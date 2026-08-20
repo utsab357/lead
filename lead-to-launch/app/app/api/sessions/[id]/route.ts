@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import type { ScrapeSession, AuditResult, RankedLead } from "@/lib/types";
+import type { ScrapeSession, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult } from "@/lib/types";
 
 const SESSIONS_DIR = path.join(process.cwd(), "data", "sessions");
 
@@ -35,11 +35,17 @@ export async function PATCH(
       audits?: Record<string, AuditResult>;
       ranked?: RankedLead[];
       selectedId?: string | null;
+      conversions?: Record<string, ConversionPoints>;
+      outreachResults?: Record<string, OutreachResult>;
+      buildPrompts?: Record<string, BuildPromptResult>;
     };
 
-    if (body.audits   !== undefined) session.audits    = body.audits;
-    if (body.ranked   !== undefined) session.ranked    = body.ranked;
-    if (body.selectedId !== undefined) session.selectedId = body.selectedId;
+    if (body.audits          !== undefined) session.audits          = body.audits;
+    if (body.ranked          !== undefined) session.ranked          = body.ranked;
+    if (body.selectedId      !== undefined) session.selectedId      = body.selectedId;
+    if (body.conversions     !== undefined) session.conversions     = body.conversions;
+    if (body.outreachResults !== undefined) session.outreachResults = body.outreachResults;
+    if (body.buildPrompts    !== undefined) session.buildPrompts    = body.buildPrompts;
 
     await fs.writeFile(filePath, JSON.stringify(session, null, 2));
     return NextResponse.json({ success: true });

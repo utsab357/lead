@@ -57,20 +57,20 @@ export default function Page() {
     setActiveSessionId(session.id);
     setAudits(session.audits ?? {});
     setRanked(session.ranked ?? []);
-    setConversions({});
+    setConversions(session.conversions ?? {});
     setSelectedId(session.selectedId ?? null);
     setOutreachResults(session.outreachResults ?? {});
     setBuildPrompts(session.buildPrompts ?? {});
 
-    const savedRanked = session.ranked ?? {};
-    const savedAudits = session.audits ?? {};
+    const savedRanked   = session.ranked ?? [];
+    const savedAudits   = session.audits ?? {};
     const savedOutreach = session.outreachResults ?? {};
-    const savedBuildPrompts = session.buildPrompts ?? {};
+    const savedBuildPs  = session.buildPrompts ?? {};
 
-    if (Object.keys(savedBuildPrompts).length > 0) setPhase(7);
+    if (Object.keys(savedBuildPs).length > 0)   setPhase(7);
     else if (Object.keys(savedOutreach).length > 0) setPhase(6);
-    else if (session.selectedId && Object.keys(savedRanked).length > 0) setPhase(5);
-    else if (Object.keys(savedRanked).length > 0) setPhase(3);
+    else if (session.selectedId && savedRanked.length > 0) setPhase(5);
+    else if (savedRanked.length > 0)             setPhase(3);
     else if (Object.keys(savedAudits).length > 0) setPhase(2);
     else setPhase(1);
   }
@@ -107,6 +107,42 @@ export default function Page() {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ selectedId: id }),
+      });
+    } catch { /* non-critical, ignore */ }
+  }
+
+  /** Persist conversion points back to the session file silently */
+  async function saveConversionsToSession(newConversions: Record<string, ConversionPoints>) {
+    if (!activeSessionId) return;
+    try {
+      await fetch(`/api/sessions/${activeSessionId}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ conversions: newConversions }),
+      });
+    } catch { /* non-critical, ignore */ }
+  }
+
+  /** Persist outreach results back to the session file silently */
+  async function saveOutreachToSession(newOutreach: Record<string, OutreachResult>) {
+    if (!activeSessionId) return;
+    try {
+      await fetch(`/api/sessions/${activeSessionId}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ outreachResults: newOutreach }),
+      });
+    } catch { /* non-critical, ignore */ }
+  }
+
+  /** Persist build prompts back to the session file silently */
+  async function saveBuildPromptsToSession(newPrompts: Record<string, BuildPromptResult>) {
+    if (!activeSessionId) return;
+    try {
+      await fetch(`/api/sessions/${activeSessionId}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ buildPrompts: newPrompts }),
       });
     } catch { /* non-critical, ignore */ }
   }
@@ -201,7 +237,10 @@ export default function Page() {
               key="p4"
               ranked={ranked}
               conversions={conversions}
-              setConversions={setConversions}
+              setConversions={(c) => {
+                setConversions(c);
+                saveConversionsToSession(c);
+              }}
               onNext={() => setPhase(5)}
               onPrev={() => setPhase(3)}
             />
@@ -211,7 +250,10 @@ export default function Page() {
               key="p5"
               ranked={ranked}
               outreachResults={outreachResults}
-              setOutreachResults={setOutreachResults}
+              setOutreachResults={(r) => {
+                setOutreachResults(r);
+                saveOutreachToSession(r);
+              }}
               onNext={() => setPhase(6)}
               onPrev={() => setPhase(4)}
             />
@@ -221,7 +263,10 @@ export default function Page() {
               key="p6"
               ranked={ranked}
               buildPrompts={buildPrompts}
-              setBuildPrompts={setBuildPrompts}
+              setBuildPrompts={(b) => {
+                setBuildPrompts(b);
+                saveBuildPromptsToSession(b);
+              }}
               onNext={() => setPhase(7)}
               onPrev={() => setPhase(5)}
             />
@@ -230,9 +275,11 @@ export default function Page() {
             <Phase7Export
               key="p7"
               ranked={ranked}
+              conversions={conversions}
               outreachResults={outreachResults}
               buildPrompts={buildPrompts}
               onPrev={() => setPhase(6)}
+
             />
           )}
         </AnimatePresence>
