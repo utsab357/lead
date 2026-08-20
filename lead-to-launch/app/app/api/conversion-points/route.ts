@@ -41,19 +41,24 @@ function buildPrompt(leads: Lead[], audits: Record<string, AuditResult>): string
 
   return `You are a business consultant and sales expert specialized in Indian local businesses. For each business below, generate UNIQUE, PERSONALIZED conversion points — specific reasons WHY this exact business needs a website RIGHT NOW.
 
-These points will be used by a freelance web developer during phone calls and WhatsApp messages to convince the business owner. The points must be:
-- SPECIFIC to this business (use their name, category, city, rating, reviews)
+These points will be used by a FREELANCE WEB DEVELOPER (not a salesperson) making cold calls. They are technical, not sales-trained. The content must be:
+- SPECIFIC to this business (use their real name, city, rating, reviews count)
 - Based on their REAL data (not generic templates)
 - Include competitor analysis (imagine what similar businesses nearby are doing)
 - Include revenue impact with real ₹ numbers
 - Feel urgent — why they're losing money TODAY
 
-For EACH business return a JSON object:
+For EACH business return a JSON object with these fields:
 - "leadId": string (copy the id)
 - "points": array of 4-5 unique selling points. Each point should be a complete sentence the developer can say on a call. Reference the business name and city.
 - "competitorInsight": ONE sentence about what their nearby competitors are doing better online (make it realistic for their city)
 - "revenueArgument": ONE sentence with specific ₹ numbers about how much revenue a website could add per month
 - "urgencyHook": ONE sentence creating urgency
+- "callScript": an object with exactly these 4 fields for a COLD CALL script:
+  - "opener": The exact first sentence to say when the owner picks up (mention their business name and one specific fact like their review count). Keep it natural and non-salesy.
+  - "keyPoints": Array of exactly 3 short bullet-point sentences to say during the call. Each should reference their real data. Easy to read aloud quickly.
+  - "objectionHandler": ONE sentence to say if the owner says "I'm not interested" or "I'm busy". Should be soft, respectful, and reference one specific number.
+  - "closer": ONE natural closing sentence to end the call and propose a next step (e.g., sending a WhatsApp message, a free mock-up).
 
 Output ONLY a JSON array of these objects. Vary the language — never repeat the same phrases across businesses.
 
@@ -111,6 +116,12 @@ export async function POST(req: Request) {
         competitorInsight:  cp.competitorInsight ?? "",
         revenueArgument:    cp.revenueArgument ?? "",
         urgencyHook:        cp.urgencyHook ?? "",
+        callScript:         cp.callScript ? {
+          opener:           cp.callScript.opener ?? "",
+          keyPoints:        Array.isArray(cp.callScript.keyPoints) ? cp.callScript.keyPoints : [],
+          objectionHandler: cp.callScript.objectionHandler ?? "",
+          closer:           cp.callScript.closer ?? "",
+        } : undefined,
       };
     }
   }

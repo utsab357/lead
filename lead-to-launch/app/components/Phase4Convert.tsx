@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PhaseShell } from "./PhaseShell";
-import { Loader2, Target, TrendingUp, Zap, Shield, Clock, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, Target, TrendingUp, Zap, Shield, Clock, ChevronDown, ChevronUp, Phone, MessageSquare, AlertCircle, CheckCircle2 } from "lucide-react";
 import type { RankedLead, ConversionPoints, AuditResult } from "@/lib/types";
 import { toast } from "sonner";
 
@@ -30,6 +30,7 @@ export function Phase4Convert({
   const [loading, setLoading] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(initialExpandedId ?? null);
   const [statusMsg, setStatusMsg] = useState("");
+  const [showScriptId, setShowScriptId] = useState<string | null>(null);
 
   async function generateAll() {
     if (ranked.length === 0) return;
@@ -161,8 +162,9 @@ export function Phase4Convert({
                   {isExpanded && (
                     <CardContent className="pt-0 border-t border-border/60">
                       {conv ? (
-                        <div className="grid md:grid-cols-2 gap-4 pt-4">
-                          <div className="space-y-2">
+                        <>
+                          <div className="grid md:grid-cols-2 gap-4 pt-4">
+                            <div className="space-y-2">
                             <div className="text-xs uppercase tracking-[0.12em] text-muted-foreground flex items-center gap-1">
                               <Zap className="h-3 w-3 text-primary" /> Selling Points
                             </div>
@@ -196,6 +198,82 @@ export function Phase4Convert({
                             </div>
                           </div>
                         </div>
+
+                        {/* Call Script Section */}
+                        {conv.callScript && (
+                          <div className="mt-4 border-t border-border/60 pt-4">
+                            <button
+                              onClick={() => setShowScriptId(showScriptId === lead.id ? null : lead.id)}
+                              className="flex items-center gap-2 text-xs uppercase tracking-[0.12em] font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition-colors w-full"
+                            >
+                              <Phone className="h-3.5 w-3.5" />
+                              Call Script
+                              {showScriptId === lead.id
+                                ? <ChevronUp className="h-3.5 w-3.5 ml-auto" />
+                                : <ChevronDown className="h-3.5 w-3.5 ml-auto" />}
+                            </button>
+
+                            <AnimatePresence initial={false}>
+                              {showScriptId === lead.id && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="mt-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4 space-y-4">
+                                    {/* Step 1: Opener */}
+                                    <div>
+                                      <div className="text-[10px] uppercase tracking-widest text-emerald-600/70 dark:text-emerald-400/70 font-semibold mb-1 flex items-center gap-1">
+                                        <Phone className="h-3 w-3" /> Step 1 — Opening Line
+                                      </div>
+                                      <p className="text-sm leading-relaxed rounded bg-background/60 border border-border/50 px-3 py-2 font-medium italic">
+                                        "{conv.callScript.opener}"
+                                      </p>
+                                    </div>
+
+                                    {/* Step 2: Key Points */}
+                                    <div>
+                                      <div className="text-[10px] uppercase tracking-widest text-blue-600/70 dark:text-blue-400/70 font-semibold mb-1 flex items-center gap-1">
+                                        <MessageSquare className="h-3 w-3" /> Step 2 — Key Points to Mention
+                                      </div>
+                                      <ul className="space-y-1.5">
+                                        {conv.callScript.keyPoints.map((kp, ki) => (
+                                          <li key={ki} className="text-sm flex items-start gap-2">
+                                            <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
+                                            <span>{kp}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+
+                                    {/* Step 3: If they say no */}
+                                    <div>
+                                      <div className="text-[10px] uppercase tracking-widest text-amber-600/70 dark:text-amber-400/70 font-semibold mb-1 flex items-center gap-1">
+                                        <AlertCircle className="h-3 w-3" /> If They Say "Not Interested"
+                                      </div>
+                                      <p className="text-sm leading-relaxed rounded bg-background/60 border border-border/50 px-3 py-2 italic">
+                                        "{conv.callScript.objectionHandler}"
+                                      </p>
+                                    </div>
+
+                                    {/* Step 4: Closer */}
+                                    <div>
+                                      <div className="text-[10px] uppercase tracking-widest text-purple-600/70 dark:text-purple-400/70 font-semibold mb-1 flex items-center gap-1">
+                                        <CheckCircle2 className="h-3 w-3" /> Step 3 — Close the Call
+                                      </div>
+                                      <p className="text-sm leading-relaxed rounded bg-background/60 border border-border/50 px-3 py-2 italic">
+                                        "{conv.callScript.closer}"
+                                      </p>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        )}
+                        </>
                       ) : (
                         <div className="py-6 text-center text-sm text-muted-foreground">
                           <Target className="h-6 w-6 mx-auto mb-2 opacity-30" />

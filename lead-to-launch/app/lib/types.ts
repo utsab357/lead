@@ -107,6 +107,12 @@ export type ConversionPoints = {
   competitorInsight: string;
   revenueArgument: string;
   urgencyHook: string;
+  callScript?: {
+    opener: string;
+    keyPoints: string[];
+    objectionHandler: string;
+    closer: string;
+  };
 };
 
 export type RankedLead = Lead & {
