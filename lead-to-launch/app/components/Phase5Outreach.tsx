@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { PhaseShell } from "./PhaseShell";
 import { IncompleteState } from "./IncompleteState";
-import { MessageCircle, Mail, Camera, Copy, ExternalLink, Clock, Sparkles, Loader2, CheckCircle2, ChevronRight } from "lucide-react";
+import { MessageCircle, Mail, Camera, Copy, ExternalLink, Clock, Sparkles, Loader2, CheckCircle2, ChevronRight, Monitor, Download } from "lucide-react";
 import type { RankedLead, OutreachChannel, OutreachLanguage, OutreachResult } from "@/lib/types";
 import { toast } from "sonner";
 
@@ -258,9 +258,33 @@ export function Phase5Outreach({
                         <CheckCircle2 className="h-3 w-3 mr-1" />
                         {doneCount}/{ranked.length} leads drafted
                       </Badge>
-                      <span className="text-xs text-muted-foreground">â€” all drafts export to Phase 7</span>
+                      <span className="text-xs text-muted-foreground">— all drafts export to Phase 7</span>
                     </div>
                   )}
+
+                  {/* Demo Preview */}
+                  <Card className="mt-4 border-primary/20 bg-primary/3">
+                    <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                      <CardTitle className="text-sm flex items-center gap-2">
+                        <Monitor className="h-4 w-4 text-primary" /> Demo preview — screenshot this to share
+                      </CardTitle>
+                      <Badge variant="outline" className="text-[10px]">Live preview</Badge>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="rounded-lg overflow-hidden border border-border h-[380px] relative">
+                        <iframe
+                          title={`Demo preview for ${activeLead.name}`}
+                          srcDoc={demoSiteHtml(activeLead)}
+                          className="w-full h-full"
+                          sandbox="allow-same-origin"
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
+                        <Download className="h-3 w-3" />
+                        Take a screenshot of this preview and send it on WhatsApp — no fake link needed.
+                      </p>
+                    </CardContent>
+                  </Card>
                 </>
               )}
             </>
@@ -269,4 +293,99 @@ export function Phase5Outreach({
       </div>
     </PhaseShell>
   );
+}
+
+/** Generates a beautiful HTML demo site for the given lead */
+function demoSiteHtml(l: RankedLead): string {
+  const wa = (l.whatsapp ?? l.phone ?? "919999999999").replace(/\D/g, "");
+  const phone = (l.phone ?? "").replace(/\s/g, "");
+  const rating = l.rating ?? "5.0";
+  const reviews = l.reviewsCount ?? 0;
+  const city = l.city?.split(",")[0] ?? l.city ?? "India";
+  const services = l.services?.slice(0, 6) ?? ["Service 1", "Service 2", "Service 3"];
+  const topReview = l.reviews?.find(r => r.rating >= 4)?.text?.slice(0, 120) ?? `Excellent service and professional staff. Highly recommended in ${city}!`;
+  const topReviewAuthor = l.reviews?.find(r => r.rating >= 4)?.author?.split(/\d/)[0]?.trim() ?? "Happy Customer";
+
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${l.name}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  body { font-family: 'Inter', sans-serif; }
+  .wa-btn { background: #25D366; }
+  .wa-btn:hover { background: #128C7E; }
+</style>
+</head><body class="bg-white text-gray-900 text-sm">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="font-bold text-gray-900 text-base truncate max-w-[180px]">${l.name}</div>
+    <a href="tel:${phone}" class="text-xs font-semibold bg-gray-900 text-white px-4 py-2 rounded-full">📞 Call Now</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white px-4 py-10">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-xs uppercase tracking-widest opacity-75 mb-2">${l.category} · ${city}</div>
+    <h1 class="text-2xl font-bold leading-tight mb-3">${l.name}<br><span class="opacity-80 font-normal text-lg">Trusted by ${reviews}+ customers in ${city}</span></h1>
+    <div class="flex items-center gap-2 mb-4">
+      <span class="text-yellow-300 font-bold">${rating} ★</span>
+      <span class="opacity-80 text-xs">${reviews} Google reviews</span>
+    </div>
+    <div class="flex gap-3 flex-wrap">
+      <a href="https://wa.me/${wa}" class="wa-btn text-white font-semibold px-5 py-2.5 rounded-full text-sm">💬 Book on WhatsApp</a>
+      <a href="tel:${phone}" class="bg-white/20 text-white font-semibold px-5 py-2.5 rounded-full text-sm border border-white/30">📞 Call Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<section class="bg-gray-50 border-y border-gray-100 px-4 py-4">
+  <div class="max-w-5xl mx-auto grid grid-cols-3 gap-2 text-center">
+    <div><div class="text-lg font-bold text-blue-600">${rating}★</div><div class="text-[10px] text-gray-500 uppercase tracking-wide">Rating</div></div>
+    <div><div class="text-lg font-bold text-blue-600">${reviews}+</div><div class="text-[10px] text-gray-500 uppercase tracking-wide">Reviews</div></div>
+    <div><div class="text-lg font-bold text-blue-600">${l.yearsInBusiness ?? "5"}+</div><div class="text-[10px] text-gray-500 uppercase tracking-wide">Yrs in ${city}</div></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="px-4 py-8">
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-lg font-bold mb-4">Our Services</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      ${services.map(s => `<div class="border border-gray-200 rounded-xl p-3"><div class="font-semibold text-sm">${s}</div><div class="text-xs text-gray-500 mt-0.5">Available now</div></div>`).join("")}
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="bg-blue-50 px-4 py-7">
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-lg font-bold mb-3">What Customers Say</h2>
+    <div class="bg-white rounded-xl p-4 border border-blue-100 shadow-sm">
+      <div class="text-yellow-400 mb-1">★★★★★</div>
+      <p class="text-sm text-gray-700 italic">"${topReview}"</p>
+      <div class="text-xs text-gray-500 mt-2 font-medium">— ${topReviewAuthor}</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="px-4 py-8 text-center">
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-lg font-bold mb-2">Book an Appointment Today</h2>
+    <p class="text-sm text-gray-500 mb-4">${l.address}</p>
+    <a href="https://wa.me/${wa}" class="wa-btn text-white font-semibold px-8 py-3 rounded-full text-sm inline-block">💬 Message on WhatsApp</a>
+  </div>
+</section>
+
+<!-- FLOATING WA BUTTON -->
+<a href="https://wa.me/${wa}" class="fixed bottom-5 right-5 wa-btn text-white w-13 h-13 rounded-full flex items-center justify-center shadow-lg text-xl z-50" style="width:52px;height:52px">💬</a>
+
+<footer class="bg-gray-900 text-gray-400 text-xs px-4 py-4 text-center">
+  © ${l.name} · ${l.address}
+</footer>
+</body></html>`;
 }

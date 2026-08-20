@@ -49,7 +49,7 @@ Business:
 - Rating: ${lead.rating ?? "n/a"} (${lead.reviewsCount ?? 0} reviews), ${lead.city}
 - Biggest gap: ${lead.audit.biggestGap}
 - Estimated ₹ lost/month: ${lead.audit.estLostRevenuePerMonth}
-- Demo link placeholder: https://lead-launch.demo/${lead.id}${conversionPointsText}${reviewInsights}
+- Demo status: The freelancer has already prepared a visual demo layout of the business website (not a live URL — it's a screenshot they will share on WhatsApp/email). So the message should reference "I've prepared a demo layout/design for your business" and offer to share it — NOT include any URL link.${conversionPointsText}${reviewInsights}
 ${businessDetails}
 
 Channel: ${channel} — ${CHANNEL_RULES[channel]}

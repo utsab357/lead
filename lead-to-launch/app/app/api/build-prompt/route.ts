@@ -12,11 +12,11 @@ async function runWithFallback<T>(prompt: string): Promise<{ ok: true; data: T }
 export const maxDuration = 300;
 
 const PLATFORM_OUTPUT: Record<string, string> = {
-  stitch: "Use Google Stitch (stitch.withgoogle.com). Create a modern, mobile-first landing page. Output clean HTML + CSS.",
-  lovable: "Single-page React + Tailwind. No backend. Use placeholder images from unsplash.com.",
-  bolt: "Single-page React + Tailwind. No backend. Use placeholder images from unsplash.com.",
-  "claude-code": "Next.js 16 app router + Tailwind + shadcn. Single landing page route.",
-  codex: "Static index.html + Tailwind CDN, fully self-contained.",
+  stitch:      "Use Google Stitch (stitch.withgoogle.com). Output clean, self-contained HTML + inline CSS. Mobile-first. No external JS frameworks.",
+  lovable:     "Single-page React + Tailwind. No backend. Use placeholder images from unsplash.com.",
+  bolt:        "Single-page React + Tailwind. No backend. Use placeholder images from unsplash.com.",
+  "claude-code": "Next.js app router + Tailwind + shadcn. Single landing page route.",
+  codex:       "Static index.html + Tailwind CDN, fully self-contained.",
 };
 
 const STYLE_INSTRUCTIONS: Record<string, string> = {
@@ -29,8 +29,14 @@ const STYLE_INSTRUCTIONS: Record<string, string> = {
 };
 
 function buildPrompt(lead: RankedLead, platform: string, style: string): string {
-  const platformNote = PLATFORM_OUTPUT[platform] ?? PLATFORM_OUTPUT.lovable;
-  const styleNote    = STYLE_INSTRUCTIONS[style] ?? STYLE_INSTRUCTIONS.professional;
+  const platformNote = PLATFORM_OUTPUT[platform] ?? PLATFORM_OUTPUT.stitch;
+
+  // Support combined styles like "professional+animated"
+  const styleIds = style.split("+").filter(Boolean);
+  const styleNote = styleIds
+    .map((id) => STYLE_INSTRUCTIONS[id] ?? "")
+    .filter(Boolean)
+    .join(" Additionally: ");
 
   // Include real scraped data for an accurate demo
   const realPhotos = lead.photoUrls?.length

@@ -12,10 +12,11 @@ import type { RankedLead, BuildPromptResult } from "@/lib/types";
 import { toast } from "sonner";
 
 const PLATFORMS = [
-  { id: "lovable",     label: "Lovable",     url: "https://lovable.dev" },
-  { id: "bolt",        label: "Bolt.new",    url: "https://bolt.new" },
-  { id: "claude-code", label: "Claude Code", url: "https://claude.com/claude-code" },
-  { id: "codex",       label: "Codex",       url: "https://chat.openai.com" },
+  { id: "stitch",     label: "Google Stitch", url: "https://stitch.withgoogle.com" },
+  { id: "lovable",    label: "Lovable",       url: "https://lovable.dev" },
+  { id: "bolt",       label: "Bolt.new",      url: "https://bolt.new" },
+  { id: "claude-code",label: "Claude Code",   url: "https://claude.com/claude-code" },
+  { id: "codex",      label: "Codex",         url: "https://chat.openai.com" },
 ];
 
 const STYLE_PRESETS = [
@@ -41,8 +42,8 @@ export function Phase4Build({
   onPrev: () => void;
 }) {
   const [activeLead, setActiveLead] = useState<RankedLead | null>(ranked[0] ?? null);
-  const [platform, setPlatform] = useState("lovable");
-  const [style, setStyle] = useState("professional");
+  const [platform, setPlatform] = useState("stitch");
+  const [styles, setStyles] = useState<string[]>(["professional"]);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [typed, setTyped] = useState<Record<string, string>>({});
@@ -57,11 +58,12 @@ export function Phase4Build({
     if (!activeLead) return;
     setGenerating(true);
     setError(null);
+    const styleParam = styles.length > 0 ? styles.join("+") : "professional";
     try {
       const res = await fetch("/api/build-prompt", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ lead: activeLead, platform, style }),
+        body: JSON.stringify({ lead: activeLead, platform, style: styleParam }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -170,27 +172,47 @@ export function Phase4Build({
                 <div className="text-xs text-muted-foreground mt-0.5">{activeLead.address} · {activeLead.category}</div>
               </div>
 
-              {/* Style preset picker */}
+              {/* Style preset picker — multi-select */}
               <div className="mb-4">
                 <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
-                  <Palette className="h-3.5 w-3.5" /> Site style
+                  <Palette className="h-3.5 w-3.5" /> Site style <span className="text-muted-foreground/60">(pick 1–3)</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {STYLE_PRESETS.map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => setStyle(s.id)}
-                      className={`rounded-lg border px-3 py-2 text-left transition-all ${
-                        style === s.id
-                          ? "border-primary/60 bg-primary/5"
-                          : "border-border hover:border-primary/30 hover:bg-muted/40"
-                      }`}
-                    >
-                      <div className="text-sm font-medium">{s.label}</div>
-                      <div className="text-[10px] text-muted-foreground mt-0.5 leading-snug">{s.desc}</div>
-                    </button>
-                  ))}
+                  {STYLE_PRESETS.map((s) => {
+                    const selected = styles.includes(s.id);
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => {
+                          if (selected) {
+                            // Prevent deselecting all
+                            if (styles.length > 1) setStyles(styles.filter((x) => x !== s.id));
+                          } else if (styles.length < 3) {
+                            setStyles([...styles, s.id]);
+                          }
+                        }}
+                        className={`rounded-lg border px-3 py-2 text-left transition-all relative ${
+                          selected
+                            ? "border-primary/70 bg-primary/8 ring-1 ring-primary/30"
+                            : "border-border hover:border-primary/30 hover:bg-muted/40"
+                        }`}
+                      >
+                        {selected && (
+                          <span className="absolute top-1.5 right-1.5 h-4 w-4 bg-primary text-primary-foreground rounded-full text-[9px] flex items-center justify-center font-bold">
+                            {styles.indexOf(s.id) + 1}
+                          </span>
+                        )}
+                        <div className="text-sm font-medium pr-4">{s.label}</div>
+                        <div className="text-[10px] text-muted-foreground mt-0.5 leading-snug">{s.desc}</div>
+                      </button>
+                    );
+                  })}
                 </div>
+                {styles.length > 1 && (
+                  <p className="text-[10px] text-muted-foreground mt-1.5">
+                    Combined style: <strong>{styles.map((id) => STYLE_PRESETS.find((s) => s.id === id)?.label).join(" + ")}</strong>
+                  </p>
+                )}
               </div>
 
               {/* Platform + Generate controls */}
@@ -232,7 +254,7 @@ export function Phase4Build({
                 <Card>
                   <CardContent className="py-12 text-center">
                     <Loader2 className="h-6 w-6 mx-auto mb-3 animate-spin text-primary" />
-                    <div className="text-sm text-muted-foreground">AI is crafting a {STYLE_PRESETS.find((s)=>s.id===style)?.label} prompt for {activeLead.name}…</div>
+                    <div className="text-sm text-muted-foreground">AI is crafting a {styles.map((id) => STYLE_PRESETS.find((s) => s.id === id)?.label).join(" + ")} prompt for {activeLead.name}…</div>
                   </CardContent>
                 </Card>
               ) : result ? (
@@ -240,7 +262,7 @@ export function Phase4Build({
                   <Card>
                     <CardHeader className="pb-2 flex flex-row items-center justify-between">
                       <CardTitle className="text-base">Generated prompt</CardTitle>
-                      <Badge variant="outline" className="text-[10px]">{STYLE_PRESETS.find((s) => s.id === style)?.label ?? style}</Badge>
+                      <Badge variant="outline" className="text-[10px]">{styles.map((id) => STYLE_PRESETS.find((s) => s.id === id)?.label).filter(Boolean).join(" + ") || "Custom"}</Badge>
                     </CardHeader>
                     <CardContent>
                       <pre className="text-xs leading-relaxed whitespace-pre-wrap font-mono bg-muted/30 rounded-md p-4 max-h-[480px] overflow-y-auto border border-border">
