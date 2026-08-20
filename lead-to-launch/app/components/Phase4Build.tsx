@@ -1,87 +1,99 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { PhaseShell } from "./PhaseShell";
 import { IncompleteState } from "./IncompleteState";
-import { ClaudeThinking, ClaudeRequired } from "./ClaudeStates";
-import { Copy, ExternalLink, Sparkles, Check } from "lucide-react";
+import { Copy, ExternalLink, Sparkles, CheckCircle2, ChevronRight, Loader2, Globe2, Palette } from "lucide-react";
 import type { RankedLead, BuildPromptResult } from "@/lib/types";
-import { callClaude } from "@/lib/claudeClient";
 import { toast } from "sonner";
 
 const PLATFORMS = [
-  { id: "lovable", label: "Lovable", url: "https://lovable.dev" },
+  { id: "lovable",     label: "Lovable",     url: "https://lovable.dev" },
+  { id: "bolt",        label: "Bolt.new",    url: "https://bolt.new" },
   { id: "claude-code", label: "Claude Code", url: "https://claude.com/claude-code" },
-  { id: "bolt", label: "Bolt.new", url: "https://bolt.new" },
-  { id: "codex", label: "Codex", url: "https://chat.openai.com" },
+  { id: "codex",       label: "Codex",       url: "https://chat.openai.com" },
+];
+
+const STYLE_PRESETS = [
+  { id: "professional", label: "Professional",  desc: "Clean, trustworthy, corporate — ideal for clinics, lawyers, CA firms" },
+  { id: "modern",       label: "Modern",         desc: "Sleek dark/light, minimal white space, subtle gradients" },
+  { id: "animated",     label: "Animated",       desc: "Scroll animations, hover effects, micro-interactions" },
+  { id: "warm",         label: "Warm & Friendly", desc: "Earthy tones, rounded corners, welcoming — great for food/retail" },
+  { id: "luxury",       label: "Luxury",          desc: "Dark background, gold accents, premium fonts — salons, boutiques" },
+  { id: "bold",         label: "Bold & Vibrant",  desc: "Bright colours, strong CTAs, high energy — gyms, events" },
 ];
 
 export function Phase4Build({
-  selected,
+  ranked,
+  buildPrompts,
+  setBuildPrompts,
   onNext,
   onPrev,
 }: {
-  selected: RankedLead | null;
+  ranked: RankedLead[];
+  buildPrompts: Record<string, BuildPromptResult>;
+  setBuildPrompts: (b: Record<string, BuildPromptResult>) => void;
   onNext: () => void;
   onPrev: () => void;
 }) {
+  const [activeLead, setActiveLead] = useState<RankedLead | null>(ranked[0] ?? null);
   const [platform, setPlatform] = useState("lovable");
-  const [prompt, setPrompt] = useState("");
-  const [pitchPoints, setPitchPoints] = useState<string[]>([]);
-  const [typed, setTyped] = useState("");
+  const [style, setStyle] = useState("professional");
   const [generating, setGenerating] = useState(false);
-  const [notInstalled, setNotInstalled] = useState(false);
-  const [claudeError, setClaudeError] = useState<string | null>(null);
-  const lastFor = useRef<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [typed, setTyped] = useState<Record<string, string>>({});
 
-  // Clear the generated prompt when the target lead or platform changes.
-  useEffect(() => {
-    const key = `${selected?.id ?? ""}:${platform}`;
-    if (key !== lastFor.current) {
-      setPrompt("");
-      setPitchPoints([]);
-      setTyped("");
-    }
-  }, [selected, platform]);
-
-  // Typewriter for the generated prompt.
-  useEffect(() => {
-    setTyped("");
-    if (!prompt) return;
-    let i = 0;
-    const id = setInterval(() => {
-      i += 10;
-      setTyped(prompt.slice(0, i));
-      if (i >= prompt.length) clearInterval(id);
-    }, 10);
-    return () => clearInterval(id);
-  }, [prompt]);
+  const result = activeLead ? buildPrompts[activeLead.id] : null;
+  const prompt = result?.prompt ?? "";
+  const displayText = activeLead ? (typed[activeLead.id] ?? prompt) : "";
+  const pitchPoints = result?.pitchPoints ?? [];
+  const doneCount = Object.keys(buildPrompts).length;
 
   async function generate() {
-    if (!selected) return;
+    if (!activeLead) return;
     setGenerating(true);
-    setNotInstalled(false);
-    setClaudeError(null);
-    const res = await callClaude<BuildPromptResult>("/api/build-prompt", { lead: selected, platform });
-    setGenerating(false);
-    if (!res.ok) {
-      if (res.notInstalled) setNotInstalled(true);
-      else setClaudeError(res.error);
-      toast.error(res.notInstalled ? "Claude Code required" : "Generation failed");
-      return;
+    setError(null);
+    try {
+      const res = await fetch("/api/build-prompt", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ lead: activeLead, platform, style }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? `Generation failed (${res.status})`);
+      }
+      const data = await res.json() as BuildPromptResult;
+      setBuildPrompts({ ...buildPrompts, [activeLead.id]: data });
+
+      // Typewriter effect
+      let i = 0;
+      const id = activeLead.id;
+      const full = data.prompt ?? "";
+      setTyped((prev) => ({ ...prev, [id]: "" }));
+      const interval = setInterval(() => {
+        i += 15;
+        setTyped((prev) => ({ ...prev, [id]: full.slice(0, i) }));
+        if (i >= full.length) clearInterval(interval);
+      }, 10);
+
+      toast.success("Website prompt generated");
+    } catch (e) {
+      setError((e as Error).message ?? "Unknown error");
+      toast.error("Generation failed");
+    } finally {
+      setGenerating(false);
     }
-    lastFor.current = `${selected.id}:${platform}`;
-    setPrompt(res.data.prompt);
-    setPitchPoints(res.data.pitchPoints ?? []);
-    toast.success("Claude generated your website prompt");
   }
 
   function copyPrompt() {
+    if (!prompt) return;
     navigator.clipboard.writeText(prompt);
-    toast.success("Prompt copied. Paste into " + PLATFORMS.find((p) => p.id === platform)?.label);
+    toast.success("Prompt copied — paste into " + PLATFORMS.find((p) => p.id === platform)?.label);
   }
 
   function openPlatform() {
@@ -89,20 +101,20 @@ export function Phase4Build({
     if (url) window.open(url, "_blank");
   }
 
-  if (!selected) {
+  if (ranked.length === 0) {
     return (
       <PhaseShell
-        title="Phase 4 — Generate website"
-        subtitle="Claude Code writes a complete, tailored website-builder prompt for the lead you picked — brand, sections, SEO, and CTAs baked in."
+        title="Phase 6 — Build Site"
+        subtitle="Generate a complete, platform-ready website prompt for each ranked lead."
         onPrev={onPrev}
         onNext={onNext}
         nextDisabled
-        nextLabel="Draft outreach"
+        nextLabel="Export"
       >
         <IncompleteState
-          title="No lead selected yet"
-          description="Run scrape, audit, and rank, then pick a prospect in Phase 3. Claude then writes a full website prompt (for Lovable / Bolt / Claude Code / Codex) here."
-          prevPhaseLabel="Rank"
+          title="No ranked leads yet"
+          description="Run Phases 1–3 first to get ranked leads, then generate website prompts here."
+          prevPhaseLabel="Outreach"
           onPrev={onPrev}
         />
       </PhaseShell>
@@ -111,108 +123,177 @@ export function Phase4Build({
 
   return (
     <PhaseShell
-      title="Phase 4 — Generate website"
-      subtitle="Claude Code writes a complete, tailored website-builder prompt for your selected lead."
+      title="Phase 6 — Build Site"
+      subtitle={`Generate a ready-to-paste website-builder prompt for each lead. ${doneCount}/${ranked.length} done.`}
       onPrev={onPrev}
       onNext={onNext}
-      nextLabel="Draft outreach"
+      nextLabel="Export"
+      nextDisabled={doneCount === 0}
     >
-      <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Selected lead</div>
-          <div className="font-display text-2xl mt-1">{selected.name}</div>
-          <div className="text-xs text-muted-foreground mt-0.5">{selected.address}</div>
+      <div className="grid lg:grid-cols-[260px_1fr] gap-4">
+        {/* Lead picker sidebar */}
+        <div className="space-y-1.5">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground px-1 mb-2">Select lead</div>
+          {ranked.map((lead, i) => {
+            const done = !!buildPrompts[lead.id];
+            const active = activeLead?.id === lead.id;
+            return (
+              <button
+                key={lead.id}
+                onClick={() => { setActiveLead(lead); setError(null); }}
+                className={`w-full text-left rounded-lg border px-3 py-2.5 transition-all duration-150 flex items-center gap-2 ${
+                  active
+                    ? "border-primary/60 bg-primary/5 text-foreground"
+                    : "border-border hover:border-primary/30 hover:bg-muted/40 text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <span className="text-xs tabular-nums w-5 shrink-0 text-muted-foreground">#{i + 1}</span>
+                <span className="flex-1 text-sm truncate font-medium">{lead.name}</span>
+                <div className="shrink-0">
+                  {done
+                    ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                    : <ChevronRight className="h-3.5 w-3.5 opacity-40" />}
+                </div>
+              </button>
+            );
+          })}
         </div>
-        <div className="flex items-center gap-2">
-          <Select value={platform} onValueChange={(v) => v && setPlatform(v)}>
-            <SelectTrigger className="w-[150px]"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {PLATFORMS.map((p) => (
-                <SelectItem key={p.id} value={p.id}>{p.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button onClick={generate} disabled={generating} className="h-10 px-4">
-            {generating ? "Generating…" : prompt ? "Regenerate" : "Generate with Claude"}
-          </Button>
-        </div>
-      </div>
 
-      {notInstalled && <div className="mb-6"><ClaudeRequired error={claudeError ?? undefined} onRetry={generate} /></div>}
-      {claudeError && !notInstalled && (
-        <div className="mb-6 rounded-md border border-[color:var(--destructive)]/40 bg-[color:var(--destructive)]/5 p-3 text-sm text-[color:var(--destructive)]" role="alert">
-          {claudeError}
-        </div>
-      )}
-
-      <div className="grid lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Claude-generated prompt</CardTitle>
-            {prompt && (
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={openPlatform}><ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Open {PLATFORMS.find((p) => p.id === platform)?.label}</Button>
-                <Button size="sm" onClick={copyPrompt}><Copy className="h-3.5 w-3.5 mr-1.5" /> Copy</Button>
+        {/* Main panel */}
+        <div className="min-w-0">
+          {activeLead && (
+            <>
+              {/* Lead info */}
+              <div className="mb-4">
+                <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Generating for</div>
+                <div className="font-display text-xl mt-1">{activeLead.name}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">{activeLead.address} · {activeLead.category}</div>
               </div>
-            )}
-          </CardHeader>
-          <CardContent>
-            {generating ? (
-              <ClaudeThinking label="Claude is writing the website prompt…" />
-            ) : prompt ? (
-              <pre className="text-xs leading-relaxed whitespace-pre-wrap font-mono bg-muted/30 rounded-md p-4 max-h-[520px] overflow-y-auto border border-border">
-                {typed}
-                {typed.length < prompt.length && <span className="animate-pulse">▌</span>}
-              </pre>
-            ) : (
-              <div className="h-[300px] flex flex-col items-center justify-center text-center gap-3 text-muted-foreground">
-                <Sparkles className="h-6 w-6" strokeWidth={1.5} />
-                <div className="text-sm max-w-xs">Pick a platform and hit <span className="text-foreground font-medium">Generate with Claude</span> — you&apos;ll get a full, tailored builder prompt.</div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Preview <span className="text-xs font-normal text-muted-foreground">· sample layout</span></CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-lg overflow-hidden border border-border h-[420px]">
-              <iframe title="Preview" srcDoc={demoSiteHtml(selected)} className="w-full h-full bg-[#f5efe6]" />
-            </div>
-            {pitchPoints.length > 0 && (
-              <div className="mt-4">
-                <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2">Pitch points for the owner</div>
-                <ul className="space-y-1.5">
-                  {pitchPoints.map((p, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <Check className="h-4 w-4 text-[color:var(--accent-foreground)] mt-0.5 shrink-0" strokeWidth={1.75} />
-                      <span>{p}</span>
-                    </li>
+              {/* Style preset picker */}
+              <div className="mb-4">
+                <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <Palette className="h-3.5 w-3.5" /> Site style
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {STYLE_PRESETS.map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => setStyle(s.id)}
+                      className={`rounded-lg border px-3 py-2 text-left transition-all ${
+                        style === s.id
+                          ? "border-primary/60 bg-primary/5"
+                          : "border-border hover:border-primary/30 hover:bg-muted/40"
+                      }`}
+                    >
+                      <div className="text-sm font-medium">{s.label}</div>
+                      <div className="text-[10px] text-muted-foreground mt-0.5 leading-snug">{s.desc}</div>
+                    </button>
                   ))}
-                </ul>
+                </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
+
+              {/* Platform + Generate controls */}
+              <div className="flex items-center gap-3 mb-4 flex-wrap">
+                <Select value={platform} onValueChange={(v) => v && setPlatform(v)}>
+                  <SelectTrigger className="w-[150px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {PLATFORMS.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button onClick={generate} disabled={generating} className="h-10 px-5">
+                  {generating
+                    ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</>
+                    : <><Sparkles className="h-4 w-4 mr-2" />{result ? "Regenerate" : "Generate prompt"}</>}
+                </Button>
+                {result && (
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={openPlatform}>
+                      <Globe2 className="h-3.5 w-3.5 mr-1.5" />Open {PLATFORMS.find((p) => p.id === platform)?.label}
+                    </Button>
+                    <Button size="sm" onClick={copyPrompt}>
+                      <Copy className="h-3.5 w-3.5 mr-1.5" />Copy prompt
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {error && (
+                <div className="mb-4 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive" role="alert">
+                  {error}
+                  <Button variant="outline" size="sm" className="ml-3" onClick={generate}>Retry</Button>
+                </div>
+              )}
+
+              {/* Prompt output */}
+              {generating ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <Loader2 className="h-6 w-6 mx-auto mb-3 animate-spin text-primary" />
+                    <div className="text-sm text-muted-foreground">AI is crafting a {STYLE_PRESETS.find((s)=>s.id===style)?.label} prompt for {activeLead.name}…</div>
+                  </CardContent>
+                </Card>
+              ) : result ? (
+                <div className="space-y-4">
+                  <Card>
+                    <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                      <CardTitle className="text-base">Generated prompt</CardTitle>
+                      <Badge variant="outline" className="text-[10px]">{STYLE_PRESETS.find((s) => s.id === style)?.label ?? style}</Badge>
+                    </CardHeader>
+                    <CardContent>
+                      <pre className="text-xs leading-relaxed whitespace-pre-wrap font-mono bg-muted/30 rounded-md p-4 max-h-[480px] overflow-y-auto border border-border">
+                        {displayText || prompt}
+                        {displayText.length < prompt.length && <span className="animate-pulse">▌</span>}
+                      </pre>
+                    </CardContent>
+                  </Card>
+
+                  {pitchPoints.length > 0 && (
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Pitch points for the owner</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="space-y-1.5">
+                          {pitchPoints.map((p, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                              <ExternalLink className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+                              <span>{p}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {doneCount > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        {doneCount}/{ranked.length} prompts generated
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">— all export to Phase 7</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Card className="border-dashed">
+                  <CardContent className="py-12 text-center">
+                    <Sparkles className="h-6 w-6 mx-auto mb-3 text-muted-foreground/50" strokeWidth={1.5} />
+                    <div className="font-display text-lg mb-1">Pick a style + platform</div>
+                    <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                      Then hit <span className="text-foreground font-medium">Generate prompt</span> — you&apos;ll get a full,
+                      personalized builder prompt using real business data.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </PhaseShell>
   );
-}
-
-function demoSiteHtml(l: RankedLead): string {
-  const wa = (l.whatsapp ?? l.phone ?? "919999999999").replace(/\D/g, "");
-  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${l.name}</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>body{font-family:ui-serif,Georgia,'Times New Roman',serif;background:#f5efe6;color:#2c2620}h1,h2,.sans{font-family:ui-sans-serif,system-ui,sans-serif}</style>
-</head><body>
-<header class="border-b border-stone-200 bg-[#faf6ee]"><div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between"><div class="font-medium tracking-tight text-stone-800">${l.name}</div><a href="tel:${(l.phone ?? "").replace(/\s/g, "")}" class="text-sm text-stone-600 sans">${l.phone ?? ""}</a></div></header>
-<section><div class="max-w-5xl mx-auto px-6 py-20 sm:py-28"><div class="text-[11px] uppercase tracking-[0.2em] text-stone-500 sans">${l.category} · ${l.city}</div><h1 class="text-4xl sm:text-6xl font-medium mt-4 leading-[1.05] tracking-tight text-stone-900">A name ${l.city.split(",")[0]}<br/>has trusted for years.<br/><span class="italic text-stone-500">Now online.</span></h1><p class="mt-6 text-lg text-stone-600 max-w-xl leading-relaxed">${l.rating} on Google · ${l.reviewsCount} reviews. Book in under a minute on WhatsApp — no calls, no waiting.</p><div class="mt-8 flex gap-3 sans"><a href="https://wa.me/${wa}" class="bg-stone-900 text-stone-50 font-medium px-7 py-3.5 rounded-full text-sm tracking-wide hover:bg-stone-700 transition">Book on WhatsApp →</a><a href="tel:${(l.phone ?? "").replace(/\s/g, "")}" class="border border-stone-300 text-stone-700 px-7 py-3.5 rounded-full text-sm tracking-wide">Call us</a></div></div></section>
-<section class="bg-[#ede4d3] border-y border-stone-200"><div class="max-w-5xl mx-auto px-6 py-14 grid sm:grid-cols-3 gap-8 text-center"><div><div class="text-4xl font-medium tracking-tight text-stone-900">${l.reviewsCount}+</div><div class="text-[11px] uppercase tracking-[0.2em] text-stone-500 mt-2 sans">Happy customers</div></div><div><div class="text-4xl font-medium tracking-tight text-stone-900">${l.rating}</div><div class="text-[11px] uppercase tracking-[0.2em] text-stone-500 mt-2 sans">Google rating</div></div><div><div class="text-4xl font-medium tracking-tight text-stone-900">${l.yearsInBusiness ?? 8}+</div><div class="text-[11px] uppercase tracking-[0.2em] text-stone-500 mt-2 sans">Years in ${l.city.split(",")[0]}</div></div></div></section>
-<section class="max-w-5xl mx-auto px-6 py-16"><div class="text-[11px] uppercase tracking-[0.2em] text-stone-500 sans">Services</div><h2 class="text-3xl font-medium tracking-tight text-stone-900 mt-2">What we do well.</h2><div class="grid sm:grid-cols-3 gap-px bg-stone-200 mt-8 border border-stone-200">${["Service one","Service two","Service three","Service four","Service five","Service six"].map((s)=>`<div class="bg-[#faf6ee] p-6"><div class="font-medium tracking-tight text-stone-900">${s}</div><div class="text-xs text-stone-500 mt-1.5 sans">Reliable · modern · affordable</div></div>`).join("")}</div></section>
-<section class="max-w-5xl mx-auto px-6 py-16 border-t border-stone-200"><div class="text-[11px] uppercase tracking-[0.2em] text-stone-500 sans">Visit us</div><h2 class="text-3xl font-medium tracking-tight text-stone-900 mt-2">${l.address}</h2><div class="mt-6 rounded-lg overflow-hidden bg-stone-200/60 border border-stone-300 h-64 flex items-center justify-center text-stone-500 sans text-sm">[Google Maps embed]</div></section>
-<a href="https://wa.me/${wa}" class="fixed bottom-6 right-6 bg-stone-900 text-stone-50 rounded-full w-14 h-14 flex items-center justify-center text-xl shadow-md">○</a>
-<footer class="bg-[#ede4d3] border-t border-stone-200 sans"><div class="max-w-5xl mx-auto px-6 py-8 text-xs text-stone-500 flex justify-between"><span>© ${l.name}</span><span>${l.address}</span></div></footer>
-</body></html>`;
 }

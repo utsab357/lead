@@ -11,7 +11,7 @@ import { Phase5Outreach } from "@/components/Phase5Outreach";
 import { Phase4Build } from "@/components/Phase4Build";
 import { Phase7Export } from "@/components/Phase7Export";
 import { SessionsPage } from "@/components/SessionsPage";
-import type { Lead, AuditResult, RankedLead, ConversionPoints, ScrapeSession } from "@/lib/types";
+import type { Lead, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, ScrapeSession } from "@/lib/types";
 import { Sparkles, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -22,9 +22,10 @@ export default function Page() {
   const [ranked, setRanked] = useState<RankedLead[]>([]);
   const [conversions, setConversions] = useState<Record<string, ConversionPoints>>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [outreachResults, setOutreachResults] = useState<Record<string, OutreachResult>>({});
+  const [buildPrompts, setBuildPrompts] = useState<Record<string, BuildPromptResult>>({});
   const [geminiOk, setGeminiOk] = useState<boolean | null>(null);
   const [showSessions, setShowSessions] = useState(false);
-  /** ID of the session file currently loaded (used to PATCH audit/rank back) */
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -40,9 +41,10 @@ export default function Page() {
     if (Object.keys(audits).length > 0) s.add(2);
     if (ranked.length > 0) s.add(3);
     if (Object.keys(conversions).length > 0) s.add(4);
-    if (selectedId) s.add(5);
+    if (Object.keys(outreachResults).length > 0) s.add(5);
+    if (Object.keys(buildPrompts).length > 0) s.add(6);
     return s;
-  }, [leads, audits, ranked, conversions, selectedId]);
+  }, [leads, audits, ranked, conversions, outreachResults, buildPrompts]);
 
   const selectedRanked = useMemo(
     () => ranked.find((r) => r.id === selectedId) ?? null,
@@ -53,26 +55,24 @@ export default function Page() {
   function handleLoadSession(session: ScrapeSession) {
     setLeads(session.leads);
     setActiveSessionId(session.id);
-
-    const savedAudits = session.audits ?? {};
-    const savedRanked = session.ranked ?? [];
-    const savedSelectedId = session.selectedId ?? null;
-
-    setAudits(savedAudits);
-    setRanked(savedRanked);
+    setAudits(session.audits ?? {});
+    setRanked(session.ranked ?? []);
     setConversions({});
-    setSelectedId(savedSelectedId);
+    setSelectedId(session.selectedId ?? null);
+    setOutreachResults(session.outreachResults ?? {});
+    setBuildPrompts(session.buildPrompts ?? {});
 
-    // Jump to the furthest completed phase
-    if (savedSelectedId && savedRanked.length > 0) {
-      setPhase(4);
-    } else if (savedRanked.length > 0) {
-      setPhase(3);
-    } else if (Object.keys(savedAudits).length > 0) {
-      setPhase(2);
-    } else {
-      setPhase(1);
-    }
+    const savedRanked = session.ranked ?? {};
+    const savedAudits = session.audits ?? {};
+    const savedOutreach = session.outreachResults ?? {};
+    const savedBuildPrompts = session.buildPrompts ?? {};
+
+    if (Object.keys(savedBuildPrompts).length > 0) setPhase(7);
+    else if (Object.keys(savedOutreach).length > 0) setPhase(6);
+    else if (session.selectedId && Object.keys(savedRanked).length > 0) setPhase(5);
+    else if (Object.keys(savedRanked).length > 0) setPhase(3);
+    else if (Object.keys(savedAudits).length > 0) setPhase(2);
+    else setPhase(1);
   }
 
   /** Persist audits back to the session file silently */
@@ -209,7 +209,9 @@ export default function Page() {
           {phase === 5 && (
             <Phase5Outreach
               key="p5"
-              selected={selectedRanked}
+              ranked={ranked}
+              outreachResults={outreachResults}
+              setOutreachResults={setOutreachResults}
               onNext={() => setPhase(6)}
               onPrev={() => setPhase(4)}
             />
@@ -217,7 +219,9 @@ export default function Page() {
           {phase === 6 && (
             <Phase4Build
               key="p6"
-              selected={selectedRanked}
+              ranked={ranked}
+              buildPrompts={buildPrompts}
+              setBuildPrompts={setBuildPrompts}
               onNext={() => setPhase(7)}
               onPrev={() => setPhase(5)}
             />
@@ -226,6 +230,8 @@ export default function Page() {
             <Phase7Export
               key="p7"
               ranked={ranked}
+              outreachResults={outreachResults}
+              buildPrompts={buildPrompts}
               onPrev={() => setPhase(6)}
             />
           )}

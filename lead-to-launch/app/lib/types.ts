@@ -64,6 +64,10 @@ export type ScrapeSession = {
   ranked?: RankedLead[];
   /** The lead ID selected in Phase 3 */
   selectedId?: string | null;
+  /** Outreach drafts per lead — { [leadId]: OutreachResult } */
+  outreachResults?: Record<string, OutreachResult>;
+  /** Build prompts per lead — { [leadId]: BuildPromptResult } */
+  buildPrompts?: Record<string, BuildPromptResult>;
 };
 
 export type AuditResult = {
