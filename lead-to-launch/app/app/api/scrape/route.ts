@@ -1,0 +1,200 @@
+import { spawn } from "node:child_process";
+import { promises as fs } from "node:fs";
+import path from "node:path";
+import type { ScrapeInput, ScrapeSession, Lead } from "@/lib/types";
+
+/**
+ * Scrape API — Streams results in real-time using Server-Sent Events (SSE).
+ * Runs Google Maps scraper first, then JustDial, merging + deduplicating results.
+ * Chrome opens on screen for each source.
+ */
+
+export const maxDuration = 900; // 15 minutes (two scrapers)
+
+const SESSIONS_DIR  = path.join(process.cwd(), "data", "sessions");
+const MAPS_SCRAPER  = path.join(process.cwd(), "scripts", "maps-scraper.mjs");
+const JD_SCRAPER    = path.join(process.cwd(), "scripts", "justdial-scraper.mjs");
+
+function generateMapUrl(name: string, city: string): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name} ${city}`)}`;
+}
+
+function sseEvent(data: object): string {
+  return `data: ${JSON.stringify(data)}\n\n`;
+}
+
+/** Normalize a business name for dedup matching */
+function normalizeName(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+export async function POST(req: Request) {
+  const input = (await req.json()) as ScrapeInput;
+
+  if (!input.niche?.trim() || !input.city?.trim()) {
+    return new Response(JSON.stringify({ error: "Niche and city are required." }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const sessionId = `session-${Date.now()}`;
+  const niche = input.niche.trim();
+  const city  = input.city.trim();
+
+  // Track child processes so we can kill them on cancel
+  const childProcesses: ReturnType<typeof spawn>[] = [];
+
+  const stream = new ReadableStream({
+    start(controller) {
+      const enc = (data: object) => {
+        try { controller.enqueue(new TextEncoder().encode(sseEvent(data))); } catch { /* closed */ }
+      };
+
+      // Track all leads from both sources for merging
+      const allLeads: Lead[] = [];
+      const seenNames = new Set<string>();
+
+      // ── Helper: run a scraper child process ──────────────────────────
+      function runScraper(
+        scriptPath: string,
+        args: string[],
+        sourceLabel: string,
+      ): Promise<void> {
+        return new Promise((resolve) => {
+          enc({ type: "status", message: `Starting ${sourceLabel} scrape...` });
+
+          const child = spawn("node", [scriptPath, ...args], {
+            cwd: process.cwd(),
+            stdio: ["ignore", "pipe", "pipe"],
+          });
+          childProcesses.push(child);
+
+          let buffer = "";
+          let stderr  = "";
+
+          child.stderr.on("data", (d: Buffer) => { stderr += d.toString(); });
+
+          child.stdout.on("data", (d: Buffer) => {
+            buffer += d.toString();
+            const lines = buffer.split("\n");
+            buffer = lines.pop() ?? "";
+
+            for (const line of lines) {
+              if (!line.trim()) continue;
+              try {
+                const msg = JSON.parse(line);
+
+                if (msg.type === "status") {
+                  enc({ type: "status", message: msg.message });
+                }
+
+                if (msg.type === "lead") {
+                  const lead: Lead = {
+                    ...msg.lead,
+                    mapUrl: msg.lead.mapUrl || generateMapUrl(msg.lead.name, msg.lead.city),
+                  };
+
+                  // Dedup check
+                  const normalized = normalizeName(lead.name);
+                  if (!seenNames.has(normalized)) {
+                    seenNames.add(normalized);
+                    allLeads.push(lead);
+
+                    // Apply no-website filter
+                    const passesFilter = input.noWebsiteOnly ? !lead.website : true;
+                    if (passesFilter) {
+                      enc({ type: "lead", lead, index: allLeads.length, total: msg.total, source: sourceLabel });
+                    }
+                  }
+                }
+
+                if (msg.type === "done") {
+                  enc({ type: "source_done", source: sourceLabel, total: msg.total, withPhone: msg.withPhone, noSite: msg.noSite });
+                }
+
+                if (msg.type === "error") {
+                  enc({ type: "error", message: msg.message });
+                }
+              } catch { /* non-JSON */ }
+            }
+          });
+
+          child.on("close", () => resolve());
+          child.on("error", () => resolve());
+        });
+      }
+
+      // ── Run scrapers sequentially ──────────────────────────────────
+      (async () => {
+        // 1. Google Maps (always run)
+        await runScraper(MAPS_SCRAPER, [niche, city, sessionId], "Google Maps");
+
+        // 2. JustDial (run after Maps)
+        try {
+          await runScraper(JD_SCRAPER, [niche, city, sessionId + "-jd"], "JustDial");
+        } catch {
+          enc({ type: "status", message: "JustDial scrape skipped (error). Maps data saved." });
+        }
+
+        // ── Save combined session ──────────────────────────────────
+        try {
+          await fs.mkdir(SESSIONS_DIR, { recursive: true });
+        } catch { /* ok */ }
+
+        // Re-number all leads
+        allLeads.forEach((l, i) => {
+          l.id = `lead-${String(i + 1).padStart(3, "0")}`;
+        });
+
+        const noSite    = allLeads.filter((l) => !l.website);
+        const withPhone = allLeads.filter((l) => l.phone);
+
+        const session: ScrapeSession = {
+          id:              sessionId,
+          niche,
+          city,
+          timestamp:       new Date().toISOString(),
+          leadsCount:      allLeads.length,
+          noWebsiteCount:  noSite.length,
+          withPhoneCount:  withPhone.length,
+          expandedTerms:   [niche],
+          leads:           allLeads,
+        };
+
+        const outPath = path.join(SESSIONS_DIR, `${sessionId}.json`);
+        await fs.writeFile(outPath, JSON.stringify(session, null, 2));
+
+        // Emit final stats
+        enc({
+          type: "done",
+          total: allLeads.length,
+          withPhone: withPhone.length,
+          noSite: noSite.length,
+          sessionId,
+          sources: {
+            maps: allLeads.filter((l) => l.source === "maps").length,
+            justdial: allLeads.filter((l) => l.source === "justdial").length,
+          },
+        });
+
+        try { controller.close(); } catch { /* already closed */ }
+      })();
+    },
+    cancel() {
+      // User pressed Stop — kill all running Chrome processes
+      for (const child of childProcesses) {
+        try { child.kill("SIGTERM"); } catch { /* already dead */ }
+      }
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      "Connection": "keep-alive",
+      "X-Accel-Buffering": "no",
+    },
+  });
+}

@@ -1,0 +1,104 @@
+import { NextResponse } from "next/server";
+import { runGroqJSON } from "@/lib/groq";
+import { runGeminiJSON } from "@/lib/gemini";
+import type { Lead, AuditResult, RankedLead } from "@/lib/types";
+
+export const maxDuration = 300;
+
+const BATCH_SIZE     = 5;
+const BATCH_DELAY_MS = 1500;
+
+function buildPrompt(leads: Lead[], audits: Record<string, AuditResult>): string {
+  const rows = leads
+    .filter((l) => audits[l.id])
+    .map((l) => ({
+      id: l.id,
+      name: l.name,
+      category: l.category,
+      rating: l.rating,
+      reviewsCount: l.reviewsCount,
+      hasWebsite: audits[l.id].hasWebsite,
+      pageSpeedScore: audits[l.id].pageSpeedScore,
+      reachable: [l.phone && "phone", l.whatsapp && "whatsapp", l.email && "email"].filter(Boolean),
+      estLostRevenuePerMonth: audits[l.id].estLostRevenuePerMonth,
+      biggestGap: audits[l.id].biggestGap,
+    }));
+
+  return `You are a sales strategist ranking local-business leads by how likely they are to BUY a website from a freelancer, and how much value a website would create for them.
+
+Score each lead 0-100 for conversion potential. Weigh:
+- No website or a slow/free-builder site (biggest opportunity) — highest weight
+- Review volume + rating (an active business with money and demand)
+- Reachability (phone + WhatsApp + email = easy to contact and close)
+- Category fit (service businesses like dentist/salon/clinic/spa/gym/restaurant/lawyer benefit most from a site)
+- Revenue left on the table
+
+For EACH lead return a JSON object:
+- "leadId": string
+- "score": integer 0-100
+- "scoreReasoning": ONE short sentence (max 18 words) explaining why it ranks where it does, referencing its real data.
+
+Output ONLY a JSON array, sorted by score DESCENDING (best first). No prose, no markdown fences.
+
+Leads:
+${JSON.stringify(rows, null, 2)}`;
+}
+
+async function runWithFallback<T>(prompt: string): Promise<{ ok: true; data: T; source: string } | { ok: false; error: string }> {
+  const groqResult = await runGroqJSON<T>(prompt);
+  if (groqResult.ok) return { ...groqResult, source: "groq" };
+  const geminiResult = await runGeminiJSON<T>(prompt);
+  if (geminiResult.ok) return { ...geminiResult, source: "gemini" };
+  return { ok: false, error: `Groq: ${groqResult.error} | Gemini: ${geminiResult.error}` };
+}
+
+function chunk<T>(arr: T[], n: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += n) chunks.push(arr.slice(i, i + n));
+  return chunks;
+}
+
+export async function POST(req: Request) {
+  const { leads, audits } = (await req.json()) as {
+    leads: Lead[];
+    audits: Record<string, AuditResult>;
+  };
+  const auditable = leads.filter((l) => audits?.[l.id]);
+  if (auditable.length === 0) {
+    return NextResponse.json({ error: "No audited leads to rank." }, { status: 400 });
+  }
+
+  // Process in batches
+  const batches = chunk(auditable, BATCH_SIZE);
+  const allScores: Array<{ leadId: string; score: number; scoreReasoning: string }> = [];
+  let source = "groq";
+
+  for (let i = 0; i < batches.length; i++) {
+    const batch = batches[i];
+    const result = await runWithFallback<Array<{ leadId: string; score: number; scoreReasoning: string }>>(
+      buildPrompt(batch, audits),
+    );
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: 502 });
+    }
+    if (result.source === "gemini") source = "gemini";
+    if (Array.isArray(result.data)) allScores.push(...result.data);
+    if (i < batches.length - 1) await new Promise(r => setTimeout(r, BATCH_DELAY_MS));
+  }
+
+  const scoreById = new Map(allScores.filter((r) => r?.leadId).map((r) => [r.leadId, r]));
+
+  const ranked: RankedLead[] = auditable
+    .map((lead) => {
+      const r = scoreById.get(lead.id);
+      return {
+        ...lead,
+        audit: audits[lead.id],
+        score: Math.max(0, Math.min(100, Number(r?.score ?? 50))),
+        scoreReasoning: r?.scoreReasoning ?? "",
+      };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  return NextResponse.json({ source, ranked });
+}
