@@ -332,36 +332,16 @@ export function Phase7Export({
                           </div>
                         )}
 
-                        {/* Phase 5 — Outreach */}
+                        {/* Phase 5 — compact redirect */}
                         {outreach ? (
-                          <div className="rounded-lg bg-blue-50/60 border border-blue-100 p-3 space-y-2">
-                            <div className="flex items-center justify-between">
-                              <div className="text-[10px] uppercase tracking-widest text-blue-600 font-semibold">Phase 5 — Outreach Message</div>
-                              <Button size="sm" variant="ghost" className="h-7 text-xs text-blue-600 px-2" onClick={() => onGoToPhase?.(5, lead.id)}>
-                                Open P5 →
-                              </Button>
+                          <div className="rounded-lg bg-blue-50/60 border border-blue-100 p-3 flex items-center justify-between gap-3">
+                            <div className="min-w-0">
+                              <div className="text-[10px] uppercase tracking-widest text-blue-600 font-semibold mb-1">Phase 5 — Outreach</div>
+                              <div className="text-xs text-gray-600 truncate">{outreach.bestSendTime}</div>
                             </div>
-                            <div className="text-xs text-gray-700 font-mono whitespace-pre-wrap bg-white rounded p-2 border border-blue-100 max-h-36 overflow-y-auto">
-                              {outreach.first}
-                            </div>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => copy(outreach.first, "First message copied")}>
-                                <Copy className="h-3 w-3 mr-1" /> Copy message
-                              </Button>
-                              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => copy(outreach.followUp, "Follow-up copied")}>
-                                <Copy className="h-3 w-3 mr-1" /> Copy follow-up
-                              </Button>
-                              {(lead.whatsapp || lead.phone) && (
-                                <a
-                                  href={`https://wa.me/${(lead.whatsapp??lead.phone??"").replace(/\D/g,"")}?text=${encodeURIComponent(outreach.first)}`}
-                                  target="_blank" rel="noopener noreferrer"
-                                >
-                                  <Button size="sm" className="h-7 text-xs bg-green-600 hover:bg-green-700">
-                                    💬 Send on WhatsApp
-                                  </Button>
-                                </a>
-                              )}
-                            </div>
+                            <Button size="sm" variant="outline" className="h-8 text-xs shrink-0 border-blue-200 text-blue-700 hover:bg-blue-50" onClick={() => onGoToPhase?.(5, lead.id)}>
+                              Open P5 →
+                            </Button>
                           </div>
                         ) : (
                           <div className="rounded-lg border border-dashed border-blue-200 px-3 py-2 flex items-center justify-between gap-2">
@@ -372,33 +352,16 @@ export function Phase7Export({
                           </div>
                         )}
 
-                        {/* Phase 6 — Site Prompt */}
+                        {/* Phase 6 — compact redirect */}
                         {buildPrompt ? (
-                          <div className="rounded-lg bg-purple-50/60 border border-purple-100 p-3 space-y-2">
-                            <div className="flex items-center justify-between">
-                              <div className="text-[10px] uppercase tracking-widest text-purple-600 font-semibold">Phase 6 — Site Prompt</div>
-                              <Button size="sm" variant="ghost" className="h-7 text-xs text-purple-600 px-2" onClick={() => onGoToPhase?.(6, lead.id)}>
-                                Open P6 →
-                              </Button>
+                          <div className="rounded-lg bg-purple-50/60 border border-purple-100 p-3 flex items-center justify-between gap-3">
+                            <div className="min-w-0">
+                              <div className="text-[10px] uppercase tracking-widest text-purple-600 font-semibold mb-1">Phase 6 — Site Prompt</div>
+                              <div className="text-xs text-gray-600 truncate">{buildPrompt.prompt.slice(0, 60)}…</div>
                             </div>
-                            <div className="text-xs text-gray-700 font-mono whitespace-pre-wrap bg-white rounded p-2 border border-purple-100 max-h-36 overflow-y-auto">
-                              {buildPrompt.prompt.slice(0, 400)}{buildPrompt.prompt.length > 400 ? "…" : ""}
-                            </div>
-                            <div className="flex gap-2 flex-wrap">
-                              <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => copy(buildPrompt.prompt, "Site prompt copied")}>
-                                <Copy className="h-3 w-3 mr-1" /> Copy full prompt
-                              </Button>
-                              <a href="https://stitch.withgoogle.com" target="_blank" rel="noopener noreferrer">
-                                <Button size="sm" variant="outline" className="h-7 text-xs">
-                                  <ExternalLink className="h-3 w-3 mr-1" /> Open Stitch
-                                </Button>
-                              </a>
-                              <a href="https://lovable.dev" target="_blank" rel="noopener noreferrer">
-                                <Button size="sm" variant="outline" className="h-7 text-xs">
-                                  <ExternalLink className="h-3 w-3 mr-1" /> Open Lovable
-                                </Button>
-                              </a>
-                            </div>
+                            <Button size="sm" variant="outline" className="h-8 text-xs shrink-0 border-purple-200 text-purple-700 hover:bg-purple-50" onClick={() => onGoToPhase?.(6, lead.id)}>
+                              Open P6 →
+                            </Button>
                           </div>
                         ) : (
                           <div className="rounded-lg border border-dashed border-purple-200 px-3 py-2 flex items-center justify-between gap-2">
