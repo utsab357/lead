@@ -11,7 +11,7 @@ import { Phase5Outreach } from "@/components/Phase5Outreach";
 import { Phase4Build } from "@/components/Phase4Build";
 import { Phase7Export } from "@/components/Phase7Export";
 import { SessionsPage } from "@/components/SessionsPage";
-import type { Lead, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, ScrapeSession } from "@/lib/types";
+import type { Lead, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus, ScrapeSession } from "@/lib/types";
 import { Sparkles, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -24,6 +24,9 @@ export default function Page() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [outreachResults, setOutreachResults] = useState<Record<string, OutreachResult>>({});
   const [buildPrompts, setBuildPrompts] = useState<Record<string, BuildPromptResult>>({});
+  const [leadStatuses, setLeadStatuses] = useState<Record<string, LeadStatus>>({});
+  const [leadNotes, setLeadNotes] = useState<Record<string, string>>({});
+  const [goToLeadId, setGoToLeadId] = useState<string | null>(null);
   const [geminiOk, setGeminiOk] = useState<boolean | null>(null);
   const [showSessions, setShowSessions] = useState(false);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -61,6 +64,8 @@ export default function Page() {
     setSelectedId(session.selectedId ?? null);
     setOutreachResults(session.outreachResults ?? {});
     setBuildPrompts(session.buildPrompts ?? {});
+    setLeadStatuses(session.leadStatuses ?? {});
+    setLeadNotes(session.leadNotes ?? {});
 
     const savedRanked   = session.ranked ?? [];
     const savedAudits   = session.audits ?? {};
@@ -143,6 +148,30 @@ export default function Page() {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ buildPrompts: newPrompts }),
+      });
+    } catch { /* non-critical, ignore */ }
+  }
+
+  /** Persist lead pipeline statuses silently */
+  async function saveLeadStatusesToSession(statuses: Record<string, LeadStatus>) {
+    if (!activeSessionId) return;
+    try {
+      await fetch(`/api/sessions/${activeSessionId}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ leadStatuses: statuses }),
+      });
+    } catch { /* non-critical, ignore */ }
+  }
+
+  /** Persist lead notes silently */
+  async function saveLeadNotesToSession(notes: Record<string, string>) {
+    if (!activeSessionId) return;
+    try {
+      await fetch(`/api/sessions/${activeSessionId}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ leadNotes: notes }),
       });
     } catch { /* non-critical, ignore */ }
   }
@@ -234,41 +263,44 @@ export default function Page() {
           )}
           {phase === 4 && (
             <Phase4Convert
-              key="p4"
+              key={`p4-${goToLeadId}`}
               ranked={ranked}
               conversions={conversions}
               setConversions={(c) => {
                 setConversions(c);
                 saveConversionsToSession(c);
               }}
-              onNext={() => setPhase(5)}
-              onPrev={() => setPhase(3)}
+              initialExpandedId={goToLeadId}
+              onNext={() => { setGoToLeadId(null); setPhase(5); }}
+              onPrev={() => { setGoToLeadId(null); setPhase(3); }}
             />
           )}
           {phase === 5 && (
             <Phase5Outreach
-              key="p5"
+              key={`p5-${goToLeadId}`}
               ranked={ranked}
               outreachResults={outreachResults}
               setOutreachResults={(r) => {
                 setOutreachResults(r);
                 saveOutreachToSession(r);
               }}
-              onNext={() => setPhase(6)}
-              onPrev={() => setPhase(4)}
+              initialLeadId={goToLeadId}
+              onNext={() => { setGoToLeadId(null); setPhase(6); }}
+              onPrev={() => { setGoToLeadId(null); setPhase(4); }}
             />
           )}
           {phase === 6 && (
             <Phase4Build
-              key="p6"
+              key={`p6-${goToLeadId}`}
               ranked={ranked}
               buildPrompts={buildPrompts}
               setBuildPrompts={(b) => {
                 setBuildPrompts(b);
                 saveBuildPromptsToSession(b);
               }}
-              onNext={() => setPhase(7)}
-              onPrev={() => setPhase(5)}
+              initialLeadId={goToLeadId}
+              onNext={() => { setGoToLeadId(null); setPhase(7); }}
+              onPrev={() => { setGoToLeadId(null); setPhase(5); }}
             />
           )}
           {phase === 7 && (
@@ -278,8 +310,15 @@ export default function Page() {
               conversions={conversions}
               outreachResults={outreachResults}
               buildPrompts={buildPrompts}
+              leadStatuses={leadStatuses}
+              leadNotes={leadNotes}
+              setLeadStatuses={(s) => { setLeadStatuses(s); saveLeadStatusesToSession(s); }}
+              setLeadNotes={(n) => { setLeadNotes(n); saveLeadNotesToSession(n); }}
+              onGoToPhase={(phaseNum, leadId) => {
+                setGoToLeadId(leadId);
+                setPhase(phaseNum);
+              }}
               onPrev={() => setPhase(6)}
-
             />
           )}
         </AnimatePresence>

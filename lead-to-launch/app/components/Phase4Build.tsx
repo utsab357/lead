@@ -34,14 +34,18 @@ export function Phase4Build({
   setBuildPrompts,
   onNext,
   onPrev,
+  initialLeadId,
 }: {
   ranked: RankedLead[];
   buildPrompts: Record<string, BuildPromptResult>;
   setBuildPrompts: (b: Record<string, BuildPromptResult>) => void;
   onNext: () => void;
   onPrev: () => void;
+  initialLeadId?: string | null;
 }) {
-  const [activeLead, setActiveLead] = useState<RankedLead | null>(ranked[0] ?? null);
+  const [activeLead, setActiveLead] = useState<RankedLead | null>(
+    (initialLeadId ? ranked.find(l => l.id === initialLeadId) : null) ?? ranked[0] ?? null
+  );
   const [platform, setPlatform] = useState("stitch");
   const [styles, setStyles] = useState<string[]>(["professional"]);
   const [generating, setGenerating] = useState(false);

@@ -18,15 +18,17 @@ export function Phase4Convert({
   setConversions,
   onNext,
   onPrev,
+  initialExpandedId,
 }: {
   ranked: RankedLead[];
   conversions: Record<string, ConversionPoints>;
   setConversions: (c: Record<string, ConversionPoints>) => void;
   onNext: () => void;
   onPrev?: () => void;
+  initialExpandedId?: string | null;
 }) {
   const [loading, setLoading] = useState(false);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(initialExpandedId ?? null);
   const [statusMsg, setStatusMsg] = useState("");
 
   async function generateAll() {

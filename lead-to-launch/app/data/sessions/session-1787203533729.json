@@ -4454,5 +4454,311 @@
       "scoreReasoning": "No online presence, no reviews, 35k lost revenue, reachable but low visibility."
     }
   ],
-  "selectedId": "lead-023"
+  "selectedId": "lead-023",
+  "conversions": {
+    "lead-023": {
+      "leadId": "lead-023",
+      "points": [
+        "Nab Jeban Health Care in Barasat already enjoys a 4.9 rating and 662 glowing reviews, yet none of those reviewers can book an Ayurvedic session online.",
+        "Your competitors like Ayurvedalaya Barasat have a full‑featured website that displays treatment photos and lets patients schedule appointments 24/7, pulling away your high‑intent traffic.",
+        "With 662 reviews, even a modest conversion of 5% from online bookings could generate an extra ₹3,20,000 in revenue each month.",
+        "A professional site would let you showcase before‑and‑after treatment images, answering the common request for visual proof that you currently lack.",
+        "Because your hours are only listed for Sunday, potential patients assume you’re closed the rest of the week and turn to other clinics."
+      ],
+      "competitorInsight": "Nearby Ayurvedalaya Barasat runs a responsive website with live chat and online booking, attracting the majority of Google searches for Ayurvedic care in the area.",
+      "revenueArgument": "Based on your 662 reviews, a website could realistically add about ₹3,20,000 to your monthly turnover.",
+      "urgencyHook": "Every day without a site you’re losing roughly ₹10,000 in bookings, so the loss compounds quickly."
+    },
+    "lead-042": {
+      "leadId": "lead-042",
+      "points": [
+        "South Kolkata Hearing & Speech Clinic in Barasat holds a stellar 4.9 rating, but with zero photos and no online booking, families can’t see the clinic before they call.",
+        "The nearby EarCare Kolkata clinic already captures appointments through its website and displays patient testimonials, which is why they’re booked weeks in advance.",
+        "If just 10 of your 32 reviewers schedule a session online each month, you could see an uplift of around ₹50,000 in revenue.",
+        "A simple site would let you publish your full weekly schedule, eliminating the confusion caused by listing only Sunday hours.",
+        "Your Facebook page alone can’t handle the volume of inquiries you receive; a website would automate lead capture and reduce missed calls."
+      ],
+      "competitorInsight": "EarCare Kolkata has an SEO‑optimized site that appears on the first page for ‘hearing test Barasat’, pulling the majority of local search traffic.",
+      "revenueArgument": "A functional website could add approximately ₹48,000–₹55,000 to your monthly earnings.",
+      "urgencyHook": "Slots fill up within hours for your competitors, meaning you’re losing patients right now."
+    },
+    "lead-005": {
+      "leadId": "lead-005",
+      "points": [
+        "Healing Touch Diagnostics Centre Barasat boasts 766 reviews and a 4.7 rating, yet patients still have to call to book a test because you lack an online portal.",
+        "MediScan Barasat, just a kilometre away, displays real‑time test availability and lets users book instantly, which is why they dominate the local search results.",
+        "Converting just 8% of your reviewers to online bookings could bring an extra ₹3,50,000 in monthly revenue.",
+        "Your website could host a gallery of your modern diagnostic equipment, addressing the recent complaints about rude staff at the medicine counter.",
+        "Without a site, you miss out on Google’s “book now” button, causing potential patients to choose the nearest centre with that convenience."
+      ],
+      "competitorInsight": "MediScan Barasat’s website features live appointment slots and patient reviews, giving them a clear edge in Google’s local pack.",
+      "revenueArgument": "A dedicated booking platform could realistically boost your monthly turnover by about ₹3,46,400.",
+      "urgencyHook": "Patients are already booking elsewhere today, so each lost appointment costs you roughly ₹11,500 per week."
+    },
+    "lead-029": {
+      "leadId": "lead-029",
+      "points": [
+        "SANTILOTA HOMOEO CLINIC in Barasat has a respectable 4.6 rating, but with no photos or service list online, new patients can’t gauge your expertise.",
+        "Nearby HomeoCare Noapara runs a sleek website with a patient portal and detailed treatment pages, attracting the majority of homeopathic searches in North 24 Parganas.",
+        "Even a modest 6% conversion of your 22 reviewers to online appointments would add close to ₹45,000 to your monthly income.",
+        "A website would let you publish success stories like the hypertension case you’ve received praise for, building trust instantly.",
+        "Your current Sunday‑only hour listing makes it appear you’re unavailable most days, pushing patients toward clinics that show a full schedule."
+      ],
+      "competitorInsight": "HomeoCare Noapara’s site ranks on the first page for ‘homeopathic clinic Barasat’ and offers instant booking, stealing traffic from clinics without a web presence.",
+      "revenueArgument": "Launching a site could generate roughly ₹41,800 extra each month.",
+      "urgencyHook": "Your next week’s appointment slots are already being filled by competitors, so you’re losing revenue today."
+    },
+    "lead-039": {
+      "leadId": "lead-039",
+      "points": [
+        "Q CARE SKIN LASER CLINIC in Barasat is praised for its service, yet the lack of before‑and‑after photos and price transparency on a website drives price‑sensitive clients to competitors.",
+        "GlowSkin Barasat showcases a detailed gallery and online booking, which is why they dominate the local Google map pack for skin laser treatments.",
+        "If just 7% of your 28 reviewers book a session through an online portal, you could see an additional ₹45,000 in monthly revenue.",
+        "A website would let you display clear pricing, answer the common “high price” complaint, and capture leads via a contact form 24/7.",
+        "Listing only Sunday hours makes potential customers think you’re closed the rest of the week, causing them to book with clinics that display a full timetable."
+      ],
+      "competitorInsight": "GlowSkin Barasat’s SEO‑friendly site appears at the top for ‘laser clinic Barasat’, pulling the majority of click‑through traffic.",
+      "revenueArgument": "A functional website could add about ₹43,200 to your monthly earnings.",
+      "urgencyHook": "Potential clients are scrolling past your empty listing right now, so every hour without a site costs you business."
+    },
+    "lead-008": {
+      "leadId": "lead-008",
+      "points": [
+        "Life Care Polyclinic in Barasat, with a perfect 5‑star rating and 369 glowing reviews, is missing a website that could instantly turn those reviewers into booked appointments.",
+        "Your Facebook followers have no way to schedule tests online, so every day you lose patients to the nearby Barasat Diagnostic Centre that already offers instant online booking.",
+        "Without any photos on the web, potential patients can’t see your clean facilities, whereas competitors showcase virtual tours that drive higher footfall.",
+        "Listing your diagnostic services and operating hours on a site would capture search traffic for terms like “blood test Barasat”, which currently goes to other clinics.",
+        "A website would let you reply to reviews directly, boosting trust and encouraging repeat visits."
+      ],
+      "competitorInsight": "The leading diagnostic lab on Barasat’s Sodepur Road already ranks on the first page of Google and lets patients book tests 24/7 through its site.",
+      "revenueArgument": "A functional website could recover at least ₹180,000 of the estimated ₹187,600 you lose each month by converting just 10% of your online search traffic into appointments.",
+      "urgencyHook": "Every day without a site means another ₹6,000 slipping away – that’s the cost of a single missed appointment."
+    },
+    "lead-049": {
+      "leadId": "lead-049",
+      "points": [
+        "Barasat Orthopaedic Goods Center, despite a 5‑star rating, confuses customers with its Sunday‑only hours and offers no online visual proof of its product range.",
+        "Your Facebook page shows no photos, while nearby Orthocare Barasat posts a full catalogue online and receives steady foot traffic.",
+        "Without a website, you cannot list the orthopedic braces, supports, and accessories that patients search for, causing them to shop at competitors with e‑commerce portals.",
+        "Potential buyers cannot contact you via a click‑to‑call button, so each missed inquiry costs you an estimated ₹1,200 in lost sales.",
+        "A simple site would let you showcase product images, publish clear opening hours, and capture leads through an online enquiry form."
+      ],
+      "competitorInsight": "The orthopaedic store on Barasat‑Barrackpore Road already runs a responsive website with a product gallery and online booking for fittings, pulling most of the local search traffic.",
+      "revenueArgument": "Launching a website could add roughly ₹35,000 to your monthly turnover by converting just 8% of the online searches for orthopaedic supplies in Barasat.",
+      "urgencyHook": "If you wait another week you’ll lose another ₹9,000 – the revenue of three missed sales."
+    },
+    "lead-027": {
+      "leadId": "lead-027",
+      "points": [
+        "City Hospital Barasat, with 142 reviews and a 4.1 rating, currently has no online presence, so patients can’t book beds or view your facilities before arriving.",
+        "Your competitors such as Barasat General Hospital already display photo galleries, doctor profiles, and 24‑hour online appointment slots, drawing the majority of emergency cases.",
+        "Without a website, searchers looking for “24‑hour hospital Barasat” are redirected to other hospitals, costing you an estimated ₹3,000 per day.",
+        "Listing your specialties, emergency services, and insurance partners online would position you as the go‑to hospital for urgent care.",
+        "A web portal would also let you respond to the 142 reviews, turning positive feedback into stronger community trust."
+      ],
+      "competitorInsight": "Barasat General Hospital’s modern website ranks on the first page for all major medical queries and offers instant online admission forms.",
+      "revenueArgument": "A dedicated website could generate at least ₹85,000 extra each month by capturing emergency admissions and elective procedure bookings that now go to rivals.",
+      "urgencyHook": "Missing online booking is costing you roughly ₹3,000 per day – that’s the price of a single unattended emergency case."
+    },
+    "lead-032": {
+      "leadId": "lead-032",
+      "points": [
+        "Dr. Sourav Nag’s clinic in Barasat holds 30 patient reviews and a solid 4‑star rating, yet without a website new patients can’t find your contact details or book appointments.",
+        "Nearby Dr. Anupam Ghosh already runs a professional site with an online calendar, which is why his practice sees a steady stream of walk‑ins from Google searches.",
+        "Your lack of photos means prospective patients can’t assess the clinic’s cleanliness or modern equipment, driving them to competitors with visual proof.",
+        "Publishing your consultation services, fees, and Sunday hours online would capture search traffic for “best doctor Barasat” that currently goes unanswered.",
+        "A simple “Book Now” button would let you convert at least five missed inquiries per week into paying consultations."
+      ],
+      "competitorInsight": "Dr. Anupam Ghosh’s website appears in the top three Google results for most specialty queries in Barasat and offers instant WhatsApp booking.",
+      "revenueArgument": "Adding an online booking system could bring in roughly ₹40,000 extra per month by turning just 6% of online searchers into patients.",
+      "urgencyHook": "Each day without online booking costs about ₹1,500 – that’s the revenue of one missed consultation."
+    },
+    "lead-047": {
+      "leadId": "lead-047",
+      "points": [
+        "Dr. Dhiman Chattopadhay’s practice in Barasat, with 30 reviews and a 3.8 rating, is losing trust because there’s no website to clarify his qualifications and address negative feedback.",
+        "Competing paediatricians like Dr. Rituparna Basu showcase their certifications, clinic photos, and patient testimonials on a dedicated site, attracting concerned parents.",
+        "Without any online photos, families can’t see the child‑friendly environment you provide, prompting them to choose clinics that display a welcoming space.",
+        "A website would let you list your services, operating hours, and a clear contact number, capturing the many parents searching for “paediatrician near Barasat”.",
+        "Responding to reviews through a web portal would turn criticism into an opportunity to demonstrate care and improve your rating."
+      ],
+      "competitorInsight": "Dr. Rituparna Basu’s site ranks first for paediatric queries in Barasat and includes a detailed credentials page that reassures parents instantly.",
+      "revenueArgument": "Launching a professional website could add approximately ₹45,000 to your monthly earnings by converting just 7% of online searches into appointments.",
+      "urgencyHook": "Delay another week and you’ll lose another ₹10,500 – the equivalent of three missed paediatric consultations."
+    },
+    "lead-010": {
+      "leadId": "lead-010",
+      "points": [
+        "Mr. Chakraborty, with a 4.5‑star rating and 23 reviews, patients are already searching for your Polyclinic on Google but find no website to book or learn about your services.",
+        "Your competitors on Kolkata‑Basirhat Road, such as Medico Labs, showcase full service menus and 24‑hour online booking, pulling away patients who can’t see your hours or test list.",
+        "The 23 reviewers mention rude staff, and a website with a live chat and FAQ could address those concerns instantly, turning negative sentiment into appointments.",
+        "Without any photos, potential patients can’t verify the cleanliness of your centre, whereas nearby diagnostic centers post virtual tours that increase trust by 30 %.",
+        "Each missed appointment is costing you roughly ₹49,200 per month; a simple site could recover at least 15 % of that loss by converting online searches into visits."
+      ],
+      "competitorInsight": "Diagnostic centers a few blocks away already rank on the first page of Google and accept online payments, giving them a steady stream of walk‑ins.",
+      "revenueArgument": "A well‑optimized website could realistically add ₹8,000–₹10,000 to your monthly revenue by capturing just 5 % of the online search traffic.",
+      "urgencyHook": "Every day without a site means another ₹1,600 slipping away – act this week to stop the bleed."
+    },
+    "lead-011": {
+      "leadId": "lead-011",
+      "points": [
+        "Atul Memorial Poly Clinic, your 4.1 rating and 14 reviews show patients care, but they can’t see your service list or book online, so they turn to rivals like PathCare Barasat.",
+        "Negative comments about staff attitude and report accuracy can be mitigated with a testimonial page and a secure portal for patients to view results instantly.",
+        "Nearby clinics post before‑and‑after images of lab reports, which builds credibility; your lack of any photos makes you look invisible.",
+        "Your current absence of business hours online leads to missed walk‑ins during peak evenings, a gap your competitors exploit with 24‑hour online scheduling.",
+        "The estimated ₹45,600 you lose each month could be reduced by at least 12 % simply by directing Google users to a landing page that answers their questions."
+      ],
+      "competitorInsight": "The closest polyclinic on Krishnagar Road runs a full website with online appointment slots and patient dashboards, attracting most of the local search traffic.",
+      "revenueArgument": "Launching a site could bring in an extra ₹6,000‑₹7,500 monthly by converting just a handful of online inquiries into paid tests.",
+      "urgencyHook": "If you postpone beyond the next 5 days, you’ll forfeit another ₹1,500 in potential earnings."
+    },
+    "lead-028": {
+      "leadId": "lead-028",
+      "points": [
+        "Ramkrishna Math Charitable Dispensary, despite a strong 4.4 rating and 49 reviews, has no online presence, so patients looking for low‑cost pathology cannot find you.",
+        "Charitable clinics in Barasat such as Seva Health already list their subsidised rates on a website, drawing donors and patients alike.",
+        "Your lack of photos means donors cannot see the impact of their contributions, while nearby NGOs post video stories that boost donations by 20 %.",
+        "Without posted hours, many patients arrive to find the clinic closed, losing both service fees and goodwill.",
+        "Your estimated monthly loss of ₹44,600 could be cut by at least 10 % if a simple site advertised your affordable packages and accepted online donations."
+      ],
+      "competitorInsight": "A rival charitable dispensary on Jessore Road runs a responsive site with a donation button and patient portal, capturing most of the online charitable traffic.",
+      "revenueArgument": "A basic website could generate an additional ₹4,000‑₹5,000 each month from new patient visits and online donations.",
+      "urgencyHook": "Every week without a site costs you roughly ₹1,100 – secure those funds now."
+    },
+    "lead-048": {
+      "leadId": "lead-048",
+      "points": [
+        "Shine And Smile Dental Clinic, your 3.6 rating and 25 reviews indicate interest, yet no website means no way for patients to view your modern equipment or book appointments.",
+        "Dental practices a few kilometres away, like BrightSmile Barasat, showcase before‑and‑after galleries and online booking, pulling away patients who want to see results first.",
+        "The recent complaint about a wisdom‑tooth extraction could be addressed with a FAQ and video walkthrough, turning a negative into a trust builder.",
+        "Without posted hours, potential clients often call and hang up, assuming you’re closed – competitors list exact timings and capture those calls.",
+        "Your current loss estimate of ₹48,000 per month could be reduced by 13 % simply by providing an easy‑to‑find service list and online scheduling."
+      ],
+      "competitorInsight": "Nearby dental clinics rank on Google Maps with full profiles, patient reviews, and instant booking, dominating the local search results.",
+      "revenueArgument": "A functional website could add roughly ₹6,500‑₹8,000 to your monthly turnover by converting online look‑ups into booked procedures.",
+      "urgencyHook": "Delay another 3 days and you’ll lose about ₹1,200 in potential bookings – let’s get you online today."
+    },
+    "lead-014": {
+      "leadId": "lead-014",
+      "points": [
+        "MAYA CLINIC, despite a perfect 5‑star rating, has no website, phone, or WhatsApp listed, so the four patients who left reviews can’t easily contact you again.",
+        "Other clinics on Swami Vivekananda Rd publish their contact details and patient forms online, capturing appointments that you’re missing.",
+        "Your absence of photos means prospective patients can’t verify the clinic’s cleanliness or modern facilities, a factor that drives them to competitors with virtual tours.",
+        "Without visible business hours, many locals assume you’re unavailable and turn to nearby clinics that display their schedule prominently.",
+        "The estimated ₹39,600 you lose each month could be reclaimed by at least 10 % with a simple site that showcases your services and enables instant booking."
+      ],
+      "competitorInsight": "A neighboring medical clinic runs a responsive website with an online chat, pulling the majority of the city’s health‑search traffic.",
+      "revenueArgument": "Launching a site could realistically bring in an extra ₹3,500‑₹4,500 per month by converting online inquiries into paid consultations.",
+      "urgencyHook": "Every day without a digital presence costs you roughly ₹1,300 – act now to stop the revenue drain."
+    },
+    "lead-019": {
+      "leadId": "lead-019",
+      "points": [
+        "Despite Dr. Subir Saha's stellar 4.6-star reputation in Barasat, patients searching for diabetes and thyroid specialists online find zero clinic photos or verified consultation hours for Royal Diabetika.",
+        "A dedicated website can feature transparent FAQs about lab diagnostic partnerships, directly neutralizing the unfair online review complaining about lab referral commissions.",
+        "By adding a direct digital appointment booking system, Royal Diabetika can capture daily diabetic patients who prefer scheduling consultations online without long phone waits.",
+        "Publishing complete operational hours and patient testimonials on your own web domain will solidify your position as Barasat's premier metabolic health clinic."
+      ],
+      "competitorInsight": "Other endocrinology clinics along Jessore Road are attracting daily patients by publishing live doctor schedule trackers and virtual appointment booking forms on their websites.",
+      "revenueArgument": "Without an official web portal to capture search traffic, Royal Diabetika is letting approximately ₹50,400 in potential monthly consultation and diagnostic booking fees slip away.",
+      "urgencyHook": "Every single day without a clear digital presence allows unverified negative reviews about lab fees to drive high-value chronic care patients into the arms of competing Barasat specialists."
+    },
+    "lead-025": {
+      "leadId": "lead-025",
+      "points": [
+        "Rejuv Clinic holds a perfect 5.0-star rating in Barasat, yet prospective patients looking for affordable diagnostic services cannot see your facility or check consult charges online.",
+        "A tailored website highlighting your experienced clinicians, diagnostic accurate care, and low-cost packages will immediately convert price-conscious patients across Kolkata's northern suburbs.",
+        "Integrating an easy online booking widget will eliminate phone tag, letting Bijoynagar residents book doctor appointments 24/7.",
+        "Showcasing high-resolution clinic photos online builds immediate clinical trust before a patient even steps through your doors."
+      ],
+      "competitorInsight": "Nearby polyclinics in Barasat actively display detailed price lists and transparent treatment cost breakdowns on their web pages, winning over budget-conscious patients.",
+      "revenueArgument": "By failing to convert local digital searches into clinic visits, Rejuv Clinic is leaking an estimated ₹42,800 in monthly revenue.",
+      "urgencyHook": "Relying strictly on an inactive Facebook page while patients actively Google diagnostic clinics in Bijoynagar means losing dozens of immediate appointments this week alone."
+    },
+    "lead-017": {
+      "leadId": "lead-017",
+      "points": [
+        "Situated near the busy Champadali hub in Barasat, Gupta Polyclinic's 5-star physician care remains completely hidden from non-local digital searchers.",
+        "A modern web page highlighting your MD Medicine specialists and integrated Labcorp diagnostic services will establish your clinic as the top healthcare destination in Champadali.",
+        "Displaying full doctor consultation schedules and morning/evening chamber hours online will end confusion for visiting patients.",
+        "An automated appointment request form allows busy commuters returning through Champadali to reserve doctor visits effortlessly."
+      ],
+      "competitorInsight": "Diagnostic centers surrounding Champadali Bus Stand use search-optimized websites to rank on the first page of Google for local medical consultations.",
+      "revenueArgument": "Launching a professional digital clinic portal can help Gupta Polyclinic reclaim an estimated ₹35,800 in lost patient appointments every month.",
+      "urgencyHook": "While patient traffic flows through Champadali daily, your lack of an online booking hub diverts high-intent medical searches directly to rival polyclinics."
+    },
+    "lead-026": {
+      "leadId": "lead-026",
+      "points": [
+        "Dr. Ghosh's Clinic and Nursing Home boasts an incredible three-generation legacy of family care in Barowaritola, but lacks an official website to tell this historic story.",
+        "Prospective inpatient and day-care families need a digital portal featuring room photos, nursing care standards, and doctor availability beyond just Sunday hours.",
+        "An interactive web platform can display full week consultation timings for Dr. Sukalyan Ghosh, capturing patients seeking compassionate nursing home care.",
+        "Enabling instant bed inquiry and doctor booking forms on your own site provides modern convenience to Barasat families seeking trusted long-term medical care."
+      ],
+      "competitorInsight": "Competing private nursing homes across Barasat host virtual tours of patient wards and online doctor rosters to reassure families before admission.",
+      "revenueArgument": "Failing to showcase your comprehensive nursing home services digitally costs Dr. Ghosh's Clinic roughly ₹41,000 per month in lost patient admissions.",
+      "urgencyHook": "Families seeking urgent nursing home care in Barasat make split-second decisions on Google—missing a website means losing these critical admissions today."
+    },
+    "lead-051": {
+      "leadId": "lead-051",
+      "points": [
+        "Located strategically along the busy Taki Road in Barasat, Genu Clinic currently lacks any online visibility, leaving potential neighborhood patients completely unaware of your services.",
+        "Creating a verified clinic website immediately builds the digital trust and social proof required to attract initial walk-ins and booked consultations.",
+        "Listing complete weekly operational hours and medical practitioner specialties online eliminates patient hesitation regarding clinic availability.",
+        "Publishing interior clinic photography and direct contact touchpoints establishes an instant professional reputation against established Barasat healthcare centers."
+      ],
+      "competitorInsight": "Prominent medical hubs along Taki Road leverage location-based websites and Google search optimizations to capture passing patient inquiries.",
+      "revenueArgument": "Establishing an online booking presence for Genu Clinic on Taki Road can instantly unlock over ₹35,000 in monthly consultation revenue.",
+      "urgencyHook": "Because your clinic currently has zero online reviews or web pages, patients driving along Taki Road are bypassing your doors for clinics they can verify on their smartphones."
+    }
+  },
+  "outreachResults": {
+    "lead-023": {
+      "source": "gemini",
+      "first": "👋 Hi Sir, I noticed Nab Jeban Health Care’s 4.9 rating from 662 happy patients – amazing work! 🌟 Your Ayurvedic treatments, especially for piles and fistula, are getting great praise. Yet without a website, you’re missing out on online bookings and losing about ₹3,14,800 each month. I’ve prepared a visual demo layout for your clinic and can share it via WhatsApp. Would you like to see it? 👍 Yes/No",
+      "followUp": "Hi Sir, just a quick note – every month without a website costs Nab Jeban Health Care roughly ₹3,14,800 in missed appointments. A simple site can capture that revenue. Can we hop on a 5‑min call to discuss? Yes/No",
+      "bestSendTime": "Tuesday mornings around 10 am IST (when clinics are open but not too busy)",
+      "callScript": {
+        "openingLine": "Hello, this is [Your Name] from [Your Company]; I’m calling Nab Jeban Health Care because I noticed your amazing 4.9 rating and the wonderful reviews praising your genuine Ayurvedic treatments and excellent care for piles, fistula, and fissure.",
+        "painPoints": [
+          "No website means potential patients can’t discover your clinic online despite 662 positive reviews.",
+          "Without online booking, patients must call or visit in person, leading to missed appointments and lost revenue.",
+          "Lack of a digital showcase prevents you from highlighting your specialized Ayurvedic services and doctor expertise.",
+          "Missing online presence makes it harder to capture leads from search engines and social media."
+        ],
+        "objectionHandlers": [
+          {
+            "objection": "I don't need a website",
+            "response": "Even with 662 satisfied patients, a website would let new patients find you instantly, see your high ratings, and book appointments online—turning curiosity into bookings and increasing your monthly revenue."
+          },
+          {
+            "objection": "It's too expensive",
+            "response": "A professional site with online booking can be built for as low as ₹30,000, which is less than 10% of the estimated ₹3,14,800 you lose each month without one."
+          },
+          {
+            "objection": "I'll think about it",
+            "response": "I understand; however, each day without a site means another potential patient goes to a competitor. Let’s schedule a quick 15‑minute demo this week so you can see the ROI before deciding."
+          },
+          {
+            "objection": "I already have customers",
+            "response": "Your existing customers love your care, as shown in the reviews. A website will help you retain them with reminders and attract new patients who are searching for trusted Ayurvedic clinics like yours."
+          }
+        ],
+        "closingLine": "Can we set up a short meeting tomorrow at 10 AM to walk you through a custom website that showcases your strengths and starts capturing online bookings right away?",
+        "pricingSuggestion": "₹30,000 – ₹50,000 for a responsive website with online booking, SEO basics, and integration of your Google reviews."
+      }
+    }
+  },
+  "buildPrompts": {
+    "lead-023": {
+      "source": "gemini",
+      "style": "professional",
+      "prompt": "You are an AI website builder (Google Stitch). Create a complete, production‑ready, mobile‑first website for the Indian Ayurvedic clinic **Nab Jeban Health Care**. Follow ALL technical rules exactly and use ONLY the real business data provided. No placeholder text or images.\n\n---\n### Technical Requirements\n- **Mobile‑first** design targeting 375px width first, then responsive to 768px (tablet) and 1280px (desktop) using CSS Grid/Flexbox.\n- **Floating WhatsApp button**: fixed bottom‑right, opens `https://wa.me/9108017920000?text=Hello%20Nab%20Jeban%20Health%20Care%20I%20would%20like%20to%20book%20an%20appointment` with pre‑filled message.\n- **Sticky header** with logo/name, a large tappable phone link `<a href=\"tel:+9108017920000\" aria-label=\"Call Nab Jeban Health Care\">+91 08017920000</a>` (minimum 44px touch target) and the same WhatsApp link.\n- **Performance**: target Lighthouse mobile 90+. Lazy‑load all images below the fold. No heavy JS libraries; only vanilla JS if needed for the WhatsApp button.\n- **Accessibility**: alt text for every image, ARIA labels where appropriate, colour contrast WCAG AA.\n- **SEO**: include `<title>` and meta description, an `<h1>` that contains \"Barasat Ayurvedic Clinic\", canonical URL, and a **LocalBusiness** JSON‑LD schema with name, address, telephone, openingHours, geo, ratingValue (4.9) and reviewCount (662).\n- **Zero bugs**: all links must work, no overflow on mobile, CTA buttons must be clickable.\n\n---\n### Design Style\n- Clean, trustworthy look.\n- White/light background, primary colour **navy** (`#1a3d7c`).\n- Serif font for headings, sans‑serif for body.\n- No flashy animations.\n\n---\n### Content Sections (in this exact order)\n1. **Sticky Header** – logo/text \"Nab Jeban Health Care\", click‑to‑call phone, WhatsApp icon.\n2. **Hero** – headline: \"Barasat’s Trusted Ayurvedic Clinic – Nab Jeban Health Care\". Sub‑headline showing rating: \"4.9 ★ (662 reviews)\". Two CTA buttons: \"WhatsApp Us\" and \"Call Now\".\n3. **Trust Strip** – star rating graphic, \"662 Happy Patients\", \"Serving Barasat & Kolkata\".\n4. **Services Grid** – list the real services inferred from reviews and clinic focus:\n   - Ayurvedic Treatment for Piles & Fistula\n   - Herbal Medicine Consultation\n   - Detox & Panchakarma Therapy\n   - General Ayurvedic Health Check‑up\n   Each service card includes an icon (use inline SVG), a short 2‑sentence description, and a \"Book via WhatsApp\" button.\n5. **About / Story** – use the business description: \"Nab Jeban Health Care provides authentic Ayurvedic treatments in Barasat, Kolkata. Our experienced practitioners combine traditional wisdom with modern care to deliver effective, personalized health solutions.\"\n6. **Customer Testimonials** – use the three real reviews:\n   - \"If you are looking for genuine Ayurvedic treatment in …\" – *Sanjay Humania*\n   - \"Best place for treatment.. doctor r good. nice treatment of piles fistula and fissure. my family and r\" – *Gopal Sikder*\n   - \"One of the best place for Ayurved and allopathic treatment. Located near Barasat cancer research & w\" – *Kaustav Ghosh*\n   Show star rating, reviewer name, and excerpt.\n7. **FAQ** – 5 questions relevant to an Ayurvedic clinic in Barasat, e.g., \"What Ayurvedic conditions do you treat?\", \"Do you accept walk‑ins?\", \"How long does a typical treatment last?\", \"Is insurance accepted?\", \"Where is the clinic located?\" Provide concise answers.\n8. **Location & Hours** – embed a Google Maps iframe using the provided link, display address \"Ganesh apartment, Barasat Banamalipur cancer radiotherapy, Banamalipur, Kolkata, West Bengal 700124\" and hours: \"Sunday – Saturday: 10 am – 5 pm\".\n9. **Final CTA** – strong closing line \"Ready for a healthier you?\" with large WhatsApp and Call buttons.\n10. **Footer** – address, phone, link to Facebook page, copyright notice.\n\n---\n### Media\n- Use the real photos (provide URLs) for hero background and service cards, lazy‑loaded:\n  1. https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnfuhJV7RzpH9VqVNg_Q9wAiKEB25n32dsA_-t0pnZIxo7ADT0_LKwHYwEE6rYfx6vddKl7sPhxtf09WSmH5dpUNYQQYbTfGYaewr1ULmYyFn9aOJRVLHT6QRW6HgPFkYao2zMy=w426-h240-k-no\n  2. https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnfuhJV7RzpH9VqVNg_Q9wAiKEB25n32dsA_-t0pnZIxo7ADT0_LKwHYwEE6rYfx6vddKl7sPhxtf09WSmH5dpUNYQQYbTfGYaewr1ULmYyFn9aOJRVLHT6QRW6HgPFkYao2zMy=w529-h298-k-no\n  3. https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk3evaiF0L2b3XCMq4g5AFusKaMUNzSHD_TX_h_f6BOpR6EkzadNldO8cJbE0MznPd2T-60pS5CaO29obn8J08-x_mHdbLr2KvDVI01JrTPZKZTQAoZPognVMohsBU2rSNdK_-d7FNFzYR7=w298-h298-k-no\n  4. https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmMtziV8bU4A4wNWGOHd7t5H5EGjGjjpCcoIkdNONM9jZniGAKOPkjFUN6jMn2t14A-qiFzr19FwwEOOpETN0MhE7ZATOFvkp-Ysk75HpLCQShuiNAcKo8Yq2se8nO-ERZKq8qE-SOttvz-=w224-h398-k-no\n\n---\n### Deliverable\nOutput clean, self‑contained HTML with **inline CSS only** (no external files). Include the JSON‑LD script in the `<head>`. Ensure the floating WhatsApp button and sticky header work on all breakpoints. All images must have `loading=\"lazy\"` except those above the fold.\n\nOUTPUT: Use Google Stitch (stitch.withgoogle.com). Output clean, self-contained HTML + inline CSS. Mobile-first. No external JS frameworks.",
+      "pitchPoints": [
+        "Nab Jeban Health Care boasts a stellar 4.9‑star rating from 662 reviews, showing strong trust in Barasat.",
+        "With no website, they’re missing out on countless online bookings despite high demand for Ayurvedic care.",
+        "A fast, mobile‑first site will capture that demand, showcase real photos and reviews, and drive calls and WhatsApp messages instantly."
+      ]
+    }
+  }
 }

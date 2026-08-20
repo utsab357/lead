@@ -19,14 +19,18 @@ export function Phase5Outreach({
   setOutreachResults,
   onNext,
   onPrev,
+  initialLeadId,
 }: {
   ranked: RankedLead[];
   outreachResults: Record<string, OutreachResult>;
   setOutreachResults: (r: Record<string, OutreachResult>) => void;
   onNext?: () => void;
   onPrev: () => void;
+  initialLeadId?: string | null;
 }) {
-  const [activeLead, setActiveLead] = useState<RankedLead | null>(ranked[0] ?? null);
+  const [activeLead, setActiveLead] = useState<RankedLead | null>(
+    (initialLeadId ? ranked.find(l => l.id === initialLeadId) : null) ?? ranked[0] ?? null
+  );
   const [channel, setChannel] = useState<OutreachChannel>("whatsapp");
   const [lang, setLang] = useState<OutreachLanguage>("hinglish");
   const [generating, setGenerating] = useState(false);

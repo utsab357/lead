@@ -47,6 +47,17 @@ export type Lead = {
   yearsInBusiness?: number;
 };
 
+/** Pipeline status for a lead */
+export type LeadStatus =
+  | "new"
+  | "called"
+  | "interested"
+  | "demo_sent"
+  | "meeting_set"
+  | "closed"
+  | "not_interested"
+  | "no_response";
+
 /** One saved scrape run — stored as data/sessions/<id>.json */
 export type ScrapeSession = {
   id: string;           // e.g. "session-1723657200000"
@@ -70,6 +81,10 @@ export type ScrapeSession = {
   outreachResults?: Record<string, OutreachResult>;
   /** Build prompts per lead — { [leadId]: BuildPromptResult } */
   buildPrompts?: Record<string, BuildPromptResult>;
+  /** Pipeline status per lead — { [leadId]: LeadStatus } */
+  leadStatuses?: Record<string, LeadStatus>;
+  /** Freeform notes per lead — { [leadId]: string } */
+  leadNotes?: Record<string, string>;
 };
 
 
