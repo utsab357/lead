@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PhaseShell } from "./PhaseShell";
 import { IncompleteState } from "./IncompleteState";
-import { Crown, IndianRupee, MessageCircle, Phone, Mail, Sparkles, Loader2 } from "lucide-react";
+import { Crown, IndianRupee, MessageCircle, Phone, Mail, Sparkles, Loader2, AlertTriangle } from "lucide-react";
 import type { Lead, AuditResult, RankedLead } from "@/lib/types";
 import { toast } from "sonner";
+import { useDuplicateIndex, normalizePhone } from "@/hooks/useDuplicateIndex";
 
 export function Phase3Rank({
   leads,
@@ -21,6 +22,7 @@ export function Phase3Rank({
   setSelectedId,
   onNext,
   onPrev,
+  sessionId,
 }: {
   leads: Lead[];
   audits: Record<string, AuditResult>;
@@ -30,10 +32,12 @@ export function Phase3Rank({
   setSelectedId: (id: string | null) => void;
   onNext: () => void;
   onPrev: () => void;
+  sessionId?: string | null;
 }) {
   const [running, setRunning]     = useState(false);
   const [error,   setError]       = useState<string | null>(null);
   const [statusMsg, setStatusMsg] = useState("");
+  const duplicates = useDuplicateIndex(sessionId);
 
   const auditedCount = leads.filter((l) => audits[l.id]).length;
 
@@ -172,6 +176,16 @@ export function Phase3Rank({
                   </CardHeader>
                   <CardContent>
                     <div className="font-medium text-base leading-snug">{lead.name}</div>
+                    {/* Duplicate badge */}
+                    {(() => {
+                      const dup = duplicates[normalizePhone(lead.phone ?? lead.whatsapp)];
+                      return dup ? (
+                        <div className="flex items-center gap-1 mt-1 text-[10px] text-amber-600">
+                          <AlertTriangle className="h-3 w-3 shrink-0" />
+                          Already seen in: {dup.niche} · {dup.city}
+                        </div>
+                      ) : null;
+                    })()}
                     <div className="text-xs text-muted-foreground mt-1">{lead.address}</div>
                     {lead.scoreReasoning && (
                       <div className="mt-3 rounded-md bg-muted/50 border border-border p-2.5 text-xs text-muted-foreground italic leading-relaxed">
@@ -225,6 +239,16 @@ export function Phase3Rank({
                         <TableCell className="font-medium tabular-nums align-top pt-3">{i + 1}</TableCell>
                         <TableCell>
                           <div className="font-medium">{lead.name}</div>
+                          {/* Duplicate badge in table */}
+                          {(() => {
+                            const dup = duplicates[normalizePhone(lead.phone ?? lead.whatsapp)];
+                            return dup ? (
+                              <div className="flex items-center gap-1 text-[10px] text-amber-600 mt-0.5">
+                                <AlertTriangle className="h-2.5 w-2.5 shrink-0" />
+                                Seen in: {dup.niche} · {dup.city}
+                              </div>
+                            ) : null;
+                          })()}
                           <div className="text-xs text-muted-foreground">{lead.reviewsCount} reviews · {lead.rating}★</div>
                           {lead.scoreReasoning && (
                             <div className="text-xs text-muted-foreground/80 italic mt-1 max-w-md">{lead.scoreReasoning}</div>

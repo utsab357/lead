@@ -259,6 +259,7 @@ export default function Page() {
               }}
               onNext={() => setPhase(4)}
               onPrev={() => setPhase(2)}
+              sessionId={activeSessionId}
             />
           )}
           {phase === 4 && (
