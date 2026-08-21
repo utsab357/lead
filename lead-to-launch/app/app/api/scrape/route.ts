@@ -14,6 +14,17 @@ export const maxDuration = 900; // 15 minutes (two scrapers)
 const SESSIONS_DIR  = path.join(process.cwd(), "data", "sessions");
 const MAPS_SCRAPER  = path.join(process.cwd(), "scripts", "maps-scraper.mjs");
 const JD_SCRAPER    = path.join(process.cwd(), "scripts", "justdial-scraper.mjs");
+const ZOMATO_SCRAPER = path.join(process.cwd(), "scripts", "zomato-scraper.mjs");
+
+/** Niche keywords that trigger Zomato scraping */
+const FOOD_NICHES = ["restaurant", "food", "cafe", "dhaba", "biryani", "pizza", "hotel",
+  "dining", "eatery", "bakery", "sweet", "mithai", "tiffin", "snacks", "bar", "pub",
+  "kitchen", "canteen", "mess", "fast food", "burger", "noodles", "chinese", "mughlai"];
+
+function isFoodNiche(niche: string): boolean {
+  const n = niche.toLowerCase();
+  return FOOD_NICHES.some((k) => n.includes(k));
+}
 
 function generateMapUrl(name: string, city: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name} ${city}`)}`;
@@ -110,7 +121,12 @@ export async function POST(req: Request) {
                 }
 
                 if (msg.type === "done") {
-                  enc({ type: "source_done", source: sourceLabel, total: msg.total, withPhone: msg.withPhone, noSite: msg.noSite });
+                  const sources = msg.sources
+                ? msg.sources.zomato > 0
+                  ? ` (Maps: ${msg.sources.maps}, Zomato: ${msg.sources.zomato})`
+                  : ` (Maps: ${msg.sources.maps})`
+                : "";
+                  enc({ type: "source_done", source: sourceLabel, total: msg.total, withPhone: msg.withPhone, noSite: msg.noSite, sources: msg.sources });
                 }
 
                 if (msg.type === "error") {
@@ -130,11 +146,14 @@ export async function POST(req: Request) {
         // 1. Google Maps (always run)
         await runScraper(MAPS_SCRAPER, [niche, city, sessionId], "Google Maps");
 
-        // 2. JustDial (run after Maps)
-        try {
-          await runScraper(JD_SCRAPER, [niche, city, sessionId + "-jd"], "JustDial");
-        } catch {
-          enc({ type: "status", message: "JustDial scrape skipped (error). Maps data saved." });
+        // 2. Zomato — only for food/restaurant niches
+        if (isFoodNiche(niche)) {
+          try {
+            enc({ type: "status", message: "🍽️ Food niche detected — also searching Zomato for more restaurants..." });
+            await runScraper(ZOMATO_SCRAPER, [niche, city, sessionId + "-zomato"], "Zomato");
+          } catch {
+            enc({ type: "status", message: "Zomato scrape skipped (error). Maps data saved." });
+          }
         }
 
         // ── Save combined session ──────────────────────────────────
@@ -173,8 +192,8 @@ export async function POST(req: Request) {
           noSite: noSite.length,
           sessionId,
           sources: {
-            maps: allLeads.filter((l) => l.source === "maps").length,
-            justdial: allLeads.filter((l) => l.source === "justdial").length,
+            maps:   allLeads.filter((l) => l.source === "maps").length,
+            zomato: allLeads.filter((l) => l.source === "zomato").length,
           },
         });
 

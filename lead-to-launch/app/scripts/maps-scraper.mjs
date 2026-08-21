@@ -165,8 +165,12 @@ async function scrapeGoogleMaps() {
               if (m) { phone = m[0].replace(/[\s\-]/g, ""); break; }
             }
           }
-          if (phone && !phone.startsWith("+")) {
-            phone = phone.startsWith("91") ? "+" + phone : "+91" + phone;
+          if (phone) {
+            let digits = phone.replace(/\D/g, "");
+            if (digits.startsWith("910") && digits.length === 13) digits = digits.slice(3);
+            else if (digits.startsWith("91") && digits.length === 12) digits = digits.slice(2);
+            else if (digits.startsWith("0") && digits.length === 11) digits = digits.slice(1);
+            phone = digits.length === 10 ? `+91${digits}` : null;
           }
         } catch { /* no phone */ }
 

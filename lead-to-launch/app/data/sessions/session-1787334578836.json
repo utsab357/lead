@@ -1,0 +1,2560 @@
+{
+  "id": "session-1787334578836",
+  "niche": "restaurant",
+  "city": "Barasat, West Bengal",
+  "timestamp": "2026-08-21T18:00:14.485Z",
+  "leadsCount": 51,
+  "noWebsiteCount": 39,
+  "withPhoneCount": 48,
+  "expandedTerms": [
+    "restaurant"
+  ],
+  "leads": [
+    {
+      "id": "lead-001",
+      "name": "Kasturi - Barasat",
+      "category": "Bengali restaurant",
+      "address": "Dak Bunglow More, 40.C, Jessore Rd, Kailas Nagar, Barasat, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919748990711",
+      "whatsapp": "+919748990711",
+      "website": "https://kasturirestaurant.in/",
+      "mapUrl": "https://www.google.com/maps/place/Kasturi+-+Barasat/data=!4m7!3m6!1s0x39f899391f5e0995:0xf13607cd08e72f87!8m2!3d22.7128265!4d88.4752802!16s%2Fg%2F11jyk_mtvh!19sChIJlQleHzmZ-DkRhy_nCM0HNvE?authuser=0&hl=en&rclk=1",
+      "rating": 4.5,
+      "reviewsCount": 3620,
+      "lat": 22.7128265,
+      "lng": 88.4752802,
+      "hours": [
+        "Sunday, 11 am to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlutgt17g6k3WlA7xhapZ4uPrw0573HVmfC4PdyqFSKgRjg0jftG4Mjh9dhCVZOpIp4vzqw9CRVJ8vBzc9BKhRnJxf2l4kJYpCuoqEeCFqBVaKyErd5O7jQ7L6sPM1usGMOf0Mw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkn9BJbsyaTEKzRCGya5hm7etfI3jVY1OoKJ4wgggZh4PhYiEncahNYYqMMPlY-XNiWVsPPH17RdbpFqsJ5Ca1pMBcIVOwUTYT4uJZV0zVR8cdxUlDX9EQdirfwB1ADhJcLeJItgw=w408-h544-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl5bqWWBJKubyrOApcN-sQmc9c3j0KLZH5zYIPa2lxsm8PQcLXsUZl9uR9xyJqntCQYU8vb75bolUHi4guByVy9cFMr7juJRdutneHRpWiD90tB67PV7_TW6zbGTagrmWfRXHS4gNoSIOxq=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlOStAvNWYSZHAduVxos-QQqmZmzohzqTxtsniEuM52NkhPYy13ghMlmiZH6_cTGJXFJh_qRAo4BmDbk-ksOT5c5l0HHKxu44HjLM-SwogTHklBeIcGiCtzf_d1bdQ0hO3Bfb6L=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmL4t425DXOovW4z_iVYSmJ2bEhARp3v5bVdeusxOGqx-e7a07N4vEFgZ1RjQVeW28BUlYiHHi4RYbaRqoIFJJ2QQg7KKG_8C9qEO4tx9W-eTfrKFHClH2JJz_L4zNgiji85LwyKw=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkn9BJbsyaTEKzRCGya5hm7etfI3jVY1OoKJ4wgggZh4PhYiEncahNYYqMMPlY-XNiWVsPPH17RdbpFqsJ5Ca1pMBcIVOwUTYT4uJZV0zVR8cdxUlDX9EQdirfwB1ADhJcLeJItgw=w224-h298-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "The taste of each food was awesome. If you wanna try authentic Bengali cuisine you must visit Kasturi Barasat.\nI came here for the ocassion of Aiburobhat of my colleague and the arrangement was awesome",
+          "rating": 5,
+          "author": "Apurbaa Acharya",
+          "timeAgo": "6 months ago"
+        },
+        {
+          "text": "The food was really good, we had fish finger and thalis. Our Waiter Sourav Dey was really very polite and respectful in his behaviour. We recommend this place.",
+          "rating": 5,
+          "author": "Sandipan Mitra",
+          "timeAgo": "2 months ago"
+        },
+        {
+          "text": "Great food, great location, great atmosphere too. Wash basin area and washroom can be made more hygienic.",
+          "rating": 5,
+          "author": "Debanjan",
+          "timeAgo": "a month ago",
+          "ownerReply": "Response from the owner a month agoThank you for your feedback, Debanjan Chakravarty. We are happy to hear you enjoyed the food, location, and atmosphere during your visit. We sincerely apologize that the hygiene in the wash basin area and washroom did not meet your … More"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-002",
+      "name": "Royal Prince Multi Cuisine Family Restaurant",
+      "category": "Family restaurant",
+      "address": "Boro Maa Kali Mandir, Lorry Stand, 17, KB Basu Rd, Champadali, Gupta Colony, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919051777993",
+      "whatsapp": "+919051777993",
+      "website": "https://royal-prince-multi.grexa.site/",
+      "mapUrl": "https://www.google.com/maps/place/Royal+Prince+Multi+Cuisine+Family+Restaurant/data=!4m7!3m6!1s0x39f8a300e3fff0a9:0xaf11a9561c060408!8m2!3d22.7195283!4d88.484963!16s%2Fg%2F11s0wn1svb!19sChIJqfD_4wCj-DkRCAQGHFapEa8?authuser=0&hl=en&rclk=1",
+      "rating": 4.1,
+      "reviewsCount": 663,
+      "lat": 22.7195283,
+      "lng": 88.484963,
+      "hours": [
+        "Sunday, 11 am to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlGAhOBwT2gyHcKxJTFZg5vtUC9jjiqk8Y8vTZxegTyihv_kmrJC65sNNP4zO00FBDef-GIbSgynJ2eynKqfeFqsR-H6D6cXjuWbG0djVrkG30CRZGATYEiOUjUdP1GCpt6C8Z45Q=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlutgt17g6k3WlA7xhapZ4uPrw0573HVmfC4PdyqFSKgRjg0jftG4Mjh9dhCVZOpIp4vzqw9CRVJ8vBzc9BKhRnJxf2l4kJYpCuoqEeCFqBVaKyErd5O7jQ7L6sPM1usGMOf0Mw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmkHlQ72puZxB_L1yqwgYIMBGb7jMGgzEyHqLm-bjTFFLjmV661cVK3C56KFqZdlrLZw7ZzDmsGPQqGFiLZY6H1gZ1SW8THYetORWNLIXCHXXalvD0rZX2BwXL1y6sZPppnFUs=w426-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm5DagDN4SbR56-hgNtpu3gx6HpBVV8UzOtH9uZJg3tpdD3ABf88mM7SYOHum0fcDPR3HLPyztcQwSklVV31-wpcYE7R1VnI3TBl67LSeCH28K2Dt7zVZfW6f_jiXFbm1vFMPINEsKY3Z8=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmfW4giTI-ooA0Gi9ykDNhOEmEbQ8NCCr4W-ZTwXBhhrtWMtXG65XpWdO_AbI8PHedsuKil15WnouIzwbdpxiZvBiBOl_NFfS6V_20O2jbEGlfrXOVbkQpWMVOHag49hYCMMIoQ=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm9dEeFhhZuRFoqyd4GDhFbBQRgoB7gZNrGgf9rUdkkK-b-_SMeC6tk3XHxTxjL7VY1J_xlM5Q2iT6ATBUbXkKuLLPMX1t6xCCXpcE9oyx3ZERr1Y2-slb78wMxekbaES9TCDbulg=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "The biryani portion is average. You might need another plate to satisfy your hunger. The biryani rice should be cooked a little bit. The non veg thali taste is also average. So, average price and average food.",
+          "rating": 3,
+          "author": "Kishore Mukherjee",
+          "timeAgo": "4 months ago",
+          "ownerReply": "Response from the owner 4 months agoHi Kishore,\n\nThank you for taking the time to share your feedback about your recent visit to … More"
+        },
+        {
+          "text": "Food was not upto the mark. Alu in biriyani was the worst part. Payes became a little sour in taste.. May be it was not fresh.",
+          "rating": 5,
+          "author": "Anindya Karmakar134 reviews · 4,863 photos",
+          "timeAgo": "a month ago",
+          "ownerReply": "Response from the owner 2 weeks agoHey Anindya Karmakar,\n\nThank you for taking the time to share your thoughts about your recent visit to us. We're sorry to hear that our food didn't quite meet your expectations, particularly the alu in biriyani and the payes. We take all feedback seriously and will"
+        },
+        {
+          "text": "Food is a little bit costly but it's tasty and maintains the food hygiene.. The staff are very polite and gentle. Nice ambience.....",
+          "rating": 4,
+          "author": "Mejbahul Islam",
+          "timeAgo": "a year ago",
+          "ownerReply": "Response from the owner 2 months agoDear Mejbahul Islam,\n\nThank you for taking the time to share your review of our family restaurant. … More"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-003",
+      "name": "Darchini Multicuisine Restaurant & Cafe",
+      "category": "Fine dining restaurant",
+      "address": "15, Jessore Rd, Champadali, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919038420202",
+      "whatsapp": "+919038420202",
+      "mapUrl": "https://www.google.com/maps/place/Darchini+Multicuisine+Restaurant+%26+Cafe/data=!4m7!3m6!1s0x39f8a393e0bf6e5b:0x17468d2207a676c2!8m2!3d22.7205841!4d88.4890711!16s%2Fg%2F11scynhmg9!19sChIJW26_4JOj-DkRwnamByKNRhc?authuser=0&hl=en&rclk=1",
+      "rating": 4.6,
+      "reviewsCount": 1317,
+      "lat": 22.7205841,
+      "lng": 88.4890711,
+      "hours": [
+        "Sunday, 11 am to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWklQsYBhWaaSexLGHEqQczeCwDcbuMp_LeOpfmBajPBTV1mo7z85ZeXDkZW0TUdp4aZlD5A7nN9nv7ROdiHJgjShwA-VCRn5qMRfg95UyXSLjbPw31p_Zn4tvWrw8lr-Apn6YTMlg=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlGAhOBwT2gyHcKxJTFZg5vtUC9jjiqk8Y8vTZxegTyihv_kmrJC65sNNP4zO00FBDef-GIbSgynJ2eynKqfeFqsR-H6D6cXjuWbG0djVrkG30CRZGATYEiOUjUdP1GCpt6C8Z45Q=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnlmlI7LNrCjDiR0iHpvGyOb0GnWpmgdZ7oNTTiumcaTouU7qAZhJ45gx5_qdXyYHjFE81TNZnQIGvWQR-eyhSMJ3GkghdY7KtI7RFHMOdu8_x2IY79IgRymA2MIM_E0S2IhPmcPg=w426-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnXSXk1xUUp7C4w0BEzGFvB2WBiXGMa2O3vWEIac-jqBp_4bMXPfdBC96zRubwQDwp7XZSVHsLggXmsbVfqr8R_UL1TafOsnagEfJfeUC8J2y0y3xPLruKx3hCP7vv_7Crl3CFp0XDC14Mw=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkb7lUuBnYGO0Dnx0N1KlTE06OsU0ITMLMN7xq7_S9Gh0QBy6uYEuZTiYgoyAlGmChEalap__ud-KcQjFnXtYzS5Vllel4bLNe_zKaX9lzLMSlAGT0n5i4XuTq9NJ2Eq_ho2nY=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWktwDb4w9HdBl03yuDdjGWcocIGitCMLlgRnspLII26FSk7Cu2VaS_LSukyre6iydTPyenKto7bAQxRraaopOE2fwGHKFajwLOfvKboQMctIt9D3qsI2TO19EaFJJZLv0onbozSFA=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "This relatively new restaurant in Barasat is located near Champadali More, right opposite the telephone exchange. The place is clean, well‑maintained, and situated on the first floor, accessible only by stairs. The staff are polite, helpful, and honest.\nThe food quality is quite good. We visited twice—once with family and once for a larger gathering with family and friends. Both times the place wa",
+          "rating": 5,
+          "author": "Sunandita Das289 reviews · 1,215 photos",
+          "timeAgo": "5 months ago",
+          "ownerReply": "Response from the owner 5 months agoThank you for the amazing rating! We’re thrilled you loved the food, service, and atmosphere. Hope to see you again!"
+        },
+        {
+          "text": "The food quality here is truly remarkable! 😋 My meal was delicious and satisfying. Service was quite good, very attentive. The atmosphere is generally functional, neither particularly inviting nor off-putting. 🍽️😊",
+          "rating": 5,
+          "author": "Akash Ghosh",
+          "timeAgo": "6 months ago",
+          "ownerReply": "Response from the owner 6 months agoThank you for your detailed feedback! 😊 Glad you loved the food and service. We’ll work on making the ambience even better. Hope to see you again! …"
+        },
+        {
+          "text": "We recently arranged an Aiburobaat program at this restaurant. The food quality and taste were good, and the staff’s behaviour was polite and courteous. The ambiance was also pleasant; however, there were some flies, which they need to take better care of. The food was served a bit late, and the pricing felt slightly on the premium side. One thing that felt awkward was that drinking water was not ",
+          "rating": 4,
+          "author": "Sayan Biswas",
+          "timeAgo": "7 months ago",
+          "ownerReply": "Response from the owner 7 months agoThank you for your detailed feedback. We appreciate your suggestions and will work on service, hygiene, and overall hospitality."
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-004",
+      "name": "Amantran Dhaba",
+      "category": "Dhaba",
+      "address": "Moinagadi, Noapara, 5, Krishnanagar Rd, Barasat, Kolkata, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+919830365136",
+      "whatsapp": "+919830365136",
+      "website": "https://sites.google.com/view/amantrancatering/home",
+      "mapUrl": "https://www.google.com/maps/place/Amantran+Dhaba/data=!4m7!3m6!1s0x39f8a36d347f8817:0x44a6eeb982c37469!8m2!3d22.7460999!4d88.4855084!16s%2Fg%2F11lgmz72vt!19sChIJF4h_NG2j-DkRaXTDgrnupkQ?authuser=0&hl=en&rclk=1",
+      "rating": 4.1,
+      "reviewsCount": 2030,
+      "lat": 22.7460999,
+      "lng": 88.4855084,
+      "hours": [
+        "Sunday, 11 am to 11:55 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWklNJKI5-xmEGd7PiObuvxbayrv-8SsyTFHm53XwKHCbhbkAqJIRti5K4Cqtp_fXhtjVI-FSYzbugVxbsfDjcsNkx2t5K-3LVZh-GXz8AGuBQtNkr8nftR-Qg5DF3Si6iPKkgac=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWklQsYBhWaaSexLGHEqQczeCwDcbuMp_LeOpfmBajPBTV1mo7z85ZeXDkZW0TUdp4aZlD5A7nN9nv7ROdiHJgjShwA-VCRn5qMRfg95UyXSLjbPw31p_Zn4tvWrw8lr-Apn6YTMlg=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkyjELHhymDBNn7pcEZckUzMEsTg4ZlRgsWO-EH_fT9YM1cvz4Cd6EufhFply32Xg2u9487pUHQkrL1ufyIJmf1_Ou-Y43BG-uR_96Rvd1dITXd-nWbVZmPk11p5tFpp-pr4w_M=w426-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmiybak99-lDwUxOXhpDJ2WjP2vASTQWBmB_iCZ6De8ys4y4bTg1I0CaLo9qI3h8pYo9fGV6uVkyGMO_4dRMxb2tnNwry9ZMJT6AW7hQJ6l18YeUav3NM1egooJvPAveu1lrYb2=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmGoU3pJkck2waOytH1v4V-NmAo4Vqg17pxhl8aYcjF6V6EzxoMPU4cS2KWjE_rDCk8WhEAtF9QKuad9VhKccHCVMZKADZe0AgdEgfxL7J2jD5FyDmLx9D5Z5njdAmFw3thM7q5iw=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkxOCkpflNvjqMyavdMEIAaXu9B_wiXPoni6XxWzNAs-WWkcWjunZoxTakYDIJcT-1Nwip_C7yF2qysh1QZx3rtT-eSbFkEDumO59LxGv8q8w807boVGEQqfdqM5LlE5wvk8MQ6=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Great place for biryani! The biryani was flavorful, perfectly cooked, and served in a generous portion. The staff were polite and the service was quick. The restaurant has a clean, comfortable, and welcoming atmosphere, making it a nice spot to enjoy a meal. Best of all, the prices are very reasonable for the quality and quantity. Definitely worth visiting if you're looking for delicious biryani a",
+          "rating": 5,
+          "author": "FreeTech",
+          "timeAgo": "a month ago"
+        },
+        {
+          "text": "Food quality used to be good here but after recent few experiences I felt it needs to improve. Dhaba style food and environment. Service and staff behavior is good. Biryani, chicken kebabs, butter naan, bharta, tandori chicken, hakka noodles are famous dishes here. Price is reasonable. Tea and Coffee also available. During festive season the place is decorated. The place has been recently renovate",
+          "rating": 4,
+          "author": "ArnavMaaiitty555 reviews · 3,213 photos",
+          "timeAgo": "Edited 10 months ago"
+        },
+        {
+          "text": "🍚🍜Excellent food quality and wonderful service on NH 12 (Madhyamgram-Barasat)! ⭐⭐⭐⭐⭐\n\nI have eaten at 'Apanjan' (আপনজন) hotel quite a few times while returning home by bike via the National Highway 12 (NH 12) route. Located perfectly on the highway between Madhyamgram Chowmatha and Barasat, the dining experience here has been absolutely wonderful every single time!\n🍚Food Quality: The quality of",
+          "rating": 5,
+          "author": "Sudip Majumder",
+          "timeAgo": "2 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-005",
+      "name": "Ishan's Cafe & More",
+      "category": "Biryani restaurant",
+      "address": "44, KNC Rd, Gupta Colony, Barasat, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919007606006",
+      "whatsapp": "+919007606006",
+      "mapUrl": "https://www.google.com/maps/place/Ishan%27s+Cafe+%26+More/data=!4m7!3m6!1s0x39f8a33ef0a4b1cd:0x142eab937e0af1ee!8m2!3d22.7142516!4d88.4792897!16s%2Fg%2F11n_fdkv1t!19sChIJzbGk8D6j-DkR7vEKfpOrLhQ?authuser=0&hl=en&rclk=1",
+      "rating": 3.9,
+      "reviewsCount": 674,
+      "lat": 22.7142516,
+      "lng": 88.4792897,
+      "hours": [
+        "Sunday, 12 to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWklNJKI5-xmEGd7PiObuvxbayrv-8SsyTFHm53XwKHCbhbkAqJIRti5K4Cqtp_fXhtjVI-FSYzbugVxbsfDjcsNkx2t5K-3LVZh-GXz8AGuBQtNkr8nftR-Qg5DF3Si6iPKkgac=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm5ZykuZe7ZPYMVY5Pvm2rTjmQvY_Ph7iPtG2CUigSXm6qK0XIzU2P3lLPMj6r68FZY5_k7e_KGLtGvlIrgx2dSmAC9SRF1V3VTMLWJhAt-HyQtZ1MwjCfM1YkGx76m-3HHAhWc=w521-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmTErREoErd7nFZQ7NFW9SwaCLNvHlnloSNIbZLpQlN9N4MvQLyuHM-iQc1LUt_iyZh4yCs1z8Y2yBk_chzo43wzOf6WRK2-k8cbiFgKxRycqoD_nn43ci7LMyNXYVbNWAUSzgG4g9qElwY=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnQsywnS2fKYu8zkFMuGSOowbpxme3PXtcxYezhAlmPtThubeu-QqxZZCU7AnwGeiy9OVx5HvBpD8SaxvbiiqgUJer5sNVSLeTiGTl4IT8NgK5IKszoRywTaaW4bpFZIJqBYNeA=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkCBsqb34JINyfiYlnG5XdLDfWkwxiYFFEJdsKBP13j1SS22Bic8MeipOWkZHD548LGNiHyVO8xg9byjUxhRmEfzcPyFJQWQRI-V1SPuw_EdGNLI_qjdMMVLMICtIqwvYM2awUx=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm5ZykuZe7ZPYMVY5Pvm2rTjmQvY_Ph7iPtG2CUigSXm6qK0XIzU2P3lLPMj6r68FZY5_k7e_KGLtGvlIrgx2dSmAC9SRF1V3VTMLWJhAt-HyQtZ1MwjCfM1YkGx76m-3HHAhWc=w646-h298-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "I ordered a briyani from zomato\nMy experience was to bad\nBriyani taste like over salted.\nTotally a bone mutton piece .\nAs if like they taking out the meat to make other dishes 🤣",
+          "rating": 1,
+          "author": "Kaushik Saha (Mr Saha)",
+          "timeAgo": "5 months ago"
+        },
+        {
+          "text": "Worst experience as a loyal customer. Ordered a full portion of chilli chicken (through Zomato), received half of it. On contacting the restaurant, they casually ignored the matter and never called back or responded. Nor did Zomato compensate for this mismanagement.",
+          "rating": 1,
+          "author": "PRATIVA BHATTACHARJEE",
+          "timeAgo": "a month ago"
+        },
+        {
+          "text": "Ordered via Zomato & Swiggy :\nMixed Noodles🍜 [Gravy🍝] ,\n🥚 🐔 Noodles🍜 [Gravy🍝] ,\n🐔 Noodles🍜 [Gravy🍝] ,\n🥚 Noodles🍜 [Gravy🍝] ,\nVeg Noodles🍜 [Gravy🍝] ,\n🥚 🐔 Noodles🍜 + 🌶 🐔 (4️⃣ Pieces) [Combo] ,\n🥚 🐔 Noodles🍜 + 🐔 Schezwan (4️⃣ Pieces) [Combo] ,\n🐔 Handie [4️⃣ Pieces with an 🥚] ,\n🐔 Kosha [Half — 2️⃣ Pieces] ,\nAfghani Murgh🐔 [Half — 4️⃣ Pieces] ,\n🐔 Bharta [1️⃣ Plate] ,\nSchezwan ",
+          "rating": 5,
+          "author": "Bratin Basu",
+          "timeAgo": "Edited 2 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-006",
+      "name": "Baba Ka Dhaba",
+      "category": "Biryani restaurant",
+      "address": "44, KNC Rd, Gupta Colony, Barasat, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919007606006",
+      "whatsapp": "+919007606006",
+      "mapUrl": "https://www.google.com/maps/place/Baba+Ka+Dhaba/data=!4m7!3m6!1s0x39f8a38f2cf10e4f:0xfde6845337d72ddd!8m2!3d22.7159709!4d88.4827326!16s%2Fg%2F11h_q_q3np!19sChIJTw7xLI-j-DkR3S3XN1OE5v0?authuser=0&hl=en&rclk=1",
+      "rating": 3.9,
+      "reviewsCount": 674,
+      "lat": 22.7159709,
+      "lng": 88.4827326,
+      "hours": [
+        "Sunday, 12 to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWklNJKI5-xmEGd7PiObuvxbayrv-8SsyTFHm53XwKHCbhbkAqJIRti5K4Cqtp_fXhtjVI-FSYzbugVxbsfDjcsNkx2t5K-3LVZh-GXz8AGuBQtNkr8nftR-Qg5DF3Si6iPKkgac=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm5ZykuZe7ZPYMVY5Pvm2rTjmQvY_Ph7iPtG2CUigSXm6qK0XIzU2P3lLPMj6r68FZY5_k7e_KGLtGvlIrgx2dSmAC9SRF1V3VTMLWJhAt-HyQtZ1MwjCfM1YkGx76m-3HHAhWc=w521-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmTErREoErd7nFZQ7NFW9SwaCLNvHlnloSNIbZLpQlN9N4MvQLyuHM-iQc1LUt_iyZh4yCs1z8Y2yBk_chzo43wzOf6WRK2-k8cbiFgKxRycqoD_nn43ci7LMyNXYVbNWAUSzgG4g9qElwY=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnQsywnS2fKYu8zkFMuGSOowbpxme3PXtcxYezhAlmPtThubeu-QqxZZCU7AnwGeiy9OVx5HvBpD8SaxvbiiqgUJer5sNVSLeTiGTl4IT8NgK5IKszoRywTaaW4bpFZIJqBYNeA=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkCBsqb34JINyfiYlnG5XdLDfWkwxiYFFEJdsKBP13j1SS22Bic8MeipOWkZHD548LGNiHyVO8xg9byjUxhRmEfzcPyFJQWQRI-V1SPuw_EdGNLI_qjdMMVLMICtIqwvYM2awUx=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm5ZykuZe7ZPYMVY5Pvm2rTjmQvY_Ph7iPtG2CUigSXm6qK0XIzU2P3lLPMj6r68FZY5_k7e_KGLtGvlIrgx2dSmAC9SRF1V3VTMLWJhAt-HyQtZ1MwjCfM1YkGx76m-3HHAhWc=w646-h298-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "I ordered a briyani from zomato\nMy experience was to bad\nBriyani taste like over salted.\nTotally a bone mutton piece .\nAs if like they taking out the meat to make other dishes 🤣",
+          "rating": 1,
+          "author": "Kaushik Saha (Mr Saha)",
+          "timeAgo": "5 months ago"
+        },
+        {
+          "text": "\"A True Highway Dhaba Vibe – Timing is Everything!\"\n\nThe Experience & Vibe: …",
+          "rating": 5,
+          "author": "Sandip Chakraborty",
+          "timeAgo": "6 months ago"
+        },
+        {
+          "text": "The food was amazing. Garlic naan exceptional. They also served some tasty yoghurt with the dish Incase you found it too spicy which I really appreciated. …",
+          "rating": 4,
+          "author": "Shovan Mallick",
+          "timeAgo": "Edited 4 years ago"
+        },
+        {
+          "text": "Baba Ka Dhaba in Barasat is a popular roadside eatery known for homely North Indian food. It attracts students, office-goers, and travelers for affordable meals, generous portions, and warm service. Simple ambiance, quick service, and tasty dal-roti make it a local favorite. Located near busy streets, it remains crowded daily.",
+          "rating": 5,
+          "author": "Miltan Biswas",
+          "timeAgo": "7 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-007",
+      "name": "Chowman (Barasat)",
+      "category": "Chinese restaurant",
+      "address": "NH12, Kailas Nagar, Barasat, Kolkata, West Bengal 700127",
+      "city": "Barasat, West Bengal",
+      "phone": "+919007498608",
+      "whatsapp": "+919007498608",
+      "website": "http://www.chowman.net/",
+      "mapUrl": "https://www.google.com/maps/place/Chowman+%28Barasat%29/data=!4m7!3m6!1s0x39f89967ab1bfe13:0x8f55037950c7651b!8m2!3d22.7115573!4d88.4749709!16s%2Fg%2F11jdwm72sm!19sChIJE_4bq2eZ-DkRG2XHUHkDVY8?authuser=0&hl=en&rclk=1",
+      "rating": 4.3,
+      "reviewsCount": 2250,
+      "lat": 22.7115573,
+      "lng": 88.4749709,
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmt166dKSQY4suwUZVn1X6hn4VoUTlIzX0DWzwLM1Z9rLNM53t-zv5iHRSklWFs96t2865FEDu9Ut_IBIWlcuOtm_LA4SfAnzqhXdAdJ1g2f6YDLD-yLtSaRUk_N3JGefGp5Fe0ev3iHM9P=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmXlxocIGxT18cZPYGQwH_CPc_mwutU72VoljTTfWPJYKyYTuBs24r5EZntKJi5WoVEqMQXALsHh-FVyJdjOO4KBQbmP6yBL4R09D8beZ5TC0y5_J8O6QuT1ExZeKgyeZicm982NA=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkoluOqrnlP-sdFaXpJva3JqvrfG_jTy08_s4lPxLBMYZfqczQYar5qWvdBmQzgrNl1XZDq1uhcQU9lXuhP58Zd_0pUU0tv3-05F7hDuo1qLDkzO_BA2amJqtkB6b99AbwrBA8=w408-h544-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk9fkdehM8Gx7rOkRpBZSpq769UKNnm8AkfFF--VakrJGgmaLiZxWwfGgUAnaU2scvEy1KVtneebVbXL43fOzxM6y7QnPDtR_bFfXpUUTw-qQNqrKne9VETUUhf1u6kEJd0mjI-2Dz_2zm7=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnRjwSoebhZXs-JUYjh00dXlaSEGYMXvs5DJo6v3PCBpiNsA6JSwXVQcU3TT51BqNJLeJX-QbuVR0eBIQrSWJE9Pe9zrCrQWwlafx-cbkeqRVr-94yFXcSMkC1KjQNav49vyk6J=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnR0oZurCvbhrufeYi0tJ3lbIcXGiqcYSz3TeYfwXxhDLZCYNi812Sa_BZlXBReFQZ0rDPPTi61h2WR7wvTgjsICRU7kNVxKL5N4yHnMnUjH5I4dmL3Ex6OB4R9qxyECQeyowEo=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Went to this branch of Chowman with my friends to have a nice Chinese dinner.\n\nThe atmosphere was neat, clean, and calm. The ambience was really great too. Though this branch is a bit smaller in size compared to a few other Chowman branches I have visited before, it still felt very cozy and comfortable.\n\nWe ordered a few items like Mixed Chow, Crab Mix Rice, a spicy fish item, and a familiar chick",
+          "rating": 5,
+          "author": "Arpan Bhattacharyya",
+          "timeAgo": "3 months ago",
+          "ownerReply": "Response from the owner 3 months agoDear Arpan,\nThank you for sharing your wonderful experience at Chowman! It’s great to hear that you enjoyed the atmosphere and the authentic flavors of the dishes. We … More"
+        },
+        {
+          "text": "This was my first visit. Overall experience was good.\nOrdered Asian Chilli Garlic Prawn(8Pcs/Plate) first and Chicken Bao(3Pcs/Plate) as starter and then as main course we had ordered Shanghai Fried Rice(Mixed) along with Chilli Basil Fish (10Pcs).\nFood was good but during payment they have mentioned that the machine is not working, but after few minutes it has been done.",
+          "rating": 4,
+          "author": "Subhartha Gupta",
+          "timeAgo": "3 months ago",
+          "ownerReply": "Response from the owner 3 months agoDear Subhartha,\nThank you for sharing your experience! We're delighted to hear that you enjoyed your first visit and the food you ordered. We apologize for the inconvenience … More"
+        },
+        {
+          "text": "chowman, my first time going. As soon as I entered, I felt like I had gone to Japan. A sweet instrumental. Everything was neatly arranged. My heart was filled.\nThe food tasted very good. The staff was very good. I want to go again. Thank you",
+          "rating": 5,
+          "author": "Stalin Majumder88 reviews · 1,379 photos",
+          "timeAgo": "7 months ago",
+          "ownerReply": "Response from the owner 6 months agoDear Stalin,\nThank you for your wonderful feedback! We're thrilled to hear that your first experience at Chowman felt so special and that you enjoyed the ambiance and food. … More"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-008",
+      "name": "Hazarduari Family Restaurant",
+      "category": "Family restaurant",
+      "address": "63/2n, KNC Rd, Hatkhola, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+916292106630",
+      "whatsapp": "+916292106630",
+      "website": "https://hotelhazarduari.co.in/",
+      "mapUrl": "https://www.google.com/maps/place/Hazarduari+Family+Restaurant/data=!4m7!3m6!1s0x39f8a3005ac9cb49:0xfec20a40e75d41f0!8m2!3d22.7133127!4d88.4793565!16s%2Fg%2F11y3ck3_1h!19sChIJScvJWgCj-DkR8EFd50AKwv4?authuser=0&hl=en&rclk=1",
+      "rating": 4,
+      "reviewsCount": 656,
+      "lat": 22.7133127,
+      "lng": 88.4793565,
+      "hours": [
+        "Sunday, 10 am to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmPCWB1VIwj7xoseU1NjmvghFBxN8ogKNeY-Du2U-yWvJYFX3n5yvluKyH3eGa6U4y9kcAjgqVXwzoAM0aii42IGlzxiPqV2bfbojPO-nDqAZ6_nz5UKy1Ssu7qWDD7a36lL4k=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmt166dKSQY4suwUZVn1X6hn4VoUTlIzX0DWzwLM1Z9rLNM53t-zv5iHRSklWFs96t2865FEDu9Ut_IBIWlcuOtm_LA4SfAnzqhXdAdJ1g2f6YDLD-yLtSaRUk_N3JGefGp5Fe0ev3iHM9P=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmyR8y-RIzlXmjjvNjpnzNivB-fwQoHMOgcRb_mjHb5-SEOKLHYC8wAIUBRkayBzY_LdoF7toft5AAQ6xRwoyFdSwOrueIRmVlx5Vw0-7QyCGB8k0SZ4O0_LsAE5LNrXHCyKBOP=w424-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkVEcAdSv6jURMT-eZE1UmxCJ48-Z4QEfaR7B7DCszQ9gqo_hOPiA5oAh2TUKJTLBBvNnkRU2qf1yXx-rN8L5Si6lx16u9Z1BIDwvjtd0culnHdtIG1_JYk8jSV5npEpZnTHA7YAU6gqow=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmwyOoEC_mJ-j9ajqwDnJB70MD5lWQ5ggO0fnDaXwlYxNjwookyIRFXFme0Rxm4_TyCrwZam3DOVHWBHhoEuY-6pYMU-fGqCf7HzXLhozGG0BfbKduwYsYigVyG3MVg38YUgEgP=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnruO8sOdqtrdPDjXHrlGdqQlECEO0z-GCrcq3G7SuMU7OyU5G8XURZgw71eMfrbJSbhkt9DWvE6Fn1VakztUiI49IJfKveJyu1jQiviU1b3ViawuNDzMiAd7l7LRBYtEVfOrKn=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Ordered, Fish fry, Tandoori chicken and Chicken Biryani. Fish fry was okayish but with a lot of coating. Tandoori chicken was good and juicy but needed proper seasoning. But the biggest let down was it's Biriyani, which was bland, unappetizing and watery? The chicken piece was straight up removed from a curry and mixed with rice. And why the biryani is wet? New novelty? If the chef wanted it wet, ",
+          "rating": 3,
+          "author": "timirbaran dutta",
+          "timeAgo": "2 weeks ago",
+          "ownerReply": "Response from the owner 5 days agoThanks for your Teviews. Look forward to welcoming you again."
+        },
+        {
+          "text": "We went today for my mother's birthday for dinner, and trust me, this restaurent needs to be hyped up MORE.\nAmbience was really nice, they served as complimentary Aam Panna drink.\nStaff Behaviour was also really nice and polite.\nWe ordered Fish Fry, Reshmi kabab as starters, and they were a delight. It was probably the best fish fry i had in a long while, pieces were also nice and good.\nFor main c",
+          "rating": 4,
+          "author": "Sammohini Pal",
+          "timeAgo": "4 months ago",
+          "ownerReply": "Response from the owner 3 months agoThanks for your honest Reviews. Looking forward to welcoming you again."
+        },
+        {
+          "text": "What to say about it….. one of the best ever restaurant Barasat had over a period of time for sure. I order very frequently from here and I have visited here also a lot of time. The behaviour of the staff and the food is top notch and the Mutton Dumphok Biriyani is Highly recommended… I just love the taste of it. Really blessed to have this restaurant near me.",
+          "rating": 5,
+          "author": "Soham Kundu",
+          "timeAgo": "8 months ago",
+          "ownerReply": "Response from the owner 8 months agoThanks for your Reviews. Please visit again."
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-009",
+      "name": "Barbeque Nation - Barasat",
+      "category": "Barbecue restaurant",
+      "address": "N-19, Jessore Rd, Barasat, Dak Banglow More, Digberia, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+918064058007",
+      "whatsapp": "+918064058007",
+      "website": "https://www.barbequenation.com/",
+      "mapUrl": "https://www.google.com/maps/place/Barbeque+Nation+-+Barasat/data=!4m7!3m6!1s0x39f899f01513c45f:0x8abdc94f2f698174!8m2!3d22.7113379!4d88.477154!16s%2Fg%2F11r_ws_716!19sChIJX8QTFfCZ-DkRdIFpL0_JvYo?authuser=0&hl=en&rclk=1",
+      "rating": 4.3,
+      "reviewsCount": 1740,
+      "lat": 22.7113379,
+      "lng": 88.477154,
+      "hours": [
+        "Sunday, 12 to 3:45 pm, 6:30 to 10:45 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk-vu5VbRNCOXfG9bMov9iK6OJFgXGQLMkrLXJV82lUA7z71B89pcuepAs29yUEnexh4h5uMYvh3-d4XxuZtwRkuaP3JPq2gZW3RyitHN1k9Lwl5GsG3nIhZPNpiBgzqGrFh8A=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmPCWB1VIwj7xoseU1NjmvghFBxN8ogKNeY-Du2U-yWvJYFX3n5yvluKyH3eGa6U4y9kcAjgqVXwzoAM0aii42IGlzxiPqV2bfbojPO-nDqAZ6_nz5UKy1Ssu7qWDD7a36lL4k=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkMN-eVKDalK9_89RkAg6Wx71wUs0ij9_iqYi0Dzn6cBb2tLg2e_hj02FXcLaNn1mvUkxaILpsBz3aVkNM61r3rYm1KbxHsgQcWKe9Iub0M_niGa92l_HLGjxfTNdbMjQp9a3IsvHwnY47Q=w426-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn3QyL0vkTCcvGNGEDSrvXuR2edPGgXb7OHGWzrfqFquiQT_ZmO3_UePlR8F-pVshWZjPn2OYKyDyG-OJYdk1T2S1fgsNMovMvHbjwLmEcvObCksfpYhm6zqshDz0806RzmxqgbtKQ5jJw=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmczKYbSl9d4fNw_ttMPlpcDMWKnyxqr4mBg9UD8ERSIdup9aGle-l2OkelgnQWhjG1C5TWciFs8zQj2jeExbZoJVKvjWpI1fRvf2CPQCu06BjeAT6xUMejiOBcwl90h5hsDmRROg=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkLjeEP5sgf9rHOXIMYfusiW9sjkEYhOVpPVD33ob3KLy9gx_-TqEgYhzI5vpBbhV9RaaSuHafJjjrTXV6OvkGtqMJ7v8ssxBxp85hI9f8tJgYrkj4WO0cHFOH9MS_2Pkvq5j4sjw=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "If you’re looking for a spot in Barasat that truly hits the mark on value, Barbeque Nation is a fantastic choice. We recently headed there for lunch, and it was a thoroughly satisfying experience from start to finish.\n​The Food Highlights\n​As expected, the starters were the stars of the show. They carry that signature BBQ flavor we all love—perfectly grilled and served hot at the table.\n​Moving on",
+          "rating": 5,
+          "author": "Nilay Paul",
+          "timeAgo": "3 months ago",
+          "ownerReply": "Response from the owner 3 months agoThank you for your kind words and appreciation. We’re delighted to know you had a great experience with us and look forward to welcoming you again soon."
+        },
+        {
+          "text": "Had a really nice experience at Barbeque Nation, Barasat. The atmosphere was pleasant and comfortable, perfect for a relaxed outing. We went with our toddler and didn’t face any issues at all, which made the experience even more stress-free.\n\nThe staff were well-behaved, attentive, and very polite throughout. At one point, someone at the table beside us was celebrating a birthday and all the staff",
+          "rating": 4,
+          "author": "ANKITA Chowdhury",
+          "timeAgo": "4 months ago",
+          "ownerReply": "Response from the owner 4 months agoHey, thank you for your kind words and support. We at Barbeque Nation, train our staff to ensure our customers have the best experience. We will continue to provide quality service to customers. Looking forward to hosting you again soon."
+        },
+        {
+          "text": "Barbeque Nation\nNow it's a famous name in buffet type of restaurants.\nSo many branches in Kolkata..\nI have already visited Barasat and CC2 branches.\n\nTheir quality of food is very good,\nTaste is so delicious (except Biriyani, biriyani here is not good in taste),\nSo many items, 10-12 items of starters, grill, kebabs, 20-25 main course including polao, fried rice, noodles, momo, chilli chicken, (3-4",
+          "rating": 5,
+          "author": "Ayan Ghosh",
+          "timeAgo": "7 months ago",
+          "ownerReply": "Response from the owner 7 months agoHey, we are glad that you enjoyed your time at Barbeque Nation. Our team works together to create a good experience for our guests. We look forward to serving with you in the future!"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-010",
+      "name": "Shahensha Restaurant Cum Bar",
+      "category": "Bar & grill",
+      "address": "Barrackpore - Barasat Rd, Talikhola, Tetultola, Barasat, Kolkata, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+919836775791",
+      "whatsapp": "+919836775791",
+      "mapUrl": "https://www.google.com/maps/place/Shahensha+Restaurant+Cum+Bar/data=!4m7!3m6!1s0x39f8998c615f09fb:0x179425a666fd99a0!8m2!3d22.73476!4d88.4658691!16s%2Fg%2F11sqcld2hf!19sChIJ-wlfYYyZ-DkRoJn9ZqYllBc?authuser=0&hl=en&rclk=1",
+      "rating": 4.2,
+      "reviewsCount": 261,
+      "lat": 22.73476,
+      "lng": 88.4658691,
+      "hours": [
+        "Open · Closes 1 am · See more hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnCqvJWKmDrSHPopnHVhrzxJ_sXrQLEbfXvE3CgZlKaLIINgyhtgJyYZ3pVMx36VGcTOzfJccQKhqKIDKBTRd5LRugc2E8Jy0SvLioXvbpDBkV5cz-a5sQWPJY7pNzWJ2NfmplV=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk-vu5VbRNCOXfG9bMov9iK6OJFgXGQLMkrLXJV82lUA7z71B89pcuepAs29yUEnexh4h5uMYvh3-d4XxuZtwRkuaP3JPq2gZW3RyitHN1k9Lwl5GsG3nIhZPNpiBgzqGrFh8A=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnCqvJWKmDrSHPopnHVhrzxJ_sXrQLEbfXvE3CgZlKaLIINgyhtgJyYZ3pVMx36VGcTOzfJccQKhqKIDKBTRd5LRugc2E8Jy0SvLioXvbpDBkV5cz-a5sQWPJY7pNzWJ2NfmplV=w408-h544-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWncqA5mOYqXd0gqlry6VsNd-0L0Foy6rAf1IbI-gTTJoPhCgifLkES0vT1ujQvDHfYoJ9ebwOqC685XhS2xTAevKbCiisq32WWTWffZbhRQdXJoztR1vLZVO6LP-kmJAOpu5dLrLKUIJyb9=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkq-tEr6c8Xl_yw5UAdGYkC2prvG1Qqkh6dyPTgLgoUdEeQIAZo3FiLnzNmjs_L6XLUWhZRyqQ9WiaX-7sCHXgnkJEf_iGPAFkL8dShiN8YghwI7ToFtZN1Ull73xt16vhgE_EV=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmL5JDcqHtFaRfUMNnfDF-th5Z8sVdLkxcr316SMW2k6J3ykc7_6q0AlftehaEL7nlJ02HwWJH7QTpGi8xalTzO-UHX3Es1iP0Tv4kFTFRa8sS0yYwwrvO27Dd8XY-s1Q-GWunN=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Overpriced, i mean idk about there day service but the night service the bar is not just that happening it's just way too much overcharging 450 rs for one bottle of magnum 🤣 kinda like day night robbery lol",
+          "rating": 2,
+          "author": "NotsoFool",
+          "timeAgo": "Edited 4 months ago"
+        },
+        {
+          "text": "Wonderful sevice. The staff was quick and very friendly. Loved their food and atmosphere. Me and my Colleague had a lovely time ( 1st visit )\n\n2nd visit : Again had a great time at this place. Me and friend went there again and had a good time based on food. But now we were limited to beer options. Only limited beer available which doesn't sit right if you are a bar.  Sharing some pictures  ( 2nd ",
+          "rating": 5,
+          "author": "Gourav Deep Das",
+          "timeAgo": "Edited 2 years ago",
+          "ownerReply": "Response from the owner 2 years agoThank you so much. It means a lot.❤️"
+        },
+        {
+          "text": "Best ambiance for relaxation with drinks, but lack of drinks variety.",
+          "rating": 4,
+          "author": "Sóm Náth",
+          "timeAgo": "7 months ago",
+          "ownerReply": "Response from the owner 7 months agoThank you 😊 …"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-011",
+      "name": "GOLDEN SPOONS",
+      "category": "Restaurant",
+      "address": "111/3, 2 Jessore Road, Govt. Medical College & Hospital, opposite Barasat, East P.O, West, Banamalipur, Banamalipur, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+917044607555",
+      "whatsapp": "+917044607555",
+      "mapUrl": "https://www.google.com/maps/place/GOLDEN+SPOONS/data=!4m7!3m6!1s0x39f8a3dca8de73a3:0x2e29cfa9558e4c8c!8m2!3d22.7236292!4d88.4924532!16s%2Fg%2F11y8f11zph!19sChIJo3PeqNyj-DkRjEyOVanPKS4?authuser=0&hl=en&rclk=1",
+      "rating": 4.7,
+      "reviewsCount": 599,
+      "lat": 22.7236292,
+      "lng": 88.4924532,
+      "hours": [
+        "Sunday, 12 to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnCqvJWKmDrSHPopnHVhrzxJ_sXrQLEbfXvE3CgZlKaLIINgyhtgJyYZ3pVMx36VGcTOzfJccQKhqKIDKBTRd5LRugc2E8Jy0SvLioXvbpDBkV5cz-a5sQWPJY7pNzWJ2NfmplV=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk-vu5VbRNCOXfG9bMov9iK6OJFgXGQLMkrLXJV82lUA7z71B89pcuepAs29yUEnexh4h5uMYvh3-d4XxuZtwRkuaP3JPq2gZW3RyitHN1k9Lwl5GsG3nIhZPNpiBgzqGrFh8A=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmxtKZ6-X0Ra4GxYbWa8V2Ms89Q7IHdz0EXpS8IhZq0b8n-sZVxT0EXR9oi60Y-w2CuYKwGO9RXmd7m0CjJd4TytQOpLc9fqfVhoRL_Pl1vSJuH928dtyvM6eAUzx1v6ZZyKbYe=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk9sHl9fbz-j9i0x5NXnsMyg9GOiEetzKCighJKA8KnBLZZocF7HJWVf_V_43UTYnT7aAK3OraSkwU1i3kXFMbTkUC_ZPOoWNv5f1G4vgQMGsK45fjEGtB04UxMV3NfLlUwdrADJopUKuos=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlaSDOPy_Dl24-KwnFNSLzdy0mB3huW_g2ORcs7rQ5KU7gwhPdwb1oMmXM-pK9mcNsaDZXpx6YZ0ezv6vs3kUcxoXtDdCweqYZuxyYgnMIX7LZsVHbdwLYwP0cSxilMbb1P=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkXwk7O5MATs0pCS4W9N6WWv0yxABhauimpdRTbtrU2k7Du4q3QRLHDYcDtrwBqGZGFwT-Ok6tuFMFED8m6Gr-U9BKIeZnw3ppOFSirZ6iauc8evld6_LdwYNm7SzY8Yk1tF1wp9Q=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "⭐⭐⭐⭐⭐ (5/5)\nHad a wonderful dining experience! One of the best restaurants in Barasat. The food was absolutely delicious, the ambience was warm and welcoming, and the …",
+          "rating": 5,
+          "author": "Mousumi Basu",
+          "timeAgo": "a month ago",
+          "ownerReply": "Response from the owner a month agoThank you very much"
+        },
+        {
+          "text": "I recently visited Golden Spoon and had a wonderful dining experience. The restaurant served a variety of delicious dishes with rich flavors and excellent presentation. The food was fresh, tasty, and prepared with great care. The staff members were friendly, polite, and provided quick service throughout the visit. The ambiance was cozy, clean, and perfect for enjoying a relaxing meal with family a",
+          "rating": 5,
+          "author": "Prem",
+          "timeAgo": "3 months ago",
+          "ownerReply": "Response from the owner Edited a week agoThank you very much"
+        },
+        {
+          "text": "Great food quality and good staff behavior with great service! Highly recommend visiting and having a good time.",
+          "rating": 5,
+          "author": "Sinchita Paul",
+          "timeAgo": "2 months ago",
+          "ownerReply": "Response from the owner 2 months agoThank you"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-012",
+      "name": "Good Old 90s Restro Cafe",
+      "category": "Cafe",
+      "address": "7, Head Post office, 2, Jessore Rd, beside Barasat, Shibananda Pally, Sethpukur, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919038474339",
+      "whatsapp": "+919038474339",
+      "mapUrl": "https://www.google.com/maps/place/Good+Old+90s+Restro+Cafe/data=!4m7!3m6!1s0x39f8a3ac77616ca5:0xad1a8ffa086b9db1!8m2!3d22.71476!4d88.4829604!16s%2Fg%2F11tbzh6f3t!19sChIJpWxhd6yj-DkRsZ1rCPqPGq0?authuser=0&hl=en&rclk=1",
+      "rating": 4.4,
+      "reviewsCount": 817,
+      "lat": 22.71476,
+      "lng": 88.4829604,
+      "hours": [
+        "Sunday, 9 am to 10 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkOdzcton-wlwczUJ05DiAs57p-RUFEbU8L-B6EFxrjBdz8vLie2WQc8_tILA5-w6aEVd2PM0EiPfFIo6eZIHGl00BsOepIHPFXm3JNo45KWKrTBmjxhMTB8Pi97zKwXp3dGbE2x94bj4t4=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnCqvJWKmDrSHPopnHVhrzxJ_sXrQLEbfXvE3CgZlKaLIINgyhtgJyYZ3pVMx36VGcTOzfJccQKhqKIDKBTRd5LRugc2E8Jy0SvLioXvbpDBkV5cz-a5sQWPJY7pNzWJ2NfmplV=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlKpoNypiXprOqJQCOzlhCvrFsVQY63fbL6pcqMwH2nE__23QIh80t63VU_zyeMOGb1EBnoemWi3XkrhVAaGZGILE25N8NY6d1eV0pwEPeOrVXj2CU60pMUIMyYKDDUocqiiLk=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlcIEgXWldj0y2f9Yf_vENd3Lz3cRqg5bXQTPO3OCuLUMef2oYLeEr18GVinV72JOB4068wmCxIjfp8khPFpE7aaLcorWUVETtL7qDQvYGRbYLSZXCks13o18tzCp0bMJ6QFtPtPw=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn2OQU4EdxPg0ILjoL-iQiyfo7hfFpZV0_NiLFPZMprWcB5R_Cey-y41NanOx6kNxQWOFqR5_krEBtCvZS93RjefVo1ynXiIgo75S6AK707aqF-GTUv2Eom4Uo5XNOGKUR2TwGc=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmQoRb5_s3ycaQjZEP6ph98gTeE2ET3JiCmKHtghQln9vzvLRu4UyKERqmnn6qiIw3gcTUaSOtDHOUbmu00n74bxLujmlFZqmRrLrSTBcJ7870jF0EueLZZ6UESEHaSCGknbjJq0w=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Food taste and overall ambience is really very good. The cafe is decorated with utmost care keeping in mind the nineties born people's taste. They also serve really reasonable combo items in different occasions without compromising the …",
+          "rating": 4,
+          "author": "Soumajit Adhikary",
+          "timeAgo": "5 months ago"
+        },
+        {
+          "text": "I have been visiting the place for past few years, mostly remains busy during the evening time, food might come a little late after you order, but the food is always good, the staff is super polite,  they attend to customers like guest at home, you can spend hours without being disturbed by the cafe staff.",
+          "rating": 5,
+          "author": "bipasa saha",
+          "timeAgo": "Edited a month ago"
+        },
+        {
+          "text": "It was Burthday special lunch we booked at Good Old 90s for 6 adults and 1 kid. Best at everything- food, hospitality, behaviour. One knock and they will help you out. I can suggest this anyone who wants to have soulful food! It was just …",
+          "rating": 5,
+          "author": "Priyanka Das",
+          "timeAgo": "5 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-013",
+      "name": "Bhoj Tasca Restro-Cafe",
+      "category": "Restaurant",
+      "address": "Suripukur, Barasat, Algaria, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+919330465476",
+      "whatsapp": "+919330465476",
+      "mapUrl": "https://www.google.com/maps/place/Bhoj+Tasca+Restro-Cafe/data=!4m7!3m6!1s0x39f8a3cedc9caa53:0x97c50dcf8864b03f!8m2!3d22.7513055!4d88.4883057!16s%2Fg%2F11mknvsjdk!19sChIJU6qc3M6j-DkRP7BkiM8NxZc?authuser=0&hl=en&rclk=1",
+      "rating": 4.4,
+      "reviewsCount": 127,
+      "lat": 22.7513055,
+      "lng": 88.4883057,
+      "hours": [
+        "Sunday, 12 am to 11:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl3ItyNNh1-Ic--nYy7iILH-hLmnpCCJZ6PVa_GnexlHyrYe-6X53WHf7-tBxv0ttBPCb-6pjfnh7GQUCq1qgrOMPG_vdWZxoWFKff6WJIFJJlS_I8hms99DXW-osTBinGOTqVlyw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkOdzcton-wlwczUJ05DiAs57p-RUFEbU8L-B6EFxrjBdz8vLie2WQc8_tILA5-w6aEVd2PM0EiPfFIo6eZIHGl00BsOepIHPFXm3JNo45KWKrTBmjxhMTB8Pi97zKwXp3dGbE2x94bj4t4=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlPoF6iJvDUxIeuAH-5VD7ToP0MOJPDWZiEZDlxw4tZjCrf1rgCeoA2VDAa2OlqYbNHYj00vI7S2a-kVUVVfenb_46L9ATe9fmGW3VH8nt9NhsCgWrXMQWYc6rNzrkE6g5B6BfdKgD3FPQ=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkyRgf2w4omK74U3yyB3Kl0pQ6_RXNBBHkjBjuR7YGKkNyCMQYpPgNcoDqKYxc-9J-JiYvelWBggc0qUV1F7ziYxsIqaFR0BbpCB-iFABD0vmJ2OfN6UMT1-3yaPSGRm6slRVwbV3UirOkW=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlPoF6iJvDUxIeuAH-5VD7ToP0MOJPDWZiEZDlxw4tZjCrf1rgCeoA2VDAa2OlqYbNHYj00vI7S2a-kVUVVfenb_46L9ATe9fmGW3VH8nt9NhsCgWrXMQWYc6rNzrkE6g5B6BfdKgD3FPQ=w397-h298-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmRQsPgkdtuXe5hBKisBHK92Dt0Td5epMgBnRH2gUsPh1c4VzVGkFKpYofMASEclU_TEzn64Iw3B4NshuK2-JwchyihZDXQIHVvM-4pURXYqqyDM0M_jjWLs9fp5qxpPMQgqU-bmlFLoiU=w224-h398-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Last sunday me and my friend visited this cafe.that day fortunately we got live musical. Ambience of the cafe is nice with bamboo decoration. There are couple friendly sitting arrangement. Food quality is average and with the price of tea is no up to the mark.",
+          "rating": 4,
+          "author": "Emdadul Haque",
+          "timeAgo": "5 months ago"
+        },
+        {
+          "text": "Yesterday me and my friend went here in this cafe for a evening gossip. The ambiance was good and feels happening due to the live music performance.\nWe have ordered two milk tea and half plate of chicken tandoori. They served …",
+          "rating": 3,
+          "author": "Touhid Rana",
+          "timeAgo": "5 months ago"
+        },
+        {
+          "text": "Nice ambience with live music, best cafe for spending evening with family & friends. Food quality is very good. Ordered Chicken Steam Momo 5pc (₹100), Fish Finger 6pc (₹180), Crispy Chicken (₹170). Service and staff behaviour also nice. …",
+          "rating": 5,
+          "author": "ArnavMaaiitty555 reviews · 3,213 photos",
+          "timeAgo": "Edited 5 months ago",
+          "ownerReply": "Response from the owner 9 months agoHi Arnab,\nThank you so much for visiting Bhoj Tasca and sharing such a wonderful review! 😊 We’re delighted that you loved our ambience, food, and service. Your … More"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-014",
+      "name": "Awesome Fries",
+      "category": "Restaurant",
+      "address": "Suripukur, Barasat, Algaria, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+919330465476",
+      "whatsapp": "+919330465476",
+      "mapUrl": "https://www.google.com/maps/place/Awesome+Fries/data=!4m7!3m6!1s0x39f899ff58671619:0xc9559dbe5472efc8!8m2!3d22.7307866!4d88.4707676!16s%2Fg%2F11t_w6ddbx!19sChIJGRZnWP-Z-DkRyO9yVL6dVck?authuser=0&hl=en&rclk=1",
+      "rating": 4.4,
+      "reviewsCount": 127,
+      "lat": 22.7307866,
+      "lng": 88.4707676,
+      "hours": [
+        "Sunday, 12 am to 11:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmRMYXrU5LEUyZ2RMSJt7gyn1IvonD_C5UOXUKkZ-mOoLH-CcS-fWe8K-iwOZ1zq7TQjpwnH9VfH-MqfzTKTjTCID7p41dJs_n1UAA_VjU21QXQxihgb59fLEtqgIURvsLHzODSMT7EE98=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl3ItyNNh1-Ic--nYy7iILH-hLmnpCCJZ6PVa_GnexlHyrYe-6X53WHf7-tBxv0ttBPCb-6pjfnh7GQUCq1qgrOMPG_vdWZxoWFKff6WJIFJJlS_I8hms99DXW-osTBinGOTqVlyw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlPoF6iJvDUxIeuAH-5VD7ToP0MOJPDWZiEZDlxw4tZjCrf1rgCeoA2VDAa2OlqYbNHYj00vI7S2a-kVUVVfenb_46L9ATe9fmGW3VH8nt9NhsCgWrXMQWYc6rNzrkE6g5B6BfdKgD3FPQ=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkyRgf2w4omK74U3yyB3Kl0pQ6_RXNBBHkjBjuR7YGKkNyCMQYpPgNcoDqKYxc-9J-JiYvelWBggc0qUV1F7ziYxsIqaFR0BbpCB-iFABD0vmJ2OfN6UMT1-3yaPSGRm6slRVwbV3UirOkW=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlPoF6iJvDUxIeuAH-5VD7ToP0MOJPDWZiEZDlxw4tZjCrf1rgCeoA2VDAa2OlqYbNHYj00vI7S2a-kVUVVfenb_46L9ATe9fmGW3VH8nt9NhsCgWrXMQWYc6rNzrkE6g5B6BfdKgD3FPQ=w397-h298-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmRQsPgkdtuXe5hBKisBHK92Dt0Td5epMgBnRH2gUsPh1c4VzVGkFKpYofMASEclU_TEzn64Iw3B4NshuK2-JwchyihZDXQIHVvM-4pURXYqqyDM0M_jjWLs9fp5qxpPMQgqU-bmlFLoiU=w224-h398-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Well let's start with food first. We ordered -\n1 x Chicken Korean Popcorn\n1 x Mango Boba Tea …",
+          "rating": 4,
+          "author": "Emdadul Haque",
+          "timeAgo": "a year ago",
+          "ownerReply": "Response from the owner a year ago🌟 Thank you for your 4-star review! We’re thrilled to hear that you enjoyed your visit to Awesome Fries, your go-to container cafe in Barasat! 😊 We strive to offer a unique experience with our diverse menu, including our delicious Korean … More"
+        },
+        {
+          "text": "Well let's start with food first. We ordered -\n1 x Chicken Korean Popcorn\n1 x Mango Boba Tea …",
+          "rating": 4,
+          "author": "Soumya Ganguly",
+          "timeAgo": "a year ago",
+          "ownerReply": "Response from the owner a year ago🌟 Thank you for your 4-star review! We’re thrilled to hear that you enjoyed your visit to Awesome Fries, your go-to container cafe in Barasat! 😊 We strive to offer a unique experience with our diverse menu, including our delicious Korean … More"
+        },
+        {
+          "text": "Nice place for evening hangout.\nSelf Order, fast service.\nGood ambience. Not many options but that’s good. …",
+          "rating": 5,
+          "author": "Soumya Das247 reviews · 2,400 photos",
+          "timeAgo": "Edited 2 years ago"
+        },
+        {
+          "text": "First of all who serves pineapple sauce with french fries?? Second of all there is only one staff and his behaviour towards his owners and customers is tremendously rude and rough. While I was asking for tomato catchup, the stuff literally …",
+          "rating": 1,
+          "author": "Shrayashi Kabiraj",
+          "timeAgo": "3 years ago",
+          "ownerReply": "Response from the owner 2 years agoThings are slowly taking shape. Staff behaviour has been corrected and we are hopeful to serve you in the nearest future."
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-015",
+      "name": "The MidTown Bistro",
+      "category": "Restaurant",
+      "address": "1st Floor, Central Plaza, 70, Jessore Rd, Sethpukur, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919073555556",
+      "whatsapp": "+919073555556",
+      "website": "https://themidtownbistro.com/",
+      "mapUrl": "https://www.google.com/maps/place/The+MidTown+Bistro/data=!4m7!3m6!1s0x39f8a32584ede135:0xd494091485882751!8m2!3d22.715883!4d88.482893!16s%2Fg%2F11q79fr0pd!19sChIJNeHthCWj-DkRUSeIhRQJlNQ?authuser=0&hl=en&rclk=1",
+      "rating": 4.3,
+      "reviewsCount": 591,
+      "lat": 22.715883,
+      "lng": 88.482893,
+      "hours": [
+        "Sunday, 12 to 10:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlfLGugEFBe3w7m3-tvf0esM2vjbj_ot_EvWb8v1yCGYNUhUZ1tR4A2VwsStuYp-3g88tjwsTuMJmIAAYjHKfx9B2UW5e15HglRDsiFdjkm36K2lOGA7dePwf2R2rlTOWEZpQ=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkSD53w6L38LbN1ve9gy9nUMWrGxumpb29QmG2jcvZwtmDOzSlphq_8JYrxDS7u0GVTlhxsTtP9hL5gV81DH4ibrwgu522A_AA1RaBCt3T1rbHysCcOayMtLserETmNsn0_AtM6=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmtU-DliHaLwbXKWttqC61Gl9AMUpCLg6-MVtcjPfT61IkHmAIxZRxk5xGetErdpEmcvN6k0QDEDmfT-5fhxSqXlL-jJzMU7eTIOthSWgHbT0ssen3vD3vMdBrd3EOdl9KLKrFyPg=w408-h303-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnfpTH7eUa4RDzQmuXm2SiWxuKIBxiRk4NZepbDk6m7IBAa1W10hNMKQPAQp7a_BzvyJXp-4tlgEJ4mwHvNQwLmz0Uk9y7anqEWsEH56EGcimih5M5SH54lN2gwiWEY8agNMsmvSsGpmNLU=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnGTinswnlBWf_TYe9wyMvadM1-n6m40TViVK6N3lRTHLWdFNgyCCSAIQqrt5x9lXd1AGC-bFukZpLg6bDTcKqEyGpENbg7VoBvL-G06C4X5G0Ls4slPrZIEsTsdslYb2FJZI-rRw=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl1la5TkCf2zv8w8jP07OrO09EW0O84aLfBwsqFYy3jeXuGNBm0cHho2cba3RsRdQO-lrs8iPhpVQMN388aVLRlKmdkvAnPrlGOJ6f6pSBO2xdtmwn6HUeN_nb-x-q6MpaB6QSN=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "socialLinks": [
+        {
+          "platform": "facebook",
+          "url": "https://www.facebook.com/themidtownbistro/menu/"
+        }
+      ],
+      "reviews": [
+        {
+          "text": "This has become our go-to spot in Barasat! We've visited twice—once with my mom and dad, and another time with my mom and aunt—and both experiences were fantastic.\n\nWe tried the Oreo Shake and Vanilla Shake, and both were absolutely stellar. Rich, refreshing, and perfectly made! We also ordered several sides (as you can see in the photos), and every single dish was delicious. Honestly, it's hard t",
+          "rating": 5,
+          "author": "Gourav Deep Das",
+          "timeAgo": "a month ago"
+        },
+        {
+          "text": "Food was amazing & specially love their Chicken Bao that’s for I actually visited & that made me fully satisfied. Truly relaxing & cozy ambiance. Staffs also professional & good. Overall a great experience. Thank you.",
+          "rating": 4,
+          "author": "Trisha Karmakar",
+          "timeAgo": "7 months ago"
+        },
+        {
+          "text": "I have visited 5 times .. everytime my experience was very good ..\nToday also I visited there & ordered Hazelnut Cold Coffee .. taste was amazing🩷🩷 .. Brownie with icecream.. I ordered that twice ... 🩷🩷",
+          "rating": 5,
+          "author": "Alokananda Roy",
+          "timeAgo": "4 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-016",
+      "name": "SHANGHAI RESTAURANT CUM BAR",
+      "category": "Restaurant",
+      "address": "Barrackpore - Barasat Rd, opposite INDIAN OIL PETROL PUMP, Barasat, Kolkata, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+919831675678",
+      "whatsapp": "+919831675678",
+      "mapUrl": "https://www.google.com/maps/place/SHANGHAI+RESTAURANT+CUM+BAR/data=!4m7!3m6!1s0x39f89990e2131f0b:0x67c77ba1e50c5c74!8m2!3d22.7352027!4d88.4653625!16s%2Fg%2F11kh43tc6p!19sChIJCx8T4pCZ-DkRdFwM5aF7x2c?authuser=0&hl=en&rclk=1",
+      "rating": 4.1,
+      "reviewsCount": 435,
+      "lat": 22.7352027,
+      "lng": 88.4653625,
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlQqnP9Vqf_sZ32k3l8MtyFVBmc699TluIgTsnIsjU1FF8Wcpl3Hnpu8NNH0YsbfAu40j8k3xJLePeNMTrRdTTGeGt1z8Gj5tderSr3oju3T82mJQKBJrqj9lYxnShocQjC5js=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlfLGugEFBe3w7m3-tvf0esM2vjbj_ot_EvWb8v1yCGYNUhUZ1tR4A2VwsStuYp-3g88tjwsTuMJmIAAYjHKfx9B2UW5e15HglRDsiFdjkm36K2lOGA7dePwf2R2rlTOWEZpQ=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkeTy6-TG-m6G4yv9yN4I0A3n5FLGa3RBi15p4ZnDI8yxDZPWagNMz67LhiVdw60fdbfnhzfPHpigBAiUEUYw6hrP1vcwQ1PdFA5DAIMgowNsj3P8o9W4wSahFVEo8LsQJYuD05k33SzyQ=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmXgxKgiVZ2ndgV_TRBF3frpTeAXgf7BdgsHC8RQtSomPM0EQF8_asXbmKcGTmtZgeBxSSjOZDr89Vk__5irrpqRqLn65lzcNJXZOz7CL3DiQuZT7bfgtel4r8E9NsazIk63eRnBxhBl76m=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmRNAvbQNwkbTn9ouyfkbFuXjDJ4-Gz6MT6xsbrAc94cUmQj6C18WVkwwKnrEFAJ1SybaWvEs2V6DHSV9qUl1LHEdPBDXDuZ7dXeNDRajy7EmW7CNA429HB2i9G-5_SQg53nU_w=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkgJfAA_xacL4J76_uNYFYAg_vgOJ1AhWdkTDlJ1Im_ybshkP_5YwYQi14LvcISdRQOIrNlBU4Zw_kYMEBV6E7pJ3tYUM3yIJDqlCTJMullE-D7xUc00bgRMzdksyBaIGnN8Rnn=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "The ambience is good. A good place to chill-out with friends or family. The stuffs are well behaved and friendly. The food cost and taste is above average. Mostly achohols are available here, but they should increase their stock, cause on Saturdays or Sundays some of the acholhol menu options are not available. In short you can go for #chilling with friends for a eve. Usually it opens by evening a",
+          "rating": 4,
+          "author": "Rounak Das",
+          "timeAgo": "5 years ago",
+          "ownerReply": "Response from the owner 5 years agoThanks a lot Sir.."
+        },
+        {
+          "text": "We celebrated our daughter's birthday here with all her friends and the overall experience was amazing. The service provided by Liton and Monotosh there were remarkable. They decorated the restaurant beyond our expectations. The food , the ambience and the staffs... everything was exceptionally good. Highly recommended",
+          "rating": 5,
+          "author": "Sayantani Mitra De",
+          "timeAgo": "a year ago"
+        },
+        {
+          "text": "The best restaurant cum bar in Barasat. It's my go to place. Fish fingers of this restaurant is my favourite. Whenever we visited this restaurant the first dish we ordered is fish fingers. It was so tasty. But i think they should increase their alcohol stocks.",
+          "rating": 4,
+          "author": "Sritama Pal",
+          "timeAgo": "Edited 2 years ago",
+          "ownerReply": "Response from the owner 2 years ago🙏 …"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-017",
+      "name": "Burmese Bahar",
+      "category": "Burmese restaurant",
+      "address": "2672/8, Pioneer Park, Barasat Station Rd, Helabattala, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919830262319",
+      "whatsapp": "+919830262319",
+      "mapUrl": "https://www.google.com/maps/place/Burmese+Bahar/data=!4m7!3m6!1s0x39f8994f7103ca13:0x713251813162ba3a!8m2!3d22.7242747!4d88.4794808!16s%2Fg%2F11fftvh76c!19sChIJE8oDcU-Z-DkROrpiMYFRMnE?authuser=0&hl=en&rclk=1",
+      "rating": 4.3,
+      "reviewsCount": 681,
+      "lat": 22.7242747,
+      "lng": 88.4794808,
+      "hours": [
+        "Sunday, 5:30 to 10:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmfFPuHNrG-C_Ro97KAUGXo3W7-j5KY-AHDvOZKetf-9IdEKin55vYVevvlLJM0E5zYkEQvffMWox2_dsWLDkA47V80ec-lDTPOjXWLPMwkGR97znQsC3bIbtyxc6OQ4_JdMUixVw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlQqnP9Vqf_sZ32k3l8MtyFVBmc699TluIgTsnIsjU1FF8Wcpl3Hnpu8NNH0YsbfAu40j8k3xJLePeNMTrRdTTGeGt1z8Gj5tderSr3oju3T82mJQKBJrqj9lYxnShocQjC5js=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWltC9fTwH-4GDf5Uv3MZI47TTA1olpWSgUXRIxJvoPj7TJyiNxSMWkgudpt5nOWt7wk1fFMku0-SZKHJjOlMHHSZrAI6Atbu7xiIACRckVWcKoyKcGqm6cKPDepj31Hfiny9BFr=w408-h528-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnI40vCMyJ4II8lnLZkLvxJw7sRAVmHy_YjNcmHv2JE7Fwrl1pm_6UiaSSip2MExzjm0YqLAU9M2LWeaTOH-DW0pu0ONeIu4CBoPCaiFivompwabtGGDxK6SM9u2EPCap5ixiN4aa_q7H9M=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmtkQY1Y2Nn6eT08CEyWUC3DtQpFlYpfJ5tD-Fdk0fSFDsjsQW_HTpJEngqZIRp_CM0ydNto7ZfrmsKthuukQhOMMRiGDg_xiHCuVlSaE8uHdAwYZn7cNqqjcrfvRn2ju4RdQJP=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmiwF8UJ9pyOlmYPCbSSOZD-1hzzWDfvyteTc3jeQaxDxEKPPQ2FIKjrvxfdhX44Kn_mWS_AbWGAyVM7g7z6bJHe14iedbXuzhDqk5aUmXfdE7oRcimYXY7a6ZpYayl-SgVcdL9=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Tried the mohinga with egg and tofu spring rice roll with cheese, the mohinga was really good and the quantity of a bowl was perfect for a single person (as per me).\nTofu was something I tried for the first time, did not like the taste much.\nThe ambience and service was great.",
+          "rating": 5,
+          "author": "Sahira Ali",
+          "timeAgo": "6 months ago",
+          "ownerReply": "Response from the owner 6 months agoThank you very much."
+        },
+        {
+          "text": "Stepping into this charming restaurant, I was immediately enveloped by its tranquil and inviting ambiance, where soft lighting and understated decor harmonized to create an intimate, cozy retreat. The gentle strains of traditional Burmese melodies further elevated the atmosphere, offering a soothing auditory backdrop that complemented the authenticity of the experience.\n\nThe true heart of this est",
+          "rating": 5,
+          "author": "Deep Das",
+          "timeAgo": "a year ago",
+          "ownerReply": "Response from the owner a year agoThank you very much."
+        },
+        {
+          "text": "Amazing experience about food . Authentic and rare to get in kolkata.\nShould visit once else u'll regret it .",
+          "rating": 5,
+          "author": "Srijoni Basu",
+          "timeAgo": "6 months ago",
+          "ownerReply": "Response from the owner 6 months agoThank you very much! We are so pleased to hear you had an amazing experience and found our food authentic. We appreciate your kind words and recommendation!"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-018",
+      "name": "House Of Tales Motor Cafe",
+      "category": "Restaurant",
+      "address": "Barrackpore - Barasat Rd, opposite Building No, Barasat, Kolkata, West Bengal 700126",
+      "city": "Barasat, West Bengal",
+      "phone": "+917439723030",
+      "whatsapp": "+917439723030",
+      "mapUrl": "https://www.google.com/maps/place/House+Of+Tales+Motor+Cafe/data=!4m7!3m6!1s0x39f899ad8551a75d:0x437a57d4e4da275f!8m2!3d22.7355841!4d88.4645219!16s%2Fg%2F11qnl1xv7k!19sChIJXadRha2Z-DkRXyfa5NRXekM?authuser=0&hl=en&rclk=1",
+      "rating": 4.2,
+      "reviewsCount": 883,
+      "lat": 22.7355841,
+      "lng": 88.4645219,
+      "hours": [
+        "Sunday, 12:30 to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlCTFRRLC9WrNU7sWkK4B7q9zTrkDOJ7mgLjxjC-Wtq00WXrbYc1pT7dM-beQNDJMYmRirMIWIL3KIePdnL0CI_7kaJZZU1uLzpRSiK-Eocb8iet9ojjDg8Dww3C3QtpNRG_oOz=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmfFPuHNrG-C_Ro97KAUGXo3W7-j5KY-AHDvOZKetf-9IdEKin55vYVevvlLJM0E5zYkEQvffMWox2_dsWLDkA47V80ec-lDTPOjXWLPMwkGR97znQsC3bIbtyxc6OQ4_JdMUixVw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnGLPSGKU_fRm9O92LxcZ99Bi9ktIr7x1QppOCfm6eZUdDZFzqTqs8kca-vg-76UkfuK5JiReLIdJhKC0S0HgalFVcKHcBWNWZR_35kQoE31t2DZgVFjN0_bC-ojUYRBMXXIYEu=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmh4bjRB6OAH-TaNcarKhPBrgLhAu0Bf9TPcQfZB0Ew6ZaHBDIDzBbQyrUd3eCE-a6x1Q4Vu3s5_Nrba2g14D6_VF7pgWii04oIkrhvbhK-R4w6ZXVAKqi0X_eF7q_d0CvU-ofqLbuucylb=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk65NQYHvll1WiXjQaxhWTL4h_kpimL14cqWL1HhBDEjld_IhMfRSOERXPRfr4TP1JSGALM7YdbiEkF08qtXt_y47QTG5VdxSZw6XwWAHYY_CJg1wvpSjrZkuDhni4naBO8XNs=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm_gXvRmXJQDNEFzHtFOvN_-_QHYOQbyvRddRk23XaSpFrAcmRjrPflnFwGsMu7ImK_rJIzNrGS9S65GESp3sU7_5GV6Z0o1wpEE0QTFa0HMq1cwYULLGnMGtlD2zfT8_Xk6kak=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "One of the better cafes of Barasat. Located on the Barasat-Barrackpore road, and is easily accessible from Barasat station via Toto.\n\nFood is decent, quantity might be a bit less for few of the items. Cutting cha (tea) is very good here.\nService is good, but they take time is serving food.\n\nAmbience is very aesthetic. Both inside and outside sitting available.\n\nParking available. Overall a much re",
+          "rating": 5,
+          "author": "Arijit Das",
+          "timeAgo": "a month ago"
+        },
+        {
+          "text": "Very very slow service, we had to wait 1 hour for just two simple items. Below average food quality and taste.",
+          "rating": 2,
+          "author": "IamSohini",
+          "timeAgo": "2 months ago"
+        },
+        {
+          "text": "I am the old customer of House of Tales Motor Cafe, located at Barrackpore Road from their beginning of the journey and till now their Behaviour towards customer is very polite and friendly and helpful nature. It is a popular hangout spot in Barasat. The cafe is known for its unique decor, which features vintage motorcycles and automobile parts. One of the best cafe I've ever visited. Food quality",
+          "rating": 5,
+          "author": "Avijit Bosu Roy136 reviews · 2,734 photos",
+          "timeAgo": "Edited a year ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-019",
+      "name": "Shanghai- Flavours of China Town (Barasat)",
+      "category": "Chinese restaurant",
+      "address": "1, Jessore Rd, Barowaritola, dakbunglow more, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+917605036570",
+      "whatsapp": "+917605036570",
+      "website": "http://www.shanghai.net.in/",
+      "mapUrl": "https://www.google.com/maps/place/Shanghai-+Flavours+of+China+Town+%28Barasat%29/data=!4m7!3m6!1s0x39f899a206220b95:0x1f3589883ed384ec!8m2!3d22.7109522!4d88.4756088!16s%2Fg%2F11tg2ydngl!19sChIJlQsiBqKZ-DkR7ITTPoiJNR8?authuser=0&hl=en&rclk=1",
+      "rating": 3.8,
+      "reviewsCount": 370,
+      "lat": 22.7109522,
+      "lng": 88.4756088,
+      "hours": [
+        "Sunday, 12 to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlCTFRRLC9WrNU7sWkK4B7q9zTrkDOJ7mgLjxjC-Wtq00WXrbYc1pT7dM-beQNDJMYmRirMIWIL3KIePdnL0CI_7kaJZZU1uLzpRSiK-Eocb8iet9ojjDg8Dww3C3QtpNRG_oOz=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmfFPuHNrG-C_Ro97KAUGXo3W7-j5KY-AHDvOZKetf-9IdEKin55vYVevvlLJM0E5zYkEQvffMWox2_dsWLDkA47V80ec-lDTPOjXWLPMwkGR97znQsC3bIbtyxc6OQ4_JdMUixVw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWke8I82oTpfZf2-63Z6Q3n2ux5_9aBC1XTsSkpxaG0eO9wMPRkuNEgx6lz0-Dmw0XkOFirjy5hspKDgjyAA1vz7WDmqWJMvGAjPV6zz9IBCKCo8S32Z0kpkc_XOOEQCP-9u5pS9JRs2mXHC=w408-h272-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl-AAgcdjkVFwVxXvF24H9UWX53juhF27T1LpA0F9Fq4pzZPDBhowU9vneeDkDxvAjQ2IRCJ20QuPOmupxgTXrKLDFO1QEsw2K-QBlg9HyVScsxBU6QOTrHOnKO8-3JR6Fos70ycOtaNvVY=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlSGosIus9gAFiWVZeu49_-GshfDjz9hbHSNGY15m2zwmb_P1Kx0KYifWVjqOML9XiUIchbHpqsPet41jLZgucINpU7BtbEdJAipuTQO1Zj-dLQQRL78Ni0HrBfknEb9IG8aoPCsw=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmMJMiPCIVFsCZDBVN4Sis87x0WB1dbBXs66P-OjlzRS_I0qhxOAoPxnKxuEUN_xHrbgwSjKXVgArVmITV56RkcgONQ0FDBLUxMhk5EGxx8dWUsWHhX5Hj5Moondxv6wbT4le9R-w=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Shanghai - Flavours of China Town in Barasat, Kolkata, is a popular Pan-Asian restaurant at 1, Jessore Road, Dakbunglow More. Open daily (12 PM–11 PM), it offers an extensive, affordable menu focusing on Indo-Chinese, Sichuan, and seafood, …",
+          "rating": 5,
+          "author": "Anupam Nandi",
+          "timeAgo": "3 months ago",
+          "ownerReply": "Response from the owner 3 months agoThank you so much for your wonderful review! We're thrilled you enjoyed the authentic Kolkata-style Chinatown food at Shanghai - Flavours of China Town. It's great to hear you loved our Takrai Chicken, Pepper Garlic Prawns, and Momos. We … More"
+        },
+        {
+          "text": "Excellent Behaviour of the Attendants and Very soothing atmosphere..the food was quite flavourful.. however both of us got a stomach upset..so I wouldn't be very happy with the food review.. otherwise it's a good place to visit",
+          "rating": 4,
+          "author": "ayon mondal",
+          "timeAgo": "a month ago",
+          "ownerReply": "Response from the owner a month agoDear Ayon Mondal, thank you for taking the time to share your feedback and for the 4-star rating. We are glad to hear you enjoyed our soothing atmosphere, flavorful food, and the excellent behavior of our staff. … More"
+        },
+        {
+          "text": "The ₹599 buffet at Shanghai Flavours of China Town offers solid value with a huge variety of dishes, but the experience is distinctly mixed. The absolute stars of the show were the seafood items, particularly the phenomenal Spicy Szechuan …",
+          "rating": 4,
+          "author": "Suman Mondal",
+          "timeAgo": "10 months ago",
+          "ownerReply": "Response from the owner 10 months agoHi Suman Mondal,\n\nWe are incredibly grateful that you took the time to share your positive … More"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-020",
+      "name": "te-amo food",
+      "category": "Continental restaurant",
+      "address": "Vishal mega Mart, Seth pukhur, opposite Baskin robbins, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "website": "https://magicpin.in/Kolkata/Barasat/Restaurant/Te-Amo-Food/store/1554191/?utm_source=gbp",
+      "mapUrl": "https://www.google.com/maps/place/te-amo+food/data=!4m7!3m6!1s0x39f899a11aceef8f:0x4deccb13528da3df!8m2!3d22.7173164!4d88.4835316!16s%2Fg%2F11jyk4pc5y!19sChIJj-_OGqGZ-DkR36ONUhPL7E0?authuser=0&hl=en&rclk=1",
+      "rating": 4.4,
+      "reviewsCount": 215,
+      "lat": 22.7173164,
+      "lng": 88.4835316,
+      "hours": [
+        "Sunday, 1 to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnyM1v8eNo3hNI8dOk7cFEo47iRy0n3eVJBDKtKX8wIJpB5viu01uDrGGtNEKjtOgZwk3CjWCKXpdBqzILDeFnhjFXw3fkPlE0KDCcL1EvDynsDBO5lpuwxc6XrsyJIhhENDXVG=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlCTFRRLC9WrNU7sWkK4B7q9zTrkDOJ7mgLjxjC-Wtq00WXrbYc1pT7dM-beQNDJMYmRirMIWIL3KIePdnL0CI_7kaJZZU1uLzpRSiK-Eocb8iet9ojjDg8Dww3C3QtpNRG_oOz=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkQoNrxhEsPt_CxCVsslh9hLqtma-Y4lDZ5zYGkj4K2NG3p5qDEvYZvlI4pi06ftMkxJjWuIjQ_KTXQzgzIMZOTCN3mQQCjD8wv2RP-U2lOgvsak_rsfzY474ckrv4RxncgzzNeQeUSDwk=w426-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnxWsm6t9xeZHAFhpj1Z_FbjYMvo3-Ih0jqeUy2RWsIVO-PdhWDkpxTrseSQuoVN32nuxAOE1NPx28Zxo1RB1QsHUR3gG1h5KPUkhrRqCzvjSYs6jKw09NmVj8NArl4fPsAz8GQxsmFaz3p=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmN30SVaZV_zTb1bsARvnWUPTXWn-jL3_zteOHnIVDiT4cfdV4n4oUTQDAPYgJC93fzo6GhBILxriHdPDBEIa1iwyR7H6oqKNLiyyB8wWThrqESENBRkVFjyaPLvXSUCk5iu1q9_A=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk-R78fuShn7OiwXgcuZsRR_2csnH_kSdrdCDuj1mslQdvdnGuDjvh3ADDc7CmdR91emo07bGmHxqoqhNFS6BY9c9iX0wSwEPzQs7I5k_JDuWOlxLI8SW7dyx-5LEzG27aNfcAk=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "You can say everything over there is just perfect\nAffordable Food👍\nGreat Ambience👍 …",
+          "rating": 4,
+          "author": "Zoiii",
+          "timeAgo": "3 months ago",
+          "ownerReply": "Response from the owner 3 months agoThank you so much for your valuable feedback 🙂☺️ …"
+        },
+        {
+          "text": "Over-all atmosphere is cozy as well as friendly, highly recommend trying chicken wings - especially hot garlic chicken wings (if you like spicy food).\nMust try the garlic bread and hot beverages! …",
+          "rating": 4,
+          "author": "Koyel Ghosh",
+          "timeAgo": "9 months ago"
+        },
+        {
+          "text": "Extremely disappointed with the Cheesy Baked Fish from this cafe. I waited 45–50 minutes patiently, expecting a freshly prepared and good-quality dish. Instead, I received a plate that was mostly coating and crumbs with barely any actual …",
+          "rating": 1,
+          "author": "Banashree Chakraborty",
+          "timeAgo": "6 months ago",
+          "ownerReply": "Response from the owner 5 months agoSorry for the service mam.. 😞 \nWe upgrade the dish (cheesy baked fish) come once again we think this time you'll satisfy with that dish..\nThank you 👍😊 …"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-021",
+      "name": "Wow! Calcutta!",
+      "category": "Restaurant",
+      "address": "Sarada Market Complex, Hatkhola Bazar 59, KNC Rd, 2nd Floor, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+916291201050",
+      "whatsapp": "+916291201050",
+      "mapUrl": "https://www.google.com/maps/place/Wow!+Calcutta!/data=!4m7!3m6!1s0x39f8a31986a869a9:0xefe686776777829d!8m2!3d22.7136796!4d88.4793456!16s%2Fg%2F11w3grt609!19sChIJqWmohhmj-DkRnYJ3Z3eG5u8?authuser=0&hl=en&rclk=1",
+      "rating": 4.4,
+      "reviewsCount": 33,
+      "lat": 22.7136796,
+      "lng": 88.4793456,
+      "hours": [
+        "Sunday, 11 am to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkvcHbaH0hlKShWdvxgg7Yk4TosdBiE-QzPODlEg8UuOtAL-1nbM2eniuGgJk1OPTkuQYiXcIXCTN4Xi14h14OEjR26pJOAWWxnd0sZSIOMo5bbZZwopq_OlxKECHX75UNAlKjZ3g=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmfFPuHNrG-C_Ro97KAUGXo3W7-j5KY-AHDvOZKetf-9IdEKin55vYVevvlLJM0E5zYkEQvffMWox2_dsWLDkA47V80ec-lDTPOjXWLPMwkGR97znQsC3bIbtyxc6OQ4_JdMUixVw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkxd0ucQSELIwvuiDyndTER-tSb_pUvaNSQ5JJ9miRxvHyHHhM20AMb8U2eIAYcQnof_YGg3nvkZrLx71i03iTKoq85TsvEHbyjlZPXUULN-hGXsczEpmZk6tWYQ3GPXm7Tmo-rzw=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmcJVyXwjHdGDfLuIwWzByIYOpIL0y1_jVUyorZXUXR0tAikGZfRa2N0SLI975jKGDq9vxiCd0PnEmXITi5mmb-eWa6ThCbV3Nw_XDTKwDnA1DKMRnvr5QzDUcGZImSRaqzfrI=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkjuCtyFQlXLT6ngZr3d0tR0_-Bj0_v2HatHhqyTK8F8lydyFl3HRx-BJ2jyhZ9H006d6eAjDzWy1Km5gS9FOOSD2Gn1qT8SmUbldSN2XshuTaQufiFjdG0avRJlkoIND97rLUDjA=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmlFtw6oG-pRBjqSr6ZJDxydBz7QBGtDnFn4y9g31y_LCIVhfW6OsdR60cY9SAOFKRuCt1xLM-vgomGVZ3qQp85wGr_TFPpS-5SFq89oyBqM5U_105sm8ryRXkeQlTe1PnaqSM=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Ordered Mixed Schezwan Fried Rice from Wow Calcutta today.\nThe restaurant did follow my instructions and made the dish extra spicy. It was like an explosion of flavors in my mouth. Although the quantity of chicken could have been better. Still, excellent quality and quantity!",
+          "rating": 4,
+          "author": "Anindya Parbat",
+          "timeAgo": "2 years ago"
+        },
+        {
+          "text": "I was gone for lunch one random day. The entry was not good as the outside place is famous for local liquor shop, which family can find a lil bit odd. But the shop is situated at 1st floor. After entering I was changed my mind. As the theme was beautiful with colorful illustration of jungle and animals, selfie place and other. Finally food was ordered and it was just delicious. Taste is awesome. T",
+          "rating": 5,
+          "author": "Life outside the 4 wall",
+          "timeAgo": "2 years ago"
+        },
+        {
+          "text": "Not so much sure in first time weather should we go or not for lunch in kalipujo time but the food was really tasty and awesome,yummy.\nOrdered basanti pulao,hyderabadi chiken .but the chiken was hard.chili chiken and Schezwan noodles was tasty💯  tandoori Chiken is overhyped not recommended overall good experience good food nice ambience.",
+          "rating": 4,
+          "author": "Moumita Kundu",
+          "timeAgo": "Edited a year ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-022",
+      "name": "The China Town",
+      "category": "Family restaurant",
+      "address": "Barrackpore - Barasat Rd, opposite Adamas Knowledge City, Barasat, Kolkata, West Bengal 700126",
+      "city": "Barasat, West Bengal",
+      "phone": "+919330456566",
+      "whatsapp": "+919330456566",
+      "mapUrl": "https://www.google.com/maps/place/The+China+Town/data=!4m7!3m6!1s0x39f899d460c5cfd3:0xe86ab6e2044846cb!8m2!3d22.7406112!4d88.4582508!16s%2Fg%2F11rhvvmt7j!19sChIJ08_FYNSZ-DkRy0ZIBOK2aug?authuser=0&hl=en&rclk=1",
+      "rating": 4,
+      "reviewsCount": 235,
+      "lat": 22.7406112,
+      "lng": 88.4582508,
+      "hours": [
+        "Closed · Opens 12 pm Sat · See more hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlF-rf-702dfRes2OqFsj3o5iIu9F1SdQ6mVyG03dLiomxm55XPbkRDo_hwyZwCpfwk3rBewQW1MXtH_K1smvOtClmYn_keXhsZTs1xFJBWFGcBDqA8vDOfytRonvR52-iHz9k=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkvcHbaH0hlKShWdvxgg7Yk4TosdBiE-QzPODlEg8UuOtAL-1nbM2eniuGgJk1OPTkuQYiXcIXCTN4Xi14h14OEjR26pJOAWWxnd0sZSIOMo5bbZZwopq_OlxKECHX75UNAlKjZ3g=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmwJk5LQZpxDvu4TI1eKHmhp3OBBmiaPrEPImrs5c-iIcWge5RxBgduCZUthYGYQeGZVO9sFOlEU_YDtuBXfjVCWAc3BxC4rSwQkFwfWSZWGV4Wk64J961-T2Kty7GeCLe2z9qU=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlfionahJmF7lr9wOgeDZpH-l-D-XGlXAEkVreXJsRbQAKdlSmcKP8tP2IZ3GZab6RqybljcyPY9EIlT8dYmt_9w2lIJlK1WnWzcfRQUJDkqqbkHdvdSKAvRz4XB0ER5GtWKSa4V9DTBLsS=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlp0D9YqRmh5fpBS0sa86bS-LYycmOFVio6T2NcRZtikKe6BAoxycOMcp54CYsx4MEqMiBSgkpUUbI-CtOylCmxqU-X4knbuUo7Esr1hdnLG2Q2pOuSUWfkN-835BuPdpzyFpMK=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmKYTYqlqmfEl0m4EnM4jAWZCrYWa5OQjUtrgQiZldvRcDjztKus2IGODKnee-ZRgT5ynxpZRcnhNu7fmjIkJtJ_znKdiQmTvgP1wKc7CNeStUWmM-dhHGQtfHMJVnc8hSHvYwGcw=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "This was our third visit, and we absolutely love this place. While the restaurant can be a bit short-staffed at times, which means the wait for food can be longer than expected, the quality of the food makes it worth every minute. Once the dishes arrive, you'll quickly forget about the wait.\n\nThe Egg Pakora is an absolute must-try—crispy, flavorful, and simply delicious. Pair it with their amazing",
+          "rating": 4,
+          "author": "Gourav Deep Das",
+          "timeAgo": "a month ago"
+        },
+        {
+          "text": "Garlic naan and Chicken bharta were good, but Fish fry was not good at all, Chicken tandoori was ok, overall food quality could be improved. Chilly baby corn was tasty. Seating arrangement both available in open air and inside AC. Lemon tea is also good and must try. Mocktails are ok. Price is reasonable.",
+          "rating": 4,
+          "author": "ArnavMaaiitty555 reviews · 3,213 photos",
+          "timeAgo": "Edited a year ago"
+        },
+        {
+          "text": "Okay for college students, price little higher comparing to similar kind of restaurants. Like chicken roll in 50 in average , but they charge 65 , biriyani is 80-100 average, they charge 150. Chicken kasha 4 pc is 80-120 average but here it is 180.",
+          "rating": 3,
+          "author": "Soumya_shootout",
+          "timeAgo": "2 years ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-023",
+      "name": "Koshe Kosha Barasat",
+      "category": "Bengali restaurant",
+      "address": "35B, Jessore Rd, Rathtala, Madhyamgram, Kolkata, West Bengal 700127",
+      "city": "Barasat, West Bengal",
+      "phone": "+917595077710",
+      "whatsapp": "+917595077710",
+      "mapUrl": "https://www.google.com/maps/place/Koshe+Kosha+Barasat/data=!4m7!3m6!1s0x39f89f393fe1e5b3:0x2ce1191a1aa1499c!8m2!3d22.707332!4d88.47364!16s%2Fg%2F11mvmz6sh6!19sChIJs-XhPzmf-DkRnEmhGhoZ4Sw?authuser=0&hl=en&rclk=1",
+      "rating": 4.3,
+      "reviewsCount": 549,
+      "lat": 22.707332,
+      "lng": 88.47364,
+      "hours": [
+        "Sunday, 11 am to 10:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmVG8EyHctcnHaj14AVXpi5Hcn-KH4tijqxujJAb28XRROuzrRV6ChxsSOE2db2vxWYAP7fQJjOzf9xSfBuA72L7OwdE2R4olnkI5zyPdqrJDbPFq3KpY6xCRt0yIBYHYU1bLorIw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlF-rf-702dfRes2OqFsj3o5iIu9F1SdQ6mVyG03dLiomxm55XPbkRDo_hwyZwCpfwk3rBewQW1MXtH_K1smvOtClmYn_keXhsZTs1xFJBWFGcBDqA8vDOfytRonvR52-iHz9k=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmx8muP9d-a6QNKgVftuKEf9mCT5D5LKOGrqdUzJ73lwnAolsTfy4pvQq9TLlEVMUwjk1Z98r2m68iXjeEXx-8yDhKLyHd-3YwJyq8kjGvYUUcgiWgIdfWv0iPFeucP3ESLU0YtBw=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlMoKWLZxADf6XmFXZYrpmPquvPrn1nj7LJfp0C4dGejqiI7t6Yj_dkevG4n5O7GJQcQro2OTSdFVaI4Vk63gDqt2SfmubJG_JEtZ4r-cnqIQVjRsBQ5fUzZXDDW3qAa-I8PmM3iuUmI50H=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlk0EJXNubNS_A8pV65SWNmDe6EuctHkkKEk8MXwSSCQG1NZz5vJ99LaY7O5CMPXjgMlq_ALDXml_b3BuAm3_fNiyXsADOGnV7SaO1vI7Ci6QHGZygXXiNP58ARiZCmRZsqfbMW=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkY0740ILPzYCKn9I8a5Clvs76Sg1ThPO4FDlAYukvXgxvX0EfFFI0hfgecXeFV-EWpzm8IrrN7YTu8VSmb1JHucKWbGV4YJBi0zFjb4tY7zRlQYqIL7z9L8iHZ6bBntcl9A5KNzA=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "The food was really good in quality & delicious. Tried chingri biryani, daab chingri, dim kosha, dal & plain rice..but I feel it was quite overexpensive. And the floor area was clean but it was narrow more like a cafeteria.",
+          "rating": 5,
+          "author": "Suman Kumar Ojha",
+          "timeAgo": "a month ago"
+        },
+        {
+          "text": "Found my new favorite Bengali spot in Barasat! Honestly, the food at Koshe Kosha hits different. Everything we ordered was fresh and super flavorful. The decor is really tasteful too, perfect for a nice dinner date or just a massive weekend lunch. 10/10 would recommend the Bhetki Paturi!",
+          "rating": 5,
+          "author": "Mahendra Saha",
+          "timeAgo": "4 months ago",
+          "ownerReply": "Response from the owner 4 months agoDear Mahendra,\n \n Thank you for your valuable feedback. We are happy to know that you liked our … More"
+        },
+        {
+          "text": "Its a traditional bengali restaurant which serves most of the traditional dishes with their very own touch. Although the outlet is a bit cozy but the overall cleanliness makes it even. Had an wonderful experience overall and hence highly recommended for family dine in.",
+          "rating": 5,
+          "author": "Gouty_TheReviewer118 reviews · 1,065 photos",
+          "timeAgo": "4 years ago"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-024",
+      "name": "3 W'S KITCHEN - BARASAT",
+      "category": "Restaurant",
+      "address": "PFR4+69M, Barackpore Main Rd Kolkata, Barasat, Kolkata, West Bengal 700126",
+      "city": "Barasat, West Bengal",
+      "phone": "+918100662283",
+      "whatsapp": "+918100662283",
+      "mapUrl": "https://www.google.com/maps/place/3+W%27S+KITCHEN+-+BARASAT/data=!4m7!3m6!1s0x39f8990060b2fd15:0x1719324a1b09df89!8m2!3d22.7418766!4d88.4563273!16s%2Fg%2F11yy2jtq9s!19sChIJFf2yYACZ-DkRid8JG0oyGRc?authuser=0&hl=en&rclk=1",
+      "rating": 4.3,
+      "reviewsCount": 155,
+      "lat": 22.7418766,
+      "lng": 88.4563273,
+      "hours": [
+        "Sunday, 11 am to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmVG8EyHctcnHaj14AVXpi5Hcn-KH4tijqxujJAb28XRROuzrRV6ChxsSOE2db2vxWYAP7fQJjOzf9xSfBuA72L7OwdE2R4olnkI5zyPdqrJDbPFq3KpY6xCRt0yIBYHYU1bLorIw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlF-rf-702dfRes2OqFsj3o5iIu9F1SdQ6mVyG03dLiomxm55XPbkRDo_hwyZwCpfwk3rBewQW1MXtH_K1smvOtClmYn_keXhsZTs1xFJBWFGcBDqA8vDOfytRonvR52-iHz9k=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkIUrVIcUJ8_vdsVg5o7Zeb1fqakav2q4H_vDdqBi6N_KZ9vmzG9gP1_djlkvyi_Kw0-0iRKGlg7bWd1KmUcWK5Z_pe6PBo9tuiYO_6Hj2YfhPkgIQYB08-Lfg95UIS3okSlrMtWnChqeU=w408-h725-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkScN7FylbmL3ZFjqhv15cRgIXqC9sTyKVN9lcKTEU90ThB5jz1DdRSiPlpbdWkfxZwHYbEGj7XgwbQm0wtrsJm072zPbAMJDn-X5uq7LzkBUu1uebA6reAJcJwQ58bNXaAC3KC9O4l-RXb=w112-h112-p-k-no",
+        "//lh5.googleusercontent.com/proxy/zg7l9JY-KU4fzDDM90BZl7uVyAKwPww7BhgjAgr4l5CDKt-Q2HaInQdCFDJcnsWCr0s8DWHqJ5vapTT0rHvhaVXwiYVuzzSyUni2HrPTlcMBtZnpcXaj26fScS-kTxXnEgjVVIqUd1xT0opVJHPgXWsNBzHVFg=w112-h112-p-k-no",
+        "//lh4.googleusercontent.com/proxy/RoPYUTYo6MjJX5oXujhUvGqeIin__cYzH-itZQXAZFMp468zZC10-yfxdQgPjcwLKKVWbD7ksFoVL-n_BzCpkm5BGtAQde6LDIWZ0C_S0ibExBkOhpXL_ZnpuvF2EV_dxg0lCQPWDmZ80iFv2uR2HyqlwLjzoQ=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "I really enjoyed my visit to 3 W's Kitchen! 🤩 The food was delightful, and the service was quite attentive. It's truly a lovely spot to spend quality time with loved ones. The atmosphere was pleasant and inviting. ✨ I'd definitely recommend it for a relaxed meal. 😊 …",
+          "rating": 4,
+          "author": "TanmoySabui409 reviews · 4,766 photos",
+          "timeAgo": "2 months ago",
+          "ownerReply": "Response from the owner 2 weeks ago\"Thank you, Tanmoy! We're delighted to know you had such a great experience with our food and team. Hope to serve you another wonderful meal again soon!\""
+        },
+        {
+          "text": "The restaurant is run by 3 ladies hence the name. Food quality is good. Milk tea is must try. Momo (₹110) is also tasty and served in a box. Different types of seating arrangement (family, private, open air) available. We tried a special dish Prawn Chicken wrap. Chinese combo available during lunch time in affordable price.",
+          "rating": 5,
+          "author": "ArnavMaaiitty555 reviews · 3,213 photos",
+          "timeAgo": "6 months ago",
+          "ownerReply": "Response from the owner 5 months agoThank you so much for your wonderful feedback! We’re truly grateful that you chose 3W’s Kitchen – Barasat’s favorite fast food & Chinese restaurant. … More"
+        },
+        {
+          "text": "This restaurant is for people who believe that food is not only about taste it's about ambience, service quality and creation of cherishable moments as well",
+          "rating": 5,
+          "author": "Amitava Ghosh",
+          "timeAgo": "6 months ago",
+          "ownerReply": "Response from the owner 5 months agoThank you so much for your wonderful feedback! We’re truly grateful that you chose 3W’s Kitchen – Barasat’s favorite fast food & Chinese restaurant. … More"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-025",
+      "name": "Relax Bar Cum Restaurant",
+      "category": "Bar",
+      "address": "Barrackpore - Barasat Rd, talikhola, Barasat, Kolkata, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+918777283327",
+      "whatsapp": "+918777283327",
+      "mapUrl": "https://www.google.com/maps/place/Relax+Bar+Cum+Restaurant/data=!4m7!3m6!1s0x39f8997dbe20eacf:0x172b22f92e0a6ab8!8m2!3d22.7348337!4d88.4657991!16s%2Fg%2F11fjtw21hb!19sChIJz-ogvn2Z-DkRuGoKLvkiKxc?authuser=0&hl=en&rclk=1",
+      "rating": 4,
+      "reviewsCount": 334,
+      "lat": 22.7348337,
+      "lng": 88.4657991,
+      "hours": [
+        "Sunday, 12 pm to 12 am, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmwVLHtWOCunFgxfxiTeEJ3geoqk39YKeOUcnuUqhJn5p2noBOzSLcArVBvNZi6iUkkfra6qkfVkCS1Gi9Ek7IvZReGgsJeAqQjXLUXmOHMkCeCBqAw-D47ZxOq1ndXZ9xTngpW2YG_ksM3=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmVG8EyHctcnHaj14AVXpi5Hcn-KH4tijqxujJAb28XRROuzrRV6ChxsSOE2db2vxWYAP7fQJjOzf9xSfBuA72L7OwdE2R4olnkI5zyPdqrJDbPFq3KpY6xCRt0yIBYHYU1bLorIw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmvKtE8scdTOFUaTrtKV7hz741qhp8eY3sPdgpsD6iS3TEZwF8qErq0EVvr0cOU_dLF-8fP8vnDwKf3CNqt2fZnJKE6uVKeP_De_a6N1F-ZfLOiansEHvGxZOqpQxict14OHUI=w426-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm6r09Jorh8npxDxsC8_og0fZc5FGpEBi-xyRGXTKeng4MMDLIs6YBdDDlS7fdqcBmmyqRC3p2GeopSYMk57Gbt4WlV5dI8ZAa8Wj-kmH20046bKn0N-bxZdL4V8ax1Vv6Js3A4May4Ew8=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlqTL1XC38-P6Bk6whTRVqO19emtBmceVljRwXu5LSdToWqGHy62kzRBCNzZ25TnJBO-JXZPL9kAZPDYEl0PFVxjiQH9ERY4VgR6XYcXAGtCWS8ZgXcLKi-PUjzi0bYDeNooEU=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnOv2j0wAAVcZ4jzTkoGOjMwflzZIYVfZuztbgrNUO2VvFLT86KIrcqJqy75MkSwB69jBJTCbnnY3i3OYr-JsTbjUyskCkjgmEfhTDi7foKFZowZnvbDsvmW1SeTOuS8x1gRKVnRg=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Service is not good enough. If you order food they will take so much time. By that time you can finish ur bottle. Otherwise atmosphere and stuff behavior is good . If you have time, it's a good place to hang out with friend/partner. Food was delicious as usual.",
+          "rating": 4,
+          "author": "Sankalan Samanta",
+          "timeAgo": "Edited 2 years ago"
+        },
+        {
+          "text": "Food quality and ambience are good but behaviour of the staff's are not satisfactory.",
+          "rating": 3,
+          "author": "sagar mistry",
+          "timeAgo": "10 months ago"
+        },
+        {
+          "text": "This is a good place to spend some time with your friends after work or on Saturday nights, it's not a pub it's a bar so the atmosphere is different than pubs in Kolkata. The service is very slow if you'll order food let it be anything they …",
+          "rating": 3,
+          "author": "Ankit Bhattacharjee",
+          "timeAgo": "3 years ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-026",
+      "name": "Maya Restaurant",
+      "category": "Fast food restaurant",
+      "address": "Natun Pukur School Rd, Digberia, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919874297088",
+      "whatsapp": "+919874297088",
+      "mapUrl": "https://www.google.com/maps/place/Maya+Restaurant/data=!4m7!3m6!1s0x39f8a3c3cf204fa3:0x5231b63793481f57!8m2!3d22.7101521!4d88.4865467!16s%2Fg%2F11gmxyf2xv!19sChIJo08gz8Oj-DkRVx9Ikze2MVI?authuser=0&hl=en&rclk=1",
+      "rating": 4.2,
+      "reviewsCount": 810,
+      "lat": 22.7101521,
+      "lng": 88.4865467,
+      "hours": [
+        "Sunday, 1 to 10 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkgnfgZTlznzolSqMqqxk5EtDpd7Hpxre9LXVwE_6f2h5yj0GiB_MXXnUhjdFRNmxVhduYIkEBc44qhFwwkQLHMuHWWWwOOCPM7ZM6oFb--15v45_sMp1Q2xOlAz2afwQY4TOlt=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmwVLHtWOCunFgxfxiTeEJ3geoqk39YKeOUcnuUqhJn5p2noBOzSLcArVBvNZi6iUkkfra6qkfVkCS1Gi9Ek7IvZReGgsJeAqQjXLUXmOHMkCeCBqAw-D47ZxOq1ndXZ9xTngpW2YG_ksM3=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmWLaao76FuioJdO1Vf6TGzmvFFCO4bahi5K6-P5UFglgon4k7L3zmeZgMVOFH3uT5fBrpRIWzur7u0DciH5wu6eyw_PGk8HL3kumO4jY6Uc5-lFTBHiakXsNiYxjAPqDSrqFQt=w408-h544-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnRB7xK5zxjcodCwG5OIsictcKpYhyH-RQj59jmuMqA7IJhLXOOyEerAGKrfOwdGlo93UetWFjB_50K1RFce29cnuk1PjJBE4g7HnMMbTg1xz1N2s-RLNleAFQ9oWqhDpKz9fvHEmg1wmo=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmzDhAAVpVYJ2ZYWzs3oOXG6hYYTx9lWBTtnIMxlApejkwna49vQ7SVHtiVp3m0xQYhwThduK44DjpmfeNKawbgpx-bG049d1ir3pguRCAHwq4u0olpwYzgC80WTLeZvvGeFJI=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlJbIDkd87v1KJNT9QuteNv0vmzeLPwcSZ8VWjjlDGOhYiCV8FuclqaGDJ_A6LDZhJfIqRk9cJ50gSmU9hDuR62jT8u9f6ufXmT-O0Zdpy5bngr00NmtxrCUNLLvZRiBF5G9YZ_4w=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "I strongly advice all the reviewers kindly don't visit this place or order from any platform like swiggy or zomato.\nToday i.e 5th may tuesday, I have ordered one paneer chili from this place and I …",
+          "rating": 1,
+          "author": "RKJ Vlogs",
+          "timeAgo": "3 months ago"
+        },
+        {
+          "text": "Maya restaurant is good as it's price of food as quantity, but it's service and food quality is not as expected, when ever you go for takeaway or dine in, your order is very late. There are all time very rush during Evening time, specially …",
+          "rating": 3,
+          "author": "Tanmay Halder",
+          "timeAgo": "a year ago"
+        },
+        {
+          "text": "Quality dropped a lot, they gave me half cooked chicken reshmi butter masala. Price went up. Not recommended anymore.",
+          "rating": 1,
+          "author": "Supriya Ray",
+          "timeAgo": "4 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-027",
+      "name": "Annarpurna Restaurant",
+      "category": "Fast food restaurant",
+      "address": "Natun Pukur School Rd, Digberia, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919874297088",
+      "whatsapp": "+919874297088",
+      "mapUrl": "https://www.google.com/maps/place/Annarpurna+Restaurant/data=!4m7!3m6!1s0x39f8a20f7fcc52b3:0x7dc2f99d9389cc27!8m2!3d22.7199615!4d88.4862726!16s%2Fg%2F11c2qt7xmx!19sChIJs1LMfw-i-DkRJ8yJk535wn0?authuser=0&hl=en&rclk=1",
+      "rating": 4.2,
+      "reviewsCount": 810,
+      "lat": 22.7199615,
+      "lng": 88.4862726,
+      "hours": [
+        "Sunday, 1 to 10 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn9x88ILR9r7iSQHpNHEopInYxi6lcGev8f-QG6u6q4CXcG8Zz_gDFrX3o5Zq8lY9r1N7lnJ1IAeUZKpCCNe_q-u7amhYXsDoR9ear8QKi_dJ3dvzXAZ7opvDUGIr9pwP9hNKAzJw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkgnfgZTlznzolSqMqqxk5EtDpd7Hpxre9LXVwE_6f2h5yj0GiB_MXXnUhjdFRNmxVhduYIkEBc44qhFwwkQLHMuHWWWwOOCPM7ZM6oFb--15v45_sMp1Q2xOlAz2afwQY4TOlt=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmWLaao76FuioJdO1Vf6TGzmvFFCO4bahi5K6-P5UFglgon4k7L3zmeZgMVOFH3uT5fBrpRIWzur7u0DciH5wu6eyw_PGk8HL3kumO4jY6Uc5-lFTBHiakXsNiYxjAPqDSrqFQt=w408-h544-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnRB7xK5zxjcodCwG5OIsictcKpYhyH-RQj59jmuMqA7IJhLXOOyEerAGKrfOwdGlo93UetWFjB_50K1RFce29cnuk1PjJBE4g7HnMMbTg1xz1N2s-RLNleAFQ9oWqhDpKz9fvHEmg1wmo=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmzDhAAVpVYJ2ZYWzs3oOXG6hYYTx9lWBTtnIMxlApejkwna49vQ7SVHtiVp3m0xQYhwThduK44DjpmfeNKawbgpx-bG049d1ir3pguRCAHwq4u0olpwYzgC80WTLeZvvGeFJI=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlJbIDkd87v1KJNT9QuteNv0vmzeLPwcSZ8VWjjlDGOhYiCV8FuclqaGDJ_A6LDZhJfIqRk9cJ50gSmU9hDuR62jT8u9f6ufXmT-O0Zdpy5bngr00NmtxrCUNLLvZRiBF5G9YZ_4w=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Quality and quantity is good. Price is little high with respect to service. And ambience is not good, lights are dim, fans are of no use, it gets really hot.",
+          "rating": 3,
+          "author": "Debjani Dey (Diya)",
+          "timeAgo": "4 years ago"
+        },
+        {
+          "text": "Very good resturant near champadali bus stand, barasat..food quality and quantity was too good..Must try theirs Briyani..light and very delicious.meat was soft and juicy..and also stafs behaviours are good.",
+          "rating": 5,
+          "author": "Tania Mandal",
+          "timeAgo": "Edited 5 years ago"
+        },
+        {
+          "text": "Worst Experience Ever. Never felt like this. My friend is totally vegetarian. He ordered veg fried rice and chilli paneer when we ordering he said no onion on chilli paneer but they added lots of onion to it. I have ordered handi mutton but instead got something else mutton full of big size onion and capsicum. Don't know what they made it no taste in food. Waiter changed the paneer but then also t",
+          "rating": 1,
+          "author": "Abhishek Chatterjee",
+          "timeAgo": "3 years ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-028",
+      "name": "Prithak Cafe",
+      "category": "Restaurant",
+      "address": "Maa Sarada Rd, Pioneer Park, Noapara, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919830217273",
+      "whatsapp": "+919830217273",
+      "mapUrl": "https://www.google.com/maps/place/Prithak+Cafe/data=!4m7!3m6!1s0x39f8a3038c2cadbb:0x4140094dd250c28b!8m2!3d22.7253021!4d88.4800341!16s%2Fg%2F11sx3txj3g!19sChIJu60sjAOj-DkRi8JQ0k0JQEE?authuser=0&hl=en&rclk=1",
+      "rating": 4.2,
+      "reviewsCount": 256,
+      "lat": 22.7253021,
+      "lng": 88.4800341,
+      "hours": [
+        "Sunday, 11:30 am to 10 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn3p4TzEREitoH2DAy2V3JQad419p4sGq4MwGBIxrawHKkAN62W_gVSdz7t65X2X_oZmPPs0kt1F-WXfa3O4xG_FCJ6SrfQIomKckiGGapVIK5TtYlItiiWvYuLhf3xHf-g8RkH7Q=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlSp-scr1F0B6dbLMwmRjvA81fM21HZONLS7x_Izc2wewX_JsZDxNjGm8s4l2qptL6Z9d4A_iY8d1JtCTGDXKOhtiHTmGO1ph3rQ8NjtS3mGkxrvZB6IiNkrjA6xVPiVfu5MRSr=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnysK6ba4F84tqeR_hOyEgwbb-hndcDlvjrgeuOAiPipYd5wtSzBuDOmC_aA4TPrB6Uke03iZHaeVjQPjdvUPMLCMTryNEFsJudg1cz2PSRtCPABxinvEHOeG4fHg3IoJiRRkHQmw=w426-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmDD3qyfUMUmsmxdJ1VLpAbPDFnbvok9N-I5FVUmK2FGu_dhNEt4hf6Q7VEv-wKfyM0aJhXMaJ-TSt7s1jrFLUtqSEn_Cg_qhtu5E83SqQUYIJ0NWVUKJ036Afy1GWHTxnucPq_0c-XVcw=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmW9i45YsSUu7NxNmI7plZVrI1Wl5TPE7nskdu_IFEBV6Wpj6AHAmKruqp1rxc5UFUXcW97sSxIa-wn00ckU8adLKVkrK5wnJxLjdqPz9Ksqm3OVB_r9Pm2c6A8dFPx3j6bh-bD=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnreRCM02sT57y4b5v0OaFChxv9WYIxR0OtjFVZjU-E7MsMk4jP-IslJlCItQt6oPPAMnJLIFXXKqYfcYdd2YGKgYQxur0JJiJi8RV_cq3CLbsMeqZZ7siKpRyyXCMCKHOYz1qa=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "We go 3rd time of this year. Food is good, but the place of the wash basin is disgusting, very dirty and despicable. (2026)\n\nWe ordered mango shake and crispy chicken both are tested good. Now there is no carrom board and neither any vehicles sound or horn. Now The place is very quite an easy to talk. The place is for every age's people. (2026)\n\nI tried coffee and crispy baby corn. Taste is averag",
+          "rating": 1,
+          "author": "Sonali Acherjee184 reviews · 1,681 photos",
+          "timeAgo": "Edited a month ago"
+        },
+        {
+          "text": "This cafe is an absolute delight! Their food is *incredible  every dish is a burst of flavor, and  every bite is tasty  From snacks to full meals, the menu is crafted with care, and the quality is consistently top-notch.\n*each item is a winner",
+          "rating": 5,
+          "author": "Utkarsh Anand",
+          "timeAgo": "a year ago"
+        },
+        {
+          "text": "It's a old but still underrated cafe for \"cha and adda\".\nTheir crispy chicken, chicken pakora, fish pakora, green tea, coffee and cold coffee are highly recommend for everyone.\nIt's a affordable, student and children friendly café in the heart of Barasat❤️",
+          "rating": 5,
+          "author": "Aniket Chakraborti",
+          "timeAgo": "2 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-029",
+      "name": "Green Chili Restaurant Cum Bar",
+      "category": "Bar",
+      "address": "PF6G+V3G, Dakbanglow, Barasat, Kolkata, West Bengal 700127",
+      "city": "Barasat, West Bengal",
+      "phone": "+919674598685",
+      "whatsapp": "+919674598685",
+      "mapUrl": "https://www.google.com/maps/place/Green+Chili+Restaurant+Cum+Bar/data=!4m7!3m6!1s0x39f8a330ba9d5cdd:0x4ffb5d4e133b9b34!8m2!3d22.712197!4d88.4751916!16s%2Fg%2F11h6qmtlzs!19sChIJ3VydujCj-DkRNJs7E05d-08?authuser=0&hl=en&rclk=1",
+      "rating": 4,
+      "reviewsCount": 159,
+      "lat": 22.712197,
+      "lng": 88.4751916,
+      "hours": [
+        "Sunday, 12 pm to 1 am, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnQSQthJIMEoICCfJaiGFDrA1hGDGymvpU8hogqKsnUaAeN2H8MDfB5BsdznuUZAqVwMgqNsOINtanLtzJGz-Haa4wFYvTYAqv67GR9NgbjpXx4pJ60fPt7wv2BqGwyukbb39TF=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn3p4TzEREitoH2DAy2V3JQad419p4sGq4MwGBIxrawHKkAN62W_gVSdz7t65X2X_oZmPPs0kt1F-WXfa3O4xG_FCJ6SrfQIomKckiGGapVIK5TtYlItiiWvYuLhf3xHf-g8RkH7Q=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmguLKocByXfY_kkW9PvKV2OrWkDgeK_ruZuA1rsdRhzBtkfSAFqIOdZWNa7QSw99ZKpmGJ82-uH3Vyu8a2zK7eZHkc3sOeDjaOj1EVzy5h-uwpKB3VK5W1hu3GwvhbG2hJ0RgFCg=w408-h543-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlU41YBOtwU-4vFWDLiPbY0-0sGY7AsUIj-A2R4TnZ-36UPiS2P5N9wBcu-fFGmnG1tqmdhYBA9VpawKG_Q7c58Tc0zXSZ-ogHK72JLH1GpzvZaoNtYXbAvcbVPazGPJD4hMSYASN2y649j=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnfcwhTtZxQh1eVyrAwQIMHKE9AX28RjefEU1TKmcvG__WVv_buO7qGK3Cknd9e1zyr2X3wJ5qg_KYqbMacpVU5a781_zPJs1M2RXimo4GaZZ8SbupQrt4mAQQyMxyBLUCjpxM4=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm1_ADMzT07B8EJlY6zfORT3g5BUUFdZIIaCic-nSD6NBQKtyiNC3lEYpgRkH9PzbX6NYDtub7_LQmr2XNJuulundcXSWdmdka9MuU8R_RlIV11zMi0RXcial7Nt9hPh0N1K3Q=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "I visit here with my friends. All dish are looking good and taste was awesome.",
+          "rating": 4,
+          "author": "Sulagna Mazumdar",
+          "timeAgo": "3 years ago"
+        },
+        {
+          "text": "Bro, had an absolutely derailed experience. 😭\n\nJust ekta peg modh khawar jonne we walked into this bar in Barasat. Khub paati bar. Suddenly, some singer gets up on stage and Shyamasangeet gaite shuru kore dilo-\"Amar Sadh na mitilo..\"\n\nWe’re just sitting there, drinks in hand, trying to process. 💀\n\nFirst time in my life I’ve sipped whisky to Shyamasangeet followed by aapke pyar me (from Raaz), fo",
+          "rating": 1,
+          "author": "Riee",
+          "timeAgo": "a year ago"
+        },
+        {
+          "text": "Nice place, good sound quality. A perfect place for weekend refreshment.",
+          "rating": 5,
+          "author": "DEBOJYOTI DAS135 reviews · 1,077 photos",
+          "timeAgo": "5 years ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-030",
+      "name": "ROWDY MOMO CAFE - BARASAT",
+      "category": "Cafe",
+      "address": "Rishi Bankim Chandra Rd, Gupta Colony, Barasat, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+916291081563",
+      "whatsapp": "+916291081563",
+      "mapUrl": "https://www.google.com/maps/place/ROWDY+MOMO+CAFE+-+BARASAT/data=!4m7!3m6!1s0x39f899cfe84430c7:0xe218582062513650!8m2!3d22.7142907!4d88.4791309!16s%2Fg%2F11y6862_41!19sChIJxzBE6M-Z-DkRUDZRYiBYGOI?authuser=0&hl=en&rclk=1",
+      "rating": 4.7,
+      "reviewsCount": 460,
+      "lat": 22.7142907,
+      "lng": 88.4791309,
+      "hours": [
+        "Closed · Opens 3:30 pm Sat · See more hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkOfBcoNCpdFnAu3RzfjqxeRHaXkReI3FNrukDHAfZfAumbG94iAm7ljF18MUr4GSZx7uB0vO0JhnRad8tOMKWw6_xwIFoj1aP583qsLTw2QYatt8F3rlY7Iu7NYO6NPQFmkbmRc6yZn2id=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnQSQthJIMEoICCfJaiGFDrA1hGDGymvpU8hogqKsnUaAeN2H8MDfB5BsdznuUZAqVwMgqNsOINtanLtzJGz-Haa4wFYvTYAqv67GR9NgbjpXx4pJ60fPt7wv2BqGwyukbb39TF=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlw0LCrl76h5Uv_nNjgvbWfJG9RvMSSZyaCwSbrjrHIRuBk6royZVWI-rxhd9U3IJiFeAnmS8lueb6ANMdMeeul1yi60HsgC1iu6fIe8aNnhjzOG365G4zYqHdqkd8Ag7CEGwbKBw=w408-h292-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkKYfX8V0WPA9nYzSSq1q1JseNTUWJw3-ED758m4niTAjjnc8fOE3tw0dHoVuQk41MLDztE02b8A48u4inLhp28uEVk0l1oUWbaX5rMLIm1fWs2ObsDcMn35TN-pvhICYNZ3VWBhA=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmbkVTQlkfHWZ1zZEgglcRuKsx_lLXmc-81NWk8qtyiYlTrKFgbYbJ6yQPMSRcDO9WK0ParrfoRziqAhhauw6pdHKT8MXNCsC5-W9A0j1qCRgLjyz-N_QUvxiFGrPBQFQKbsNY=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm4YJDqpGx3j79TqudvGBo_rNvxQvR-xAWrHq6fN3suE-UHVDblCksW6d9XneZdSbWQjWYaT7Pes_yoHUtzArL-R9NFSBwDadz3NtekvV8K96A39XjPVfuZRbJHdbi5SG1e5qwEtLeN1tcY=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "We tried the offer of 10 momos for ₹42. Overall, the taste was good and worth the price. However, the stuffing quantity inside the momos felt a bit less. Apart from that, everything was fine. We'll try the main menu items next time to get a better idea of the overall food quality.",
+          "rating": 4,
+          "author": "Sk Koushik Adib",
+          "timeAgo": "2 months ago",
+          "ownerReply": "Response from the owner a month agoHello Sk Koushik Adib,\n\nThank you for taking the time to share your thoughts about your recent visit to … More"
+        },
+        {
+          "text": "The momos were average honestly..not so good not so bad . The chutney they provided should hbe been better anyways . The coating was soft & juicy but the filling taste is just average .\nOrdered :- Chicken Steam Momo (Mini)",
+          "rating": 2,
+          "author": "Kalpadip Majumder",
+          "timeAgo": "5 months ago",
+          "ownerReply": "Response from the owner 5 months agoHey Kalpadip,\n\nThank you for taking the time to share your thoughts about your recent visit to … More"
+        },
+        {
+          "text": "Recently visited. Small & cozy atmosphere. sitting arrangement for max 10 people.Pocket friendly & also good quality food.. Beside Barasat Municipality..\nWe ordered-\n1. Popcorn Momo - 42/-\n2. Peri Peri French Fries - 69/-\n3. Classic Chicken Burger - 69/-\n4. Cold Coffee - 69/-\n5. Milk Coffee - 39/-\n6. Chicken cheese peri peri fried momo - 149/-\n7. Chicken Nuggets - 59/-\n8. Brownie with Icecream - 1",
+          "rating": 5,
+          "author": "Tanusree Saha",
+          "timeAgo": "Edited 6 months ago",
+          "ownerReply": "Response from the owner 5 months agoHello Tanusree!\n\nWe're delighted to hear that you had a wonderful experience at Rowdy Momo Cafe - … More"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-031",
+      "name": "THE CAFE & SNACKS",
+      "category": "Restaurant",
+      "address": "Barsha Appartment, 66/N, KNC Rd, Gupta Colony, Barasat, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919007327880",
+      "whatsapp": "+919007327880",
+      "mapUrl": "https://www.google.com/maps/place/THE+CAFE+%26+SNACKS/data=!4m7!3m6!1s0x39f8a315b77d78d1:0x735051e57aed6c7a!8m2!3d22.7125467!4d88.4791284!16s%2Fg%2F11m_kzwvld!19sChIJ0Xh9txWj-DkRemzteuVRUHM?authuser=0&hl=en&rclk=1",
+      "rating": 4.4,
+      "reviewsCount": 72,
+      "lat": 22.7125467,
+      "lng": 88.4791284,
+      "hours": [
+        "Sunday, 9:30 am to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkrXXJs6N5kZcve0WRawMNPJH0XGhUKFCbYwNx0-zuF8vLPsuwpoWeL2g9-UI12IiZbK84F91vZk3-7QijGnjqVf9w-4WEtzRTy7cO8bIDdXpvaOL6XMZggy5lcRapS4oFsv5mN=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkOfBcoNCpdFnAu3RzfjqxeRHaXkReI3FNrukDHAfZfAumbG94iAm7ljF18MUr4GSZx7uB0vO0JhnRad8tOMKWw6_xwIFoj1aP583qsLTw2QYatt8F3rlY7Iu7NYO6NPQFmkbmRc6yZn2id=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnuveqOSa-LjI5qOGYiyEgPyE552AuWL-tEPtd2rIgjw45Thgfn07N4I8GxR4eGKUhXbw5T7Ixm2uIJiFn3oMra4incbiiKjJI_Ke8jmplkgGK_WjdEfCrOq3nUUEYhnX8srcvIpmkC2qNt=w408-h549-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmad6zh2tQW_YgTiIOrz2VoVPS0EoYg9WmeFPPczDwxwlxl4fS-9_5ZrEQOf4mGfZScGroXt8-5I4iXGtWuixNchq-iG84lwGupYIkxbIy_o7CVJssa5GwJGVIOl8P-NKOIKJm4TUHRMVcw=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlSvHWEKaf5ABTrI9r-KFlcKYX-ITIui0jOLChPmEoX81sfYjBeWkwGpvEs2uC6UvYvcSNos9WlVySypJxFN1nipoIwHSTh5SbrR2ayzI38sDLSSzrocI6cossxwxep9m75vdrWpp3pNEpD=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl9IyG9_uFgpckMNM0DEA22OioOTx6t2mTITximuzqOSHwnaG_GptpzDLWyX0MaOS-89328a6dgy04Rdz06sq0EZOdSsvybezmzIjA0d5a-T-BM4NdyhD4jC8rD5NEiyKokOH1zp7ot7mbS=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "A small, cozy, and student-friendly place — not fancy, but definitely effective. The food quality is excellent for such affordable prices, making it perfect for students on a budget. The location is also convenient and easy to find. Highly recommended for a casual yet satisfying meal.",
+          "rating": 4,
+          "author": "Tanisha Bose",
+          "timeAgo": "10 months ago",
+          "ownerReply": "Response from the owner 8 months agoThank you for your valuable feedback"
+        },
+        {
+          "text": "Ordered from Zomato under the restaurant name \"The Pizza\".\n\nOrdered White Sauce Pasta, the image had Penne pasta, got delivered elbow pasta, that too, extremely less quantity.\n\nQuality wise was okayish but the quantity and description are misleading for the price, 200+.",
+          "rating": 1,
+          "author": "Tathagata Guha Ray",
+          "timeAgo": "2 months ago"
+        },
+        {
+          "text": "The worst pizza ever. 160 rupees is a complete waste. I ate the worst pizza of my life today. Tea is 35% good 30 whole spoiled.",
+          "rating": 1,
+          "author": "Saptarshi Sadhukhan",
+          "timeAgo": "4 years ago"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-032",
+      "name": "Hungru Pizza Barasat",
+      "category": "Pizza restaurant",
+      "address": "Colony More, Barasat, Kolkata, West Bengal 700126",
+      "city": "Barasat, West Bengal",
+      "phone": "+919833048397",
+      "whatsapp": "+919833048397",
+      "mapUrl": "https://www.google.com/maps/place/Hungru+Pizza+Barasat/data=!4m7!3m6!1s0x39f899ffdf471c3d:0xe22868aadd2719fc!8m2!3d22.721826!4d88.4779427!16s%2Fg%2F11wxglzx6v!19sChIJPRxH3_-Z-DkR_Bkn3apoKOI?authuser=0&hl=en&rclk=1",
+      "rating": 4.8,
+      "reviewsCount": 407,
+      "lat": 22.721826,
+      "lng": 88.4779427,
+      "hours": [
+        "Closed · Opens 12 pm Sat · See more hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmmHCgJK6Ow5ODTnb-qBVh-fSe_OpDiy3ogTQR0PCoX_an-AfrnUu1xpryZfItqmWMOxum9VgNtuEY_63hMXkrdgswdd0ofIJQaUAF21IAln-6nSeVu_G9_FJ6_lzDONHNzRZSLedabWUxT=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkrXXJs6N5kZcve0WRawMNPJH0XGhUKFCbYwNx0-zuF8vLPsuwpoWeL2g9-UI12IiZbK84F91vZk3-7QijGnjqVf9w-4WEtzRTy7cO8bIDdXpvaOL6XMZggy5lcRapS4oFsv5mN=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmmHCgJK6Ow5ODTnb-qBVh-fSe_OpDiy3ogTQR0PCoX_an-AfrnUu1xpryZfItqmWMOxum9VgNtuEY_63hMXkrdgswdd0ofIJQaUAF21IAln-6nSeVu_G9_FJ6_lzDONHNzRZSLedabWUxT=w408-h272-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlpLh9b3y5La17LXjPiNaskrR2VNNtwDFsoCn24-NvliOyYNZPuYoUbbRMKc7wIdsffAqMFN87d6wVO34kjmeA5ESmao29HoNrPiM9oGNimCgKMA7YJm_2vxBjIxbw2_MVv3Y9FyEwwL3E=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkN8ZrNFpoYLTJiqNukp_XySASdmTpZkey2uPK-dOOeTAPP8iO9TM624QC_KD6MH90VaO4PMKwuZF7DIdLdrz4IfbRYM-gYOuCZM8YWdssZNs4fbom-jS_LdyrL9ryY7bKJ2BDLug=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmI73NkHChsz12ytntSMz6xoBR8KsHva4bZ3Yd0Vfq17jaQoDHUZ_XAnHWwSSF1vnN-2KyzftVAQ8cLIxYD0818yTXz2bXFOM9J-R860W3brfPLnAgz0xo_ZtnCtMjPIj99BcwA=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "socialLinks": [
+        {
+          "platform": "facebook",
+          "url": "https://www.facebook.com/profile.php?id=61569856790290&mibextid=ZbWKwL"
+        }
+      ],
+      "reviews": [
+        {
+          "text": "I've been visiting this place for the past two years, and the ambience, staff behavior, and food have always been impressive. The excellent food and warm hospitality keep me coming back again and again. …",
+          "rating": 5,
+          "author": "Anwesha Dutta",
+          "timeAgo": "2 months ago",
+          "ownerReply": "Response from the owner 2 months agoThanks Mam for such lovely appreciation. This indeed motivate entire kitchen & service team. Will look foward to greet you again🍕🍕 …"
+        },
+        {
+          "text": "I recently visited Hungru Pizza Café, and it turned out to be an amazing experience! The first thing I tried was their cold coffee, and honestly, it was one of the best I’ve had. Perfectly chilled, creamy, and not overly sweet — just the …",
+          "rating": 5,
+          "author": "Asit Bairagi",
+          "timeAgo": "6 months ago",
+          "ownerReply": "Response from the owner 5 months agoThank you for sharing such an amazing experience with us! We are thrilled to hear that our cold coffee was one of the best you've had, and that you enjoyed the balance of flavor and texture. It's wonderful to know you found our pizzas tasty … More"
+        },
+        {
+          "text": "Hungru Pizza Barasat, you've won my heart! 😍 I tried their Gondhoraj Momo and Tandoori Momo combo, and oh boy, it was DELICIOUS 🤤! The flavors were on point, and the momos were perfectly cooked. And let's not forget their pizzas 🍕 - super …",
+          "rating": 5,
+          "author": "Coconut Quinoa",
+          "timeAgo": "a year ago",
+          "ownerReply": "Response from the owner a year agoThanks for heartwarming feedback. Really motivate our team. Looking forward to greet you again🍕🍕 …"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-033",
+      "name": "Hidden Flame",
+      "category": "Takeout restaurant",
+      "address": "Hidden Flame,Premises, 11, Rishi Bankim Chandra Rd, Gupta Colony, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "mapUrl": "https://www.google.com/maps/place/Hidden+Flame/data=!4m7!3m6!1s0x39f8996ed09533e5:0xc341be1a52700dd2!8m2!3d22.7131133!4d88.4770583!16s%2Fg%2F11l30l4649!19sChIJ5TOV0G6Z-DkR0g1wUhq-QcM?authuser=0&hl=en&rclk=1",
+      "rating": 4.3,
+      "reviewsCount": 113,
+      "lat": 22.7131133,
+      "lng": 88.4770583,
+      "hours": [
+        "Closed · Opens 9 am Tue · See more hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmmHCgJK6Ow5ODTnb-qBVh-fSe_OpDiy3ogTQR0PCoX_an-AfrnUu1xpryZfItqmWMOxum9VgNtuEY_63hMXkrdgswdd0ofIJQaUAF21IAln-6nSeVu_G9_FJ6_lzDONHNzRZSLedabWUxT=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkrXXJs6N5kZcve0WRawMNPJH0XGhUKFCbYwNx0-zuF8vLPsuwpoWeL2g9-UI12IiZbK84F91vZk3-7QijGnjqVf9w-4WEtzRTy7cO8bIDdXpvaOL6XMZggy5lcRapS4oFsv5mN=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnDzfO6OmbgToceBS7K4iVuPcwrBVUd_8ysFqOAIb0EwbFqSAEQEArSFFBilIDI5h9bDDVFmDkG0QLmU66Z2A8IIhVvCSMvfpDiHWEQIGTfk12GH8r-oE18eyqUEeCHTFzD0C_lPMe7QQsb=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlppbgnSoZzBACEQRB59wXsPIVRNPztzMPZYOg4_nJgq6Qu_TLbWsN5Gcu8BrWZlS1z_g9gQr4bIk_QObfvlcqvXqYQxxgef7lAXTAdlXEuS6hb4Qr2n8ERnVcjFBI3h_lRzrvu=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmJA9a4Q5UbIbTnKXJO0dFnPIMaewdO0O4vdd9PTGCg2nAkRmteaE4h0raUu3PY6t_4nduUtYO2dimsSIMyMI-xW9XCxjFGITo5eG-uJ9fUQAvetvyz1DSjH26X-GVaOEdi8mo=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlUA4gJ75ToPttvuD1x9C48gbirA7qW2bW1OSyeNazmscQY3LINUB0csHhzn09vD0oCvNRf8w2ONSRlc85dqsqbnbYk7hyEK62OSwhDrevuLyjKSK9PMIZwp_HK3nA39BJbegAN=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "I went there recently for a casual dinner and here is my experience as a hotelier :\n1. I ordered chicken clear soup as a starter which came after 20 mins which is …",
+          "rating": 3,
+          "author": "Esha Mallick",
+          "timeAgo": "a year ago",
+          "ownerReply": "Response from the owner a year agoThank you for taking the time to leave your review. We truly appreciate your feedback, as it helps us improve. We’re sorry to hear that your experience did not fully meet your expectations and take necessary action required for better in service sector..hope to see "
+        },
+        {
+          "text": "Good food and service . Reasonable price . Would be great if they would accept zomato pay as it is showing in zomato that they accept zomato pay 10% off.That is kind of misleading , management must get it removed from zomato pay offer ,if they don't accept it .\n\nFood was really good , they got things customized for us . We ordered 10inch pizza but I don't think  it was 10 inch ,should have been la",
+          "rating": 4,
+          "author": "Anita Desai",
+          "timeAgo": "a year ago"
+        },
+        {
+          "text": "Went there to celebrate maa's birthday....the behaviour of owner n all staffs is admirable....all the foods we ordered are equally tasty n fresh also the quantity is sufficient for us...had a great experience overall...must visit ..thank you so much❤️‍🩹 …",
+          "rating": 5,
+          "author": "Soyeta Paul",
+          "timeAgo": "2 years ago",
+          "ownerReply": "Response from the owner 2 years agoThank you so much for your wonderful 5/5 rating! We are thrilled to hear that you had a positive experience with our service. Your satisfaction is our top priority, and your feedback motivates us to keep delivering the best."
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-034",
+      "name": "The Brick House cafe",
+      "category": "Family restaurant",
+      "address": "University Rd, Uttarpara, Barasat, Berunanpukhuria, West Bengal 700126",
+      "city": "Barasat, West Bengal",
+      "phone": "+917003755743",
+      "whatsapp": "+917003755743",
+      "mapUrl": "https://www.google.com/maps/place/The+Brick+House+cafe/data=!4m7!3m6!1s0x39f899401fa523c9:0xd353b3abe221d96b!8m2!3d22.7426603!4d88.4387176!16s%2Fg%2F11p5xkwrjh!19sChIJySOlH0CZ-DkRa9kh4quzU9M?authuser=0&hl=en&rclk=1",
+      "rating": 4.2,
+      "reviewsCount": 375,
+      "lat": 22.7426603,
+      "lng": 88.4387176,
+      "hours": [
+        "Sunday, 12:30 to 10:45 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmLHEOc4MtnGVp4D6LFfV6qokHNbKLdlqIWpT7QkRQRz0sAks54kGHkX9Di8jhxmcXhpU0U5nK5lqIod7KijASJlVrhoXTkkKu_PKacPNT8tkz_x0YoPx99WxPQsRWcHDPaKTMa=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlluYPGWxY0Pu4XiB03OfnV6mTqu8bvDjgemrq5sT9pxpAYhpPjj8oNP-bDyPGI4wVxYIToZx_zz_m5byk2oiXg8XxmS_rjBlsHdvNNAL1GQaVot1bJoaYAdZoUAX8QJkSOBbtSbQ=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmLHEOc4MtnGVp4D6LFfV6qokHNbKLdlqIWpT7QkRQRz0sAks54kGHkX9Di8jhxmcXhpU0U5nK5lqIod7KijASJlVrhoXTkkKu_PKacPNT8tkz_x0YoPx99WxPQsRWcHDPaKTMa=w408-h271-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk-oZwnDX0oNyvF7jF3_TCBUtDYIlHYvRCKUdMw2liu1_0XhzpP4tomy5W-xjbUjkLS08xMKAKDTkUJL8Z5NEhPbgYYqK1g3yM2z4Dj0ndtz5JsE4WrOM1nYeWQZj4TXQOWdP3VgUUcF_St=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkrGt1fsED7fltg_-xjoq3o0BCnQTTmY8lhqBWa-1CeZJz1JI3k8PBeQtKqQSmi2MSLAZPKg-46mXUMrDeQMgT1yloUOCviHpcUllM-jYQfzz5C7pQr2CeSNj71xDQIB_iGKHWx=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkEtlsO_vUr3qTFdurHr2DvehDQY8lVve00u4fPtodn5UhmuZSHXkm6wKoxoYuAC-bDGgDMgmkSopXIWXOWGfWkqAvo4UydhodULAnk9Kd-XdGNiRuyjcn9PJU4SsEh93HmiaKr=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "In my experience it is the best cafe ever, I frequently visit here from inauguration of this cafe.\nTasty sufficient pocket friendly foods.\nWonderful atmosphere.\nStaff behaviour is very polite.\nParking availablity.\nYou can celebrate your any special day here.\nMust try items- Chicken Pakora with Coffee,\nChicken reshmi kabab,Laccha Parota with Chicken kadai.",
+          "rating": 5,
+          "author": "Freedom Riders",
+          "timeAgo": "8 months ago",
+          "ownerReply": "Response from the owner 8 months agoThank you for your feedback,,highly appreciable...."
+        },
+        {
+          "text": "1.Superb Ambiance\n2.Great place for a hangout with frieds and your loved ones\n3.Resonable price\n4.Decent services\n\nOverall a good place to chill out, but not when you are alone or lonely or lowly\nas the food won't comfort you a bit because it sucks.\n\nPov- May be you could try carrying your own food and enjoy the ambiance like a picnic garden if its allowed.",
+          "rating": 4,
+          "author": "Rubel mahajan",
+          "timeAgo": "7 months ago",
+          "ownerReply": "Response from the owner 7 months agoWhich food you didn't like?? May we know? We' ll try to serve you better next time"
+        },
+        {
+          "text": "It was a good experience..momo & soup was soo tasty . fish finger is good but its less fish stuffing.tea was good .. allover it's a nice place to hangout..",
+          "rating": 4,
+          "author": "Sneha Bhattacharjee (Snu)",
+          "timeAgo": "10 months ago"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-035",
+      "name": "Bengal Food Junction",
+      "category": "Restaurant",
+      "address": "Barbaria, Barbaria Bus Stop, PO- Jagannathpur PS-Duttapukur, Pin 700126, Barasat, West Bengal 700126",
+      "city": "Barasat, West Bengal",
+      "phone": "+919038281700",
+      "whatsapp": "+919038281700",
+      "mapUrl": "https://www.google.com/maps/place/Bengal+Food+Junction/data=!4m7!3m6!1s0x39f899bd80ad0623:0x74a4949c9af25c9b!8m2!3d22.7397622!4d88.4587238!16s%2Fg%2F11l30r0qmh!19sChIJIwatgL2Z-DkRm1zympyUpHQ?authuser=0&hl=en&rclk=1",
+      "rating": 4.2,
+      "reviewsCount": 59,
+      "lat": 22.7397622,
+      "lng": 88.4587238,
+      "hours": [
+        "Sunday, 12 to 10:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl18zpiVNWkzAUC3L47rWfgmiUvh6peTprdJy348bB1JCczCbRmGDvYQZTOnqfTOLnZZIk_KHEVbp5sSRvJfi57CDtzg9FCk9ZlKTsdcGpsN0zKYIqFT2p-qBzpxFQ6ToLSbidV=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmLHEOc4MtnGVp4D6LFfV6qokHNbKLdlqIWpT7QkRQRz0sAks54kGHkX9Di8jhxmcXhpU0U5nK5lqIod7KijASJlVrhoXTkkKu_PKacPNT8tkz_x0YoPx99WxPQsRWcHDPaKTMa=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl18zpiVNWkzAUC3L47rWfgmiUvh6peTprdJy348bB1JCczCbRmGDvYQZTOnqfTOLnZZIk_KHEVbp5sSRvJfi57CDtzg9FCk9ZlKTsdcGpsN0zKYIqFT2p-qBzpxFQ6ToLSbidV=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmliuY6_n3FFrjovAgQ_ykaGO0JuRipsVxaJWzRtYka6pwo-925XZk_WiAPupuRfBRUQkAjigS_u_tD3AmiUgm8S6a8cMLXpHarZVBUgLplJRraj78ZUTeO55M_aI_KA7OwYxc-GecRdMD7=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkuPcI1WKuqOvp1q-lRCjYjEYT_yqG6-4GaIxbk3EfAKkdpKJzZsL98g5XJmc-KNyJmIjNA9X4XZmBosYafQwhOrCWu5NIdIsKDIZIfYSoLOCYdiGlWmgtHZ7_tIGn91Ob3FRk=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWntyEUO509PW7gOwaAymGm0LMhPHphRFzVuQ7ZfIHFi6qA62fdQCuO0xHzlnAko0NM67DRHSfFi4EnQhxs5n4_RqYfPcm97JpUpSPH30dNc4hyQmClQ6TP3DJLAVos9Q2o9KrwJ=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Went with my sister and mother, the ambience and food along with the service was wonderful. A good place for dining. Specially Loved the decorations of this place, the lights and the poetry. It was overall a wonderful experience. The plus point is they have a good place for car parking.",
+          "rating": 5,
+          "author": "Shawan Barik",
+          "timeAgo": "2 years ago"
+        },
+        {
+          "text": "Hyderabadi Chicken biriyani here is awesome at very affordable price and tasty as authentic Hyderabadi biriyani, though starter was overpriced and just average in taste.",
+          "rating": 4,
+          "author": "Aman 9x",
+          "timeAgo": "a year ago"
+        },
+        {
+          "text": "According to price, food quality and taste is downgraded. No spacial dish and the price is too high compared to other Restaurants as well as Cafe. They overtake the Village Cafe and Restaurant, and renamed it Bengal Food Junction. But truly there are no special food like the old one. Totally waste of money and time. I ordered a normal Mutton Biriyani with extra Chicken. The mutton was average, but",
+          "rating": 2,
+          "author": "Sougata Biswas",
+          "timeAgo": "2 years ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-036",
+      "name": "Swaade Gandhe food adda",
+      "category": "Restaurant",
+      "address": "Siraj uddyan, Champadali, Banamalipur, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "website": "https://swadhegandhefoodadda.framer.website/",
+      "mapUrl": "https://www.google.com/maps/place/Swaade+Gandhe+food+adda/data=!4m7!3m6!1s0x39f8a32127244d65:0x7d25cd55725ecc29!8m2!3d22.721232!4d88.4864113!16s%2Fg%2F11j53q4_lc!19sChIJZU0kJyGj-DkRKcxeclXNJX0?authuser=0&hl=en&rclk=1",
+      "rating": 4.9,
+      "reviewsCount": 244,
+      "lat": 22.721232,
+      "lng": 88.4864113,
+      "hours": [
+        "Sunday, 12 to 8 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmsOtr1zf95N8ee7drZUEahnpQ37uNj4cf3UWTjcfcbuAv8FH-E9VnjWPAIiq1hw7uixY27p6bICePVQPdNb8_MeUUKj-G8mqQjg8bZjirzG4BykU99JjQsf-HIy9zo7vaswgfY=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl18zpiVNWkzAUC3L47rWfgmiUvh6peTprdJy348bB1JCczCbRmGDvYQZTOnqfTOLnZZIk_KHEVbp5sSRvJfi57CDtzg9FCk9ZlKTsdcGpsN0zKYIqFT2p-qBzpxFQ6ToLSbidV=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl18g3wn0KMJ5wSkyiFG6WbCbTO3A-L1edzzMgVWXUR4uXgTQm28m02kixESa09QoH9H7oWSipbz0j58BeWUeE6Fc0qHfnY8WPZS6nQtA99t35Ddc_Ndq2JT2UTRpiGZ8k2jw4=w426-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkeSnARGepvDivDUhoMOFjkYp_OEDfoH_2A4IfD_HD69X6EfXeyvvmuuDQ0mWXHuoeyh2rNfzB6ySOqzQmxsExY_Im5cTMyOud97DeyaaaKhk7SswWTMl0SYSk-teaDO9nNt25Zhw=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmXVkrE5LHBjvpCZvvuuEcWs-yh7Zv_pLL-ajF-HlZO1NxstM5phh_1-kJ2qwo34WYwPxGfJtTBq7blgnlP7pvEz0TWoyMIBM9LiAfHgiaSlPB03H4mNlEfv-pgeBXzUzxPOpc=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkRsbZcYf3qnvAsJjAourn1lz6BIpDs_OqnPiRHcs1OaHoT6aV8ywGX20q7XPLJuQt8vMl4qpl7BIUH11fzKn_0fl1hniI3CCS1IXAIw-D4ZedDPGZMvo-ZpxhaBW5du2w_xflL4w=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Best Mocktail i ever taken.nice pizza also.momo is awesome.best part of restaurant is its hygiene and behavior.nice ambiance to hangout with family and friend.so delicious fresh food.we will come again here.",
+          "rating": 5,
+          "author": "o p",
+          "timeAgo": "4 years ago"
+        },
+        {
+          "text": "Sitting in the beautiful environment of Siraj Udyan with friends, loved ones, or family, spending some time and enjoying delicious snacks feels wonderful! The food quality is good, tasty too, and the prices are reasonable. Their services and behaviour are also quite good.",
+          "rating": 4,
+          "author": "Tista Paul",
+          "timeAgo": "Edited 2 years ago"
+        },
+        {
+          "text": "Afghani momo is really awesome.mango shake is also fabeolous.",
+          "rating": 5,
+          "author": "Shamma Naz Parvin",
+          "timeAgo": "4 years ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-037",
+      "name": "D Bapi Biriyani Moyna",
+      "category": "Biryani restaurant",
+      "address": "Krishnanagar Rd, Ashok Colony, Barasat, Kolkata, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+919038575953",
+      "whatsapp": "+919038575953",
+      "website": "https://dbapibiriyani.in/",
+      "mapUrl": "https://www.google.com/maps/place/D+Bapi+Biriyani+Moyna/data=!4m7!3m6!1s0x39f8a3f7e27562b3:0x273c79e15831a734!8m2!3d22.7459462!4d88.4854602!16s%2Fg%2F11v9_h30lh!19sChIJs2J14vej-DkRNKcxWOF5PCc?authuser=0&hl=en&rclk=1",
+      "rating": 3.8,
+      "reviewsCount": 2293,
+      "lat": 22.7459462,
+      "lng": 88.4854602,
+      "hours": [
+        "Sunday, 12:15 pm to 12 am, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnGDeYLVl6Imz3Bju5_Qt1e62IaUeDPdgcDLKMrcd1LwpJOn4pwAqf4lRG09vxfOiTv0rwsvzjkFAqHIUMl72Wro-RR9Pczr92VGyFVep2LsqeUmT_Xsa3dYbnFdzzvfE-rNL7t=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmsOtr1zf95N8ee7drZUEahnpQ37uNj4cf3UWTjcfcbuAv8FH-E9VnjWPAIiq1hw7uixY27p6bICePVQPdNb8_MeUUKj-G8mqQjg8bZjirzG4BykU99JjQsf-HIy9zo7vaswgfY=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn24ctho8kGwl4wzreVb8fUHnxGvIe8RwAcaMOtcPpCcDPPJAw7zuMifwdW6B9kxAB4mvL4QaZq4WWDwLkRFHdiNlvbUXXG2ba-4dA9Y1UjwMoHcPMsIIx9Y3q_OGlwJVzNHUek=w408-h255-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk9EIKqjy49-yt2scG022yCYLGYddtxh6duMvjUiyTOOnCE65QX4wpgfak2x9B3O8GpSN5dRo6f0k67NebiMS9Qzy9qojHE6roFKjUWircrn-pjUxztfASjt4Sh0Tfn7sZ27XrmcvY28EA=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkQI_nzIO8ulsdjBdP2HbkEJYpigrTXOXITpEe08gGaezBYAgJ-QY6tPTd5TEPTUyaUMqOKwx2xWHRdYnJcKN7zIVkQsd51DF-eDkUTzv78NwFzffGhjs_BEl5z8tu31uHQkHy-rg=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlij8dJ5rZz2WpV8K_qNJIqUWaxFUcxLAHh2FQwxch_rDnMp_GaM2BWz3i3QNk56pfx4gQiZmuU3stAykonoUsurDAYva7Is0BZ-jiC1krhZKlTQil_afhwl_BxWFEz0HmYG5clpQ=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Visited D Bapi Barasat for the first time, and it completely blew me away!\nBefore visiting, I thought the prices were a bit on the higher side, but after eating, I can safely say every single rupee is justified. …",
+          "rating": 5,
+          "author": "Subhajit Mondal",
+          "timeAgo": "2 weeks ago"
+        },
+        {
+          "text": "Near Neelgunj Barasat, this outlet is situated just beside the National Highway.\nFood quality was really satisfying. …",
+          "rating": 5,
+          "author": "Arpita Dey208 reviews · 1,550 photos",
+          "timeAgo": "2 months ago"
+        },
+        {
+          "text": "On the occasion of 1st January, We went to their Barasat outlet. The seating arrangement was cozy and with good ambiance. Very first thing I didn't like that, the order has to be placed from the reception, and make the payment first. This is ridiculous. Service is so unprofessional and quite slow.\nWe ordered two plates of mutton biryani. Which is priced at 350rs/plate. 😱 After having the first gl",
+          "rating": 2,
+          "author": "Touhid Rana",
+          "timeAgo": "7 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-038",
+      "name": "Mouchak Sweets",
+      "category": "Sweet shop",
+      "address": "PF9J+C83, KNC Rd, Gupta Colony, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919830043670",
+      "whatsapp": "+919830043670",
+      "mapUrl": "https://www.google.com/maps/place/Mouchak+Sweets/data=!4m7!3m6!1s0x39f8a207c6a3ce37:0x4b9d557b571ad05f!8m2!3d22.7185229!4d88.4808085!16s%2Fg%2F1vqmgslx!19sChIJN86jxgei-DkRX9AaV3tVnUs?authuser=0&hl=en&rclk=1",
+      "rating": 4,
+      "reviewsCount": 2645,
+      "lat": 22.7185229,
+      "lng": 88.4808085,
+      "hours": [
+        "Sunday, 10 am to 10 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnGDeYLVl6Imz3Bju5_Qt1e62IaUeDPdgcDLKMrcd1LwpJOn4pwAqf4lRG09vxfOiTv0rwsvzjkFAqHIUMl72Wro-RR9Pczr92VGyFVep2LsqeUmT_Xsa3dYbnFdzzvfE-rNL7t=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmsOtr1zf95N8ee7drZUEahnpQ37uNj4cf3UWTjcfcbuAv8FH-E9VnjWPAIiq1hw7uixY27p6bICePVQPdNb8_MeUUKj-G8mqQjg8bZjirzG4BykU99JjQsf-HIy9zo7vaswgfY=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlln6mDS9P9HSO-j_1BiZLzoPL7Ueo_ZYXFUXapgvqNhw-v1SOADUI_UTQDl1HyuGymCEN7gUu-xMzaLON3nbouwO7FHDLwNLNgXUTJbvSsBHzO7xg8CwmH1vR35DqcpQd6YGnve5sbjo39=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmGUGjYgmdvXwkeTd0QGhsEp199tBzX95a2O2f24CsHHCsWNmhH49ySZ2H0DVTmwv3yyVBt5vWF0Vw22aQntO4KKNbIKkYBX37vf37tF-PJdmkYLHfgSHAnU4vo42F5BriFIfb4_sPNyMcs=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlln6mDS9P9HSO-j_1BiZLzoPL7Ueo_ZYXFUXapgvqNhw-v1SOADUI_UTQDl1HyuGymCEN7gUu-xMzaLON3nbouwO7FHDLwNLNgXUTJbvSsBHzO7xg8CwmH1vR35DqcpQd6YGnve5sbjo39=w397-h298-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmVkcl3hKdviJvgHEfwOROVUFCfO345JIsoc1Cli-aObI6BAdoPih5A1hsJQ-oxYF8HGpyeazJt09Vww9v4549xRCYYVhCmJsotCMzbS0Gh_zEbSo0SIBnE9XJ3p6NJ--PBO1WLRpkmQR0=w530-h298-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Its a spooky experience went to the mouchak’s restaurant, had for a lunch seems no one visit for a long time quite surprised even though food experience better from their bangaliyana outlet. …",
+          "rating": 5,
+          "author": "AnKiT",
+          "timeAgo": "7 months ago"
+        },
+        {
+          "text": "Dahi Vada is very delicious to eat. I like it very much! 🥰 I am very happy... ❤\n\nYou can also buy and try this Dahi Vada from here. I hope you will like it too! ❤️ …",
+          "rating": 5,
+          "author": "Lima Roy",
+          "timeAgo": "3 weeks ago"
+        },
+        {
+          "text": "Very Very tasty sweets , snacks . Everything is just wow.. Also very clean & hygienic..\nJust love it.. …",
+          "rating": 5,
+          "author": "Tanusree Saha",
+          "timeAgo": "a year ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-039",
+      "name": "New Fatcong",
+      "category": "Restaurant",
+      "address": "North East Kalikapur, Barasat, Kolkata, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+918013855355",
+      "whatsapp": "+918013855355",
+      "mapUrl": "https://www.google.com/maps/place/New+Fatcong/data=!4m7!3m6!1s0x39f8a3134d6581b9:0xed6f64d7e125c324!8m2!3d22.717455!4d88.4979285!16s%2Fg%2F11h1vg7v0b!19sChIJuYFlTROj-DkRJMMl4ddkb-0?authuser=0&hl=en&rclk=1",
+      "rating": 4.4,
+      "reviewsCount": 352,
+      "lat": 22.717455,
+      "lng": 88.4979285,
+      "hours": [
+        "Sunday, 6 to 10 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkd-84wkFM9DSzU0L3YbB5kM8Q0Uo_qzlnYL93qf25n-iieLHJglkW9NgnVe3N-pzlx5tq4qnlF46kueV8fTeEeEzOAdrf3DHBlur1jBXyfdwzF9aOBx6PvV28oSxQi9l0NXn2Cpw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnGDeYLVl6Imz3Bju5_Qt1e62IaUeDPdgcDLKMrcd1LwpJOn4pwAqf4lRG09vxfOiTv0rwsvzjkFAqHIUMl72Wro-RR9Pczr92VGyFVep2LsqeUmT_Xsa3dYbnFdzzvfE-rNL7t=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnMhZyaBEVbVAqj-oUDAx3S3_5SOcIJ2eCN51GbbLNou-QCxmkAvoibkmbWVCSTPO1-mLY8a21KJjWO70Ir4YNH5x6srJnxfMmsv3UdrGfvPoaOHxT9Q4jiUzHY1cq6TRH-n-3A=w408-h305-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnpDWmHt0A7FnujihrqHk2k_z9eYa0ht3A6SrYmqQxJH3WsZjnfZhdrXLS0orMk5vrMGCFwiwYRL7vHGChsfj6U9REVIjJ9ZOTZhDnjet-D0GL7nlQi1Wjkwtk_x2KWg7v8uNgSWq7_Ka0=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWllgdBpILg04SCbseXIUpJCB2PsnyZmkxDWeWNTMMRa-kYw1b0aQyzWeFnDlzTO3spMmHf2k0UbxUtgHfVupVV_gOlW42mFLcxpm9ccgs_BWSGznoEpyDLsdbGZUP3R8I5tv7oC=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmvz8iNqbyb3G3vIiLAU4mPxqUI102Jx3WPZSoRaI9MiQnOLLUszitWVaT0Apeq5Db3bh-q39TFraSs5O3SHJIroU1fDi-Ubq7TtaJBKOhxyz1H38Yye9Uo4s5Z-w3tEZytgevLAw=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Given one extra star just for the sake of the food taste. Everything else was really disappointing. …",
+          "rating": 2,
+          "author": "Utsab Suvro Biswas",
+          "timeAgo": "7 months ago"
+        },
+        {
+          "text": "The best Chinese cuisine in town...\nIf you ever visit this place, you must try 'Drums Of Heaven' and 'Fried Chicken'.... …",
+          "rating": 5,
+          "author": "Subham Sarkar",
+          "timeAgo": "Edited 7 years ago"
+        },
+        {
+          "text": "Best affordable i don't have more pictures completely hidden gem and also cheap best place to to hangout quietly trust me food is best\nAverage for two people is 500-600",
+          "rating": 5,
+          "author": "Tantri Saha",
+          "timeAgo": "4 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-040",
+      "name": "Cafe Green Bite",
+      "category": "Restaurant",
+      "address": "North East Kalikapur, Barasat, Kolkata, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+918013855355",
+      "whatsapp": "+918013855355",
+      "mapUrl": "https://www.google.com/maps/place/Cafe+Green+Bite/data=!4m7!3m6!1s0x39f89918420c0c15:0xc97d0580198353bb!8m2!3d22.7129098!4d88.4766978!16s%2Fg%2F11w21hn88p!19sChIJFQwMQhiZ-DkRu1ODGYAFfck?authuser=0&hl=en&rclk=1",
+      "rating": 4.4,
+      "reviewsCount": 352,
+      "lat": 22.7129098,
+      "lng": 88.4766978,
+      "hours": [
+        "Sunday, 6 to 10 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlc0r2x0eE6TsuA_nNSXZTEsp_EO3r73ghK2Qgov19nLBxD91DOpFd8UVAu3S5kjAmsWB4MBOxWF10Ug8rJhGFjBGYfWOiRb9D66AXN9R6DpV8CWqu3StzIZ0cYIiTXQXTcNXbVgA=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkd-84wkFM9DSzU0L3YbB5kM8Q0Uo_qzlnYL93qf25n-iieLHJglkW9NgnVe3N-pzlx5tq4qnlF46kueV8fTeEeEzOAdrf3DHBlur1jBXyfdwzF9aOBx6PvV28oSxQi9l0NXn2Cpw=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnMhZyaBEVbVAqj-oUDAx3S3_5SOcIJ2eCN51GbbLNou-QCxmkAvoibkmbWVCSTPO1-mLY8a21KJjWO70Ir4YNH5x6srJnxfMmsv3UdrGfvPoaOHxT9Q4jiUzHY1cq6TRH-n-3A=w408-h305-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnpDWmHt0A7FnujihrqHk2k_z9eYa0ht3A6SrYmqQxJH3WsZjnfZhdrXLS0orMk5vrMGCFwiwYRL7vHGChsfj6U9REVIjJ9ZOTZhDnjet-D0GL7nlQi1Wjkwtk_x2KWg7v8uNgSWq7_Ka0=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWllgdBpILg04SCbseXIUpJCB2PsnyZmkxDWeWNTMMRa-kYw1b0aQyzWeFnDlzTO3spMmHf2k0UbxUtgHfVupVV_gOlW42mFLcxpm9ccgs_BWSGznoEpyDLsdbGZUP3R8I5tv7oC=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmvz8iNqbyb3G3vIiLAU4mPxqUI102Jx3WPZSoRaI9MiQnOLLUszitWVaT0Apeq5Db3bh-q39TFraSs5O3SHJIroU1fDi-Ubq7TtaJBKOhxyz1H38Yye9Uo4s5Z-w3tEZytgevLAw=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Given one extra star just for the sake of the food taste. Everything else was really disappointing.\n\nThe main chef is the owner, server and chef. It's a one man show but the man has no decency to show whatsoever because he has none.\n\nGod knows where he gets his attitude from. He has absolutely no idea how to behave and his service is also poor.\n\nWhen I asked the guy for some tissues he said to go ",
+          "rating": 2,
+          "author": "Utsab Suvro Biswas",
+          "timeAgo": "7 months ago"
+        },
+        {
+          "text": "The best Chinese cuisine in town...\nIf you ever visit this place, you must try 'Drums Of Heaven' and 'Fried Chicken'....\nThe taste, quality and quantity is just invincible...\nMoreover the chef 'Babu Da' is the most talented chef i have ever come across...♥️♥️♥️♥️♥️♥️👍👍👍👍👍👍👍👌👌👌👌👌👌\nThe price of the food items is very reasonable!!!",
+          "rating": 4,
+          "author": "Subham Sarkar",
+          "timeAgo": "a year ago"
+        },
+        {
+          "text": "We discovered this place suddenly and decided to head on to Try something new. As we entered,  a soothing music and dim light just changed our mood and we ordered a veg pizza along with two black tea. The ambience is really photogenic and …",
+          "rating": 4,
+          "author": "SRESHA SARKAR",
+          "timeAgo": "a year ago"
+        },
+        {
+          "text": "The ambiance of this restaurant is simply fantastic! 🤩 The cozy atmosphere, soft lighting, and elegant decor create the perfect setting for any special occasion.❤️..And ...The food is really outstanding! Every meal we had was full of flavor and cooked to perfection... very affordable price 💥.. …",
+          "rating": 5,
+          "author": "Dona Roy",
+          "timeAgo": "Edited a year ago"
+        },
+        {
+          "text": "Very good resturent.  Affordable price & staff behavior is very good",
+          "rating": 5,
+          "author": "Pritam Das",
+          "timeAgo": "2 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-041",
+      "name": "Bisakha Restaurant",
+      "category": "Restaurant",
+      "address": "Dakbungalow More, 01/A, Rishi Bankim Chandra Rd, near Barasat, Prasadpur, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919088161610",
+      "whatsapp": "+919088161610",
+      "mapUrl": "https://www.google.com/maps/place/Bisakha+Restaurant/data=!4m7!3m6!1s0x39f898a79a35c83f:0xc6f6334c4888c0bc!8m2!3d22.7225955!4d88.4783895!16s%2Fg%2F11bw8m44vr!19sChIJP8g1mqeY-DkRvMCISEwz9sY?authuser=0&hl=en&rclk=1",
+      "rating": 4.5,
+      "reviewsCount": 74,
+      "lat": 22.7225955,
+      "lng": 88.4783895,
+      "hours": [
+        "Sunday, 3 to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkb0YSxZCLF70aST2BKYU52_VqOhR3a-Gr0oa9zpS5V8Sz5Ge1MHDRkhoM-pZDh6QL-Dcb464ajkfgtsPQAmdyf3JpquyxmoNtlqQd21x18WjEtVHeF1ownAWGb1c3eTUCb97DoZQ=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlc0r2x0eE6TsuA_nNSXZTEsp_EO3r73ghK2Qgov19nLBxD91DOpFd8UVAu3S5kjAmsWB4MBOxWF10Ug8rJhGFjBGYfWOiRb9D66AXN9R6DpV8CWqu3StzIZ0cYIiTXQXTcNXbVgA=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmE7-Sq2zCrt-BM_szQPFgjZj2a1HC54WZ79G1hJz4LbCJ7_EhHgn2OSyTOFhDXVrxBuOrGLlwUVPqQcavl6k0g0f2RKpKMugWFzJ5qVhlp4OJsdgCPdfwcUKm2sbB3zartgBtB77luIqg=w408-h544-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn26EjMBWuu5_xzpQDr9h10p_QBaxGxR8EeUbQKnXsz6Bzu_sgv6Wv2FGxvuyUOdelCtisPKrwYWfDKqkVhYbCj3NJmAqePi-p_v1FYXlVm4e2g6WEl-prHHn-kGEfB3Z6Ccs0kRRXQxuo=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnLGD07BhY74VK3u4P4gbEsxFtjGuFbd17R1iThbfSdwFUCbK6HjECU40_a8FKzmxkcDpPuyEy0Mgn-G24mk6cyc1i1pe0uIzJcvwP412kCng5lGO8L0NJFPnxBg_GJc3rZPUkaEQ=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWleMFiBUAekPDYLbOcsOohMtFqaGySbwZG-m-poXFZIt5IyEYOJDCWx3Yjb-mD5om0_1wBDnLM4oubmjPeMlcY5alAnyxxC3d6vEsbEWShRSoqphYHvhV6udsMsH8PJgfR3198=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Very good resturent.  Affordable price & staff behavior is very good",
+          "rating": 5,
+          "author": "Pritam Das",
+          "timeAgo": "2 months ago"
+        },
+        {
+          "text": "We discovered this place suddenly and decided to head on to Try something new. As we entered,  a soothing music and dim light just changed our mood and we ordered a veg pizza along with two black tea. The ambience is really photogenic and  staffs behaved politely.  I was worried about the quality of veg pizza (as we ordered with a little modification,  with no onion) while drinking black tea. Noth",
+          "rating": 4,
+          "author": "SRESHA SARKAR",
+          "timeAgo": "a year ago"
+        },
+        {
+          "text": "The ambiance of this restaurant is simply fantastic! 🤩 The cozy atmosphere, soft lighting, and elegant decor create the perfect setting for any special occasion.❤️..And ...The food is really outstanding! Every meal we had was full of flavor and cooked to perfection... very affordable price 💥..",
+          "rating": 5,
+          "author": "Dona Roy",
+          "timeAgo": "Edited a year ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-042",
+      "name": "TapBeer Bar & Kitchen",
+      "category": "Restaurant",
+      "address": "3rd floor, Star mall 74/Mall/1, North Jessore Road Madhyamgram, Sisir Kunja, Barasat, kolkata, West Bengal 700129",
+      "city": "Barasat, West Bengal",
+      "phone": "+917004672696",
+      "whatsapp": "+917004672696",
+      "mapUrl": "https://www.google.com/maps/place/TapBeer+Bar+%26+Kitchen/data=!4m7!3m6!1s0x39f89fd025d11c33:0xccca715f9428428a!8m2!3d22.7031723!4d88.4717675!16s%2Fg%2F11w3bxf2c6!19sChIJMxzRJdCf-DkRikIolF9xysw?authuser=0&hl=en&rclk=1",
+      "rating": 4.6,
+      "reviewsCount": 210,
+      "lat": 22.7031723,
+      "lng": 88.4717675,
+      "hours": [
+        "Sunday, 11:30 am to 11:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmQbOGJeYtfmBvsDXgfYia0lyukSkGDFeltrNwN_qaVH4XOZMuOKj6gQYgsGLLdZO16EQ2sJ7HrAjCXbkwZu4w01-Jt5rZfPqNzEkUR1ElhuT9Cj4WUWZCwCVHgjFIg9PO_OPdtS0sYxbA=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkb0YSxZCLF70aST2BKYU52_VqOhR3a-Gr0oa9zpS5V8Sz5Ge1MHDRkhoM-pZDh6QL-Dcb464ajkfgtsPQAmdyf3JpquyxmoNtlqQd21x18WjEtVHeF1ownAWGb1c3eTUCb97DoZQ=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnKzxcAz_rWIMzGxm9-aEP380b1bwA3sKxsHlwZp0qqMGAWqF4Fh9VkxJSGQRRaXaiZzy4KGD4eCpC1LMVrKa8exxTV6DHLc9UQHb7Dmlu_mmAxPjfC8xR7-t4BQlkfZf0HYrJg0w=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkXfFGKPDghJ6mDPNIugfC9RKCwJiXFGLak54IUGXiBziBGFmlSedzt7IZWRWGI7T4Ot_klCkYhHYgXtBj01Qn1ScAmXmMhqZjfTXoa8hQOMPvKPWPDVaES3pxzrQlc_diIjRg=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkFtCD3ZFP8vGGVgP02WbB2vhX7ZgUroskiyKSTkTxYBgSTpL-9Y0B7g9ntWh0v5Be3U66eo9u37DST5dYli-rkH4qTxPTtZZAK-6LzurtKZkXg-nTZt_KZQ6GCTxjoYz4YWqWv=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmFg8SI6TjEuLyXvbeNmz-EDi4JB7GeO2efN9BQm1eLlkbpUz-1MHUGjuYL2lh25tyNFMzyNEBk5iF4m95ABRdyO5HRH5H91UTqS1mFujG9l4rQVnzjkhJGJuRUVgoyADMdfl2EIg=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "The drinks were amazing, and the staff were very polite and welcoming. It was my first time trying cocktails , and I had a great experience overall.\nHowever, there was one issue that made us uncomfortable. An old man  sitting in cash counter was continuously staring at my girlfriend, which affected the atmosphere and made us feel uneasy. We ended up leaving earlier than planned because of it.\nI ho",
+          "rating": 3,
+          "author": "Aman Prasad",
+          "timeAgo": "2 months ago"
+        },
+        {
+          "text": "Had an amazing time celebrating at Tap Beer Bar & Kitchen! The atmosphere was lively, the drinks were great, and the overall experience left me incredibly happy. Highly recommended for a fun night out!\"\n@kabirajs342",
+          "rating": 5,
+          "author": "Somnath kabiraj",
+          "timeAgo": "2 months ago"
+        },
+        {
+          "text": "They cheated,  Give 2 small peg of 30ml, charge 2 big peg of 60ml. Cheated with smile with no shame.\n\n3rd class, even not all brands are available. They do it intentionally,  an young boy was there, even I tried brand as per him as all brands are not available, when bill given he tell he served all 60ml peg to us , it's totally cheating.",
+          "rating": 1,
+          "author": "Sandip Mondal",
+          "timeAgo": "a month ago",
+          "ownerReply": "Response from the owner a month agoSorry to here this from you sir Your feedback matters ...We don't cheat our guests sir there might be some confusion .Our standard serving 30ml .Can you please share your Bill or Bill Number On Our Tapbeer Helpline:-9123087647."
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-043",
+      "name": "ADITYA CAFE AND RESTAURANT",
+      "category": "Restaurant",
+      "address": "Badu Road, Kathor Rd, near Dakat Kalibari, Barasat, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+919836525454",
+      "whatsapp": "+919836525454",
+      "mapUrl": "https://www.google.com/maps/place/ADITYA+CAFE+AND+RESTAURANT/data=!4m7!3m6!1s0x39f8a1004398eaa7:0x462818b5883db2fb!8m2!3d22.7047519!4d88.5026501!16s%2Fg%2F11wnc92q4w!19sChIJp-qYQwCh-DkR-7I9iLUYKEY?authuser=0&hl=en&rclk=1",
+      "rating": 4.5,
+      "reviewsCount": 36,
+      "lat": 22.7047519,
+      "lng": 88.5026501,
+      "hours": [
+        "Sunday, 4 am to 11:59 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmSgWpmT3mgiweXZWDr_ld_PyVUqEGfHhOVl6PsCjGj9m9RjDdKvZF2N2H5vVIVx7BbWGoBmRurqlQHKV6rgomX8JeLMwqa09_YN45E3TLV1MMJrjEWVqZF0O_kJu7X8_118hxg=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmQbOGJeYtfmBvsDXgfYia0lyukSkGDFeltrNwN_qaVH4XOZMuOKj6gQYgsGLLdZO16EQ2sJ7HrAjCXbkwZu4w01-Jt5rZfPqNzEkUR1ElhuT9Cj4WUWZCwCVHgjFIg9PO_OPdtS0sYxbA=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmSgWpmT3mgiweXZWDr_ld_PyVUqEGfHhOVl6PsCjGj9m9RjDdKvZF2N2H5vVIVx7BbWGoBmRurqlQHKV6rgomX8JeLMwqa09_YN45E3TLV1MMJrjEWVqZF0O_kJu7X8_118hxg=w408-h544-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnNq5jJJKKIUJxZgNQhSyd3S5C8C5mt9krj0RvEU8n8Ztmvp76o5TaaKdx8CPe6HBJhvyEaQVHRXqXD2kMHJoJ9JRsPpr5_Hb4BgVNDbJS6enRay3srDMVWyrZH09JmwzH2hRt7P6OgP0wh=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmSgWpmT3mgiweXZWDr_ld_PyVUqEGfHhOVl6PsCjGj9m9RjDdKvZF2N2H5vVIVx7BbWGoBmRurqlQHKV6rgomX8JeLMwqa09_YN45E3TLV1MMJrjEWVqZF0O_kJu7X8_118hxg=w224-h298-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnNq5jJJKKIUJxZgNQhSyd3S5C8C5mt9krj0RvEU8n8Ztmvp76o5TaaKdx8CPe6HBJhvyEaQVHRXqXD2kMHJoJ9JRsPpr5_Hb4BgVNDbJS6enRay3srDMVWyrZH09JmwzH2hRt7P6OgP0wh=w224-h316-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "The food was so delicious and the service was really great, too!” 2. “The Egg maggi was so yummy and I ate the whole thing, even though it was quite heavy for one person.",
+          "rating": 5,
+          "author": "Saheli Paul",
+          "timeAgo": "3 months ago"
+        },
+        {
+          "text": "Everything was okay until I found that they charge more than the price in their menu. Even cross the mrps for packaged foods.\n\nEgg roll is written at Rs. 35, but they notified me about the updated price(40) when it was already being made.\n\nBottled cold drinks(mrp 12) were charged with 14 each.",
+          "rating": 3,
+          "author": "Arnab",
+          "timeAgo": "a year ago"
+        },
+        {
+          "text": "Very good food quality, very friendly , helpful staff atmosphere is quite well.\nOverall good experience  must visit.",
+          "rating": 5,
+          "author": "Amit Majumder",
+          "timeAgo": "5 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-044",
+      "name": "Hakkaland Restaurant Cum Bar",
+      "category": "Restaurant",
+      "address": "5th Floor, STAR MALL, Jessore Rd, Sisir Kunja, Madhyamgram, West Bengal 700129",
+      "city": "Barasat, West Bengal",
+      "phone": "+918697778899",
+      "whatsapp": "+918697778899",
+      "mapUrl": "https://www.google.com/maps/place/Hakkaland+Restaurant+Cum+Bar/data=!4m7!3m6!1s0x39f89f209a416f27:0x1feedfbb3eba4280!8m2!3d22.7030075!4d88.4717483!16s%2Fg%2F11llg2r8bw!19sChIJJ29BmiCf-DkRgEK6Prvf7h8?authuser=0&hl=en&rclk=1",
+      "rating": 4,
+      "reviewsCount": 349,
+      "lat": 22.7030075,
+      "lng": 88.4717483,
+      "hours": [
+        "Sunday, 12 to 10:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnYm0j8bHEOoXHW_Lo2WuMWbypWMcPS2WCWrTfrH_3Z9ZbnLlJX-wMvdwfGId5DakbE4odawY8N4Kw0otHK6cVY6w7JI7fAv5ybHOuOvxXufoMABMKYyyEZyxjZ0DM8aAjZOYZGMD7Exx5n=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmSgWpmT3mgiweXZWDr_ld_PyVUqEGfHhOVl6PsCjGj9m9RjDdKvZF2N2H5vVIVx7BbWGoBmRurqlQHKV6rgomX8JeLMwqa09_YN45E3TLV1MMJrjEWVqZF0O_kJu7X8_118hxg=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl2et7HORTDpuyPiN2RI1kJ-G3heiYLYgUkXkPw77WyMGnv6bOQ_r9z0Rvfo1czXVsVEaDClnN_1W7BK5L2KnQS6e1AcBuHT-6DZg6j5ehymO3maRQJW5cfE2uvCq_5yFHwWO7QXw=w408-h408-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlzUdvLa0zktIVTbd7iQJZPXZkJMNBMrsq0e5c7Cu_uYNWaTmuGa-aBy0fDcp2TeBFgFnOfghJszJ2gf3OR-wGohuap0YXfwGevxZjnM_DEbh5VvMoCAdLc4JmxGJimdTFVFqD1SP83aPXF=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkXtc1hHPWDUIYuzTQEdcrYog9I-gFRRG30yep4w93fH5ndiIEthxyDajn7n4N3xW92194JqJDt4QfcT1_hWku77hgr2oq3br-GlOG9VYp2jc1TBeZn6Z5VPRj8RefyYPdkvLY7=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmmPHUmw6l-kT4XdYbpEyLLXa9dkU73Yg-58ZaLTbz1iFYDSSV8LR54zUO_RXkYGdEpUYIC1h6IFSMDmm0kx9_usoJVLV4hDV1oD2QVr0n1ZerXlQDYpmHe9MM0Y1IF04KC3z0=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "socialLinks": [
+        {
+          "platform": "facebook",
+          "url": "https://www.facebook.com/hakkaland.india/menu/?ref=page_internal"
+        }
+      ],
+      "reviews": [
+        {
+          "text": "I ordered the Chicken 65 and the Burned Garlic fried noodles (egg-Chicken). The Chicken 65 was fantastic—the chicken was moist, soft, and juicy. However, I was a bit disappointed with the noodles—it lacked the distinct smoked chili garlic flavor I was expecting",
+          "rating": 3,
+          "author": "Juthika Basu",
+          "timeAgo": "a month ago"
+        },
+        {
+          "text": "Good chinese food. Great ambience. Price range normal. Recommended 👍",
+          "rating": 4,
+          "author": "Jayanshi De",
+          "timeAgo": "2 months ago"
+        },
+        {
+          "text": "The food quality is so filthy........ordered Chinese sizzler, the noodles taste  like street food stall. Basa smelling like dipped into formalin solution for long period of time. Provided normal dry corn in the name of American corn. Highlighted the entire matter to the Manager but he was continuously try to manipulate me by different excuses & try to establish his statement that I was wrong. Reco",
+          "rating": 1,
+          "author": "arnab mitra",
+          "timeAgo": "10 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-045",
+      "name": "Dhanush Restaurant and Cafe",
+      "category": "Restaurant",
+      "address": "Suripukur , algaria,NH 34(12, Barasat, Nebadhai Duttapukur, barasat, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+919088101995",
+      "whatsapp": "+919088101995",
+      "website": "https://dhanushcafe.my.canva.site/about-dhanush",
+      "mapUrl": "https://www.google.com/maps/place/Dhanush+Restaurant+and+Cafe/data=!4m7!3m6!1s0x39f899f76a6bf307:0x48dcd0b3016b1dc6!8m2!3d22.7520586!4d88.4881537!16s%2Fg%2F11lngcrljz!19sChIJB_NraveZ-DkRxh1rAbPQ3Eg?authuser=0&hl=en&rclk=1",
+      "rating": 4.4,
+      "reviewsCount": 108,
+      "lat": 22.7520586,
+      "lng": 88.4881537,
+      "hours": [
+        "Closes soon · 11:30 pm · Opens 12 pm Sat · See more hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkftnBUr76FPOjJiMMj2B6AR13vniCjSPJyEwKgfssAzqHW5aoblr6Uhk5Cr0ekfTNFNCxwrxPM1YCUS4dRIJVHI4AiYGDpFuh84M3kqScHfUkpBgBD7AIJMIlTNd4yvCzHisb_=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnYm0j8bHEOoXHW_Lo2WuMWbypWMcPS2WCWrTfrH_3Z9ZbnLlJX-wMvdwfGId5DakbE4odawY8N4Kw0otHK6cVY6w7JI7fAv5ybHOuOvxXufoMABMKYyyEZyxjZ0DM8aAjZOYZGMD7Exx5n=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkScvARoLhZuYhrHWAxND-huLg-2RLSl3ixUolLWpG_UZVB5GZCf-XlNBMYXGN3Nnk7SdHYvohm0k7De92V2DMiQ8Sd43n3szdcPQXjZvHHg1DTWDlUcWh37QQpMDFsFeGdcK3B=w426-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnQngu9K6v6EZ5ywdwpwWDAqXLLnAla_gjXr4GZv71t9ZHy3DO1ALkV7RJGWHdPH0_PymzQ_AXrMNgLMsYLzDyy9LGX24LLdIgiJ8PFAxsXxDKRUoC4HcOiuIR3jgsS3hJ5doYzAfQAqxxR=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnciSy-s7xQ5U9sS3det_dWe-bJ8qpcdLf4MWcgOqfTLPFPooZkYJP45FMdglNlSTNp7ITjr4QECc0gnULSRD1LJ6YZliP5ywq-ryXr322bhstBwe4UGsfowsrFh_nGUVPnFjU=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnYnTz3KxUOOo79y_8G5ycE4y4mJBf5bit15JpPZ9FZvNjPBMmpehVU9NIXEwqFd6ljB_6ehcYeFa-nKMNndrREKlFtEgegNxs8lE2cjk9Dhddmn9VbDrOvj5vAT88nxeTIojxf=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "We often goes to the Krishna nagar road for a little refreshment. And there are very few good dhabas beside the road. We almost tried every cafes and dhabas around. And at last we went there in the dhanush. After opening the menu card you can realize the price is on the higher side. We ordered one plate of crispy chicken (250rs) and two large tea(35rs). The service is little slow. And the crispy c",
+          "rating": 3,
+          "author": "Touhid Rana",
+          "timeAgo": "Edited 2 months ago"
+        },
+        {
+          "text": "The food here was amazing. It was absolutely delicious. Service was absolutely 10/10 and the ambience, live music everything made the experience even better. The cafe owners are really sweet and amazing. If you happen to be in Barsat do give Dhanush a visit! You'll love it 😀",
+          "rating": 5,
+          "author": "Ritika Bharti",
+          "timeAgo": "3 weeks ago"
+        },
+        {
+          "text": "Food quality has improved. We tried Chicken Tikka Kebab earlier which was good and recently tried Egg Chicken Fried Rice (₹140) and Butter Garlic Chicken (₹190) which were great. Ambience is very good and nicely decorated. Open air dining and party area available here. Milk Tea (₹15) is also must try.",
+          "rating": 5,
+          "author": "ArnavMaaiitty555 reviews · 3,213 photos",
+          "timeAgo": "Edited 9 months ago",
+          "ownerReply": "Response from the owner a year agoThank you for taking the time to share your experience with us! We're thrilled to know you enjoyed the ambiance and appreciated the decor—it means a lot to us. 😊 … More"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-046",
+      "name": "Desilicious cafe and restro",
+      "category": "Restaurant",
+      "address": "Berial ground road Hatkhola, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919073014757",
+      "whatsapp": "+919073014757",
+      "mapUrl": "https://www.google.com/maps/place/Desilicious+cafe+and+restro/data=!4m7!3m6!1s0x39f8a3dd4f8fb4bb:0xd34462733c00f082!8m2!3d22.7133654!4d88.4802815!16s%2Fg%2F11gy3frlzp!19sChIJu7SPT92j-DkRgvAAPHNiRNM?authuser=0&hl=en&rclk=1",
+      "rating": 4.3,
+      "reviewsCount": 144,
+      "lat": 22.7133654,
+      "lng": 88.4802815,
+      "hours": [
+        "Sunday, 1:30 to 10:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmAbU_Jj0-sMQOOnpoCND7Jnjr-0KE4OWuBJQxPJFaiW4rRNaFPh2zY4lQXO3oXAWBy7P1KmwLv77pRLEYGSOpvNtex4CTurlPxBe8tvK5YYmvv1HPdIX9MaDjqVyaFU2Elw8RI=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkftnBUr76FPOjJiMMj2B6AR13vniCjSPJyEwKgfssAzqHW5aoblr6Uhk5Cr0ekfTNFNCxwrxPM1YCUS4dRIJVHI4AiYGDpFuh84M3kqScHfUkpBgBD7AIJMIlTNd4yvCzHisb_=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk4a5vLs5NKtY7tVYG2RhCTUW9hUUJfRKMuLHOsQmbvQpR96m_FJeNE4HabRfTSYRQcj0NZFfQ_zsFT2YAUo_bvjjFdr-E-tbUa921fMnwDrOvuNRp05OWUvugMAR92AgCTg3QyKg=w426-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl4X3rNWkVQqpQOEPBiFR9Uf4Q946eldzg7mJ1DM2lsFD8BDDqPTsZdbKhOc336JBiqM8BDMzsDk0MwvMkbRL6_iqtaqt6yWQI6Dk0zg1aYiSw6Ikd4LAq6nD7oNvxJ9U3RroHgcP4HFnA=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkzcZ-kpXsd562YB26lUGamyq2klKeA0Xv8ikUaRrPwtiKVCfgfzt1TnLnO5V2gtRdHaOlbVh7Kdix-4hqXG2l8O_cVca9H67fbFFSXveg_iWWbjBdmT8Lghd93Sohq0dzN_-B8=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlvPKyPmU-lg2d-Vv5zPRbT6gxEFKkAqJ_lFW0ud4_yRMSTqNGP4UF9IK3p7XYEiLTFFWFuWc8PHVQ_CFpMlZ63gcYZcAIbs8pR3cWiGDvoruN-6wSrGXU5abR_NNZXD-N0QP5W=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "We went there for early dinner. Place was small and there are not a lot of sitting arrangements. We ordered fish finger, banana shake, cold coffee and one fish and one chicken item.\n\nExcept the Chicken item the others were average. I didn't like the fish finger much.",
+          "rating": 4,
+          "author": "Soumya Saha",
+          "timeAgo": "3 years ago"
+        },
+        {
+          "text": "Good food quality and in best price. Ambience is is very well for having dinner :)",
+          "rating": 5,
+          "author": "Ankan Basu",
+          "timeAgo": "a month ago"
+        },
+        {
+          "text": "Awesome food..justify the name \"Delicious\"..\nOnly high chair facilities available,  thats why you have to be very carefull for your little one..\nMust Try combos...",
+          "rating": 5,
+          "author": "Krishnendu Suin",
+          "timeAgo": "4 years ago",
+          "ownerReply": "Response from the owner 4 years agoSir,thank you ,\nDo visit us again"
+        }
+      ],
+      "ownerReplies": true,
+      "source": "maps"
+    },
+    {
+      "id": "lead-047",
+      "name": "3 Star Restaurant Cum Bar",
+      "category": "Restaurant",
+      "address": "Berial ground road Hatkhola, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "phone": "+919073014757",
+      "whatsapp": "+919073014757",
+      "mapUrl": "https://www.google.com/maps/place/3+Star+Restaurant+Cum+Bar/data=!4m7!3m6!1s0x39f8a247357a8be7:0x73dc60425cfe438e!8m2!3d22.7333887!4d88.5055057!16s%2Fg%2F11ckvd170y!19sChIJ54t6NUei-DkRjkP-XEJg3HM?authuser=0&hl=en&rclk=1",
+      "rating": 4.3,
+      "reviewsCount": 144,
+      "lat": 22.7333887,
+      "lng": 88.5055057,
+      "hours": [
+        "Sunday, 1:30 to 10:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmAbU_Jj0-sMQOOnpoCND7Jnjr-0KE4OWuBJQxPJFaiW4rRNaFPh2zY4lQXO3oXAWBy7P1KmwLv77pRLEYGSOpvNtex4CTurlPxBe8tvK5YYmvv1HPdIX9MaDjqVyaFU2Elw8RI=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkftnBUr76FPOjJiMMj2B6AR13vniCjSPJyEwKgfssAzqHW5aoblr6Uhk5Cr0ekfTNFNCxwrxPM1YCUS4dRIJVHI4AiYGDpFuh84M3kqScHfUkpBgBD7AIJMIlTNd4yvCzHisb_=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk4a5vLs5NKtY7tVYG2RhCTUW9hUUJfRKMuLHOsQmbvQpR96m_FJeNE4HabRfTSYRQcj0NZFfQ_zsFT2YAUo_bvjjFdr-E-tbUa921fMnwDrOvuNRp05OWUvugMAR92AgCTg3QyKg=w426-h240-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl4X3rNWkVQqpQOEPBiFR9Uf4Q946eldzg7mJ1DM2lsFD8BDDqPTsZdbKhOc336JBiqM8BDMzsDk0MwvMkbRL6_iqtaqt6yWQI6Dk0zg1aYiSw6Ikd4LAq6nD7oNvxJ9U3RroHgcP4HFnA=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkzcZ-kpXsd562YB26lUGamyq2klKeA0Xv8ikUaRrPwtiKVCfgfzt1TnLnO5V2gtRdHaOlbVh7Kdix-4hqXG2l8O_cVca9H67fbFFSXveg_iWWbjBdmT8Lghd93Sohq0dzN_-B8=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlvPKyPmU-lg2d-Vv5zPRbT6gxEFKkAqJ_lFW0ud4_yRMSTqNGP4UF9IK3p7XYEiLTFFWFuWc8PHVQ_CFpMlZ63gcYZcAIbs8pR3cWiGDvoruN-6wSrGXU5abR_NNZXD-N0QP5W=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "The number taking for the Dancers are blandly Scam...they will tell you to give a certain amount of money then they will give you number which ultimately doesn't gets connected with the dancer for future services! Am raring 3 ⭐ just for the food & service.",
+          "rating": 3,
+          "author": "Soumya Saha",
+          "timeAgo": "6 months ago"
+        },
+        {
+          "text": "The number taking for the Dancers are blandly Scam...they will tell you to give a certain amount of money then they will give you number which ultimately doesn't gets connected with the dancer for future services! Am raring 3 ⭐ just for the food & service.",
+          "rating": 3,
+          "author": "Shounak Bal",
+          "timeAgo": "6 months ago"
+        },
+        {
+          "text": "3 star restaurant cum bar situated near the main road. Very good place for food and drinks.",
+          "rating": 4,
+          "author": "Ayan Chaki",
+          "timeAgo": "3 years ago"
+        },
+        {
+          "text": "It's one of the best restaurant cum bar in Habra road near kajipara . Good service are there",
+          "rating": 4,
+          "author": "SAYAN MAJI",
+          "timeAgo": "3 years ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-048",
+      "name": "The Paris Cafe & Restaurant",
+      "category": "Restaurant",
+      "address": "Fortune Township, Near, Jessore Rd, Kazipara, Barasat, Kolkata, West Bengal 700125",
+      "city": "Barasat, West Bengal",
+      "phone": "+918335979741",
+      "whatsapp": "+918335979741",
+      "mapUrl": "https://www.google.com/maps/place/The+Paris+Cafe+%26+Restaurant/data=!4m7!3m6!1s0x39f89900279442f9:0x4eca181610ce459d!8m2!3d22.7496909!4d88.4454212!16s%2Fg%2F11x2179gy9!19sChIJ-UKUJwCZ-DkRnUXOEBYYyk4?authuser=0&hl=en&rclk=1",
+      "rating": 4,
+      "reviewsCount": 831,
+      "lat": 22.7496909,
+      "lng": 88.4454212,
+      "hours": [
+        "Sunday, 12 to 11 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnB0O5znj4A406RipNPw2dBN2XGyCe7rJhsINRlrdj153QEkWwc00H7Yz9jSYYMPIxzqpbG8f1sOkhulxIGSddgXQkzwPf0MSNYKTWakHurKkrMfvY8ntqmSe7sq-jRuaOM=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmAbU_Jj0-sMQOOnpoCND7Jnjr-0KE4OWuBJQxPJFaiW4rRNaFPh2zY4lQXO3oXAWBy7P1KmwLv77pRLEYGSOpvNtex4CTurlPxBe8tvK5YYmvv1HPdIX9MaDjqVyaFU2Elw8RI=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlUHMTQGph5IGe-7LSAU3m_pjSmNn8PYVjeTMGu4qfkHhezEhDis9I2thh1F1wmCLHcCr_Amz_aGc2nUVlt2tZ_WeV0CaYSo4S6VWSWj3r2Z37C9VVtAqnIXBjEM9X4s4Fw1J5Yiej0c78i=w408-h307-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlKCZvntu2fWMXsM28I7LAShXsKHqvBMeD2WNS6UtLFiWMiG0i_pGfI5W0eFprHlKzvQMlqeSyMvwFmH5KgaA9VeUTi16NLXCWvzk2xuFIwLTtg_-8BRA0ojxskRpLQakJ_J7xzLyMDFS2q=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm6_V3T1HvSQNElkRbwN1F9gwLU9-gTULdVw3uaSuX33NsAP93cz2hNILIPfybCj__7__Oh6k-kdXlceFKSit24njZTW_HGT3SHVEUpYmzpwvvU3pw1dQgKyJ6ksGCbebF0F9s=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWniT2DMyTL6J2VROO_zPnFRDZ3alRIwfYPU6T4Is__paQ_FBSSy7-jjvBzc_CY-ucCKNTVa48PtANNCcmby1BxyN-gLaVicLQALfR2NEYahQCZXBIBBenlW2StIL2HGoQaJcHeoIQ=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "The number taking for the Dancers are blandly Scam...they will tell you to give a certain amount of money then they will give you number which ultimately doesn't gets connected with the dancer for future services! Am raring 3 ⭐ just for the food & service.",
+          "rating": 3,
+          "author": "Shounak Bal",
+          "timeAgo": "6 months ago"
+        },
+        {
+          "text": "3 star restaurant cum bar situated near the main road. Very good place for food and drinks.",
+          "rating": 4,
+          "author": "Ayan Chaki",
+          "timeAgo": "3 years ago"
+        },
+        {
+          "text": "It's one of the best restaurant cum bar in Habra road near kajipara . Good service are there",
+          "rating": 4,
+          "author": "SAYAN MAJI",
+          "timeAgo": "3 years ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-049",
+      "name": "Visti Cafe and Restaurant",
+      "category": "Restaurant",
+      "address": "Barasat, Berunanpukhuria, Malikapur, West Bengal 700126",
+      "city": "Barasat, West Bengal",
+      "phone": "+917439531900",
+      "whatsapp": "+917439531900",
+      "mapUrl": "https://www.google.com/maps/place/Visti+Cafe+and+Restaurant/data=!4m7!3m6!1s0x39f8999dd73241f9:0xb0522212556594dc!8m2!3d22.7425108!4d88.4380065!16s%2Fg%2F11yvy5w6km!19sChIJ-UEy152Z-DkR3JRlVRIiUrA?authuser=0&hl=en&rclk=1",
+      "rating": 4,
+      "reviewsCount": 44,
+      "lat": 22.7425108,
+      "lng": 88.4380065,
+      "hours": [
+        "Sunday, 12:30 to 10:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnB0O5znj4A406RipNPw2dBN2XGyCe7rJhsINRlrdj153QEkWwc00H7Yz9jSYYMPIxzqpbG8f1sOkhulxIGSddgXQkzwPf0MSNYKTWakHurKkrMfvY8ntqmSe7sq-jRuaOM=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmAbU_Jj0-sMQOOnpoCND7Jnjr-0KE4OWuBJQxPJFaiW4rRNaFPh2zY4lQXO3oXAWBy7P1KmwLv77pRLEYGSOpvNtex4CTurlPxBe8tvK5YYmvv1HPdIX9MaDjqVyaFU2Elw8RI=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmF9yFuhK1C_2vgB-KVkBybNPqyckHFuexl7kg7gD-_TICC0FSTzmOSxBRuJGjpUJljj9--4etXJIRZfg-N-eqY5aLu2U52F27rJqbD8Qksk86IOL0JVRhiw5K-NCvstA_-ncBUSKPz-6sI=w408-h243-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl7VD7aLlfbk19yERkqgthB8TFu7AmdYKX1u3Rf06y04GMSOqxo4Z4fQEno7hwcuZy16vMxBBh4ERFrUboQ0AiRYF5LpZVDMDJk3_gcbQzyYS8Zna-cyUCyHEX-XohFRr0I7otUzKbe8hQ=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmF9yFuhK1C_2vgB-KVkBybNPqyckHFuexl7kg7gD-_TICC0FSTzmOSxBRuJGjpUJljj9--4etXJIRZfg-N-eqY5aLu2U52F27rJqbD8Qksk86IOL0JVRhiw5K-NCvstA_-ncBUSKPz-6sI=w500-h298-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnqt14UBDFlxyI1C4CF19lAZov3QcSU6giOTlkZm4lNf_E6YaUaTDQQC3kblVe1Uzhblvu-b7V7XWR-XY1-x9mKRKm3-jnSPX9L0nqedhu7x3VvxEfypnuDtQpxZUrymAAmgIWPfsEFBYGq=w397-h298-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Excellent! Marvelous! Outstanding! Feeling like m in own place. Food quality is awesome top notch! Service boy behaviour is appreciated. And owner of this cafe is too honest and good manners.",
+          "rating": 5,
+          "author": "Kamal Hossain",
+          "timeAgo": "Edited 4 months ago"
+        },
+        {
+          "text": "Milk Tea (₹30) is must try. Chicken Momo is ok. Nice ambience and decorated, a good place to hangout with friends and also family.",
+          "rating": 4,
+          "author": "ArnavMaaiitty555 reviews · 3,213 photos",
+          "timeAgo": "2 months ago"
+        },
+        {
+          "text": "The very beautiful happening cafe food was really tasty ,,the service need to be improved more overall it was great experience ,,,the tree enhancing the look more ...the night experience maybe more happening",
+          "rating": 4,
+          "author": "Moumita Kundu",
+          "timeAgo": "5 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-050",
+      "name": "Annapurna Family Restaurant",
+      "category": "Restaurant",
+      "address": "Barasat, Berunanpukhuria, Malikapur, West Bengal 700126",
+      "city": "Barasat, West Bengal",
+      "phone": "+917439531900",
+      "whatsapp": "+917439531900",
+      "mapUrl": "https://www.google.com/maps/place/Annapurna+Family+Restaurant/data=!4m7!3m6!1s0x39f8a323f425d7bd:0x1c4600179ccd7c26!8m2!3d22.7192992!4d88.480849!16s%2Fg%2F11gzpq8gws!19sChIJvdcl9COj-DkRJnzNnBcARhw?authuser=0&hl=en&rclk=1",
+      "rating": 4,
+      "reviewsCount": 44,
+      "lat": 22.7192992,
+      "lng": 88.480849,
+      "hours": [
+        "Sunday, 12:30 to 10:30 pm, Copy open hours"
+      ],
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnqt14UBDFlxyI1C4CF19lAZov3QcSU6giOTlkZm4lNf_E6YaUaTDQQC3kblVe1Uzhblvu-b7V7XWR-XY1-x9mKRKm3-jnSPX9L0nqedhu7x3VvxEfypnuDtQpxZUrymAAmgIWPfsEFBYGq=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnB0O5znj4A406RipNPw2dBN2XGyCe7rJhsINRlrdj153QEkWwc00H7Yz9jSYYMPIxzqpbG8f1sOkhulxIGSddgXQkzwPf0MSNYKTWakHurKkrMfvY8ntqmSe7sq-jRuaOM=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmF9yFuhK1C_2vgB-KVkBybNPqyckHFuexl7kg7gD-_TICC0FSTzmOSxBRuJGjpUJljj9--4etXJIRZfg-N-eqY5aLu2U52F27rJqbD8Qksk86IOL0JVRhiw5K-NCvstA_-ncBUSKPz-6sI=w408-h243-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl7VD7aLlfbk19yERkqgthB8TFu7AmdYKX1u3Rf06y04GMSOqxo4Z4fQEno7hwcuZy16vMxBBh4ERFrUboQ0AiRYF5LpZVDMDJk3_gcbQzyYS8Zna-cyUCyHEX-XohFRr0I7otUzKbe8hQ=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmF9yFuhK1C_2vgB-KVkBybNPqyckHFuexl7kg7gD-_TICC0FSTzmOSxBRuJGjpUJljj9--4etXJIRZfg-N-eqY5aLu2U52F27rJqbD8Qksk86IOL0JVRhiw5K-NCvstA_-ncBUSKPz-6sI=w500-h298-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnqt14UBDFlxyI1C4CF19lAZov3QcSU6giOTlkZm4lNf_E6YaUaTDQQC3kblVe1Uzhblvu-b7V7XWR-XY1-x9mKRKm3-jnSPX9L0nqedhu7x3VvxEfypnuDtQpxZUrymAAmgIWPfsEFBYGq=w397-h298-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "Excellent! Marvelous! Outstanding! Feeling like m in own place. Food quality is awesome top notch! Service boy behaviour is appreciated. And owner of this cafe is too honest and good manners.",
+          "rating": 5,
+          "author": "Kamal Hossain",
+          "timeAgo": "Edited 4 months ago"
+        },
+        {
+          "text": "Milk Tea (₹30) is must try. Chicken Momo is ok. Nice ambience and decorated, a good place to hangout with friends and also family.",
+          "rating": 4,
+          "author": "ArnavMaaiitty555 reviews · 3,213 photos",
+          "timeAgo": "2 months ago"
+        },
+        {
+          "text": "The very beautiful happening cafe food was really tasty ,,the service need to be improved more overall it was great experience ,,,the tree enhancing the look more ...the night experience maybe more happening",
+          "rating": 4,
+          "author": "Moumita Kundu",
+          "timeAgo": "5 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    },
+    {
+      "id": "lead-051",
+      "name": "Halum Hulum Food Center",
+      "category": "Chinese restaurant",
+      "address": "Jessore Rd, Barowaritola, Kailas Nagar, Barasat, Kolkata, West Bengal 700127",
+      "city": "Barasat, West Bengal",
+      "phone": "+916290551411",
+      "whatsapp": "+916290551411",
+      "mapUrl": "https://www.google.com/maps/place/Halum+Hulum+Food+Center/data=!4m7!3m6!1s0x39f899b27babb801:0xafa4f0d646d6e4d!8m2!3d22.7107682!4d88.4755607!16s%2Fg%2F11qntv1wyh!19sChIJAbire7KZ-DkRTW5tZA1P-go?authuser=0&hl=en&rclk=1",
+      "rating": 4.3,
+      "reviewsCount": 289,
+      "lat": 22.7107682,
+      "lng": 88.4755607,
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkT4J3r7aTwOIdKYaMltCAVV4FF51ZffRFEl454Sh_hjYz9ZnK-kOxZpP7dGvExHPxMkoEkcftSNdeR4jZqRodMhA5MxbM6zEtmcWVUfS-xzAE6b6alrRTZj58-n4dbsjBu-fZsdQ=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnqt14UBDFlxyI1C4CF19lAZov3QcSU6giOTlkZm4lNf_E6YaUaTDQQC3kblVe1Uzhblvu-b7V7XWR-XY1-x9mKRKm3-jnSPX9L0nqedhu7x3VvxEfypnuDtQpxZUrymAAmgIWPfsEFBYGq=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkT4J3r7aTwOIdKYaMltCAVV4FF51ZffRFEl454Sh_hjYz9ZnK-kOxZpP7dGvExHPxMkoEkcftSNdeR4jZqRodMhA5MxbM6zEtmcWVUfS-xzAE6b6alrRTZj58-n4dbsjBu-fZsdQ=w408-h316-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlYzS4auRQxQLuf52Hr6LIrdw6qawv0ZuTkrkDSxPxurzLAonAgeoOqHC0M8LzduL73rItA61NHboW7kSzu8XlsDJOfsPuDKZNMB_KLGOGX5meTfnSntLWdkNTeNIkM-anCxV8=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn2aQpX6SjY4JwzUyFYe3SjrE6Wedc5I4gEqSxGH5wa9FolUPfvmkrRbT_daXESc2_KKa62k-ke1P-e5gRltmt_SsQhzUKgj1TbCmaHMMmDl__8Qqzt--LJ-5WC_aGsDKhr6wHyGw=w112-h112-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmqq78spvV8aHS_mW64Pv0yA2d6N2StfXG2v4R4fGJrZ2IQ51n2S-bt3dpeI3XGRP_oI4j6yAOcjbx8Nx2zbnkD1A-ikS5T9AP9aUEE-v16hE71Z3AGCG1dwkCT8Q1ocYnIBnEJ6A=w112-h112-p-k-no"
+      ],
+      "priceLevel": "₹",
+      "reviews": [
+        {
+          "text": "I must say the quality of biryani is far better than what I expected in this price range. But I did not like the fried rice, it was little flavor less.Overall my experience was good keeping the price in mind",
+          "rating": 4,
+          "author": "Pritam Sen",
+          "timeAgo": "5 years ago"
+        },
+        {
+          "text": "The food was just awesome it was really good but it has a cozy atmosphere which for some can get you congested and that is all",
+          "rating": 5,
+          "author": "Premangshu Das",
+          "timeAgo": "4 months ago"
+        },
+        {
+          "text": "Staff behavior is not good. The price shown online is low, but when we visit the place, they do not answer properly and charge extra for plates.",
+          "rating": 1,
+          "author": "Sarafaraj Ali",
+          "timeAgo": "6 months ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps"
+    }
+  ]
+}
