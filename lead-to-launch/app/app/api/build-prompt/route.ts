@@ -31,10 +31,10 @@ function cleanWaNumber(raw: string | null | undefined): string {
 
 const PLATFORM_OUTPUT: Record<string, string> = {
   stitch:       "Use Google Stitch (stitch.withgoogle.com). Output one complete self-contained HTML file with ALL CSS inline in a <style> tag and all JS inline in a <script> tag. No external files. No React. No build step.",
-  lovable:      "Build in Lovable (lovable.dev). Single-page React + Tailwind. Component-based. No backend. Use real photo URLs for images.",
-  bolt:         "Build in Bolt (bolt.new). Single-page React + Tailwind. No backend. Self-contained components.",
-  "claude-code":"Next.js App Router + Tailwind + shadcn/ui. Single landing page at app/page.tsx.",
-  codex:        "Static index.html + Tailwind CDN. Fully self-contained single file.",
+  lovable:      "Build in Lovable (lovable.dev). Tech stack: React 18 + TypeScript + Tailwind CSS (frontend), Django 4.x + Django REST Framework (backend). Create React components with proper props and types. Use Tailwind utility classes for all styling. Backend API endpoints for contact form and appointment booking using Django REST Framework. Do NOT use plain HTML or vanilla CSS.",
+  bolt:         "Build in Bolt (bolt.new). Tech stack: React 18 + TypeScript + Tailwind CSS (frontend), Django 4.x + Django REST Framework (backend). Structure as proper React components. Use Tailwind for styling. Include Django models and DRF views for form submissions. Do NOT use plain HTML or vanilla CSS.",
+  "claude-code":"Build with Claude Code. Tech stack: React 18 + TypeScript + Tailwind CSS + shadcn/ui (frontend), Django 4.x + Django REST Framework (backend). Use Next.js App Router for the frontend. Include Django models, serializers, and API views. Proper folder structure for both frontend and backend.",
+  codex:        "Build with OpenAI Codex. Tech stack: React 18 + TypeScript + Tailwind CSS (frontend), Django 4.x + Django REST Framework (backend). Provide complete component code and Django backend code.",
 };
 
 // 2026-level design system per style

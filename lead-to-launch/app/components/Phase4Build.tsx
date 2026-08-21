@@ -12,11 +12,11 @@ import type { RankedLead, BuildPromptResult, ExtraPage } from "@/lib/types";
 import { toast } from "sonner";
 
 const PLATFORMS = [
-  { id: "stitch",     label: "Google Stitch", url: "https://stitch.withgoogle.com" },
-  { id: "lovable",    label: "Lovable",       url: "https://lovable.dev" },
-  { id: "bolt",       label: "Bolt.new",      url: "https://bolt.new" },
-  { id: "claude-code",label: "Claude Code",   url: "https://claude.com/claude-code" },
-  { id: "codex",      label: "Codex",         url: "https://chat.openai.com" },
+  { id: "stitch",      label: "Google Stitch",  url: "https://stitch.withgoogle.com" },
+  { id: "lovable",     label: "Lovable",         url: "https://lovable.dev" },
+  { id: "bolt",        label: "Bolt.new",        url: "https://bolt.new" },
+  { id: "claude-code", label: "Claude Code",     url: "https://claude.com/claude-code" },
+  { id: "codex",       label: "Codex",           url: "https://chat.openai.com" },
 ];
 
 const STYLE_PRESETS = [
@@ -49,6 +49,7 @@ export function Phase4Build({
   const [platform, setPlatform] = useState("stitch");
   const [styles, setStyles] = useState<string[]>(["professional"]);
   const [generating, setGenerating] = useState(false);
+  const [generatingExtraPages, setGeneratingExtraPages] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [typed, setTyped] = useState<Record<string, string>>({});
   const [sidebarSearch, setSidebarSearch] = useState("");
@@ -90,6 +91,36 @@ export function Phase4Build({
       }, 10);
 
       toast.success("Website prompt generated");
+
+      // Auto-generate ALL extra page prompts in parallel
+      if (data.extraPages && data.extraPages.length > 0) {
+        setGeneratingExtraPages(true);
+        const lead = activeLead;
+        // Mark all as generating
+        const initState: Record<string, { prompt: string; generating: boolean }> = {};
+        data.extraPages.forEach(p => { initState[`${lead.id}:${p.id}`] = { prompt: "", generating: true }; });
+        setExtraPagePrompts(prev => ({ ...prev, ...initState }));
+
+        // Fire all in parallel
+        await Promise.allSettled(
+          data.extraPages.map(async (page) => {
+            const key = `${lead.id}:${page.id}`;
+            try {
+              const r = await fetch("/api/build-prompt", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ lead, platform, style: styleParam, pageType: page.id, pageLabel: page.label }),
+              });
+              const d = await r.json();
+              setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: d.prompt ?? "", generating: false } }));
+            } catch {
+              setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: "", generating: false } }));
+            }
+          })
+        );
+        setGeneratingExtraPages(false);
+        toast.success("All page prompts ready!");
+      }
     } catch (e) {
       setError((e as Error).message ?? "Unknown error");
       toast.error("Generation failed");
@@ -333,12 +364,17 @@ export function Phase4Build({
                             <Palette className="h-4 w-4 text-primary" />
                             More Pages You Can Offer
                           </CardTitle>
-                          <Badge variant="outline" className="text-[10px] text-primary border-primary/30">
-                            Upsell Opportunity
-                          </Badge>
+                          {generatingExtraPages
+                            ? <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-400/40 flex items-center gap-1">
+                                <Loader2 className="h-2.5 w-2.5 animate-spin" /> Generating all prompts…
+                              </Badge>
+                            : <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-400/40">
+                                <CheckCircle2 className="h-2.5 w-2.5 mr-1" /> All prompts ready
+                              </Badge>
+                          }
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">
-                          AI suggested these for <strong>{activeLead.name}</strong> — show them to earn more
+                          AI suggested these for <strong>{activeLead.name}</strong> — all prompts auto-generated, copy and paste into your builder
                         </p>
                       </CardHeader>
                       <CardContent className="space-y-3">
@@ -346,61 +382,43 @@ export function Phase4Build({
                           const key = `${activeLead.id}:${page.id}`;
                           const ep = extraPagePrompts[key];
                           return (
-                            <div key={page.id} className="flex items-start justify-between gap-3 rounded-lg border border-border p-3 hover:border-primary/30 hover:bg-muted/30 transition-colors">
-                              <div className="flex items-start gap-3 min-w-0">
-                                <span className="text-xl shrink-0">{page.icon}</span>
-                                <div className="min-w-0">
-                                  <div className="text-sm font-medium">{page.label}</div>
-                                  <div className="text-xs text-muted-foreground mt-0.5">{page.desc}</div>
-                                  {ep?.prompt && (
-                                    <div className="mt-2">
-                                      <pre className="text-[10px] bg-muted/50 rounded p-2 max-h-24 overflow-y-auto whitespace-pre-wrap border border-border font-mono">
-                                        {ep.prompt.slice(0, 300)}…
-                                      </pre>
-                                      <button
-                                        onClick={() => { navigator.clipboard.writeText(ep.prompt); toast.success(`${page.label} prompt copied!`); }}
-                                        className="mt-1.5 text-[10px] text-primary underline hover:no-underline"
-                                      >
-                                        Copy full prompt
-                                      </button>
-                                    </div>
-                                  )}
+                            <div key={page.id} className="rounded-lg border border-border p-3 hover:border-primary/30 hover:bg-muted/30 transition-colors">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex items-start gap-3 min-w-0">
+                                  <span className="text-xl shrink-0">{page.icon}</span>
+                                  <div className="min-w-0">
+                                    <div className="text-sm font-medium">{page.label}</div>
+                                    <div className="text-xs text-muted-foreground mt-0.5">{page.desc}</div>
+                                  </div>
+                                </div>
+                                <div className="shrink-0">
+                                  {ep?.generating
+                                    ? <div className="flex items-center gap-1 text-xs text-muted-foreground"><Loader2 className="h-3 w-3 animate-spin" /> Generating…</div>
+                                    : ep?.prompt
+                                      ? <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => { navigator.clipboard.writeText(ep.prompt); toast.success(`${page.label} prompt copied!`); }}>
+                                          <Copy className="h-3 w-3 mr-1" />Copy
+                                        </Button>
+                                      : <Button size="sm" className="h-7 text-xs" onClick={async () => {
+                                          setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: "", generating: true } }));
+                                          try {
+                                            const r = await fetch("/api/build-prompt", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ lead: activeLead, platform, style: styles.join("+"), pageType: page.id, pageLabel: page.label }) });
+                                            const d = await r.json();
+                                            setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: d.prompt ?? "", generating: false } }));
+                                            toast.success(`${page.label} prompt ready!`);
+                                          } catch { setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: "", generating: false } })); }
+                                        }}>
+                                          <Sparkles className="h-3 w-3 mr-1" />Generate
+                                        </Button>
+                                  }
                                 </div>
                               </div>
-                              <Button
-                                size="sm"
-                                variant={ep?.prompt ? "outline" : "default"}
-                                className="h-8 text-xs shrink-0"
-                                disabled={ep?.generating}
-                                onClick={async () => {
-                                  setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: "", generating: true } }));
-                                  try {
-                                    const res = await fetch("/api/build-prompt", {
-                                      method: "POST",
-                                      headers: { "content-type": "application/json" },
-                                      body: JSON.stringify({
-                                        lead: activeLead,
-                                        platform,
-                                        style: styles.join("+"),
-                                        pageType: page.id,
-                                        pageLabel: page.label,
-                                      }),
-                                    });
-                                    const data = await res.json();
-                                    setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: data.prompt ?? "", generating: false } }));
-                                    toast.success(`${page.label} prompt ready!`);
-                                  } catch {
-                                    setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: "", generating: false } }));
-                                    toast.error("Failed to generate page prompt");
-                                  }
-                                }}
-                              >
-                                {ep?.generating
-                                  ? <><Loader2 className="h-3 w-3 mr-1 animate-spin" />Generating…</>
-                                  : ep?.prompt
-                                    ? <><Copy className="h-3 w-3 mr-1" />Regenerate</>
-                                    : <><Sparkles className="h-3 w-3 mr-1" />Generate</>}
-                              </Button>
+                              {ep?.prompt && (
+                                <div className="mt-2">
+                                  <pre className="text-[10px] bg-muted/50 rounded p-2 max-h-28 overflow-y-auto whitespace-pre-wrap border border-border font-mono">
+                                    {ep.prompt.slice(0, 400)}…
+                                  </pre>
+                                </div>
+                              )}
                             </div>
                           );
                         })}
