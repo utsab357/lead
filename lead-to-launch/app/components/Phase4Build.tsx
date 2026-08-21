@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { PhaseShell } from "./PhaseShell";
 import { IncompleteState } from "./IncompleteState";
 import { Loader2, CheckCircle2, ChevronRight, Copy, Sparkles, Search, ExternalLink, Globe2, Palette } from "lucide-react";
-import type { RankedLead, BuildPromptResult } from "@/lib/types";
+import type { RankedLead, BuildPromptResult, ExtraPage } from "@/lib/types";
 import { toast } from "sonner";
 
 const PLATFORMS = [
@@ -52,6 +52,7 @@ export function Phase4Build({
   const [error, setError] = useState<string | null>(null);
   const [typed, setTyped] = useState<Record<string, string>>({});
   const [sidebarSearch, setSidebarSearch] = useState("");
+  const [extraPagePrompts, setExtraPagePrompts] = useState<Record<string, { prompt: string; generating: boolean }>>({});
 
   const result = activeLead ? buildPrompts[activeLead.id] : null;
   const prompt = result?.prompt ?? "";
@@ -319,6 +320,90 @@ export function Phase4Build({
                             </li>
                           ))}
                         </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* ── AI-suggested Extra Pages ── */}
+                  {result?.extraPages && result.extraPages.length > 0 && (
+                    <Card className="border-primary/20">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-sm flex items-center gap-2">
+                            <Palette className="h-4 w-4 text-primary" />
+                            More Pages You Can Offer
+                          </CardTitle>
+                          <Badge variant="outline" className="text-[10px] text-primary border-primary/30">
+                            Upsell Opportunity
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          AI suggested these for <strong>{activeLead.name}</strong> — show them to earn more
+                        </p>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        {result.extraPages.map((page: ExtraPage) => {
+                          const key = `${activeLead.id}:${page.id}`;
+                          const ep = extraPagePrompts[key];
+                          return (
+                            <div key={page.id} className="flex items-start justify-between gap-3 rounded-lg border border-border p-3 hover:border-primary/30 hover:bg-muted/30 transition-colors">
+                              <div className="flex items-start gap-3 min-w-0">
+                                <span className="text-xl shrink-0">{page.icon}</span>
+                                <div className="min-w-0">
+                                  <div className="text-sm font-medium">{page.label}</div>
+                                  <div className="text-xs text-muted-foreground mt-0.5">{page.desc}</div>
+                                  {ep?.prompt && (
+                                    <div className="mt-2">
+                                      <pre className="text-[10px] bg-muted/50 rounded p-2 max-h-24 overflow-y-auto whitespace-pre-wrap border border-border font-mono">
+                                        {ep.prompt.slice(0, 300)}…
+                                      </pre>
+                                      <button
+                                        onClick={() => { navigator.clipboard.writeText(ep.prompt); toast.success(`${page.label} prompt copied!`); }}
+                                        className="mt-1.5 text-[10px] text-primary underline hover:no-underline"
+                                      >
+                                        Copy full prompt
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              <Button
+                                size="sm"
+                                variant={ep?.prompt ? "outline" : "default"}
+                                className="h-8 text-xs shrink-0"
+                                disabled={ep?.generating}
+                                onClick={async () => {
+                                  setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: "", generating: true } }));
+                                  try {
+                                    const res = await fetch("/api/build-prompt", {
+                                      method: "POST",
+                                      headers: { "content-type": "application/json" },
+                                      body: JSON.stringify({
+                                        lead: activeLead,
+                                        platform,
+                                        style: styles.join("+"),
+                                        pageType: page.id,
+                                        pageLabel: page.label,
+                                      }),
+                                    });
+                                    const data = await res.json();
+                                    setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: data.prompt ?? "", generating: false } }));
+                                    toast.success(`${page.label} prompt ready!`);
+                                  } catch {
+                                    setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: "", generating: false } }));
+                                    toast.error("Failed to generate page prompt");
+                                  }
+                                }}
+                              >
+                                {ep?.generating
+                                  ? <><Loader2 className="h-3 w-3 mr-1 animate-spin" />Generating…</>
+                                  : ep?.prompt
+                                    ? <><Copy className="h-3 w-3 mr-1" />Regenerate</>
+                                    : <><Sparkles className="h-3 w-3 mr-1" />Generate</>}
+                              </Button>
+                            </div>
+                          );
+                        })}
                       </CardContent>
                     </Card>
                   )}

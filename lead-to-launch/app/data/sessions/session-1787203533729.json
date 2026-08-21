@@ -2738,14 +2738,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No website to capture online bookings",
-        "Zero online photos — customers can't see the business",
-        "Business hours not visible online",
-        "No services listed despite offering diagnostics",
-        "Rude medical shop staff hurting reputation"
+        "Zero online photos — customers can't see the facility",
+        "Business hours not listed on any platform",
+        "No website to showcase services or enable online booking",
+        "Rude medical shop counter staff mentioned in negative reviews",
+        "Owner replies are present but no engagement on social media beyond Facebook"
       ],
-      "biggestGap": "Without a website the centre cannot offer online appointment booking, leaving the 766 reviewers – especially those complaining about rude medical‑shop staff – to turn elsewhere.",
-      "estLostRevenuePerMonth": 346400
+      "biggestGap": "Customers are frustrated by rude medical shop staff and the absence of any online booking system, which together drive them to competitors.",
+      "estLostRevenuePerMonth": 336400
     },
     "lead-008": {
       "leadId": "lead-008",
@@ -2756,14 +2756,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No website to convert Facebook followers",
-        "Zero online photos — customers can't see the clinic",
-        "Business hours not visible online",
-        "No services listed online",
-        "Owner does not reply to reviews, missing engagement"
+        "Zero photos — potential patients cannot view the clinic",
+        "No business hours displayed online",
+        "No website to capture appointments despite high positive sentiment",
+        "Owner does not reply to reviews, missing engagement opportunity",
+        "Only Facebook presence limits digital reach"
       ],
-      "biggestGap": "The clinic’s complete lack of a website means its 369 happy reviewers and active Facebook page cannot be turned into online bookings or new patient leads.",
-      "estLostRevenuePerMonth": 187600
+      "biggestGap": "The clinic’s lack of a website and missing business hours prevent potential patients from scheduling visits, despite strong positive reviews.",
+      "estLostRevenuePerMonth": 177600
     },
     "lead-010": {
       "leadId": "lead-010",
@@ -2774,14 +2774,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No website to attract patients",
-        "Zero online photos — customers can't see the centre",
-        "Business hours not visible online",
-        "No services listed online",
-        "Rude staff complaints not addressed online"
+        "No photos available to illustrate clinic environment",
+        "Operating hours absent from online listings",
+        "Lack of website prevents online service discovery",
+        "Owner does not respond to reviews, reducing trust",
+        "Only Facebook listed, no broader social footprint"
       ],
-      "biggestGap": "With no website and no visible service list, the centre loses the chance to address the rude‑staff complaints from its 23 reviewers, driving patients to competitors.",
-      "estLostRevenuePerMonth": 49200
+      "biggestGap": "Without any online presence or photos, the centre loses visibility, and the absence of a website blocks appointment bookings.",
+      "estLostRevenuePerMonth": 39200
     },
     "lead-011": {
       "leadId": "lead-011",
@@ -2792,14 +2792,15 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No website to showcase services",
-        "Zero online photos — customers can't see the polyclinic",
-        "Business hours not visible online",
-        "Services listed but not presented clearly online",
-        "Negative reviews about staff attitude and report accuracy"
+        "Zero online photos, hindering visual trust",
+        "No website despite multiple services listed",
+        "Rude staff behavior highlighted in reviews",
+        "Payment options advertised but not accepted, causing frustration",
+        "Safety concerns for women noted in negative feedback",
+        "Owner does not reply to reviews, missing remediation"
       ],
-      "biggestGap": "The absence of a website prevents the polyclinic from countering the harsh staff‑attitude and report‑accuracy complaints that appear in its 14 reviews, costing potential patients.",
-      "estLostRevenuePerMonth": 45600
+      "biggestGap": "Negative reviews about rude staff, unsafe environment for women, and unaccepted payment options highlight urgent need for a professional website and reputation management.",
+      "estLostRevenuePerMonth": 35600
     },
     "lead-014": {
       "leadId": "lead-014",
@@ -2810,14 +2811,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No website to attract patients",
-        "Zero online photos — customers can't see the clinic",
-        "Business hours not visible online",
-        "No phone or WhatsApp contact listed",
-        "Owner engagement missing on reviews"
+        "No photos to showcase clinic",
+        "Business hours missing online",
+        "No website to convert Facebook followers",
+        "No phone or WhatsApp listed, limiting contact options",
+        "Owner replies unknown, indicating possible lack of engagement"
       ],
-      "biggestGap": "Having no website, phone or WhatsApp contact and zero photos makes Maya Clinic virtually invisible online, squandering any of its 4 reviews and Facebook presence.",
-      "estLostRevenuePerMonth": 39600
+      "biggestGap": "Having no website, phone or WhatsApp and zero photos makes the clinic invisible to local patients, causing missed revenue.",
+      "estLostRevenuePerMonth": 31600
     },
     "lead-017": {
       "leadId": "lead-017",
@@ -2828,15 +2829,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
+        "No website to capture online appointments",
+        "Business hours not visible online",
         "Zero online photos — customers can't see the clinic",
-        "Business hours not listed — patients can't plan visits",
-        "No website to showcase services and capture appointments",
-        "No online booking option (customers have to call) — missed conversion",
-        "Owner not responding to reviews — low engagement",
-        "Only Facebook presence, no integrated digital platform"
+        "No services listed online despite offering medical care",
+        "Owner not responding to reviews online"
       ],
-      "biggestGap": "Without a website, Gupta Polyclinic misses the chance to display its services and allow online appointment booking, leading to lost patient conversions.",
-      "estLostRevenuePerMonth": 35800
+      "biggestGap": "Without a website, Gupta Polyclinic cannot capture online appointments or showcase its praised doctor consultations, missing out on digital patient flow.",
+      "estLostRevenuePerMonth": 30800
     },
     "lead-019": {
       "leadId": "lead-019",
@@ -2847,15 +2847,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "Zero online photos — patients can't view clinic environment",
-        "Business hours missing — uncertainty for appointments",
-        "No website to clarify lab affiliations and build trust",
-        "Negative perception of lab referral bias not addressed online",
-        "No online booking system — patients must call",
-        "Owner not replying to reviews — engagement gap"
+        "Negative review mentions lab bias – no transparent lab info online",
+        "Zero online photos — patients can't view the clinic",
+        "Business hours not visible online",
+        "No website to showcase specialist credentials",
+        "Owner not engaging with reviewers"
       ],
-      "biggestGap": "The absence of a website prevents Royal Diabetika from clarifying its lab partnerships and countering the negative perception of biased referrals, costing potential patients.",
-      "estLostRevenuePerMonth": 50400
+      "biggestGap": "The absence of a website leaves Royal Diabetika unable to address the lab‑bias complaint and provide transparent lab options, driving potential patients away.",
+      "estLostRevenuePerMonth": 42400
     },
     "lead-023": {
       "leadId": "lead-023",
@@ -2866,15 +2865,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "Zero online photos — visual proof of Ayurvedic treatments missing",
-        "No website to list the extensive services despite high review volume",
-        "Limited online presence beyond Facebook",
-        "No online booking despite high demand",
-        "Hours only listed for Sunday, other days unclear",
-        "Owner replies but no digital platform to capture leads"
+        "Zero online photos — potential patients can't see facilities",
+        "No website to list extensive Ayurvedic services",
+        "Only Sunday hours listed; full schedule missing online",
+        "No online booking despite high review volume",
+        "Owner replies but no digital presence"
       ],
-      "biggestGap": "Despite 662 reviews, Nab Jeban Health Care lacks a website to showcase its Ayurvedic services and enable online bookings, forfeiting a large share of potential patients.",
-      "estLostRevenuePerMonth": 314800
+      "biggestGap": "Despite 662 reviews, Nab Jeban Health Care lacks a website, preventing it from displaying its Ayurvedic expertise and booking options, a major revenue leak.",
+      "estLostRevenuePerMonth": 294800
     },
     "lead-025": {
       "leadId": "lead-025",
@@ -2885,15 +2883,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "Zero online photos — prospective patients can't see clinic",
-        "Business hours not displayed — appointment planning difficult",
-        "No website to promote affordable treatments",
-        "No online booking system",
-        "Owner not engaging with reviews",
-        "Only Facebook presence limits reach"
+        "Zero online photos — clinic appears empty online",
+        "Business hours not listed online",
+        "No website to provide appointment scheduling",
+        "No service catalog visible online",
+        "Owner not responding to reviews"
       ],
-      "biggestGap": "Rejuv Clinic’s lack of a website means its affordable services and positive patient experiences remain invisible online, losing new patient acquisition.",
-      "estLostRevenuePerMonth": 42800
+      "biggestGap": "Rejuv Clinic’s missing website means its high‑praise service cannot be booked online, causing loss of patients seeking convenient appointments.",
+      "estLostRevenuePerMonth": 36800
     },
     "lead-026": {
       "leadId": "lead-026",
@@ -2905,14 +2902,13 @@
       "loadTimeMs": 0,
       "gaps": [
         "Zero online photos — patients can't view facilities",
-        "Limited hours info only for Sunday, full schedule missing",
-        "No website to highlight multi‑generation doctors and nursing home services",
-        "No online booking option",
-        "Owner not responding to reviews",
-        "Only Facebook presence restricts outreach"
+        "No website to display nursing home amenities",
+        "Services not listed online despite offering care",
+        "Owner not engaging with reviewers",
+        "Limited hours shown only for Sunday; full schedule missing"
       ],
-      "biggestGap": "Without a website, Dr. Ghosh's Clinic cannot showcase its three‑generation medical legacy and nursing home amenities, missing out on attracting new patients.",
-      "estLostRevenuePerMonth": 41000
+      "biggestGap": "Dr. Ghosh's Clinic and Nursing Home’s lack of a website and missing service details block patients from learning about its nursing care, leading to lost referrals.",
+      "estLostRevenuePerMonth": 36000
     },
     "lead-027": {
       "leadId": "lead-027",
@@ -2923,14 +2919,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No website — no online booking or information hub",
-        "Zero online photos — customers can’t view the hospital facilities",
-        "Business hours incomplete — only Sunday 24‑hour listed",
-        "Services not listed online despite medical offerings",
-        "Owner not replying to reviews — missed engagement"
+        "Zero online photos — customers can't see the facility",
+        "Business hours only shown for Sunday, other days not visible",
+        "No website to showcase services or accept appointments",
+        "Owner not responding to reviews online",
+        "No online booking despite 24‑hour service mention"
       ],
-      "biggestGap": "The biggest opportunity is creating a website with online booking and photo gallery, addressing the lack of any digital presence highlighted by zero photos and missing service listings.",
-      "estLostRevenuePerMonth": 91800
+      "biggestGap": "Add a professional website with online booking to capture the 24‑hour demand and showcase photos, as reviewers can’t see the facility.",
+      "estLostRevenuePerMonth": 92500
     },
     "lead-028": {
       "leadId": "lead-028",
@@ -2941,14 +2937,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No website — no digital channel for cheap treatment offers",
-        "Zero online photos — patients can’t see the dispensary",
-        "Business hours missing — operating times not visible",
-        "Services absent online — pathology and clinic services not displayed",
-        "Owner not responding to reviews — no customer interaction"
+        "Zero online photos — patients can't view clinic environment",
+        "Business hours not visible online",
+        "No website to list affordable services or charitable rates",
+        "No online appointment system despite high demand",
+        "Owner not engaging with reviewers online"
       ],
-      "biggestGap": "The most critical gap is the absence of a website to showcase their ultra‑low‑cost treatments and pathology services, which patients can’t discover online.",
-      "estLostRevenuePerMonth": 44600
+      "biggestGap": "Create a simple website listing cheap treatment rates and hours, since no online presence prevents patients from finding the charitable pricing.",
+      "estLostRevenuePerMonth": 50000
     },
     "lead-029": {
       "leadId": "lead-029",
@@ -2959,14 +2955,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No website — no platform for homeopathic appointment booking",
-        "Zero online photos — clinic interior unseen",
-        "Limited hours shown only for Sunday",
-        "No services listed online despite homeopathic treatments",
-        "Owner not engaging with reviews"
+        "Zero online photos — potential patients can't see clinic",
+        "Limited business hours displayed only for Sunday",
+        "No website to present homeopathic services",
+        "No online booking despite positive doctor feedback",
+        "Owner not replying to reviews"
       ],
-      "biggestGap": "The primary opportunity lies in building a website and adding photos to demonstrate the homeopathic clinic’s expertise, as current listings show no visual or service information.",
-      "estLostRevenuePerMonth": 41800
+      "biggestGap": "Implement an online booking portal and website to showcase the homeopathic clinic, addressing the lack of photos and limited hour information.",
+      "estLostRevenuePerMonth": 39000
     },
     "lead-032": {
       "leadId": "lead-032",
@@ -2977,14 +2973,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No website — no online presence for Dr. Nag’s practice",
-        "Zero online photos — patients can’t view clinic environment",
-        "Operating hours only for Sunday — full schedule hidden",
-        "No services detailed online",
-        "No phone/WhatsApp contact listed online"
+        "Zero online photos — patients can't view clinic ambience",
+        "No website to detail doctor’s qualifications and schedule",
+        "No online booking system despite demand",
+        "Negative feedback on staff attitude not addressed publicly",
+        "Limited business hours shown only for Sunday"
       ],
-      "biggestGap": "The key gap is the missing website and contact details, preventing new patients from finding Dr. Nag’s practice and booking appointments online.",
-      "estLostRevenuePerMonth": 46000
+      "biggestGap": "Address the negative attitude feedback by adding a website with clear staff policies and an online appointment system to improve patient trust.",
+      "estLostRevenuePerMonth": 44000
     },
     "lead-039": {
       "leadId": "lead-039",
@@ -2995,14 +2991,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No website — no online booking for skin laser services",
-        "Zero online photos — potential clients can’t see results",
-        "Business hours limited to Sunday — full schedule not shown",
-        "No services listed online despite skin care offerings",
-        "Customers complain about high prices"
+        "Zero online photos — clients can't see clinic interior",
+        "No website to display pricing and service menu",
+        "No online booking despite high price complaints",
+        "Business hours only listed for Sunday",
+        "Owner not responding to price‑related complaints"
       ],
-      "biggestGap": "The biggest chance for growth is launching a website with pricing transparency and photo before‑after galleries to counter the high‑price complaints and lack of online visibility.",
-      "estLostRevenuePerMonth": 43200
+      "biggestGap": "Introduce a website with transparent pricing and booking options to counter high‑price complaints and provide visual proof of the clinic.",
+      "estLostRevenuePerMonth": 45000
     },
     "lead-042": {
       "leadId": "lead-042",
@@ -3013,13 +3009,13 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
+        "No website to capture online appointments",
         "Zero online photos — customers can't see the clinic",
-        "Business hours listed only for Sunday, missing full weekly schedule",
-        "No website to showcase services or enable online booking",
-        "Owner not replying to reviews — missed engagement opportunity",
-        "Only Facebook present, no Instagram or website to capture audience"
+        "Limited business hours displayed (only Sunday) — hours not fully visible",
+        "No services listed online despite offering speech therapy",
+        "Owner not engaging with reviews (ownerReplies false)"
       ],
-      "biggestGap": "With no website and zero photos, potential patients can’t see the clinic or book appointments, despite a 4.9 rating and positive reviews.",
+      "biggestGap": "Without a website, the clinic cannot showcase its speech therapy services or allow online appointment booking, missing out on potential patients.",
       "estLostRevenuePerMonth": 48000
     },
     "lead-047": {
@@ -3031,14 +3027,15 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No business hours displayed online",
-        "Zero photos — potential patients can't view the clinic environment",
-        "No website to clarify qualifications and services",
+        "No website to display qualifications and accept appointments",
+        "Business hours not visible online",
+        "Zero online photos — patients can't see the clinic",
+        "No services listed; patients unsure of offerings",
         "Negative reviews flag lack of certified pediatric credentials",
         "Owner not responding to reviews"
       ],
-      "biggestGap": "Negative reviews criticize the doctor’s lack of pediatric certification, and the absence of a website prevents clarifying credentials and building trust.",
-      "estLostRevenuePerMonth": 47000
+      "biggestGap": "Patients are questioning the doctor's pediatric credentials, and without a website to clarify qualifications, the practice risks losing families.",
+      "estLostRevenuePerMonth": 46000
     },
     "lead-048": {
       "leadId": "lead-048",
@@ -3049,13 +3046,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "No business hours listed",
-        "Zero online photos — patients can't assess dental facilities",
-        "No website to present treatment options or enable online booking",
-        "Negative review mentions unsatisfactory wisdom tooth extraction experience",
-        "Owner not replying to reviews"
+        "No website to showcase dental services and booking",
+        "Business hours not listed",
+        "Zero online photos — no visual proof of clinic quality",
+        "No services listed online despite offering extractions and braces",
+        "Negative review cites unsatisfactory wisdom tooth extraction",
+        "Owner not engaging with reviews"
       ],
-      "biggestGap": "A dissatisfied patient highlighted a poor wisdom tooth extraction, and without a website or photos, the clinic cannot address concerns or showcase expertise.",
+      "biggestGap": "The recent complaint about a botched wisdom tooth extraction, coupled with no website to reassure patients, is a critical loss driver.",
       "estLostRevenuePerMonth": 48000
     },
     "lead-049": {
@@ -3067,14 +3065,14 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "Business hours confusing format and limited visibility",
-        "Zero photos — customers can't view orthopedic products",
-        "No website to list orthopedic goods and services",
-        "Owner not replying to reviews",
-        "Only Facebook presence, no broader digital footprint"
+        "No website to list orthopedic products and capture online sales",
+        "Zero online photos — customers can't view product range",
+        "Business hours only show Sunday, full schedule missing",
+        "No services or product categories displayed online",
+        "Owner engagement with reviews not evident"
       ],
-      "biggestGap": "Confusing Sunday‑only hours and no online photos leave visitors unsure when to shop, while the missing website hides the range of orthopedic goods offered.",
-      "estLostRevenuePerMonth": 40800
+      "biggestGap": "Without a website, the orthopedic goods center cannot display its product catalog or enable online ordering, missing sales.",
+      "estLostRevenuePerMonth": 33000
     },
     "lead-051": {
       "leadId": "lead-051",
@@ -3085,13 +3083,13 @@
       "hasSchema": false,
       "loadTimeMs": 0,
       "gaps": [
-        "Business hours provided only for Sunday, no full schedule",
-        "Zero photos — patients can't see clinic interior",
-        "No website to list medical services",
-        "No reviews or ratings, missing social proof",
-        "Owner not replying to reviews"
+        "No website to present clinic services and accept bookings",
+        "Zero online photos — patients can't see facilities",
+        "Business hours only Sunday, full schedule missing",
+        "No services listed online despite being a medical clinic",
+        "No customer reviews visible to build trust"
       ],
-      "biggestGap": "The clinic has no online presence at all—no website, photos, or reviews—making it invisible to new patients despite being open on Sundays.",
+      "biggestGap": "The complete absence of an online presence, especially a website, prevents the clinic from attracting new patients and showcasing its services.",
       "estLostRevenuePerMonth": 35000
     }
   },
@@ -4949,6 +4947,59 @@
         "Without a website, they’re missing out on countless mobile users who could book Ayurvedic treatments instantly.",
         "A high‑converting, mobile‑first site will showcase their real photos, services, and enable WhatsApp bookings, turning reviews into new patients."
       ]
+    },
+    "lead-042": {
+      "source": "gemini",
+      "style": "animated",
+      "prompt": "Create a ultra-premium, modern 2026 web application for 'South Kolkata Hearing & Speech Clinic' located in Barasat. The site must be outputted as a single full-featured, self-contained index.html file containing all CSS in <style> and JS in <script> tags. Use Google Fonts (@import Cabinet Grotesk, Clash Display, DM Sans, Space Grotesk) and AOS scroll animation library via CDN (https://unpkg.com/aos@2.3.4/dist/aos.css and https://unpkg.com/aos@2.3.4/dist/aos.js).\n\nDESIGN SYSTEM & KINETIC ANIMATIONS:\n- Color Palette: --bg: #FAFAF9; --primary: #FF4D4D; --secondary: #FF8C42; --dark: #1A1A2E; --text: #1A1A2E; --muted: #6B7280; --glass: rgba(255, 255, 255, 0.7); --glass-border: rgba(255, 255, 255, 0.4);\n- Typography: Headlines using 'Clash Display' / 'Space Grotesk' (700, 800), body using 'Cabinet Grotesk' / 'DM Sans' (400, 500, 700).\n- Micro-interactions: Cards lift (-8px translateY) with glowing box-shadow on hover. Buttons have gradient red-to-orange animation with sliding shimmer effect (::after pseudo) and right-moving arrow icon. Tilt-card effect on service cards.\n- Smooth scrolling (html { scroll-behavior: smooth; }).\n\nREQUIRED STRUCTURE & SECTIONS:\n1. STICKY HEADER (64px height, backdrop-filter: blur(20px), glassmorphic): Logo text 'South Kolkata Hearing & Speech Clinic', direct call button (+91 9106291672935), WhatsApp quick link, and animated mobile full-screen menu overlay.\n2. FULL-VIEWPORT HERO (100dvh): Full bleed background image (Photo 1: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnk9VtwsX5on-DB56sVjYdRc5nRVp-0PoPmLKc3GpOIoD06BHLI8uS768qk9DrW2a_6dVXnd7w2MjW5oLV8vlG2aIivIlIpm72GtgV4O8uzx57SXUB_BeeTYSRSHShSfTxKA3kV81lspt0O=w32-h32-p-k-no) with dark gradient overlay. Headline: 'Trusted Hearing & Speech Medical Clinic in Barasat' with gradient-clip highlight on 'Barasat'. Floating glass badge with '★ 4.9 · 32 Patient Reviews'. Dual CTA buttons: 'WhatsApp Instant Booking' and 'Call Now'. Bouncing scroll indicator.\n3. ANIMATED TRUST STATS STRIP: Dark background strip with JS countUp animated counters using IntersectionObserver for '4.9 Star Rating', '32+ Google Reviews', '5+ Years Care', '100% Patient Satisfaction'.\n4. BENTO GRID SERVICES SECTION: 2-column span for primary service 'Pediatric & Adult Speech Therapy' + 1-column cards for 'Digital Hearing Aid Fitting', 'Audiometry Assessment', and 'Hearing Loss Rehabilitation'. Glassmorphic cards with animated border gradient on hover and instant WhatsApp booking links.\n5. ABOUT / STORY (SPLIT SCREEN): Left side features layered real photos (Photo 2: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnMEebAPKL8kGk5S2FSHvDEkcXUH8PiagwqenkC-pV4toMlIUixthdNhlLXkAS31pIa7V_urCu6f7RZUog7ydCnM9SG85uPF5IUYCLqbUpfi9b9LrlX3_7mJnuh6vLmrBSmjGI=w156-h114-p-k-no and Photo 3: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlvfnWGXEJU7SwYdFu-mfOoxaJ2e687Nbgc-UHtRw-jpwgc0uMjjJokUpYUXDk_znGTC5qcqf8lpnGCcZ7QM_Rga5GnfuVEN6Dk0LTCooSueC2sdb4nNmT5epReBw8eENtfsSQKHOw6lNxQ=w156-h114-p-k-no) with subtle offsets. Right side details methodical care procedures and systematic therapy sessions.\n6. GLASSMORPHIC TESTIMONIAL CARDS: Showcase actual customer quotes:\n   - 'My son attends this place and he has improved so much over just a short span of time. The approach of the Speech therapists is very different from other centres I have attended...' — Puja Das (5★)\n   - 'The speech therapists at here are very cooperative and nice. Their work procedures are also very methodical and systematic. The sessions offered by them are very effective.' — Subhasis maity (5★)\n   - 'My grandmother have hearing loss and was not able to communicate properly, but now all the problem has been solved after wearing the rightly suggested hearing aid given by SKHS...' — shibsankar das (5★)\n7. FAQ ACCORDION: Interactive expandable accordion with 5 clinic FAQs covering booking, consultation process, hearing aid trials, and location access.\n8. LOCATION & HOURS: 2-column layout with Google Maps Embed (https://www.google.com/maps/place/South+Kolkata+Hearing+%26+Speech+Clinic/...) and complete operational hours (Sunday: 9:00 AM – 10:00 PM).\n9. FINAL CTA & FLOATING WHATSAPP: High contrast primary banner 'Transform Your Hearing & Speech Today in Barasat' with dual actions. Persistent bottom-right floating WhatsApp button with pulsing radial glow animation.\n10. FOOTER: Dark theme footer with quick navigation links, address (5565, Market, Kolkata, West Bengal 700124, Barasat), direct phone link, Facebook page link (https://www.facebook.com/profile.php?id=61552306353859&mibextid=ZbWKwL), and structured JSON-LD schema for SEO.\n\nInitialize AOS on load with duration: 600, easing: 'ease-out-cubic', once: true. Ensure complete mobile responsiveness and zero overflow.",
+      "pitchPoints": [
+        "With a 4.9-star rating across 32 authentic patient reviews, South Kolkata Hearing & Speech Clinic is Barasat's premier therapy provider, but your web presence should reflect that high level of medical care.",
+        "This 2026 kinetic agency design integrates one-click WhatsApp scheduling and interactive service previews built to turn online searches into immediate patient consultations.",
+        "Featuring real stories from patients like Puja Das and Shibsankar Das, this platform instills complete clinical trust and maximizes bookings across Kolkata and Barasat."
+      ]
+    },
+    "lead-005": {
+      "source": "gemini",
+      "style": "professional",
+      "prompt": "Create a ultra-premium 2026 agency-built website for 'Healing Touch Diagnostics Centre Barasat' using Google Stitch. Output a single, completely self-contained HTML file with all CSS inline inside a <style> tag and all JavaScript inside a <script> tag. No external CSS/JS framework dependencies except Google Fonts and AOS library.\n\n## BUSINESS DATA & ASSETS\n- Business Name: Healing Touch Diagnostics Centre Barasat\n- Category: Diagnostic center in Barasat, Kolkata\n- Address: 65/1/1, Jessore Rd, Champadali, Barasat, Kolkata, West Bengal 700124\n- Google Rating: 4.7 ⭐ (766 reviews)\n- Phone: +91 9109903733358\n- Phone Link: tel:+919109903733358\n- WhatsApp Link: https://wa.me/919109903733358?text=Hello%20Healing%20Touch%20Diagnostics%20Centre%20Barasat\n- Google Maps Embed Link: https://www.google.com/maps/place/Healing+Touch+Diagnostics+Centre+Barasat/data=!4m7!3m6!1s0x39f8a34597f922fb:0x8fb698723bfa04c8!8m2!3d22.7213291!4d88.4898539!16s%2Fg%2F11knp5bn3v!19sChIJ-yL5l0Wj-DkRyAT6O3KYto8?authuser=0&hl=en&rclk=1\n- Facebook URL: https://www.facebook.com/profile.php?id=61552306353859&mibextid=ZbWKwL\n- Real Photos:\n  - Hero Background / Main: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWktuP9mAxTCLGzcBkK5h_AxBiqKCmZl-pOXaZVlIv6qJPxqb37pUgsJMruhoviYTyFOGq_65He2Cs-xm1ei0GrNpgYxcnOIxjgG7jIs3vUYhmKYlL4Oo9cuo1MK_r5-1oPXaEFC=w32-h32-p-k-no\n  - Gallery/Story 1: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm3HNIuX0no7ygYfvNvAoRFK4LRukMHzf2lW5u9CjaSHO8O2MjUMzrLN8VDwk0YMJxpkSvuosp3qcCpyYrHKC6P5wBYVDnH91ESbXsc8WpDTRGgscuXr0T-KDr3O1WhbpVNnV3vj3rohQ6E=w32-h32-p-k-no\n  - Gallery/Story 2: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmmubTSDrm4Lg7tWp2u75ZKtAFNSUJIxUcTUXSNbXT1Dj-U54-PfwsK6oA2zhaqwStiiJi021Nm26nF25MKI8kTe85NhnUbj-TgW75QjV7QK0kBdW9ux73HkHz6zwAy7VtqI-gYREK3Tgwk=w408-h544-k-no\n  - Diagnostic Equipment: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlt0o7NJrEufJP4_eMlWALdFId7QTj31mJRpCfwmKLaGnPMXbY65OHMf4RCvWyfWtZ7VvzurXxy2yiFh03K21gbwRJWPjDAz2ToO7Qj4sWZYcqjbcGKUe4tRqOFO0V9WufumMQVfQ=w224-h314-k-no\n\n## DESIGN SYSTEM & VARIABLES\n```css\n:root {\n  --bg: #F9FAFB;\n  --surface: #FFFFFF;\n  --primary: #1A3C5E;\n  --primary-light: #2563EB;\n  --accent: #0EA5E9;\n  --text: #0F172A;\n  --muted: #64748B;\n  --border: #E2E8F0;\n  --font-body: 'Plus Jakarta Sans', sans-serif;\n  --font-heading: 'Instrument Serif', serif;\n}\n```\nInclude Google Fonts: `Plus Jakarta Sans` (400, 500, 600, 700, 800) and `Instrument Serif` (400, 400i).\nInclude AOS animation library CSS: `https://unpkg.com/aos@2.3.4/dist/aos.css` and JS: `https://unpkg.com/aos@2.3.4/dist/aos.js`.\n\n## STRUCTURE & REQUIRED SECTIONS\n1. **SEO Head**: Proper meta tags, open graph tags, JSON-LD Schema (`LocalBusiness` with rating 4.7, address, geo coordinates 22.7213291, 88.4898539, phone, opening hours).\n2. **Sticky Header (64px)**: Blur background backdrop-filter: blur(16px), business wordmark in font-heading, mobile hamburger toggle, rapid CTA links for phone call (+91 9109903733358) and direct WhatsApp booking.\n3. **Full-Viewport Hero (100dvh)**: Full-bleed background photo with linear-gradient overlay (`linear-gradient(135deg, rgba(26,60,94,0.92) 0%, rgba(14,165,233,0.6) 100%)`). Floating glassmorphism badge showing `★ 4.7 · 766 Reviews`. Main headline: \"Trusted Diagnostic Centre in Barasat\" with gradient text accents. Dual high-contrast action buttons.\n4. **Animated Trust Stats Strip**: JS `requestAnimationFrame` animated counter triggered via `IntersectionObserver`. Stats: 4.7 Rating, 766+ Google Reviews, 100% Precise Reports, 5+ Years Serving Barasat.\n5. **Bento Grid Services Layout**: First card spans 2 columns on desktop. Services: Blood & Pathology Tests, Digital X-Ray & Ultrasound, ECG & Cardiac Screening, Whole Body Checkups, Home Sample Collection. Glassmorphism hover cards with scale animations.\n6. **Split-Screen Story Section**: Left side features stacked overlapping images with subtle angle rotation; right side highlights patient care values with an instant booking CTA.\n7. **Customer Testimonials**: Glassmorphic cards with exact customer feedback from Manjurul Hassan Mollah (4★) and Arpita Samadder (5★).\n8. **FAQ Accordion**: Smooth CSS accordion with SVG rotate arrows covering booking, report turnaround time, home collection, fasting instructions, and payment methods.\n9. **Location & Hours**: Embedded Google Map, exact address in Champadali, Barasat, opening hours (Mon-Sat: 7:00 AM - 9:00 PM, Sun: 7:00 AM - 2:00 PM), and driving directions button.\n10. **Dark Accent Closing CTA**: Premium dark gradient CTA box with bold tagline and double booking buttons.\n11. **Footer**: Social link to Facebook, sitemap, legal disclaimer, phone click-to-call, copyright 2026.\n12. **Floating WhatsApp Button**: Positioned fixed bottom-right with continuous pulse ring animation.",
+      "pitchPoints": [
+        "With 766+ Google reviews and a stellar 4.7-star rating, Healing Touch Diagnostics Centre is Barasat's premier healthcare choice, but your digital presence needs to match that offline reputation.",
+        "Patients in Barasat actively searching on mobile for fast blood tests and imaging need direct 1-click WhatsApp booking and transparent home collection info.",
+        "This 2026 modern glassmorphic web design will turn thousands of monthly local search impressions into immediate, scheduled diagnostic appointments."
+      ]
+    },
+    "lead-029": {
+      "source": "gemini",
+      "style": "professional",
+      "prompt": "Create a complete, single-file HTML website for SANTILOTA HOMOEO CLINIC in Barasat, West Bengal. Output a fully functional, mobile-first single HTML document with inline <style> and inline <script> tags. Use Google Fonts ('Plus Jakarta Sans' and 'Instrument Serif') and AOS (Animate On Scroll) via CDN.\n\n### BUSINESS DATA\n- Name: SANTILOTA HOMOEO CLINIC\n- Category: Medical Clinic / Homeopathic Healthcare\n- Doctor: Dr. Narayan Ray\n- Rating: 4.6 Stars (22 Reviews)\n- Address: 1234, Rabindra Road, Noapara, Barasat, West Bengal 700125\n- Phone: +91 9109903524482\n- WhatsApp: https://wa.me/919109903524482?text=Hello%20SANTILOTA%20HOMOEO%20CLINIC\n- Map URL: https://www.google.com/maps/place/SANTILOTA+HOMOEO+CLINIC/data=!4m7!3m6!1s0x39f8a2732aea0bf3:0xd74ad0ebd02d742f!8m2!3d22.7320376!4d88.4864017!16s%2Fg%2F11tfd8kzfx!19sChIJ8wvqKnOi-DkRL3Qt0OvQStc?authuser=0&hl=en&rclk=1\n- Facebook: https://www.facebook.com/profile.php?id=61552306353859&mibextid=ZbWKwL\n- Hours: Sunday: 9:00 AM – 12:00 PM, 5:00 PM – 8:00 PM; Mon-Sat: Morning & Evening Slots Available\n- Photos:\n  * Hero Background: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnPoISRZYE9ELE9kt1rbPWPWwKqTxr9t4olWeXpHXW0ypUWWbBSMx1OIiO0JMqs6f_DfgBf26he7gRZ2IBK9ABEcyTx15JbDP7xtnstkrKwOTvvdhXUiID8VDbFlylcyJEKn53C99wfko0T=w408-h438-k-no\n  * Clinic Visual 1: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmrg8XBipy8RhnDK7Zlg0OPT_QkttCdtD893c-V6OmfgcY1m_EXXoyMGK9C80QDvz9ACo9yRjz2IZJIjk4EnJd7J2Yh3Rjahjl1hL4KhFygWvT7jvRIyl9FAkrFuRtUfGLzs53-gw=w32-h32-p-k-no\n  * Clinic Visual 2: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkxc4l59Wy_DNDnvyw3MYqzA68EMy2x7g93svelX0n0S6wkbt8HPV3EkcvO6GUy-pyeKokol5A9LNigr_skSHc2YIxBKOAepswaIPKGLPsjQ2CBrOEbJqDaXzKdCmN-Vs5ocP4t_g=w156-h114-p-k-no\n\n### DESIGN SYSTEM & DESIGN RULES\n- Color Palette:\n  --bg: #F9FAFB\n  --surface: #FFFFFF\n  --primary: #1A3C5E\n  --primary-light: #2563EB\n  --accent: #0EA5E9\n  --text: #0F172A\n  --muted: #64748B\n  --border: #E2E8F0\n- Typography: Imports from Google Fonts: 'Plus Jakarta Sans' for body and 'Instrument Serif' for display headings.\n- Layout & Style: Modern 2026 UI, glassmorphism badges, gradient text overlays, responsive bento grid for services, hover elevation micro-interactions (transform translateY(-4px)).\n- Fixed Floating Elements: Floating WhatsApp CTA button at bottom right with pulsing effect.\n\n### MANDATORY SECTIONS\n1. STICKY HEADER: Glassmorphic background blur, brand title 'SANTILOTA HOMOEO CLINIC', direct phone link, WhatsApp contact button, mobile hamburger toggle.\n2. HERO (100dvh): Full viewport height image with dark gradient overlay, gradient headline 'Trusted Homeopathic Clinic in Barasat', floating 4.6★ glass badge, subheadline highlighting Dr. Narayan Ray's compassionate care, two prominent CTAs (WhatsApp Booking & Direct Call), animated scroll indicator.\n3. ANIMATED TRUST STATS: Dark background strip with JS count-up counters for 4.6★ Rating, 22+ Google Reviews, 5+ Years Serving Barasat, and 100% Natural Treatments.\n4. BENTO GRID SERVICES: Desktop bento grid layout (2-col span featured card + 1-col cards) showcasing key treatments: Hypertension Management, Chronic Skin Conditions, Digestive & Metabolic Health, Respiratory Care, and Child Homeopathy. Each card includes an icon, description, and WhatsApp booking link.\n5. ABOUT SECTION (SPLIT SCREEN): Left side offset overlapping photo gallery; Right side narrative highlighting Dr. Narayan Ray's patient-first listening approach and holistic healing philosophy.\n6. CUSTOMER TESTIMONIALS: Glassmorphism review cards featuring real quotes:\n   - 'i went there yesterday. doctor narayan ray is very humble to me. he listen to me very carefully...' — Bristi Sarkar (5★)\n   - 'Highly recommendable homeopathic Clinic at Barasat, North 24 Parganas, Kolkata.' — Reserved for Nature (5★)\n   - 'Very effective in treating my hypertension condition.' — RKD Multispeciality (5★)\n7. FAQ ACCORDION: Interactive expandable accordion answering 5 patient queries (consultation process, appointment booking, hypertension/chronic disease treatment, location, natural remedies).\n8. LOCATION & HOURS: 2-column layout with embedded Google Maps iframe on left and operational hours/address card with 'Get Directions' CTA on right.\n9. FINAL CTA SECTION: High-contrast primary dark container, headline 'Ready to Heal Naturally in Barasat?', dual action buttons for direct call and instant WhatsApp consultation.\n10. FOOTER: Deep dark footer containing brand narrative, quick nav links, full address with icons, Facebook link, copyright 2026 notice.\n\n### TECHNICAL & SEO REQUIREMENTS\n- Full SEO meta tags, LocalBusiness JSON-LD schema with exact address and phone number.\n- AOS scroll animation library initialized via script.\n- Fully self-contained single output HTML string with embedded CSS and JS.",
+      "pitchPoints": [
+        "Patients explicitly praise Dr. Narayan Ray's humble approach and careful listening—your current online presence needs a custom site that reflects this high level of clinical trust.",
+        "With a strong 4.6★ rating across 22 reviews, a modern 2026 web design with instant WhatsApp booking will convert local Barasat searches into immediate appointments.",
+        "A dedicated bento-grid showcase for chronic conditions like hypertension establishes SANTILOTA HOMOEO CLINIC as the premier holistic care center in North 24 Parganas."
+      ],
+      "extraPages": [
+        {
+          "id": "appointment_booking",
+          "icon": "📅",
+          "label": "Book Consultation",
+          "desc": "An interactive schedule-selection tool allowing Barasat patients to book clinic visits or online consultations with Dr. Narayan Ray."
+        },
+        {
+          "id": "conditions_treated",
+          "icon": "🩺",
+          "label": "Conditions & Treatments",
+          "desc": "In-depth guide on natural homeopathic management for hypertension, skin allergies, respiratory concerns, and metabolic health."
+        },
+        {
+          "id": "patient_guidance",
+          "icon": "🌿",
+          "label": "Homeopathy Care Guide",
+          "desc": "Patient onboarding instructions on dosage guidelines, dietary precautions during treatment, and what to expect on the first consultation."
+        }
+      ]
     }
+  },
+  "leadStatuses": {
+    "lead-023": "called"
   }
 }

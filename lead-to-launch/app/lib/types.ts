@@ -135,9 +135,17 @@ export type RankedLead = Lead & {
   };
 };
 
+export type ExtraPage = {
+  id: string;
+  icon: string;
+  label: string;
+  desc: string;
+};
+
 export type BuildPromptResult = {
   prompt: string;
   pitchPoints: string[];
+  extraPages?: ExtraPage[];
 };
 
 export type OutreachResult = {
