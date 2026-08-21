@@ -28,6 +28,37 @@ const STYLE_INSTRUCTIONS: Record<string, string> = {
   bold:         "High-contrast vibrant palette. Electric blue or orange primary, bold 700+ weight headings, large hero text, strong above-fold CTA, high-energy feel.",
 };
 
+/**
+ * Cleans an Indian phone number to +91 XXXXXXXXXX format.
+ * Handles common scraper artifacts like "+91 08017920000" → "+91 8017920000"
+ */
+function cleanPhone(raw: string | null | undefined): string {
+  if (!raw) return "n/a";
+  const digits = raw.replace(/\D/g, ""); // strip everything except digits
+  // If starts with 91 and next digit is 0 (e.g. 910XXXXXXXXX), remove the 0
+  if (digits.startsWith("91") && digits.length === 12 && digits[2] === "0") {
+    return `+91 ${digits.slice(3)}`;
+  }
+  // If 11 digits starting with 0 (e.g. 08017920000), strip leading 0
+  if (digits.length === 11 && digits[0] === "0") {
+    return `+91 ${digits.slice(1)}`;
+  }
+  // If 10 digits (standard Indian mobile)
+  if (digits.length === 10) {
+    return `+91 ${digits}`;
+  }
+  // If already has 91 prefix (12 digits)
+  if (digits.startsWith("91") && digits.length === 12) {
+    return `+91 ${digits.slice(2)}`;
+  }
+  return `+91 ${digits}`;
+}
+
+function cleanWaNumber(raw: string | null | undefined): string {
+  if (!raw) return "";
+  return cleanPhone(raw).replace(/[^\d]/g, ""); // digits only for wa.me
+}
+
 function buildPrompt(lead: RankedLead, platform: string, style: string): string {
   const platformNote = PLATFORM_OUTPUT[platform] ?? PLATFORM_OUTPUT.stitch;
 
@@ -91,7 +122,7 @@ ${styleNote}
 - Category: ${lead.category}
 - Location: ${lead.address}, ${lead.city}
 - Google Rating: ${lead.rating ?? "n/a"} ⭐ (${lead.reviewsCount ?? 0} reviews)
-- Phone: ${lead.phone ?? "n/a"} | WhatsApp: ${lead.whatsapp ?? lead.phone ?? "n/a"}
+- Phone: ${cleanPhone(lead.phone)} | WhatsApp: wa.me/${cleanWaNumber(lead.whatsapp ?? lead.phone)}
 - Years in business: ${lead.yearsInBusiness ?? "n/a"}
 - Biggest gap today: ${lead.audit.biggestGap}${realPhotos}${realServices}${realHours}${realAbout}${realReviews}${socialLinks}
 

@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { PhaseShell } from "./PhaseShell";
 import { IncompleteState } from "./IncompleteState";
-import { Copy, ExternalLink, Sparkles, CheckCircle2, ChevronRight, Loader2, Globe2, Palette } from "lucide-react";
+import { Loader2, CheckCircle2, ChevronRight, Copy, Sparkles, Search, ExternalLink, Globe2, Palette } from "lucide-react";
 import type { RankedLead, BuildPromptResult } from "@/lib/types";
 import { toast } from "sonner";
 
@@ -51,6 +51,7 @@ export function Phase4Build({
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [typed, setTyped] = useState<Record<string, string>>({});
+  const [sidebarSearch, setSidebarSearch] = useState("");
 
   const result = activeLead ? buildPrompts[activeLead.id] : null;
   const prompt = result?.prompt ?? "";
@@ -138,31 +139,59 @@ export function Phase4Build({
     >
       <div className="grid lg:grid-cols-[260px_1fr] gap-4">
         {/* Lead picker sidebar */}
-        <div className="space-y-1.5">
-          <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground px-1 mb-2">Select lead</div>
-          {ranked.map((lead, i) => {
-            const done = !!buildPrompts[lead.id];
-            const active = activeLead?.id === lead.id;
-            return (
-              <button
-                key={lead.id}
-                onClick={() => { setActiveLead(lead); setError(null); }}
-                className={`w-full text-left rounded-lg border px-3 py-2.5 transition-all duration-150 flex items-center gap-2 ${
-                  active
-                    ? "border-primary/60 bg-primary/5 text-foreground"
-                    : "border-border hover:border-primary/30 hover:bg-muted/40 text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <span className="text-xs tabular-nums w-5 shrink-0 text-muted-foreground">#{i + 1}</span>
-                <span className="flex-1 text-sm truncate font-medium">{lead.name}</span>
-                <div className="shrink-0">
-                  {done
-                    ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                    : <ChevronRight className="h-3.5 w-3.5 opacity-40" />}
-                </div>
-              </button>
-            );
-          })}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between px-1">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Select lead</div>
+            <div className="text-[10px] text-muted-foreground">{doneCount}/{ranked.length} done</div>
+          </div>
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search by name, city…"
+              value={sidebarSearch}
+              onChange={e => setSidebarSearch(e.target.value)}
+              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50"
+            />
+          </div>
+          {/* Scrollable list */}
+          <div className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-260px)] pr-0.5">
+            {ranked
+              .filter(l => {
+                const q = sidebarSearch.toLowerCase();
+                return !q || l.name.toLowerCase().includes(q) || l.city.toLowerCase().includes(q) || l.category.toLowerCase().includes(q);
+              })
+              .map((lead) => {
+                const done = !!buildPrompts[lead.id];
+                const active = activeLead?.id === lead.id;
+                return (
+                  <button
+                    key={lead.id}
+                    onClick={() => { setActiveLead(lead); setError(null); }}
+                    className={`w-full text-left rounded-lg border px-3 py-2.5 transition-all duration-150 flex items-center gap-2 ${
+                      active
+                        ? "border-primary/60 bg-primary/5 text-foreground"
+                        : "border-border hover:border-primary/30 hover:bg-muted/40 text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <span className="text-xs tabular-nums w-5 shrink-0 text-muted-foreground">#{ranked.indexOf(lead) + 1}</span>
+                    <span className="flex-1 text-sm truncate font-medium">{lead.name}</span>
+                    <div className="shrink-0">
+                      {done
+                        ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                        : <ChevronRight className="h-3.5 w-3.5 opacity-40" />}
+                    </div>
+                  </button>
+                );
+              })}
+            {ranked.filter(l => {
+              const q = sidebarSearch.toLowerCase();
+              return !q || l.name.toLowerCase().includes(q) || l.city.toLowerCase().includes(q) || l.category.toLowerCase().includes(q);
+            }).length === 0 && (
+              <div className="text-xs text-muted-foreground text-center py-4">No leads match "{sidebarSearch}"</div>
+            )}
+          </div>
         </div>
 
         {/* Main panel */}

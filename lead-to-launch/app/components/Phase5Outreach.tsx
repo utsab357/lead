@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { PhaseShell } from "./PhaseShell";
 import { IncompleteState } from "./IncompleteState";
-import { MessageCircle, Mail, Camera, Copy, ExternalLink, Clock, Sparkles, Loader2, CheckCircle2, ChevronRight, Monitor, Download } from "lucide-react";
+import { MessageCircle, Mail, Camera, Copy, ExternalLink, Clock, Sparkles, Loader2, CheckCircle2, ChevronRight, Search } from "lucide-react";
 import type { RankedLead, OutreachChannel, OutreachLanguage, OutreachResult } from "@/lib/types";
 import { toast } from "sonner";
 
@@ -35,6 +35,7 @@ export function Phase5Outreach({
   const [lang, setLang] = useState<OutreachLanguage>("hinglish");
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sidebarSearch, setSidebarSearch] = useState("");
 
   // Local edits to message and followup (keyed by leadId)
   const [localEdits, setLocalEdits] = useState<Record<string, { message: string; followUp: string }>>({});
@@ -48,7 +49,7 @@ export function Phase5Outreach({
   if (ranked.length === 0) {
     return (
       <PhaseShell
-        title="Phase 5 â€” Outreach"
+        title="Phase 5 — Outreach"
         subtitle="AI writes personalized first message + day-3 follow-up for each lead."
         onPrev={onPrev}
         onNext={onNext}
@@ -56,7 +57,7 @@ export function Phase5Outreach({
       >
         <IncompleteState
           title="No ranked leads yet"
-          description="Run Phases 1â€“3 first to get ranked leads, then generate personalized outreach here."
+          description="Run Phases 1–3 first to get ranked leads, then generate personalized outreach here."
           prevPhaseLabel="Rank"
           onPrev={onPrev}
         />
@@ -80,7 +81,6 @@ export function Phase5Outreach({
       }
       const data = await res.json() as OutreachResult;
       setOutreachResults({ ...outreachResults, [activeLead.id]: data });
-      // Clear local edits for this lead since fresh data is here
       setLocalEdits((prev) => { const n = { ...prev }; delete n[activeLead.id]; return n; });
       toast.success("AI drafted your outreach");
     } catch (e) {
@@ -95,6 +95,7 @@ export function Phase5Outreach({
     if (!activeLead) return;
     setLocalEdits((prev) => ({ ...prev, [activeLead.id]: { ...prev[activeLead.id], message: val, followUp: prev[activeLead.id]?.followUp ?? followUp } }));
   }
+
   function updateFollowUp(val: string) {
     if (!activeLead) return;
     setLocalEdits((prev) => ({ ...prev, [activeLead.id]: { ...prev[activeLead.id], followUp: val, message: prev[activeLead.id]?.message ?? message } }));
@@ -130,7 +131,7 @@ export function Phase5Outreach({
 
   return (
     <PhaseShell
-      title="Phase 5 â€” Outreach"
+      title="Phase 5 — Outreach"
       subtitle={`AI writes a personalized first touch + day-3 follow-up for each lead. ${doneCount}/${ranked.length} drafted.`}
       onPrev={onPrev}
       onNext={onNext}
@@ -139,31 +140,59 @@ export function Phase5Outreach({
     >
       <div className="grid lg:grid-cols-[260px_1fr] gap-4">
         {/* Lead picker sidebar */}
-        <div className="space-y-1.5">
-          <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground px-1 mb-2">Select lead</div>
-          {ranked.map((lead, i) => {
-            const done = !!outreachResults[lead.id];
-            const active = activeLead?.id === lead.id;
-            return (
-              <button
-                key={lead.id}
-                onClick={() => { setActiveLead(lead); setError(null); }}
-                className={`w-full text-left rounded-lg border px-3 py-2.5 transition-all duration-150 flex items-center gap-2 ${
-                  active
-                    ? "border-primary/60 bg-primary/5 text-foreground"
-                    : "border-border hover:border-primary/30 hover:bg-muted/40 text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <span className="text-xs tabular-nums w-5 shrink-0 text-muted-foreground">#{i + 1}</span>
-                <span className="flex-1 text-sm truncate font-medium">{lead.name}</span>
-                <div className="shrink-0 flex items-center gap-1">
-                  {done
-                    ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                    : <ChevronRight className="h-3.5 w-3.5 opacity-40" />}
-                </div>
-              </button>
-            );
-          })}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between px-1">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Select lead</div>
+            <div className="text-[10px] text-muted-foreground">{doneCount}/{ranked.length} drafted</div>
+          </div>
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search by name, city…"
+              value={sidebarSearch}
+              onChange={e => setSidebarSearch(e.target.value)}
+              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50"
+            />
+          </div>
+          {/* Scrollable list */}
+          <div className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-260px)] pr-0.5">
+            {ranked
+              .filter(l => {
+                const q = sidebarSearch.toLowerCase();
+                return !q || l.name.toLowerCase().includes(q) || l.city.toLowerCase().includes(q) || l.category.toLowerCase().includes(q);
+              })
+              .map((lead, i) => {
+                const done = !!outreachResults[lead.id];
+                const active = activeLead?.id === lead.id;
+                return (
+                  <button
+                    key={lead.id}
+                    onClick={() => { setActiveLead(lead); setError(null); }}
+                    className={`w-full text-left rounded-lg border px-3 py-2.5 transition-all duration-150 flex items-center gap-2 ${
+                      active
+                        ? "border-primary/60 bg-primary/5 text-foreground"
+                        : "border-border hover:border-primary/30 hover:bg-muted/40 text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <span className="text-xs tabular-nums w-5 shrink-0 text-muted-foreground">#{ranked.indexOf(lead) + 1}</span>
+                    <span className="flex-1 text-sm truncate font-medium">{lead.name}</span>
+                    <div className="shrink-0 flex items-center gap-1">
+                      {done
+                        ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                        : <ChevronRight className="h-3.5 w-3.5 opacity-40" />}
+                    </div>
+                  </button>
+                );
+              })}
+            {ranked.filter(l => {
+              const q = sidebarSearch.toLowerCase();
+              return !q || l.name.toLowerCase().includes(q) || l.city.toLowerCase().includes(q) || l.category.toLowerCase().includes(q);
+            }).length === 0 && (
+              <div className="text-xs text-muted-foreground text-center py-4">No leads match "{sidebarSearch}"</div>
+            )}
+          </div>
         </div>
 
         {/* Main panel */}
@@ -176,7 +205,7 @@ export function Phase5Outreach({
                   <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Drafting for</div>
                   <div className="font-display text-xl mt-1">{activeLead.name}</div>
                   <div className="text-xs text-muted-foreground mt-0.5">
-                    {activeLead.phone}{activeLead.email ? ` Â· ${activeLead.email}` : ""}
+                    {activeLead.phone}{activeLead.email ? ` · ${activeLead.email}` : ""}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -196,7 +225,7 @@ export function Phase5Outreach({
                 </div>
                 <Button onClick={generate} disabled={generating} className="h-10 px-4">
                   {generating
-                    ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Writingâ€¦</>
+                    ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Writing…</>
                     : result ? "Regenerate" : "Draft outreach"}
                 </Button>
               </div>
@@ -204,7 +233,7 @@ export function Phase5Outreach({
               {generating && (
                 <div className="mb-4 rounded-lg border border-border bg-card p-4 flex items-center gap-3">
                   <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
-                  <span className="text-sm">AI is writing outreach for {activeLead.name}â€¦</span>
+                  <span className="text-sm">AI is writing outreach for {activeLead.name}…</span>
                 </div>
               )}
               {error && (
@@ -221,7 +250,7 @@ export function Phase5Outreach({
                       <Sparkles className="h-5 w-5 text-primary" strokeWidth={1.5} />
                     </div>
                     <div className="font-display text-lg mb-1">Pick a channel + language</div>
-                    <p className="text-sm text-muted-foreground">Then hit &ldquo;Draft outreach&rdquo; â€” you&apos;ll get a first message and a day-3 follow-up.</p>
+                    <p className="text-sm text-muted-foreground">Then hit &ldquo;Draft outreach&rdquo; — you&apos;ll get a first message and a day-3 follow-up.</p>
                   </CardContent>
                 </Card>
               )}
@@ -265,30 +294,6 @@ export function Phase5Outreach({
                       <span className="text-xs text-muted-foreground">— all drafts export to Phase 7</span>
                     </div>
                   )}
-
-                  {/* Demo Preview */}
-                  <Card className="mt-4 border-primary/20 bg-primary/3">
-                    <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                      <CardTitle className="text-sm flex items-center gap-2">
-                        <Monitor className="h-4 w-4 text-primary" /> Demo preview — screenshot this to share
-                      </CardTitle>
-                      <Badge variant="outline" className="text-[10px]">Live preview</Badge>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="rounded-lg overflow-hidden border border-border h-[380px] relative">
-                        <iframe
-                          title={`Demo preview for ${activeLead.name}`}
-                          srcDoc={demoSiteHtml(activeLead)}
-                          className="w-full h-full"
-                          sandbox="allow-same-origin"
-                        />
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
-                        <Download className="h-3 w-3" />
-                        Take a screenshot of this preview and send it on WhatsApp — no fake link needed.
-                      </p>
-                    </CardContent>
-                  </Card>
                 </>
               )}
             </>
@@ -297,99 +302,4 @@ export function Phase5Outreach({
       </div>
     </PhaseShell>
   );
-}
-
-/** Generates a beautiful HTML demo site for the given lead */
-function demoSiteHtml(l: RankedLead): string {
-  const wa = (l.whatsapp ?? l.phone ?? "919999999999").replace(/\D/g, "");
-  const phone = (l.phone ?? "").replace(/\s/g, "");
-  const rating = l.rating ?? "5.0";
-  const reviews = l.reviewsCount ?? 0;
-  const city = l.city?.split(",")[0] ?? l.city ?? "India";
-  const services = l.services?.slice(0, 6) ?? ["Service 1", "Service 2", "Service 3"];
-  const topReview = l.reviews?.find(r => r.rating >= 4)?.text?.slice(0, 120) ?? `Excellent service and professional staff. Highly recommended in ${city}!`;
-  const topReviewAuthor = l.reviews?.find(r => r.rating >= 4)?.author?.split(/\d/)[0]?.trim() ?? "Happy Customer";
-
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${l.name}</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-  body { font-family: 'Inter', sans-serif; }
-  .wa-btn { background: #25D366; }
-  .wa-btn:hover { background: #128C7E; }
-</style>
-</head><body class="bg-white text-gray-900 text-sm">
-
-<!-- HEADER -->
-<header class="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-    <div class="font-bold text-gray-900 text-base truncate max-w-[180px]">${l.name}</div>
-    <a href="tel:${phone}" class="text-xs font-semibold bg-gray-900 text-white px-4 py-2 rounded-full">📞 Call Now</a>
-  </div>
-</header>
-
-<!-- HERO -->
-<section class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white px-4 py-10">
-  <div class="max-w-5xl mx-auto">
-    <div class="text-xs uppercase tracking-widest opacity-75 mb-2">${l.category} · ${city}</div>
-    <h1 class="text-2xl font-bold leading-tight mb-3">${l.name}<br><span class="opacity-80 font-normal text-lg">Trusted by ${reviews}+ customers in ${city}</span></h1>
-    <div class="flex items-center gap-2 mb-4">
-      <span class="text-yellow-300 font-bold">${rating} ★</span>
-      <span class="opacity-80 text-xs">${reviews} Google reviews</span>
-    </div>
-    <div class="flex gap-3 flex-wrap">
-      <a href="https://wa.me/${wa}" class="wa-btn text-white font-semibold px-5 py-2.5 rounded-full text-sm">💬 Book on WhatsApp</a>
-      <a href="tel:${phone}" class="bg-white/20 text-white font-semibold px-5 py-2.5 rounded-full text-sm border border-white/30">📞 Call Us</a>
-    </div>
-  </div>
-</section>
-
-<!-- TRUST STRIP -->
-<section class="bg-gray-50 border-y border-gray-100 px-4 py-4">
-  <div class="max-w-5xl mx-auto grid grid-cols-3 gap-2 text-center">
-    <div><div class="text-lg font-bold text-blue-600">${rating}★</div><div class="text-[10px] text-gray-500 uppercase tracking-wide">Rating</div></div>
-    <div><div class="text-lg font-bold text-blue-600">${reviews}+</div><div class="text-[10px] text-gray-500 uppercase tracking-wide">Reviews</div></div>
-    <div><div class="text-lg font-bold text-blue-600">${l.yearsInBusiness ?? "5"}+</div><div class="text-[10px] text-gray-500 uppercase tracking-wide">Yrs in ${city}</div></div>
-  </div>
-</section>
-
-<!-- SERVICES -->
-<section class="px-4 py-8">
-  <div class="max-w-5xl mx-auto">
-    <h2 class="text-lg font-bold mb-4">Our Services</h2>
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-      ${services.map(s => `<div class="border border-gray-200 rounded-xl p-3"><div class="font-semibold text-sm">${s}</div><div class="text-xs text-gray-500 mt-0.5">Available now</div></div>`).join("")}
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIAL -->
-<section class="bg-blue-50 px-4 py-7">
-  <div class="max-w-5xl mx-auto">
-    <h2 class="text-lg font-bold mb-3">What Customers Say</h2>
-    <div class="bg-white rounded-xl p-4 border border-blue-100 shadow-sm">
-      <div class="text-yellow-400 mb-1">★★★★★</div>
-      <p class="text-sm text-gray-700 italic">"${topReview}"</p>
-      <div class="text-xs text-gray-500 mt-2 font-medium">— ${topReviewAuthor}</div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="px-4 py-8 text-center">
-  <div class="max-w-5xl mx-auto">
-    <h2 class="text-lg font-bold mb-2">Book an Appointment Today</h2>
-    <p class="text-sm text-gray-500 mb-4">${l.address}</p>
-    <a href="https://wa.me/${wa}" class="wa-btn text-white font-semibold px-8 py-3 rounded-full text-sm inline-block">💬 Message on WhatsApp</a>
-  </div>
-</section>
-
-<!-- FLOATING WA BUTTON -->
-<a href="https://wa.me/${wa}" class="fixed bottom-5 right-5 wa-btn text-white w-13 h-13 rounded-full flex items-center justify-center shadow-lg text-xl z-50" style="width:52px;height:52px">💬</a>
-
-<footer class="bg-gray-900 text-gray-400 text-xs px-4 py-4 text-center">
-  © ${l.name} · ${l.address}
-</footer>
-</body></html>`;
 }
