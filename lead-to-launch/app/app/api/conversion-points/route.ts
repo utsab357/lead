@@ -11,56 +11,76 @@ const BATCH_DELAY_MS = 1500;
 function buildPrompt(leads: Lead[], audits: Record<string, AuditResult>): string {
   const rows = leads
     .filter((l) => audits[l.id])
-    .map((l) => ({
-      id: l.id,
-      name: l.name,
-      category: l.category,
-      city: l.city,
-      address: l.address,
-      rating: l.rating,
-      reviewsCount: l.reviewsCount,
-      hasWebsite: audits[l.id].hasWebsite,
-      biggestGap: audits[l.id].biggestGap,
-      estLostRevenuePerMonth: audits[l.id].estLostRevenuePerMonth,
-      gaps: audits[l.id].gaps,
-      hours: l.hours ?? null,
-      photosCount: l.photosCount ?? 0,
-      services: l.services ?? [],
-      priceLevel: l.priceLevel ?? null,
-      socialLinks: l.socialLinks?.map(s => s.platform) ?? [],
-      ownerReplies: l.ownerReplies ?? null,
-      customerComplaints: l.reviews
-        ?.filter(r => r.rating <= 2)
-        .slice(0, 3)
-        .map(r => r.text.slice(0, 120)) ?? [],
-      customerPraise: l.reviews
-        ?.filter(r => r.rating >= 4)
-        .slice(0, 3)
-        .map(r => r.text.slice(0, 120)) ?? [],
-    }));
+    .map((l) => {
+      const monthlyLoss = audits[l.id].estLostRevenuePerMonth;
+      const monthlyLossStr = monthlyLoss != null ? `₹${Number(monthlyLoss).toLocaleString("en-IN")}` : "";
+      const numericMonthly = Number(monthlyLoss) || 0;
+      const dailyLoss = numericMonthly > 0 ? `₹${Math.round(numericMonthly / 30).toLocaleString("en-IN")}` : null;
 
-  return `You are a business consultant and sales expert specialized in Indian local businesses. For each business below, generate UNIQUE, PERSONALIZED conversion points — specific reasons WHY this exact business needs a website RIGHT NOW.
+      return {
+        id: l.id,
+        name: l.name,
+        category: l.category,
+        city: l.city,
+        address: l.address,
+        rating: l.rating,
+        reviewsCount: l.reviewsCount,
+        hasWebsite: audits[l.id].hasWebsite,
+        biggestGap: audits[l.id].biggestGap,
+        estLostRevenuePerMonth: monthlyLossStr,
+        estLostRevenuePerDay: dailyLoss,   // ← FIXED: pre-calculated so AI uses correct number
+        gaps: audits[l.id].gaps,
+        hours: l.hours ?? null,
+        photosCount: l.photosCount ?? 0,
+        services: l.services ?? [],
+        priceLevel: l.priceLevel ?? null,
+        socialLinks: l.socialLinks?.map(s => s.platform) ?? [],
+        ownerReplies: l.ownerReplies ?? null,
+        customerComplaints: l.reviews
+          ?.filter(r => r.rating <= 2)
+          .slice(0, 3)
+          .map(r => r.text.slice(0, 150)) ?? [],
+        customerPraise: l.reviews
+          ?.filter(r => r.rating >= 4)
+          .slice(0, 3)
+          .map(r => r.text.slice(0, 150)) ?? [],
+      };
+    });
 
-These points will be used by a FREELANCE WEB DEVELOPER (not a salesperson) making cold calls. They are technical, not sales-trained. The content must be:
-- SPECIFIC to this business (use their real name, city, rating, reviews count)
-- Based on their REAL data (not generic templates)
-- Include competitor analysis (imagine what similar businesses nearby are doing)
-- Include revenue impact with real ₹ numbers
-- Feel urgent — why they're losing money TODAY
+  return `You are a business consultant helping a FIRST-TIME CALLER who is a web developer (not a salesperson) pitch a free website demo to local Indian business owners. The developer is nervous and technical — the content must be simple, honest, and conversational.
 
-For EACH business return a JSON object with these fields:
-- "leadId": string (copy the id)
-- "points": array of 4-5 unique selling points. Each point should be a complete sentence the developer can say on a call. Reference the business name and city.
-- "competitorInsight": ONE sentence about what their nearby competitors are doing better online (make it realistic for their city)
-- "revenueArgument": ONE sentence with specific ₹ numbers about how much revenue a website could add per month
-- "urgencyHook": ONE sentence creating urgency
-- "callScript": an object with exactly these 4 fields for a COLD CALL script:
-  - "opener": The exact first sentence to say when the owner picks up (mention their business name and one specific fact like their review count). Keep it natural and non-salesy.
-  - "keyPoints": Array of exactly 3 short bullet-point sentences to say during the call. Each should reference their real data. Easy to read aloud quickly.
-  - "objectionHandler": ONE sentence to say if the owner says "I'm not interested" or "I'm busy". Should be soft, respectful, and reference one specific number.
-  - "closer": ONE natural closing sentence to end the call and propose a next step (e.g., sending a WhatsApp message, a free mock-up).
+CRITICAL RULES — read before generating:
+1. NEVER invent specific competitor names (like "XYZ Clinic 2km away"). You don't know real competitors. Instead say "similar clinics nearby" or "other [category] businesses in [city]". Inventing names will embarrass the caller.
+2. MATH MUST BE CONSISTENT. The field "estLostRevenuePerDay" is pre-calculated. Use THAT exact number in the objection handler — never invent a different daily figure.
+3. The opener must NOT sound like a sales call. It should sound like a curious person who stumbled on their business online. Start with a genuine observation or compliment. Do NOT start with "I'm calling to sell you" or "I want to offer you".
+4. Use REAL review text from customerComplaints and customerPraise to make points personal. If a customer complained about "no online booking", reference that. If customers praise the doctor, compliment the owner on it.
+5. Keep language simple. The developer will read this on a phone screen while talking. Short sentences only.
 
-Output ONLY a JSON array of these objects. Vary the language — never repeat the same phrases across businesses.
+For EACH business return a JSON object with these EXACT fields:
+
+- "leadId": string (copy the id field exactly)
+
+- "points": array of 4-5 unique selling points. Each = one sentence the developer can SAY OUT LOUD. Use the business name, city, real review data, and specific numbers. Do NOT use generic sentences.
+
+- "competitorInsight": ONE sentence about what similar businesses in their city are doing online — use generic phrasing like "other Ayurvedic clinics in Barasat" not invented names.
+
+- "revenueArgument": ONE sentence with specific ₹/month number from estLostRevenuePerMonth. Keep it realistic.
+
+- "urgencyHook": ONE short punchy sentence. Must use estLostRevenuePerDay as the daily loss figure.
+
+- "callScript": object with these fields for a cold call — keep ALL text SHORT (max 2 sentences each):
+  - "opener": First sentence to say when owner picks up. Should sound like: "I was looking at [category] clinics in [city] and noticed your [specific observation]..." — NOT salesy. Mention one real fact (rating, reviews, or a specific review insight).
+  - "iceBreaker": ONE question to ask AFTER the opener to get the owner talking naturally. Should NOT be about selling. Example: "Do most of your patients find you through Google or through word of mouth?" — makes them reflect on their online presence themselves.
+  - "keyPoints": Array of exactly 3 short bullet sentences to mention. Each references their real data. Easy to read aloud quickly. No jargon.
+  - "objectionHandler": ONE sentence for when they say "not interested" or "I'm busy". MUST use the pre-calculated estLostRevenuePerDay figure. Keep it soft and non-pushy.
+  - "closer": ONE sentence to end the call. Should offer to send a free WhatsApp mock-up or demo screenshot. Never ask for money.
+  - "doNotSay": ONE specific phrase or mistake a first-time caller should AVOID with this owner. Example: "Don't say 'I want to build you a website' upfront — instead say you noticed their profile and wanted to share something."
+
+- "postCallWhatsApp": The exact WhatsApp message to send within 5 minutes after the call ends. Should be 2-3 sentences max. Warm, personal, references something from the call. Ends with a soft yes/no question. Include their name/business name naturally.
+
+- "bestTimeToCall": ONE short sentence recommending the best day and time to call this specific type of business (based on their category and hours). Example: "For a clinic, call Tuesday or Wednesday between 2–4 PM when appointment rushes are lower."
+
+Output ONLY a valid JSON array. No markdown. No explanation. Vary language across businesses — never repeat the same sentences.
 
 Businesses:
 ${JSON.stringify(rows, null, 2)}`;
@@ -116,13 +136,18 @@ export async function POST(req: Request) {
         competitorInsight:  cp.competitorInsight ?? "",
         revenueArgument:    cp.revenueArgument ?? "",
         urgencyHook:        cp.urgencyHook ?? "",
+        postCallWhatsApp:   (cp as any).postCallWhatsApp ?? "",
+        bestTimeToCall:     (cp as any).bestTimeToCall ?? "",
         callScript:         cp.callScript ? {
           opener:           cp.callScript.opener ?? "",
+          iceBreaker:       (cp.callScript as any).iceBreaker ?? "",
           keyPoints:        Array.isArray(cp.callScript.keyPoints) ? cp.callScript.keyPoints : [],
           objectionHandler: cp.callScript.objectionHandler ?? "",
           closer:           cp.callScript.closer ?? "",
+          doNotSay:         (cp.callScript as any).doNotSay ?? "",
         } : undefined,
       };
+
     }
   }
 

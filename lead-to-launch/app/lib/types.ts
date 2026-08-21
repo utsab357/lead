@@ -107,12 +107,17 @@ export type ConversionPoints = {
   competitorInsight: string;
   revenueArgument: string;
   urgencyHook: string;
+  postCallWhatsApp?: string;
+  bestTimeToCall?: string;
   callScript?: {
     opener: string;
+    iceBreaker?: string;
     keyPoints: string[];
     objectionHandler: string;
     closer: string;
+    doNotSay?: string;
   };
+
 };
 
 export type RankedLead = Lead & {

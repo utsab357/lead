@@ -233,6 +233,19 @@ export function Phase4Convert({
                                       </p>
                                     </div>
 
+                                    {/* Ice Breaker */}
+                                    {conv.callScript.iceBreaker && (
+                                      <div>
+                                        <div className="text-[10px] uppercase tracking-widest text-teal-600/70 font-semibold mb-1 flex items-center gap-1">
+                                          <MessageSquare className="h-3 w-3" /> Ice Breaker — Get Them Talking
+                                        </div>
+                                        <p className="text-sm leading-relaxed rounded bg-background/60 border border-border/50 px-3 py-2 italic">
+                                          "{conv.callScript.iceBreaker}"
+                                        </p>
+                                        <p className="text-[10px] text-muted-foreground mt-1">Ask this after the opener. Listen — don't pitch yet.</p>
+                                      </div>
+                                    )}
+
                                     {/* Step 2: Key Points */}
                                     <div>
                                       <div className="text-[10px] uppercase tracking-widest text-blue-600/70 dark:text-blue-400/70 font-semibold mb-1 flex items-center gap-1">
@@ -267,7 +280,40 @@ export function Phase4Convert({
                                         "{conv.callScript.closer}"
                                       </p>
                                     </div>
+
+                                    {/* Do NOT say */}
+                                    {conv.callScript.doNotSay && (
+                                      <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2">
+                                        <div className="text-[10px] uppercase tracking-widest text-red-600 font-semibold mb-1">⚠ Don't Say This</div>
+                                        <p className="text-xs text-red-700">{conv.callScript.doNotSay}</p>
+                                      </div>
+                                    )}
                                   </div>
+
+                                  {/* Post-call WhatsApp message */}
+                                  {conv.postCallWhatsApp && (
+                                    <div className="mt-3 rounded-lg border border-green-200 bg-green-50/60 p-3">
+                                      <div className="text-[10px] uppercase tracking-widest text-green-700 font-semibold mb-1.5 flex items-center gap-1">
+                                        💬 Send This WhatsApp Within 5 Min After Call
+                                      </div>
+                                      <p className="text-sm text-gray-700 font-mono leading-relaxed whitespace-pre-wrap">{conv.postCallWhatsApp}</p>
+                                      <button
+                                        onClick={() => { navigator.clipboard.writeText(conv.postCallWhatsApp!); }}
+                                        className="mt-2 text-[10px] text-green-700 underline hover:no-underline"
+                                      >
+                                        Copy message
+                                      </button>
+                                    </div>
+                                  )}
+
+                                  {/* Best time to call */}
+                                  {conv.bestTimeToCall && (
+                                    <div className="mt-2 rounded-lg border border-blue-100 bg-blue-50/60 px-3 py-2">
+                                      <div className="text-[10px] uppercase tracking-widest text-blue-600 font-semibold mb-0.5">🕐 Best Time to Call</div>
+                                      <p className="text-xs text-blue-800">{conv.bestTimeToCall}</p>
+                                    </div>
+                                  )}
+
                                 </motion.div>
                               )}
                             </AnimatePresence>
