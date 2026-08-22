@@ -32,16 +32,18 @@ export async function PATCH(
     const session: ScrapeSession = JSON.parse(raw);
 
     const body = (await req.json()) as {
-      audits?: Record<string, AuditResult>;
-      ranked?: RankedLead[];
-      selectedId?: string | null;
-      conversions?: Record<string, ConversionPoints>;
+      leads?:          import("@/lib/types").Lead[];
+      audits?:         Record<string, AuditResult>;
+      ranked?:         RankedLead[];
+      selectedId?:     string | null;
+      conversions?:    Record<string, ConversionPoints>;
       outreachResults?: Record<string, OutreachResult>;
-      buildPrompts?: Record<string, BuildPromptResult>;
-      leadStatuses?: Record<string, LeadStatus>;
-      leadNotes?: Record<string, string>;
+      buildPrompts?:   Record<string, BuildPromptResult>;
+      leadStatuses?:   Record<string, LeadStatus>;
+      leadNotes?:      Record<string, string>;
     };
 
+    if (body.leads           !== undefined) session.leads           = body.leads;
     if (body.audits          !== undefined) session.audits          = body.audits;
     if (body.ranked          !== undefined) session.ranked          = body.ranked;
     if (body.selectedId      !== undefined) session.selectedId      = body.selectedId;

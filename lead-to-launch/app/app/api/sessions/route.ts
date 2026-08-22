@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import type { ScrapeSession } from "@/lib/types";
+import type { ScrapeSession, Lead } from "@/lib/types";
 
 const SESSIONS_DIR = path.join(process.cwd(), "data", "sessions");
 
@@ -39,6 +39,38 @@ export async function GET() {
     return NextResponse.json({ sessions });
   } catch {
     return NextResponse.json({ sessions: [] });
+  }
+}
+
+/** POST — create a new session (for manually added leads) */
+export async function POST(req: Request) {
+  await ensureDir();
+  try {
+    const body = (await req.json()) as { leads: Lead[]; niche?: string; city?: string };
+    const leads = body.leads ?? [];
+    const niche = body.niche ?? "manual";
+    const city  = body.city  ?? leads[0]?.city ?? "mixed";
+
+    const id = `session-${Date.now()}`;
+    const session: ScrapeSession = {
+      id,
+      niche,
+      city,
+      timestamp:       new Date().toISOString(),
+      leadsCount:      leads.length,
+      noWebsiteCount:  leads.filter((l) => !l.website).length,
+      withPhoneCount:  leads.filter((l) => !!l.phone).length,
+      expandedTerms:   [],
+      leads,
+    };
+
+    await fs.writeFile(
+      path.join(SESSIONS_DIR, `${id}.json`),
+      JSON.stringify(session, null, 2),
+    );
+    return NextResponse.json({ sessionId: id });
+  } catch (e) {
+    return NextResponse.json({ error: (e as Error).message }, { status: 500 });
   }
 }
 

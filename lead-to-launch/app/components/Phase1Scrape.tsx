@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { PhaseShell } from "./PhaseShell";
-import { Loader2, MapPin, Phone, Star, Globe, MessageCircle, Mail, ExternalLink, StopCircle } from "lucide-react";
+import { Loader2, MapPin, Phone, Star, Globe, MessageCircle, Mail, ExternalLink, StopCircle, Plus, ChevronDown } from "lucide-react";
 import { NicheDropdown } from "./NicheDropdown";
 import type { Lead, ScrapeInput } from "@/lib/types";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ export function Phase1Scrape({
   setLeads,
   onNext,
   onPrev,
+  sessionId,
   onSessionCreated,
   onScrapeStart,
 }: {
@@ -30,6 +31,8 @@ export function Phase1Scrape({
   setLeads: Dispatch<SetStateAction<Lead[]>>;
   onNext: () => void;
   onPrev?: () => void;
+  /** Active session ID — used to persist manually added leads */
+  sessionId?: string | null;
   /** Called with the new sessionId when a scrape finishes saving */
   onSessionCreated?: (sessionId: string) => void;
   /** Called just before a new scrape begins (use to clear downstream state) */
@@ -44,6 +47,11 @@ export function Phase1Scrape({
   const [statusMsg, setStatusMsg]   = useState("");
   const [progress, setProgress]     = useState<{ index: number; total: number } | null>(null);
   const readerRef = useRef<ReadableStreamDefaultReader | null>(null);
+
+  // Manual add state
+  const [manualInput,   setManualInput]   = useState("");
+  const [manualLoading, setManualLoading] = useState(false);
+  const [manualOpen,    setManualOpen]    = useState(false);
 
   async function runScrape() {
     setLoading(true);
@@ -134,6 +142,54 @@ export function Phase1Scrape({
     setStatusMsg("");
     setProgress(null);
     toast.info("Scrape cancelled — leads found so far are kept.");
+  }
+
+  async function addManually() {
+    if (!manualInput.trim()) return;
+    setManualLoading(true);
+    try {
+      const res = await fetch("/api/scrape-single", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ input: manualInput.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error ?? "Failed to fetch business");
+      const lead: Lead = data.lead;
+      setLeads((prev) => {
+        // Don't add if name already exists
+        if (prev.some((l) => l.name.toLowerCase() === lead.name.toLowerCase())) {
+          toast.info(`"${lead.name}" is already in your list.`);
+          return prev;
+        }
+        const updated = [...prev, lead];
+        toast.success(`Added: ${lead.name}`);
+        // Persist to existing session OR create a new one
+        if (sessionId) {
+          // Update existing session
+          fetch(`/api/sessions/${sessionId}`, {
+            method: "PATCH",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ leads: updated }),
+          }).catch(() => { /* non-critical */ });
+        } else {
+          // No session yet — create one and notify parent
+          fetch("/api/sessions", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ leads: updated, niche: "manual", city: lead.city || "mixed" }),
+          }).then((r) => r.json()).then((d) => {
+            if (d.sessionId) onSessionCreated?.(d.sessionId);
+          }).catch(() => { /* non-critical */ });
+        }
+        return updated;
+      });
+      setManualInput("");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setManualLoading(false);
+    }
   }
 
   const withPhone = leads.filter((l) => l.phone).length;
@@ -263,6 +319,44 @@ export function Phase1Scrape({
               </div>
             )}
           </CardContent>
+        </Card>
+
+        {/* Add manually */}
+        <Card className="md:col-span-1 border-dashed">
+          <button
+            className="w-full flex items-center justify-between px-5 py-3 text-left"
+            onClick={() => setManualOpen((o) => !o)}
+          >
+            <span className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <Plus className="h-4 w-4" /> Add a specific business
+            </span>
+            <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${manualOpen ? "rotate-180" : ""}`} />
+          </button>
+          {manualOpen && (
+            <CardContent className="pt-0 pb-4 space-y-3">
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Paste a Google Maps URL, Zomato link, any business website, or just type the business name.
+              </p>
+              <Input
+                placeholder="e.g. Gold's Gym Barasat   or paste any URL"
+                value={manualInput}
+                onChange={(e) => setManualInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && addManually()}
+                disabled={manualLoading}
+                className="h-9 text-sm"
+              />
+              <Button
+                onClick={addManually}
+                disabled={manualLoading || !manualInput.trim()}
+                size="sm"
+                className="w-full"
+              >
+                {manualLoading
+                  ? <><Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />Fetching...</>
+                  : <><Plus className="h-3.5 w-3.5 mr-2" />Add business</>}
+              </Button>
+            </CardContent>
+          )}
         </Card>
 
         {/* Live map */}

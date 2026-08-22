@@ -218,6 +218,7 @@ export default function Page() {
               key="p1"
               leads={leads}
               setLeads={setLeads}
+              sessionId={activeSessionId}
               onScrapeStart={() => {
                 // Clear downstream data when a new scrape begins
                 setAudits({});
