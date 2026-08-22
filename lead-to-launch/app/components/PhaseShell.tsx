@@ -12,6 +12,7 @@ export function PhaseShell({
   onNext,
   nextLabel = "Next phase",
   nextDisabled = false,
+  nextDisabledHint,
   prevDisabled = false,
 }: {
   title: string;
@@ -21,6 +22,7 @@ export function PhaseShell({
   onNext?: () => void;
   nextLabel?: string;
   nextDisabled?: boolean;
+  nextDisabledHint?: string;
   prevDisabled?: boolean;
 }) {
   return (
@@ -47,14 +49,19 @@ export function PhaseShell({
           >
             <ChevronLeft className="h-4 w-4 mr-1.5" strokeWidth={1.75} /> Back
           </Button>
-          <Button
-            onClick={onNext}
-            disabled={nextDisabled || !onNext}
-            aria-label={nextLabel}
-            className="h-10 px-5 transition-transform duration-150 active:scale-[0.98]"
-          >
-            {nextLabel} <ChevronRight className="h-4 w-4 ml-1.5" strokeWidth={1.75} />
-          </Button>
+          <div className="flex flex-col items-end gap-0.5">
+            {nextDisabled && nextDisabledHint && (
+              <span className="text-[11px] text-muted-foreground">{nextDisabledHint}</span>
+            )}
+            <Button
+              onClick={onNext}
+              disabled={nextDisabled || !onNext}
+              aria-label={nextLabel}
+              className="h-10 px-5 transition-transform duration-150 active:scale-[0.98]"
+            >
+              {nextLabel} <ChevronRight className="h-4 w-4 ml-1.5" strokeWidth={1.75} />
+            </Button>
+          </div>
         </div>
       </div>
     </motion.div>

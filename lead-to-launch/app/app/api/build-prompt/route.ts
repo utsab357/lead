@@ -102,6 +102,31 @@ DESIGN SYSTEM — BOLD HIGH-ENERGY (2026):
 - Service cards: flat bold cards with thick colored left border, icon in a colored square badge, card border-radius:0. Each card has a different accent color.
 - CTA button: background --primary red, all-caps text in Bebas Neue, wide letter-spacing, no border-radius (sharp corners). On hover: background --secondary yellow, color --dark.
 - Stats: giant numbers in Bebas Neue on dark background, red underline accent.`,
+
+  "ai-decides": `
+AI-SELECTED DESIGN SYSTEM — INTELLIGENCE MODE:
+
+STEP 1 — ANALYZE THE BUSINESS (do this silently before any code):
+Look at the business data provided: category, name, rating, reviews count, about text, services, and photos.
+Ask yourself:
+  - What kind of customer does this business serve? (premium/luxury vs everyday/budget, young vs mature)
+  - What emotion should the website evoke? (trust/calm, energy/excitement, warmth/comfort, prestige/exclusivity)
+  - What industry conventions apply? (clinics = professional clean; gyms = bold energy; restaurants = warm/inviting; salons/boutiques = luxury; tech/startups = modern dark)
+  - Do the photos look dark/moody or bright/airy? Dense/urban or natural/organic?
+
+STEP 2 — CHOOSE ONE of these established styles as the primary:
+  A) Professional Trust — clinics, lawyers, CAs, consultants, education
+  B) Sleek Modern Dark — tech, agencies, co-working, modern gyms, studios
+  C) Animated Kinetic — fitness, events, sports, entertainment, youth brands
+  D) Warm Earthy Premium — restaurants, cafes, Ayurveda, wellness, food retail
+  E) Dark Luxury — high-end salons, boutiques, jewellery, premium hotels, spas
+  F) Bold High-Energy — gyms, MMA, street food, nightlife, streetwear
+
+STEP 3 — STATE YOUR CHOICE (as an HTML comment at the very top of your output):
+<!-- STYLE: [chosen style name] | REASON: [one sentence explaining why this fits this specific business] -->
+
+STEP 4 — IMPLEMENT THAT STYLE COMPLETELY:
+After choosing, implement the full design system for that style exactly as defined — with proper font imports, CSS custom properties, hero style, card styles, button styles, and animations. Do not mix styles randomly; be intentional and consistent.`,
 };
 
 function buildPrompt(lead: RankedLead, platform: string, style: string): string {

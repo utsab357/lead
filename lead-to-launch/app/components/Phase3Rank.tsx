@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,25 @@ export function Phase3Rank({
   const [running, setRunning]     = useState(false);
   const [error,   setError]       = useState<string | null>(null);
   const [statusMsg, setStatusMsg] = useState("");
+  const [elapsed,   setElapsed]   = useState(0);   // seconds since rank started
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const duplicates = useDuplicateIndex(sessionId);
+
+  // Start/stop elapsed timer when ranking runs
+  useEffect(() => {
+    if (running) {
+      setElapsed(0);
+      timerRef.current = setInterval(() => setElapsed((s) => s + 1), 1000);
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [running]);
+
+  function fmtElapsed(s: number) {
+    if (s < 60) return `${s}s`;
+    return `${Math.floor(s / 60)}m ${s % 60}s`;
+  }
 
   const auditedCount = leads.filter((l) => audits[l.id]).length;
 
@@ -97,11 +115,10 @@ export function Phase3Rank({
   return (
     <PhaseShell
       title="Phase 3 — Ranked prospects"
-      subtitle="AI scores each lead on conversion potential and explains why. Pick one to build for."
+      subtitle="AI scores each lead on conversion potential and explains why. Head to Phase 4 to prepare your pitch."
       onPrev={onPrev}
       onNext={onNext}
-      nextDisabled={!selectedId}
-      nextLabel="Build website"
+      nextLabel="Prepare pitch"
     >
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
         <div className="text-sm text-muted-foreground">
@@ -114,10 +131,21 @@ export function Phase3Rank({
         </Button>
       </div>
 
-      {running && statusMsg && (
-        <div className="mb-6 rounded-lg border border-border bg-card p-4 flex items-center gap-3">
-          <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
-          <span className="text-sm">{statusMsg}</span>
+      {running && (
+        <div className="mb-6 rounded-lg border border-border bg-card p-4 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
+              <span>AI is scoring {auditedCount} leads — please wait…</span>
+            </div>
+            <span className="text-xs text-muted-foreground tabular-nums shrink-0">{fmtElapsed(elapsed)}</span>
+          </div>
+          {/* Animated indeterminate bar */}
+          <div className="relative h-1.5 rounded-full bg-muted overflow-hidden">
+            <div className="absolute inset-y-0 left-0 w-1/3 bg-primary rounded-full animate-[shimmer_1.5s_ease-in-out_infinite]" style={{ animation: "slide 1.5s ease-in-out infinite" }} />
+            <style>{`@keyframes slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} }`}</style>
+          </div>
+          <p className="text-xs text-muted-foreground">This usually takes 15–30 seconds for large lists.</p>
         </div>
       )}
       {error && (
@@ -222,7 +250,6 @@ export function Phase3Rank({
                       <TableHead className="w-[220px]">Score</TableHead>
                       <TableHead>₹ Lost / mo</TableHead>
                       <TableHead>Site</TableHead>
-                      <TableHead className="text-right">Select</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -232,9 +259,7 @@ export function Phase3Rank({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: i * 0.04 }}
-                        aria-selected={selectedId === lead.id}
-                        className={`border-b border-border cursor-pointer transition-colors duration-150 hover:bg-muted/40 ${selectedId === lead.id ? "bg-primary/5" : ""}`}
-                        onClick={() => setSelectedId(lead.id)}
+                        className="border-b border-border"
                       >
                         <TableCell className="font-medium tabular-nums align-top pt-3">{i + 1}</TableCell>
                         <TableCell>
@@ -274,18 +299,6 @@ export function Phase3Rank({
                           ) : (
                             <Badge variant="outline" className="text-xs font-normal text-[color:var(--destructive)] border-[color:var(--destructive)]/40 bg-[color:var(--destructive)]/5">None</Badge>
                           )}
-                        </TableCell>
-                        <TableCell className="text-right align-top pt-2.5">
-                          <Button
-                            size="sm"
-                            variant={selectedId === lead.id ? "default" : "outline"}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedId(lead.id);
-                            }}
-                          >
-                            {selectedId === lead.id ? "Selected" : "Select"}
-                          </Button>
                         </TableCell>
                       </motion.tr>
                     ))}

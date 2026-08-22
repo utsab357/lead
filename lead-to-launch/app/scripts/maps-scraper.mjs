@@ -279,37 +279,82 @@ async function scrapeGoogleMaps() {
           }
         } catch { /* no hours */ }
 
-        // Photo URLs — get from the DETAIL PANEL IMAGE CAROUSEL (not the feed!)
-        // The detail panel shows a row of photos at the top with class "aoRNLd" or inside button[jsaction*="photo"]
+        // Photo URLs — Google Maps renders the photo strip as CSS background-image
+        // on <button> elements (NOT <img> tags). We extract via inline style + computed style.
         let photosCount = 0;
         let photoUrls = [];
         try {
-          // Photo count from the "All" photos button text
-          const photoBtn = page.locator('button[jsaction*="pane.heroHeaderImage"], button[aria-label*="Photo"], button[aria-label*="photo"]');
+          // Count from the "See all photos" button text (e.g. "247 photos")
+          const photoBtn = page.locator('button[jsaction*="pane.heroHeaderImage"], button[aria-label*="photo" i], button[aria-label*="Photo" i]');
           if (await photoBtn.count() > 0) {
-            const pText = (await photoBtn.first().textContent()) || "";
-            const pMatch = pText.match(/([\d,]+)/);
-            if (pMatch) photosCount = parseInt(pMatch[1].replace(/,/g, ""), 10);
-          }
-          // Get photo URLs from the current page URL to construct photo gallery link
-          // Also try to get images specifically from the detail panel's image area
-          // The detail panel images are typically inside the header area above the name
-          // Photos — get all googleusercontent images from detail panel (not feed, not avatars)
-          const panelPhotos = await page.evaluate(() => {
-            const feed = document.querySelector('[role="feed"]');
-            const imgs = [];
-            for (const img of document.querySelectorAll('img[src*="googleusercontent"]')) {
-              if (feed && feed.contains(img)) continue;
-              const src = img.getAttribute('src') || '';
-              if (src.includes('/a-/') || src.includes('/a/ACg')) continue;  // reviewer avatars
-              if (src.includes('w28') || src.includes('w36') || src.includes('w24')) continue; // tiny icons
-              if (!imgs.includes(src)) imgs.push(src);
-              if (imgs.length >= 6) break;
+            for (let pb = 0; pb < Math.min(await photoBtn.count(), 4); pb++) {
+              const pText = (await photoBtn.nth(pb).textContent()) || "";
+              const pMatch = pText.match(/([\d,]+)/);
+              if (pMatch) { photosCount = parseInt(pMatch[1].replace(/,/g, ""), 10); break; }
             }
+          }
+
+          // Extract photo URLs — check CSS background-image on photo strip buttons
+          const panelPhotos = await page.evaluate(() => {
+            const imgs = [];
+            const feed = document.querySelector('[role="feed"]');
+
+            // Method 1: background-image in inline style on buttons (most reliable for Maps panel)
+            const candidates = document.querySelectorAll(
+              'button[jsaction], [class*="aoRNLd"] button, [data-photo-index] button, button[style*="background"]'
+            );
+            for (const el of candidates) {
+              if (feed && feed.contains(el)) continue;
+              const style = el.getAttribute('style') || '';
+              // Match inline background-image: url(...)
+              const m = style.match(/background-image\s*:\s*url\(\s*["']?(https:\/\/[^"')]+)["']?\s*\)/i);
+              if (m) {
+                const url = m[1];
+                if (!url.includes('/a-/') && !url.includes('/a/ACg') && !imgs.includes(url)) {
+                  imgs.push(url);
+                  if (imgs.length >= 6) break;
+                }
+              }
+            }
+
+            // Method 2: computed background-image (for dynamically applied styles)
+            if (imgs.length < 3) {
+              const allBtns = document.querySelectorAll('[role="main"] button');
+              for (const btn of allBtns) {
+                if (feed && feed.contains(btn)) continue;
+                const computed = window.getComputedStyle(btn).backgroundImage;
+                if (!computed || computed === 'none') continue;
+                const m = computed.match(/url\(\s*["']?(https:\/\/(?:lh3|lh5|maps)\.googleusercontent\.com\/[^"')]+)["']?\s*\)/i);
+                if (m) {
+                  const url = m[1];
+                  if (!imgs.includes(url)) {
+                    imgs.push(url);
+                    if (imgs.length >= 6) break;
+                  }
+                }
+              }
+            }
+
+            // Method 3: fallback — img tags that do exist in some layouts
+            if (imgs.length === 0) {
+              for (const img of document.querySelectorAll('img[src*="googleusercontent"]')) {
+                if (feed && feed.contains(img)) continue;
+                const src = img.getAttribute('src') || '';
+                if (src.includes('/a-/') || src.includes('/a/ACg')) continue;
+                if (src.includes('w28') || src.includes('w36') || src.includes('w24')) continue;
+                if (!imgs.includes(src)) imgs.push(src);
+                if (imgs.length >= 6) break;
+              }
+            }
+
             return imgs;
           });
+
           photoUrls = panelPhotos || [];
+          // Use found count as fallback if button text didn't give us a count
+          if (!photosCount && photoUrls.length > 0) photosCount = photoUrls.length;
         } catch { /* no photos */ }
+
 
         // About — extract from Overview panel inline (no tab click)
         // Filter out: feed text, review snippets, addresses, service labels

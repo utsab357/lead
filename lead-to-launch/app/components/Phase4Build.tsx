@@ -26,6 +26,7 @@ const STYLE_PRESETS = [
   { id: "warm",         label: "Warm & Friendly", desc: "Earthy tones, rounded corners, welcoming — great for food/retail" },
   { id: "luxury",       label: "Luxury",          desc: "Dark background, gold accents, premium fonts — salons, boutiques" },
   { id: "bold",         label: "Bold & Vibrant",  desc: "Bright colours, strong CTAs, high energy — gyms, events" },
+  { id: "ai-decides",   label: "\u2728 AI Decides",  desc: "AI reads the business category, photos & audience — then picks and builds the perfect style automatically" },
 ];
 
 export function Phase4Build({
@@ -237,47 +238,59 @@ export function Phase4Build({
                 <div className="text-xs text-muted-foreground mt-0.5">{activeLead.address} · {activeLead.category}</div>
               </div>
 
-              {/* Style preset picker — multi-select */}
+              {/* Style preset picker */}
               <div className="mb-4">
                 <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
-                  <Palette className="h-3.5 w-3.5" /> Site style <span className="text-muted-foreground/60">(pick 1–3)</span>
+                  <Palette className="h-3.5 w-3.5" /> Site style <span className="text-muted-foreground/60">(pick 1–3, or let AI decide)</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {STYLE_PRESETS.map((s) => {
-                    const selected = styles.includes(s.id);
+                    const selected   = styles.includes(s.id);
+                    const isAI       = s.id === "ai-decides";
+                    const aiSelected = styles.includes("ai-decides");
                     return (
                       <button
                         key={s.id}
                         onClick={() => {
-                          if (selected) {
-                            // Prevent deselecting all
-                            if (styles.length > 1) setStyles(styles.filter((x) => x !== s.id));
-                          } else if (styles.length < 3) {
-                            setStyles([...styles, s.id]);
+                          if (isAI) {
+                            // AI Decides is exclusive — select only it
+                            setStyles(selected ? ["professional"] : ["ai-decides"]);
+                          } else {
+                            // Selecting a manual style clears AI Decides
+                            const base = styles.filter((x) => x !== "ai-decides" && x !== s.id);
+                            if (selected) {
+                              setStyles(base.length > 0 ? base : ["professional"]);
+                            } else if (base.length < 3) {
+                              setStyles([...base, s.id]);
+                            }
                           }
                         }}
                         className={`rounded-lg border px-3 py-2 text-left transition-all relative ${
-                          selected
+                          selected && isAI
+                            ? "border-amber-400/70 bg-amber-400/8 ring-1 ring-amber-400/40"
+                            : selected
                             ? "border-primary/70 bg-primary/8 ring-1 ring-primary/30"
                             : "border-border hover:border-primary/30 hover:bg-muted/40"
                         }`}
                       >
-                        {selected && (
+                        {selected && !isAI && (
                           <span className="absolute top-1.5 right-1.5 h-4 w-4 bg-primary text-primary-foreground rounded-full text-[9px] flex items-center justify-center font-bold">
-                            {styles.indexOf(s.id) + 1}
+                            {styles.filter(x => x !== "ai-decides").indexOf(s.id) + 1}
                           </span>
                         )}
-                        <div className="text-sm font-medium pr-4">{s.label}</div>
+                        <div className={`text-sm font-medium pr-4 ${selected && isAI ? "text-amber-500" : ""}`}>{s.label}</div>
                         <div className="text-[10px] text-muted-foreground mt-0.5 leading-snug">{s.desc}</div>
                       </button>
                     );
                   })}
                 </div>
-                {styles.length > 1 && (
+                {styles.includes("ai-decides") ? (
+                  <p className="text-[10px] text-amber-600/80 mt-1.5">AI will analyze this business and build the perfect design system automatically.</p>
+                ) : styles.length > 1 ? (
                   <p className="text-[10px] text-muted-foreground mt-1.5">
                     Combined style: <strong>{styles.map((id) => STYLE_PRESETS.find((s) => s.id === id)?.label).join(" + ")}</strong>
                   </p>
-                )}
+                ) : null}
               </div>
 
               {/* Platform + Generate controls */}
