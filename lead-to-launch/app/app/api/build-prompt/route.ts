@@ -1,12 +1,66 @@
 import { NextResponse } from "next/server";
-import { runGroqJSON } from "@/lib/groq";
 import { runGeminiJSON } from "@/lib/gemini";
-import type { RankedLead, BuildPromptResult } from "@/lib/types";
+import type { RankedLead, BuildPromptResult, ExtraPage } from "@/lib/types";
 
-async function runWithFallback<T>(prompt: string): Promise<{ ok: true; data: T } | { ok: false; error: string }> {
-  const groq = await runGroqJSON<T>(prompt);
-  if (groq.ok) return groq;
-  return runGeminiJSON<T>(prompt);
+/**
+ * Small AI request — only asks for pitch points and extra page suggestions.
+ * ~200 input tokens + ~300 output = ~500 tokens total.
+ * The website prompt itself is built by code (buildPrompt), not AI.
+ */
+async function getCreativeInsights(
+  lead: RankedLead,
+): Promise<{ pitchPoints: string[]; extraPages: ExtraPage[] }> {
+  const prompt = `You are a web sales consultant. A developer is pitching a website to a local Indian business.
+
+Business data:
+- Name: ${lead.name}
+- Category: ${lead.category}
+- City: ${lead.city?.split(",")[0] ?? ""}
+- Rating: ${lead.rating ?? "n/a"} ⭐ (${lead.reviewsCount ?? 0} reviews)
+- Has website: ${lead.website ? "Yes" : "No"}
+- Phone: ${lead.phone ?? "n/a"}
+${lead.about ? `- About: ${lead.about.slice(0, 200)}` : ""}
+${lead.services?.length ? `- Services: ${lead.services.slice(0, 6).join(", ")}` : ""}
+
+Return ONLY this JSON (no markdown, no explanation):
+{
+  "pitchPoints": [
+    "Sentence 1 — reference their real rating/reviews/gap to make it personal",
+    "Sentence 2 — revenue/opportunity argument",
+    "Sentence 3 — urgency or local competition hook"
+  ],
+  "extraPages": [
+    {
+      "id": "snake_case_id",
+      "icon": "📅",
+      "label": "Page Name",
+      "desc": "One sentence: what this page does and why THIS specific business needs it"
+    }
+  ]
+}
+
+For extraPages: suggest only what genuinely fits this business type. 3-5 pages max.`;
+
+  const result = await runGeminiJSON<{ pitchPoints: string[]; extraPages: ExtraPage[] }>(prompt, {
+    temperature: 0.5,
+  });
+
+  if (result.ok) {
+    return {
+      pitchPoints: Array.isArray(result.data.pitchPoints) ? result.data.pitchPoints : [],
+      extraPages:  Array.isArray(result.data.extraPages)  ? result.data.extraPages  : [],
+    };
+  }
+
+  // AI failed — return safe defaults so the prompt still works
+  return {
+    pitchPoints: [
+      `${lead.name} has ${lead.reviewsCount ?? "many"} Google reviews but no website — every competitor with a website is taking their customers.`,
+      `A professional website turns their ${lead.rating ?? "high"}⭐ rating into a 24/7 sales tool that books clients even when the phone is off.`,
+      `Local businesses in ${lead.city?.split(",")[0] ?? "your city"} are moving online fast — being first in ${lead.category} here is a real advantage.`,
+    ],
+    extraPages: [],
+  };
 }
 
 export const maxDuration = 300;
@@ -275,39 +329,115 @@ ${realPhotos}${realServices}${realHours}${realAbout}${realReviews}${socialLinks}
 ## CRITICAL REMINDER
 The output must look like it was built by a ₹5,00,000+ agency. It must make the business owner's jaw drop. Use the real business data — real name, real reviews, real photos, real phone. When the owner sees this demo, they must feel: "This is exactly what my business needs."
 
-OUTPUT: ${platformNote}
-
-Return ONLY this JSON (no markdown fences, no explanation):
-{
-  "prompt": "the complete website prompt as a single string — include ALL section details, design tokens, CSS snippets, real business data, and the OUTPUT instruction at the end",
-  "pitchPoints": ["3 short powerful sentences the developer can say to the owner referencing their real data — rating, review count, the specific gap, revenue potential"],
-  "extraPages": [
-    {
-      "id": "unique_id_snake_case",
-      "icon": "single emoji",
-      "label": "Page Name (short, clear)",
-      "desc": "One sentence explaining what this page does and why this business specifically needs it"
-    }
-  ]
+OUTPUT: ${platformNote}`;
 }
 
-For extraPages: think like a professional web agency. Based on THIS specific business (${lead.name}, category: ${lead.category}), decide which additional pages beyond the landing page this business truly needs. Be specific — a Panchakarma clinic needs different pages than a dental clinic. Suggest only what genuinely makes sense for this exact business type. Typical examples: booking page for clinics, digital menu + QR for restaurants, rooms & pricing for hotels, before/after gallery for salons, class schedule for gyms, product catalog for shops, admission form for schools. Only include pages that are actually relevant.`;
+/**
+ * Builds a specific extra page prompt (booking, menu, gallery, etc.) — pure code, no AI.
+ */
+function buildExtraPagePrompt(
+  lead: RankedLead,
+  platform: string,
+  style: string,
+  pageType: string,
+  pageLabel: string,
+): string {
+  const platformNote = PLATFORM_OUTPUT[platform] ?? PLATFORM_OUTPUT.stitch;
+  const styleIds = style.split("+").filter(Boolean);
+  const designSystem = styleIds.map((id) => STYLE_SYSTEM[id] ?? "").filter(Boolean).join("\n\nADDITIONAL STYLE LAYER:\n");
+
+  const phone = cleanPhone(lead.phone);
+  const waNumber = cleanWaNumber(lead.whatsapp ?? lead.phone);
+  const waLink = `https://wa.me/${waNumber}?text=Hello%20${encodeURIComponent(lead.name)}`;
+  const telLink = `tel:${phone.replace(/\s/g, "")}`;
+  const realPhotos = lead.photoUrls?.length
+    ? lead.photoUrls.slice(0, 4).map((u, i) => `Photo ${i + 1}: ${u}`).join("\n")
+    : "";
+
+  const pageInstructions: Record<string, string> = {
+    booking:
+      `Build a complete BOOKING / APPOINTMENT page.\n- Prominent booking form: Name, Phone, Service (dropdown), Preferred Date, Preferred Time, Message.\n- On submit: show WhatsApp link pre-filled with booking details linking to ${waLink}.\n- Above the form: 3 trust signals using their ${lead.rating ?? "5.0"} rating and ${lead.reviewsCount ?? "100+"} reviews.\n- Below the form: FAQ about the booking process (3 questions).\n- Sticky WhatsApp button always visible.`,
+    schedule:
+      `Build a complete CLASS SCHEDULE / TIMETABLE page.\n- Weekly schedule table (Mon-Sun) with realistic class slots for this business type.\n- Each slot: class name, duration, trainer, difficulty badge (Beginner/Intermediate/Advanced).\n- Filter buttons by day and class type.\n- "Book This Class" button on each row linking to ${waLink}.`,
+    menu:
+      `Build a complete DIGITAL MENU page.\n- Category tabs (Starters, Mains, Desserts, Beverages, Specials) with animated tab switching.\n- Each item: name, description, price (Rs.), vegetarian/non-veg badge.\n- "Order on WhatsApp" button links to ${waLink}.\n- QR code placeholder section at bottom.\n- Search bar to filter items.`,
+    gallery:
+      `Build a complete PHOTO GALLERY / BEFORE & AFTER page.\n${realPhotos ? `Use these real photos:\n${realPhotos}` : "Use placeholder images with realistic alt text."}\n- Masonry grid layout (CSS columns: 3 on desktop, 2 on tablet, 1 on mobile).\n- Lightbox on click (pure JS, no library).\n- Filter buttons: All, Before & After, Facilities, Events.\n- CTA at bottom: "Book Your Session" linking to ${waLink}.`,
+    team:
+      `Build a complete TEAM / STAFF page.\n- Grid of team cards (3 per row on desktop).\n- Each card: name, role, short bio, years of experience, initials avatar.\n- Hover: card lifts, WhatsApp contact button appears.\n- CTA at bottom to book a session via ${waLink}.`,
+    pricing:
+      `Build a complete PRICING / MEMBERSHIP PLANS page.\n- 3 plan tiers: Basic, Standard, Premium with monthly price (Rs.), features list (5-7 items), "Most Popular" badge on Standard.\n- Annual pricing toggle (monthly / yearly) with JS.\n- Each plan: "Get Started" button linking to ${waLink}.\n- Below plans: FAQ about membership (4 questions).`,
+    admission:
+      `Build a complete ADMISSION / ENROLLMENT FORM page.\n- Multi-step form (3 steps) with progress bar: Step 1 (personal details), Step 2 (program selection), Step 3 (confirmation).\n- Step 1: Name, DOB, Gender, Phone, Email, Address.\n- Step 2: Program dropdown, batch time, how they heard about us.\n- Step 3: Review + "Submit via WhatsApp" button linking to ${waLink}.`,
+    products:
+      `Build a complete PRODUCT CATALOG page.\n- Grid of product cards (3-4 per row desktop, 2 tablet, 1 mobile).\n- Each card: product image, name, description, price (Rs.), "Order on WhatsApp" button.\n- Category filter bar at top.\n- Search input to filter products.\n- Use realistic product names for this business category.`,
+  };
+
+  const specificInstructions = pageInstructions[pageType]
+    ?? `Build a complete ${pageLabel} page that fits ${lead.name} professionally. Include relevant content, CTAs to WhatsApp (${waLink}), and mobile-responsive layout.`;
+
+  return `You are a WORLD-CLASS web designer in 2026. Build a complete, self-contained ${pageLabel} page for ${lead.name}.
+
+This is an ADDITIONAL PAGE for their website — it must match their main site brand.
+
+## PLATFORM
+${platformNote}
+
+## DESIGN SYSTEM (match the main site)
+${designSystem}
+
+## BUSINESS INFO
+- Name: ${lead.name}
+- Category: ${lead.category}, ${lead.city?.split(",")[0]}
+- Phone: ${phone} (tel: ${telLink})
+- WhatsApp: ${waLink}
+- Rating: ${lead.rating ?? "n/a"} (${lead.reviewsCount ?? 0} reviews)
+
+## PAGE TO BUILD: ${pageLabel.toUpperCase()}
+${specificInstructions}
+
+## TECHNICAL REQUIREMENTS
+- Self-contained: all CSS in <style>, all JS in <script>. No external files except AOS.
+- Mobile-first: 375px, 768px, 1280px breakpoints.
+- Smooth scroll, hover effects, micro-interactions.
+- WCAG AA contrast, aria-labels, min 44px touch targets.
+- AOS: <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"> and <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>, AOS.init({duration:600,easing:'ease-out-cubic',once:true}).
+- Floating WhatsApp button (bottom-right, pulsing glow).
+- Back link to homepage (href="index.html").
+
+OUTPUT: ${platformNote}`;
 }
+
+
 
 export async function POST(req: Request) {
-  const { lead, platform, style } = (await req.json()) as { lead: RankedLead; platform: string; style?: string };
+  const { lead, platform, style, pageType, pageLabel } = (await req.json()) as {
+    lead: RankedLead;
+    platform: string;
+    style?: string;
+    pageType?: string;   // provided when generating an extra page prompt
+    pageLabel?: string;
+  };
   if (!lead) return NextResponse.json({ error: "No lead provided." }, { status: 400 });
 
-  const result = await runWithFallback<BuildPromptResult>(buildPrompt(lead, platform || "stitch", style || "professional"));
-  if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 502 });
+  // ── Extra page: on-demand, per-click, instant ─────────────────────────────
+  if (pageType && pageLabel) {
+    const prompt = buildExtraPagePrompt(lead, platform || "stitch", style || "professional", pageType, pageLabel);
+    return NextResponse.json({ source: "code", prompt });
   }
-  const raw = result.data as any;
+
+  // ── Main landing page (Option A) ──────────────────────────────────────────
+  // 1. Build the website prompt instantly in JavaScript — no AI, no tokens, never fails
+  const websitePrompt = buildPrompt(lead, platform || "stitch", style || "professional");
+
+  // 2. Ask AI ONLY for the small creative parts (~500 tokens total)
+  const { pitchPoints, extraPages } = await getCreativeInsights(lead);
+
   return NextResponse.json({
-    source: "gemini",
+    source: "code",
     style: style || "professional",
-    prompt: raw.prompt ?? "",
-    pitchPoints: Array.isArray(raw.pitchPoints) ? raw.pitchPoints : [],
-    extraPages: Array.isArray(raw.extraPages) ? raw.extraPages : [],
+    prompt: websitePrompt,
+    pitchPoints,
+    extraPages,
   });
 }

@@ -6,11 +6,12 @@
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-// Models available on this API key (verified via /v1/models)
+// Models tried in order — verified against actual API key (2026-08-22)
+// gpt-oss-120b MUST be first — only model that handles large prompts (13k+ chars)
 const GROQ_MODELS = [
-  "qwen/qwen3.6-27b",    // 27B thinking model — best quality
-  "openai/gpt-oss-120b", // 120B fallback
-  "openai/gpt-oss-20b",  // 20B last resort
+  "openai/gpt-oss-120b", // 120B — handles large prompts, high context window
+  "openai/gpt-oss-20b",  // 20B — smaller context, fallback for lighter tasks
+  "qwen/qwen3.6-27b",   // 27B thinking model — limited output, last resort
 ];
 
 export type GroqResult<T> =
@@ -54,10 +55,14 @@ export async function runGroqJSON<T>(
 
   for (const model of GROQ_MODELS) {
     try {
-      // Build body — qwen needs thinking disabled explicitly
+      // Build body — qwen needs thinking disabled and lower max_tokens
+      // gpt-oss models support up to ~8k total tokens (input + output)
+      // with large build prompts (~3k input tokens), 4096 output is safe; 8192 causes 413
+      const modelMaxTokens = model.includes("qwen") ? 2048 : 4096;
       const body: Record<string, unknown> = {
         model,
         temperature: opts.temperature ?? 0.3,
+        max_tokens: modelMaxTokens,
         messages: [
           {
             role:    "system",
@@ -85,26 +90,26 @@ export async function runGroqJSON<T>(
       if (!res.ok) {
         const errBody = await res.text();
         if (res.status === 429) {
-          // Rate limited — wait 65s for the per-minute window to reset, then retry same model
-          await new Promise(r => setTimeout(r, 65000));
-          // Retry this model after waiting (don't continue to next model)
+          // Rate limited — wait 15s then retry once
+          await new Promise(r => setTimeout(r, 15000));
           const res2 = await fetch(GROQ_API_URL, {
             method:  "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${key}` },
             body: JSON.stringify(body),
           });
           if (!res2.ok) {
-            const e2 = await res2.text();
-            return { ok: false, error: `Groq still rate limited after wait: ${e2.slice(0, 150)}` };
+            // Still rate-limited or error — try next model instead of giving up
+            continue;
           }
           const j2   = await res2.json();
           const raw2: string = j2?.choices?.[0]?.message?.content ?? "";
-          if (!raw2.trim()) return { ok: false, error: "Groq returned empty response after retry." };
+          if (!raw2.trim()) continue; // empty response — try next model
           const t2 = stripThinking(raw2);
           try { return { ok: true, data: JSON.parse(t2) as T }; }
           catch {
             const d2 = extractJSON<T>(t2);
             if (d2 !== null) return { ok: true, data: d2 };
+            continue; // bad JSON — try next model
           }
         }
         // For other 4xx errors on this model, try next model
@@ -114,7 +119,8 @@ export async function runGroqJSON<T>(
 
       const json     = await res.json();
       const rawText: string = json?.choices?.[0]?.message?.content ?? "";
-      if (!rawText.trim()) return { ok: false, error: "Groq returned empty response." };
+      if (!rawText.trim()) continue; // empty — try next model
+
 
       // Strip <think>...</think> blocks (qwen thinking model)
       const text = stripThinking(rawText);

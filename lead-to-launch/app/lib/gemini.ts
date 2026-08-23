@@ -95,13 +95,14 @@ export async function runGeminiJSON<T>(
         const msg = (e as Error).message || "Unknown Gemini error";
 
         if (msg.includes("429") || msg.toLowerCase().includes("quota")) {
-          // Rate limited — wait and retry, then fall back to Groq
-          if (attempt < MAX_RETRIES) {
-            await new Promise(r => setTimeout(r, attempt * 4000));
+          // Rate limited — only retry TWICE with short waits, then fall back to Groq fast
+          // (5 retries × growing waits = 40s of pointless waiting when Gemini is quota-exhausted)
+          if (attempt <= 2) {
+            await new Promise(r => setTimeout(r, attempt * 2000));
             continue;
           }
           canFallback = true;
-          break; // exhausted retries on this model — try next or fall back
+          break; // go straight to Groq
         }
 
         // 503 overload — retry with increasing delay (3s, 6s, 9s, 12s, 15s)

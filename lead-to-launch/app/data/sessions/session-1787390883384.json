@@ -4382,58 +4382,143 @@
       ],
       "biggestGap": "The gym lacks a website and online scheduling, preventing it from addressing hygiene concerns and trainer availability, which is a major missed opportunity to attract and retain members.",
       "estLostRevenuePerMonth": 134000
+    },
+    "lead-005": {
+      "leadId": "lead-005",
+      "pageSpeedScore": 68,
+      "hasWebsite": true,
+      "mobileFriendly": true,
+      "https": true,
+      "hasSchema": false,
+      "loadTimeMs": 4200,
+      "gaps": [
+        "Only 2 photos uploaded — limited visual proof for prospects",
+        "Business hours only list Sunday, full weekly schedule missing",
+        "No services listed on profile despite offering gym facilities",
+        "No social media links; Instagram presence absent",
+        "Website lacks structured data (schema), reducing SEO visibility"
+      ],
+      "biggestGap": "The single biggest opportunity is to publish complete weekly operating hours, as only Sunday hours are shown, causing potential members to be unsure when they can visit.",
+      "estLostRevenuePerMonth": 80000
+    },
+    "lead-023": {
+      "leadId": "lead-023",
+      "pageSpeedScore": 0,
+      "hasWebsite": false,
+      "mobileFriendly": false,
+      "https": false,
+      "hasSchema": false,
+      "loadTimeMs": 0,
+      "gaps": [
+        "No website to showcase studio and capture leads",
+        "Business hours not visible online",
+        "No phone or WhatsApp contact information listed",
+        "Owner does not reply to reviews online",
+        "No services listed online despite offering fitness programs"
+      ],
+      "biggestGap": "The studio lacks an online presence—no website, no listed hours or contact details—preventing potential customers from finding and booking sessions.",
+      "estLostRevenuePerMonth": 30000
     }
   },
   "ranked": [
     {
-      "id": "maps-003",
-      "name": "Lion's Den Fitness Hub",
-      "category": "Fitness center",
-      "address": "Rail Gate, Sangam Market, 2nd Floor, near 12, Barasat, Kolkata, West Bengal 700124",
+      "id": "lead-005",
+      "name": "Srija Fitness 2.0",
+      "category": "Gym",
+      "address": "Binapani Apartment, 08, Mukherjee Para Road, Dakshinpara Rd, Barasat, Kolkata, West Bengal 700124",
       "city": "Barasat, West Bengal",
-      "phone": "+919903711089",
-      "whatsapp": "+919903711089",
-      "mapUrl": "https://www.google.com/maps/place/Lion%27s+Den+Fitness+Hub/data=!4m7!3m6!1s0x39f8a37ae86b2797:0xdd663976d24b32c8!8m2!3d22.7220249!4d88.4799901!16s%2Fg%2F11h_wk8n2n!19sChIJlydr6Hqj-DkRyDJL0nY5Zt0?authuser=0&hl=en&g_ep=EgoyMDI2MDgxOS4wIJJjKgBIAVAD&rclk=1",
-      "rating": 4.6,
-      "reviewsCount": 229,
-      "lat": 22.7220249,
-      "lng": 88.4799901,
+      "phone": "+918100618198",
+      "whatsapp": "+918100618198",
+      "website": "https://srijafitness.in/",
+      "mapUrl": "https://www.google.com/maps/place/Srija+Fitness+2.0/data=!4m7!3m6!1s0x39f8a3c20ff58013:0xb456d19e1defcce3!8m2!3d22.7111377!4d88.4794882!16s%2Fg%2F11ygz5qjyp!19sChIJE4D1D8Kj-DkR48zvHZ7RVrQ?authuser=0&hl=en&g_ep=EgoyMDI2MDgxOS4wIJJjKgBIAVAD&rclk=1",
+      "rating": 5,
+      "reviewsCount": 200,
+      "lat": 22.7111377,
+      "lng": 88.4794882,
+      "hours": [
+        "Sunday, 6 am to 11 pm, Copy open hours"
+      ],
       "photoUrls": [
-        "https://lh3.googleusercontent.com/grass-cs/ACvplmP908s-OXp6h1Jrq1ao0IemgKdhuDOlrEhSTRoO2PNlue8jSYtEgnevpjB737U5ZIuz1u63cY7zBVATtgk65qDHZirTe0jQjb_M6qRtloSlbLZPwCxRiyijxCRpz-4vsFUL7JVNcA=w300-h450-p-k-no",
-        "https://lh3.googleusercontent.com/grass-cs/ACvplmOBmP3v37RSYFx3i3wbCjtsuFVC6h_47L7vJkNXp7Rv_ltzLqjnhJC6PE-jJz2jlm-rICv-3jSGxtJT9NPLxXM6-yEjzgWKUiqFjcnU0hl-BmePnvovNAYCCJmzagy43j_5EtLh=w300-h450-p-k-no"
+        "https://lh3.googleusercontent.com/grass-cs/ACvplmNTF25u0yr0oaQMXPKmY5xb_EEMPX0xCtuKP7ACf6ciY0q-q53jTcvdTZiF0CSbuOLt0UA59TMoRtsQTy86k93KIYdmy6BQfl9Biu5HE9n9xEklmpDXpAu-IlZFFUn8Y7QMbgxQHtlyLGs0=w300-h450-p-k-no",
+        "https://lh3.googleusercontent.com/grass-cs/ACvplmNNx8xijjTpK2wz_zpP7F-JiDy9tItB4Qjl-1jBPbYGKgbKWGE_AtQ4SEfq5ABJzz2IXC0YO9iecTc7PDNeg_emiECSEYpuIKsTRwmzT56x1A1T4fsyDlhxgwwZDNFnmga7GpD38xWQz4M=w300-h450-p-k-no"
       ],
       "photosCount": 2,
-      "socialLinks": [
-        {
-          "platform": "facebook",
-          "url": "https://www.facebook.com/LDFHub/"
-        }
-      ],
       "reviews": [
         {
-          "text": "Very bad experience. No proper maintenance at all. Bathroom passage is always wet and unhygienic, and no proper drinking water (only one jar for everyone). Machines are old and not maintained. Morning shift trainer is not professional, gets irritated when asked anything, his own fitness is questionable, and his overall appearance is not like a trainer. Fees increase every year but no improvement. ",
-          "rating": 1,
-          "author": "Pooja Mallick",
-          "timeAgo": "4 months ago"
-        },
-        {
-          "text": "The gym opens at 6 AM, but the trainer is consistently absent until 7:30–8:00 AM. This is unacceptable as members are left without proper guidance during early morning workouts. A trainer must be present from the opening time to ensure safety and correct training also trainer behaviour is so rude and unacceptable",
-          "rating": 1,
-          "author": "Sima Mallick",
-          "timeAgo": "2 months ago"
-        },
-        {
-          "text": "Great space for workout, helped me alot to change physically within 2 years itself.",
+          "text": "The atmosphere of this gym is excellent! The trainers are very helpful and take great care of the members. All the equipment is brand new and high quality. It's also top-notch in terms of cleanliness. For those looking to start their fitness journey, this gym is the best option.",
           "rating": 5,
-          "author": "Aniket Gope",
-          "timeAgo": "2 years ago",
-          "ownerReply": "Response from the owner 2 years agoThank for your feedback!"
+          "author": "SUJOY BISWAS",
+          "timeAgo": "Edited 2 months ago",
+          "ownerReply": "Response from the owner 2 months agoThanks for spending your valuable time to share your experience with us.\nThanks Srija fitness 2.0"
+        },
+        {
+          "text": "I was a member of Srija Fitness when it first started, but due to work pressure I had to take a break from the gym for almost 3.5 years.\n\nRecently, I visited Srija Fitness 2.0 and was truly impressed by the upgraded equipment, spacious environment, and overall facilities. Even though the original branch is within walking distance from my home, I decided to join the 2.0 branch because of its excell",
+          "rating": 5,
+          "author": "Prosenjit Saha",
+          "timeAgo": "2 weeks ago"
+        },
+        {
+          "text": "​Great gym with an amazing vibe! SRIJA FITNESS 2.0 has everything you need for a solid workout, whether you want to lift weights or do cardio. The highlight for me has been working with my trainer. They are highly professional, attentive to detail, and really know how to motivate you without being overwhelming. If you are looking for a place with great equipment and excellent guidance, you'll be i",
+          "rating": 5,
+          "author": "Indranath Ghosh",
+          "timeAgo": "3 weeks ago"
         }
       ],
       "ownerReplies": true,
       "source": "maps",
       "audit": {
-        "leadId": "maps-003",
+        "leadId": "lead-005",
+        "pageSpeedScore": 68,
+        "hasWebsite": true,
+        "mobileFriendly": true,
+        "https": true,
+        "hasSchema": false,
+        "loadTimeMs": 4200,
+        "gaps": [
+          "Only 2 photos uploaded — limited visual proof for prospects",
+          "Business hours only list Sunday, full weekly schedule missing",
+          "No services listed on profile despite offering gym facilities",
+          "No social media links; Instagram presence absent",
+          "Website lacks structured data (schema), reducing SEO visibility"
+        ],
+        "biggestGap": "The single biggest opportunity is to publish complete weekly operating hours, as only Sunday hours are shown, causing potential members to be unsure when they can visit.",
+        "estLostRevenuePerMonth": 80000
+      },
+      "score": 85,
+      "scoreReasoning": "Slow site, high reviews and revenue loss, reachable via phone/WhatsApp, strong gym fit."
+    },
+    {
+      "id": "lead-023",
+      "name": "6Fit Fitness Studio",
+      "category": "Fitness center",
+      "address": "19B, Harinath Sen Rd, Dakshinpara, Barasat, Joshow RD, West Bengal 700124",
+      "city": "Barasat, West Bengal",
+      "mapUrl": "https://www.google.com/maps/place/6Fit+Fitness+Studio/data=!4m7!3m6!1s0x39f8990052da5eab:0x453caed03fc3db68!8m2!3d22.710737!4d88.4789115!16s%2Fg%2F11z7dgvs43!19sChIJq17aUgCZ-DkRaNvDP9CuPEU?authuser=0&hl=en&g_ep=EgoyMDI2MDgxOS4wIJJjKgBIAVAD&rclk=1",
+      "rating": 5,
+      "reviewsCount": null,
+      "lat": 22.710737,
+      "lng": 88.4789115,
+      "photoUrls": [
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlPdyjGif5QdK5UeU1NDjI0oQEY779xIeEPjwVv2h3T67-RfwXQYL5m4VwqzkV846CJo4OMt29L4Lby13iPh5l9Mwq9pSvo6CTa-l6BBvI1Id9XBWq1Q3T2mM4GTzz1Pc4RyvlxzpQVPogZ=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkH9XJrjjVFd793zX5-wXugDmYHRITXMYZC4H4NEB0XSPDfx-uwD3Z0XxXHeBFdJqMRpxDKhZgg8SaGj7kBYHbO7nZAI8AtqHq0L2mE55LKU2c6ZRhlxI8M4B6m1Iwq8-3cij50ew=w32-h32-p-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlPdyjGif5QdK5UeU1NDjI0oQEY779xIeEPjwVv2h3T67-RfwXQYL5m4VwqzkV846CJo4OMt29L4Lby13iPh5l9Mwq9pSvo6CTa-l6BBvI1Id9XBWq1Q3T2mM4GTzz1Pc4RyvlxzpQVPogZ=w408-h306-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlPdyjGif5QdK5UeU1NDjI0oQEY779xIeEPjwVv2h3T67-RfwXQYL5m4VwqzkV846CJo4OMt29L4Lby13iPh5l9Mwq9pSvo6CTa-l6BBvI1Id9XBWq1Q3T2mM4GTzz1Pc4RyvlxzpQVPogZ=w397-h298-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmlfcNzst6tyPRHlcu-_gbiSK4g29QGyL9OyY3-eroh_ue-VHZ2uuBxkq3o47MpF2kEA77IHLZyCxupKcjzIFMQ0oWIXGS63O9xq35YT6neaJprpqZ8Syut4Z-m1kCZMHmHk4hPkmkqY6M=w397-h298-k-no",
+        "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlr2Q6e3bheLUYqg5yIjBDq-Vcn_I2y2Ps-sXwpYzHPJNWUwp-yB2460aeoSu-G968wr3vE2Y2wbf4UT1r3IBt47vrb_ua8c9YYCF4R7hq-XEMPZfGl0lyQS9Bc3HnUGdEYuYQk8EpspuGf=w397-h298-k-no"
+      ],
+      "photosCount": 6,
+      "reviews": [
+        {
+          "text": "Ambiance is very nice and the quality of exercise is also good",
+          "rating": 5,
+          "author": "Sanchita Dey",
+          "timeAgo": "2 weeks ago"
+        }
+      ],
+      "ownerReplies": false,
+      "source": "maps",
+      "audit": {
+        "leadId": "lead-023",
         "pageSpeedScore": 0,
         "hasWebsite": false,
         "mobileFriendly": false,
@@ -4441,16 +4526,17 @@
         "hasSchema": false,
         "loadTimeMs": 0,
         "gaps": [
-          "Very few online photos — potential clients can't view facilities",
+          "No website to showcase studio and capture leads",
           "Business hours not visible online",
-          "No services listed online despite offering fitness programs",
-          "Hygiene complaints and trainer absenteeism — no online schedule or booking system"
+          "No phone or WhatsApp contact information listed",
+          "Owner does not reply to reviews online",
+          "No services listed online despite offering fitness programs"
         ],
-        "biggestGap": "The gym lacks a website and online scheduling, preventing it from addressing hygiene concerns and trainer availability, which is a major missed opportunity to attract and retain members.",
-        "estLostRevenuePerMonth": 134000
+        "biggestGap": "The studio lacks an online presence—no website, no listed hours or contact details—preventing potential customers from finding and booking sessions.",
+        "estLostRevenuePerMonth": 30000
       },
-      "score": 92,
-      "scoreReasoning": "No website, high reviews, reachable, fitness category, $134k lost revenue → strong conversion potential."
+      "score": 70,
+      "scoreReasoning": "No website, high revenue loss, but no contact channels and unknown reviews limit conversion."
     }
   ],
   "conversions": {
@@ -4480,6 +4566,140 @@
         "closer": "I can send you a free WhatsApp mock‑up of a simple site showing your schedule and photos—no cost at all.",
         "doNotSay": "Don't say 'I want to build you a website' right away; focus on the observations you made."
       }
+    },
+    "lead-005": {
+      "leadId": "lead-005",
+      "points": [
+        "Srija Fitness 2.0 in Barasat has a perfect 5‑star rating from 200 happy members.",
+        "Your members love the brand‑new equipment and helpful trainers, as one reviewer said the atmosphere is excellent.",
+        "Only two photos are shown online, so adding more could showcase the gym’s vibe and attract more sign‑ups.",
+        "Listing full weekly hours could stop confusion and help capture the ₹2,667 you lose each day.",
+        "Connecting an Instagram link would let prospects see daily workouts and drive more visits."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already displaying full weekly hours and active Instagram feeds.",
+      "revenueArgument": "Based on our analysis, you could be missing about ₹80,000 each month.",
+      "urgencyHook": "Every day you don’t show full hours could be costing you roughly ₹2,667.",
+      "postCallWhatsApp": "Hello, thanks for chatting earlier. I’ve prepared a quick WhatsApp mock‑up showing full weekly hours and extra photos for Srija Fitness 2.0—would you like me to share it now?",
+      "bestTimeToCall": "For a gym, try calling on Tuesday or Wednesday between 2 pm and 4 pm when the morning rush is over.",
+      "callScript": {
+        "opener": "Hi, I was looking at gyms in Barasat and saw Srija Fitness 2.0’s 5‑star rating and the great comments about your trainers.",
+        "iceBreaker": "Do most of your new members find you through Google searches or by word of mouth?",
+        "keyPoints": [
+          "You have 200 five‑star reviews praising the atmosphere and equipment.",
+          "Only two photos are online, limiting visual proof for prospects.",
+          "Your profile lists only Sunday hours, which may cause daily losses of about ₹2,667."
+        ],
+        "objectionHandler": "I understand you’re busy, but even a single extra member each day could offset the ₹2,667 you’re currently missing.",
+        "closer": "I can send you a free WhatsApp mock‑up of a richer profile with full hours and more photos—no cost at all.",
+        "doNotSay": "Don’t say 'I want to build you a website' right away; focus on the profile improvements you’ve already made."
+      }
+    },
+    "lead-023": {
+      "leadId": "lead-023",
+      "points": [
+        "6Fit Fitness Studio in Barasat has a 5‑star rating and members praise the nice ambiance and quality workouts.",
+        "You already have six photos online, but adding more could highlight the studio’s vibe and draw new clients.",
+        "Without a website or listed hours, potential customers may never know you’re open, costing about ₹1,000 each day.",
+        "Showing clear contact details and class schedules can turn online searches into bookings.",
+        "A simple online booking link could capture the ₹30,000 you might be missing each month."
+      ],
+      "competitorInsight": "Other fitness centers in Barasat are already listing their class times and contact numbers on Google.",
+      "revenueArgument": "Our estimate shows you could be losing around ₹30,000 every month.",
+      "urgencyHook": "Each day without visible hours may be costing you roughly ₹1,000.",
+      "postCallWhatsApp": "Hello, thanks for your time earlier. I’ve put together a quick WhatsApp mock‑up that adds your studio’s hours and a contact link for 6Fit Fitness Studio—shall I share it now?",
+      "bestTimeToCall": "For a fitness studio, call on Monday or Thursday between 3 pm and 5 pm when classes are usually slower.",
+      "callScript": {
+        "opener": "Hi, I was checking fitness studios in Barasat and noticed 6Fit Fitness Studio’s 5‑star rating and the great comment about your nice ambiance.",
+        "iceBreaker": "Do most of your clients hear about you from friends or do they search online first?",
+        "keyPoints": [
+          "You have six photos that already show the studio’s vibe.",
+          "Your profile lacks a website, hours, and contact info, which can hide you from seekers.",
+          "Missing this info could be costing you about ₹1,000 every day."
+        ],
+        "objectionHandler": "I get that you’re busy, but even one extra sign‑up per day could cover the ₹1,000 you’re currently missing.",
+        "closer": "I can send a free WhatsApp mock‑up with a simple online schedule and contact button—no charge.",
+        "doNotSay": "Avoid saying 'I’ll build you a website' right away; focus on adding hours and contact details first."
+      }
+    }
+  },
+  "buildPrompts": {
+    "maps-003": {
+      "source": "code",
+      "style": "professional",
+      "prompt": "You are a WORLD-CLASS web designer and developer in 2026. Your job is to write a complete, production-ready website prompt for a local Indian business. The output MUST look like a premium 2026 agency-built website — NOT a WordPress template from 2015.\n\n## PLATFORM\nUse Google Stitch (stitch.withgoogle.com). Output one complete self-contained HTML file with ALL CSS inline in a <style> tag and all JS inline in a <script> tag. No external files. No React. No build step.\n\n## MANDATORY DESIGN RULES — READ EVERY WORD\n1. FULL-VIEWPORT HERO: The hero section MUST be 100dvh (full screen height). The business photo MUST be used as a full-bleed background image with a CSS gradient overlay. The headline MUST be large (clamp at minimum 2.8rem on mobile, 4.5rem on desktop). This is non-negotiable.\n2. REAL DESIGN SYSTEM: Use the complete design system below. Apply CSS custom properties (--variables) from the top. Every color, font, and spacing value must come from the system.\n3. MICRO-INTERACTIONS: Every card, button, and image must have a hover state with transform and transition. No static elements.\n4. ANIMATED STATS: Create a \"trust numbers\" section with big animated counters (JS IntersectionObserver + requestAnimationFrame countUp) showing: star rating, review count, years in business.\n5. BENTO GRID or MASONRY for services — NOT a boring equal-column grid. At least one card should span 2 columns on desktop for visual interest.\n6. GLASSMORPHISM for overlapping UI elements (testimonial cards, floating badges, stat chips).\n7. GRADIENT TEXT on the main hero headline or key section heading (CSS: background:gradient; -webkit-background-clip:text; color:transparent).\n8. FLOATING WHATSAPP: Fixed bottom-right, pulsing glow animation, always visible.\n9. SMOOTH SCROLL: html { scroll-behavior: smooth; }\n10. MOBILE FIRST: Design for 375px, enhance at 768px, maximize at 1280px. EVERY section must be tested mentally for mobile overflow.\n\n## DESIGN SYSTEM\n\nDESIGN SYSTEM — PROFESSIONAL TRUST (2026):\n- Fonts: Import from Google Fonts: \"Plus Jakarta Sans\" (weights 400,500,600,700,800) for body, \"Instrument Serif\" for display headings. Use: font-family: 'Plus Jakarta Sans', sans-serif globally; headings use 'Instrument Serif'.\n- Colors: --bg: #F9FAFB; --surface: #FFFFFF; --primary: #1A3C5E; --primary-light: #2563EB; --accent: #0EA5E9; --text: #0F172A; --muted: #64748B; --border: #E2E8F0;\n- Hero: full-viewport-height (100dvh). Real photo URL as background-image with dark-blue gradient overlay (linear-gradient(135deg, rgba(26,60,94,0.92) 0%, rgba(14,165,233,0.6) 100%)). White headline text, H1 font-size clamp(2.5rem,5vw,4.5rem), font-weight 800, line-height 1.1.\n- Cards: background white, border 1px solid var(--border), border-radius 16px, box-shadow: 0 4px 24px rgba(0,0,0,0.06). On hover: transform translateY(-4px), box-shadow 0 12px 40px rgba(0,0,0,0.12), transition 200ms ease.\n- Buttons: Primary = background linear-gradient(135deg, #1A3C5E, #2563EB), color white, border-radius 50px, padding 14px 32px, font-weight 600, box-shadow: 0 4px 20px rgba(37,99,235,0.35). Hover: brightness(1.08) scale(1.02).\n- Section alternation: sections alternate between #F9FAFB and white backgrounds. One key section uses --primary as dark background with white text.\n\n## REQUIRED SECTIONS (do not skip any)\n\n### 1. STICKY HEADER\n- Height: 64px. backdrop-filter: blur(20px). Semi-transparent background.\n- Left: business name as wordmark (bold, styled).\n- Right: Click-to-call phone as <a href=\"tel:+919903711089\">+91 9903711089</a> with a phone icon. WhatsApp icon linking to https://wa.me/919903711089?text=Hello%20Lion's%20Den%20Fitness%20Hub.\n- Hamburger menu on mobile that slides in a full-screen nav overlay.\n\n### 2. HERO (100dvh)\n- Background: first real photo URL as CSS background-image with gradient overlay from the design system.\n- Floating trust badge (glassmorphism): \"★ 4.6 · 229  Reviews\" — positioned absolute, animated fade-in.\n- H1: Bold, large, gradient or white text: \"Trusted Fitness center in Barasat\"\n- Sub-headline: short, compelling, max 12 words.\n- TWO CTA buttons: WhatsApp primary, Call secondary. Both with hover animations.\n- Scroll indicator (animated bouncing chevron or dot at bottom).\n\n### 3. ANIMATED TRUST STATS STRIP\n- Dark or accent background (not white).\n- 3–4 stat items in a row: \"4.6★ Rating\" | \"229+ Reviews\" | \"5+ Years\" | \"100% Natural\".\n- Each number animates counting up when scrolled into view (JS countUp).\n- Stats separated by vertical dividers or gold/accent lines.\n\n### 4. SERVICES — BENTO GRID LAYOUT\n- Use realistic services for this business category (3–6 services)\n- CSS Grid: on desktop, mix 1-col and 2-col spans. First card spans 2 columns. Others are 1. This creates a bento layout.\n- Each card: icon (SVG or emoji), service name as bold heading, 1 short description sentence, \"Book Now →\" link to https://wa.me/919903711089?text=Hello%20Lion's%20Den%20Fitness%20Hub.\n- Cards use the glassmorphism/card style from the design system.\n- Hover: lift + glow effect.\n\n### 5. ABOUT / STORY (SPLIT SCREEN)\n- Left side: full-height stacked photos (2nd and 3rd real photo URLs, overlapping with a slight rotation/offset for visual depth).\n- Right side: \"Our Story\" label, H2, the about text, a \"Speak with Us\" button.\n\n- On mobile: photos stack above text.\n\n### 6. CUSTOMER TESTIMONIALS (CARDS WITH GLASSMORPHISM)\n\nREAL CUSTOMER REVIEWS (use these exact quotes):\n  - \"Great space for workout, helped me alot to change physically within 2 years itself.\" — Aniket Gope (5★)\n- Layout: 3-column grid on desktop, 1-column on mobile.\n- Each card: giant quote mark (CSS content, styled in accent color), star rating (show ★ symbols), review text (italic), reviewer name bold.\n- Cards: glassmorphism style from design system.\n- Add subtle fade-up animation (AOS or CSS @keyframes).\n\n### 7. FAQ ACCORDION\n- 5 questions relevant to Fitness center in Barasat.\n- Each item: question as bold clickable header, answer expands smoothly (CSS max-height transition or JS toggle).\n- Arrow icon rotates 180° when open.\n- Include question about: booking process, pricing, what to expect on first visit, location/parking, online consultation if applicable.\n\n### 8. LOCATION + HOURS\n- Two-column: Left = embedded Google Maps iframe using link: https://www.google.com/maps/place/Lion%27s+Den+Fitness+Hub/data=!4m7!3m6!1s0x39f8a37ae86b2797:0xdd663976d24b32c8!8m2!3d22.7220249!4d88.4799901!16s%2Fg%2F11h_wk8n2n!19sChIJlydr6Hqj-DkRyDJL0nY5Zt0?authuser=0&hl=en&g_ep=EgoyMDI2MDgxOS4wIJJjKgBIAVAD&rclk=1, height 350px, border-radius from design system.\n- Right = Address card with icon, Hours list with icon.\n- Show realistic hours for this business type\n- \"Get Directions\" button linking to Google Maps.\n\n### 9. FINAL CTA SECTION\n- Accent/dark colored background (not white — use the primary or dark color from design system).\n- Bold large closing headline: \"Ready to get started?\"\n- Sub-text: one compelling sentence referencing Barasat.\n- Two buttons: WhatsApp + Call. Both large and prominent.\n- Optional: subtle background pattern or noise texture.\n\n### 10. FOOTER\n- Dark background. 3–4 columns on desktop.\n- Col 1: Business name + short tagline + social links: \nSOCIAL LINKS: facebook: https://www.facebook.com/LDFHub/\n- Col 2: Quick links (Home, Services, About, Contact)\n- Col 3: Contact info — address with 📍 icon, phone with 📞 as click-to-call, WhatsApp link.\n- Bottom bar: © 2026 Lion's Den Fitness Hub. All rights reserved. | Privacy Policy | Terms\n- Social link to Facebook: https://www.facebook.com/LDFHub/\n\n## BUSINESS DATA\n- Name: Lion's Den Fitness Hub\n- Category: Fitness center\n- Address: Rail Gate, Sangam Market, 2nd Floor, near 12, Barasat, Kolkata, West Bengal 700124, Barasat, West Bengal\n- Rating: 4.6 ⭐ (229 reviews)\n- Phone: +91 9903711089\n- WhatsApp link: https://wa.me/919903711089?text=Hello%20Lion's%20Den%20Fitness%20Hub\n- Tel link: tel:+919903711089\n- Google Maps: https://www.google.com/maps/place/Lion%27s+Den+Fitness+Hub/data=!4m7!3m6!1s0x39f8a37ae86b2797:0xdd663976d24b32c8!8m2!3d22.7220249!4d88.4799901!16s%2Fg%2F11h_wk8n2n!19sChIJlydr6Hqj-DkRyDJL0nY5Zt0?authuser=0&hl=en&g_ep=EgoyMDI2MDgxOS4wIJJjKgBIAVAD&rclk=1\n- Facebook: https://www.facebook.com/LDFHub/\n\nREAL PHOTOS (use these as actual <img src=\"...\"> — not stock, not placeholder):\n  Photo 1: https://lh3.googleusercontent.com/grass-cs/ACvplmP908s-OXp6h1Jrq1ao0IemgKdhuDOlrEhSTRoO2PNlue8jSYtEgnevpjB737U5ZIuz1u63cY7zBVATtgk65qDHZirTe0jQjb_M6qRtloSlbLZPwCxRiyijxCRpz-4vsFUL7JVNcA=w300-h450-p-k-no\n  Photo 2: https://lh3.googleusercontent.com/grass-cs/ACvplmOBmP3v37RSYFx3i3wbCjtsuFVC6h_47L7vJkNXp7Rv_ltzLqjnhJC6PE-jJz2jlm-rICv-3jSGxtJT9NPLxXM6-yEjzgWKUiqFjcnU0hl-BmePnvovNAYCCJmzagy43j_5EtLh=w300-h450-p-k-no\nREAL CUSTOMER REVIEWS (use these exact quotes):\n  - \"Great space for workout, helped me alot to change physically within 2 years itself.\" — Aniket Gope (5★)\nSOCIAL LINKS: facebook: https://www.facebook.com/LDFHub/\n\n## TECHNICAL REQUIREMENTS\n- SEO: <title>Lion's Den Fitness Hub – Fitness center in Barasat</title>, meta description (compelling, 160 chars), LocalBusiness JSON-LD schema with real data, canonical URL, H1 with city+category.\n- PERFORMANCE: lazy-load all images below the fold (<img loading=\"lazy\">), no heavy libraries except AOS (CDN, 14kb).\n- ACCESSIBILITY: alt text on every image, aria-labels on all buttons/links, min 44px touch targets, WCAG AA contrast.\n- ZERO BUGS: no mobile overflow, all links functional, no broken images.\n- Use AOS library for scroll animations: <link rel=\"stylesheet\" href=\"https://unpkg.com/aos@2.3.4/dist/aos.css\"> and <script src=\"https://unpkg.com/aos@2.3.4/dist/aos.js\"></script>, initialize with AOS.init({duration:600,easing:'ease-out-cubic',once:true}).\n\n## CRITICAL REMINDER\nThe output must look like it was built by a ₹5,00,000+ agency. It must make the business owner's jaw drop. Use the real business data — real name, real reviews, real photos, real phone. When the owner sees this demo, they must feel: \"This is exactly what my business needs.\"\n\nOUTPUT: Use Google Stitch (stitch.withgoogle.com). Output one complete self-contained HTML file with ALL CSS inline in a <style> tag and all JS inline in a <script> tag. No external files. No React. No build step.\n\nReturn ONLY this JSON (no markdown fences, no explanation):\n{\n  \"prompt\": \"the complete website prompt as a single string — include ALL section details, design tokens, CSS snippets, real business data, and the OUTPUT instruction at the end\",\n  \"pitchPoints\": [\"3 short powerful sentences the developer can say to the owner referencing their real data — rating, review count, the specific gap, revenue potential\"],\n  \"extraPages\": [\n    {\n      \"id\": \"unique_id_snake_case\",\n      \"icon\": \"single emoji\",\n      \"label\": \"Page Name (short, clear)\",\n      \"desc\": \"One sentence explaining what this page does and why this business specifically needs it\"\n    }\n  ]\n}\n\nFor extraPages: think like a professional web agency. Based on THIS specific business (Lion's Den Fitness Hub, category: Fitness center), decide which additional pages beyond the landing page this business truly needs. Be specific — a Panchakarma clinic needs different pages than a dental clinic. Suggest only what genuinely makes sense for this exact business type. Typical examples: booking page for clinics, digital menu + QR for restaurants, rooms & pricing for hotels, before/after gallery for salons, class schedule for gyms, product catalog for shops, admission form for schools. Only include pages that are actually relevant.",
+      "pitchPoints": [
+        "With a stellar 4.6‑star rating from 229 happy members but no online presence, Lion's Den Fitness Hub is missing out on showcasing its reputation to new prospects.",
+        "A modern website can drive 30‑40% more membership sign‑ups by letting visitors view class schedules, book sessions, and purchase memberships online.",
+        "Your neighboring gyms in Barasat are already online, so securing a site now ensures you stay top‑of‑mind and capture the digital‑savvy crowd before they choose a competitor."
+      ],
+      "extraPages": [
+        {
+          "id": "class_schedule",
+          "icon": "📅",
+          "label": "Class Schedule",
+          "desc": "Shows weekly class times and lets members book spots, turning casual browsers into booked participants."
+        },
+        {
+          "id": "trainer_profiles",
+          "icon": "📅",
+          "label": "Our Trainers",
+          "desc": "Highlights each trainer’s expertise and certifications, building trust and encouraging sign‑ups for personal training."
+        },
+        {
+          "id": "membership_plans",
+          "icon": "📅",
+          "label": "Membership Plans",
+          "desc": "Details pricing tiers and online enrollment, simplifying the purchase process and boosting conversions."
+        },
+        {
+          "id": "health_blog",
+          "icon": "📅",
+          "label": "Health & Fitness Blog",
+          "desc": "Provides workout tips and nutrition advice, improving SEO and positioning Lion's Den as a local authority."
+        }
+      ]
+    },
+    "lead-023": {
+      "source": "code",
+      "style": "ai-decides",
+      "prompt": "You are a WORLD-CLASS web designer and developer in 2026. Your job is to write a complete, production-ready website prompt for a local Indian business. The output MUST look like a premium 2026 agency-built website — NOT a WordPress template from 2015.\n\n## PLATFORM\nUse Google Stitch (stitch.withgoogle.com). Output one complete self-contained HTML file with ALL CSS inline in a <style> tag and all JS inline in a <script> tag. No external files. No React. No build step.\n\n## MANDATORY DESIGN RULES — READ EVERY WORD\n1. FULL-VIEWPORT HERO: The hero section MUST be 100dvh (full screen height). The business photo MUST be used as a full-bleed background image with a CSS gradient overlay. The headline MUST be large (clamp at minimum 2.8rem on mobile, 4.5rem on desktop). This is non-negotiable.\n2. REAL DESIGN SYSTEM: Use the complete design system below. Apply CSS custom properties (--variables) from the top. Every color, font, and spacing value must come from the system.\n3. MICRO-INTERACTIONS: Every card, button, and image must have a hover state with transform and transition. No static elements.\n4. ANIMATED STATS: Create a \"trust numbers\" section with big animated counters (JS IntersectionObserver + requestAnimationFrame countUp) showing: star rating, review count, years in business.\n5. BENTO GRID or MASONRY for services — NOT a boring equal-column grid. At least one card should span 2 columns on desktop for visual interest.\n6. GLASSMORPHISM for overlapping UI elements (testimonial cards, floating badges, stat chips).\n7. GRADIENT TEXT on the main hero headline or key section heading (CSS: background:gradient; -webkit-background-clip:text; color:transparent).\n8. FLOATING WHATSAPP: Fixed bottom-right, pulsing glow animation, always visible.\n9. SMOOTH SCROLL: html { scroll-behavior: smooth; }\n10. MOBILE FIRST: Design for 375px, enhance at 768px, maximize at 1280px. EVERY section must be tested mentally for mobile overflow.\n\n## DESIGN SYSTEM\n\nAI-SELECTED DESIGN SYSTEM — INTELLIGENCE MODE:\n\nSTEP 1 — ANALYZE THE BUSINESS (do this silently before any code):\nLook at the business data provided: category, name, rating, reviews count, about text, services, and photos.\nAsk yourself:\n  - What kind of customer does this business serve? (premium/luxury vs everyday/budget, young vs mature)\n  - What emotion should the website evoke? (trust/calm, energy/excitement, warmth/comfort, prestige/exclusivity)\n  - What industry conventions apply? (clinics = professional clean; gyms = bold energy; restaurants = warm/inviting; salons/boutiques = luxury; tech/startups = modern dark)\n  - Do the photos look dark/moody or bright/airy? Dense/urban or natural/organic?\n\nSTEP 2 — CHOOSE ONE of these established styles as the primary:\n  A) Professional Trust — clinics, lawyers, CAs, consultants, education\n  B) Sleek Modern Dark — tech, agencies, co-working, modern gyms, studios\n  C) Animated Kinetic — fitness, events, sports, entertainment, youth brands\n  D) Warm Earthy Premium — restaurants, cafes, Ayurveda, wellness, food retail\n  E) Dark Luxury — high-end salons, boutiques, jewellery, premium hotels, spas\n  F) Bold High-Energy — gyms, MMA, street food, nightlife, streetwear\n\nSTEP 3 — STATE YOUR CHOICE (as an HTML comment at the very top of your output):\n<!-- STYLE: [chosen style name] | REASON: [one sentence explaining why this fits this specific business] -->\n\nSTEP 4 — IMPLEMENT THAT STYLE COMPLETELY:\nAfter choosing, implement the full design system for that style exactly as defined — with proper font imports, CSS custom properties, hero style, card styles, button styles, and animations. Do not mix styles randomly; be intentional and consistent.\n\n## REQUIRED SECTIONS (do not skip any)\n\n### 1. STICKY HEADER\n- Height: 64px. backdrop-filter: blur(20px). Semi-transparent background.\n- Left: business name as wordmark (bold, styled).\n- Right: Click-to-call phone as <a href=\"tel:n/a\">n/a</a> with a phone icon. WhatsApp icon linking to https://wa.me/?text=Hello%206Fit%20Fitness%20Studio.\n- Hamburger menu on mobile that slides in a full-screen nav overlay.\n\n### 2. HERO (100dvh)\n- Background: first real photo URL as CSS background-image with gradient overlay from the design system.\n- Floating trust badge (glassmorphism): \"★ 5 · 100+  Reviews\" — positioned absolute, animated fade-in.\n- H1: Bold, large, gradient or white text: \"Trusted Fitness center in Barasat\"\n- Sub-headline: short, compelling, max 12 words.\n- TWO CTA buttons: WhatsApp primary, Call secondary. Both with hover animations.\n- Scroll indicator (animated bouncing chevron or dot at bottom).\n\n### 3. ANIMATED TRUST STATS STRIP\n- Dark or accent background (not white).\n- 3–4 stat items in a row: \"5★ Rating\" | \"100++ Reviews\" | \"5+ Years\" | \"100% Natural\".\n- Each number animates counting up when scrolled into view (JS countUp).\n- Stats separated by vertical dividers or gold/accent lines.\n\n### 4. SERVICES — BENTO GRID LAYOUT\n- Use realistic services for this business category (3–6 services)\n- CSS Grid: on desktop, mix 1-col and 2-col spans. First card spans 2 columns. Others are 1. This creates a bento layout.\n- Each card: icon (SVG or emoji), service name as bold heading, 1 short description sentence, \"Book Now →\" link to https://wa.me/?text=Hello%206Fit%20Fitness%20Studio.\n- Cards use the glassmorphism/card style from the design system.\n- Hover: lift + glow effect.\n\n### 5. ABOUT / STORY (SPLIT SCREEN)\n- Left side: full-height stacked photos (2nd and 3rd real photo URLs, overlapping with a slight rotation/offset for visual depth).\n- Right side: \"Our Story\" label, H2, the about text, a \"Speak with Us\" button.\n\n- On mobile: photos stack above text.\n\n### 6. CUSTOMER TESTIMONIALS (CARDS WITH GLASSMORPHISM)\n\nREAL CUSTOMER REVIEWS (use these exact quotes):\n  - \"Ambiance is very nice and the quality of exercise is also good\" — Sanchita Dey (5★)\n- Layout: 3-column grid on desktop, 1-column on mobile.\n- Each card: giant quote mark (CSS content, styled in accent color), star rating (show ★ symbols), review text (italic), reviewer name bold.\n- Cards: glassmorphism style from design system.\n- Add subtle fade-up animation (AOS or CSS @keyframes).\n\n### 7. FAQ ACCORDION\n- 5 questions relevant to Fitness center in Barasat.\n- Each item: question as bold clickable header, answer expands smoothly (CSS max-height transition or JS toggle).\n- Arrow icon rotates 180° when open.\n- Include question about: booking process, pricing, what to expect on first visit, location/parking, online consultation if applicable.\n\n### 8. LOCATION + HOURS\n- Two-column: Left = embedded Google Maps iframe using link: https://www.google.com/maps/place/6Fit+Fitness+Studio/data=!4m7!3m6!1s0x39f8990052da5eab:0x453caed03fc3db68!8m2!3d22.710737!4d88.4789115!16s%2Fg%2F11z7dgvs43!19sChIJq17aUgCZ-DkRaNvDP9CuPEU?authuser=0&hl=en&g_ep=EgoyMDI2MDgxOS4wIJJjKgBIAVAD&rclk=1, height 350px, border-radius from design system.\n- Right = Address card with icon, Hours list with icon.\n- Show realistic hours for this business type\n- \"Get Directions\" button linking to Google Maps.\n\n### 9. FINAL CTA SECTION\n- Accent/dark colored background (not white — use the primary or dark color from design system).\n- Bold large closing headline: \"Ready to get started?\"\n- Sub-text: one compelling sentence referencing Barasat.\n- Two buttons: WhatsApp + Call. Both large and prominent.\n- Optional: subtle background pattern or noise texture.\n\n### 10. FOOTER\n- Dark background. 3–4 columns on desktop.\n- Col 1: Business name + short tagline + social links: WhatsApp, Facebook icons\n- Col 2: Quick links (Home, Services, About, Contact)\n- Col 3: Contact info — address with 📍 icon, phone with 📞 as click-to-call, WhatsApp link.\n- Bottom bar: © 2026 6Fit Fitness Studio. All rights reserved. | Privacy Policy | Terms\n- Social link to Facebook: #\n\n## BUSINESS DATA\n- Name: 6Fit Fitness Studio\n- Category: Fitness center\n- Address: 19B, Harinath Sen Rd, Dakshinpara, Barasat, Joshow RD, West Bengal 700124, Barasat, West Bengal\n- Rating: 5 ⭐ (0 reviews)\n- Phone: n/a\n- WhatsApp link: https://wa.me/?text=Hello%206Fit%20Fitness%20Studio\n- Tel link: tel:n/a\n- Google Maps: https://www.google.com/maps/place/6Fit+Fitness+Studio/data=!4m7!3m6!1s0x39f8990052da5eab:0x453caed03fc3db68!8m2!3d22.710737!4d88.4789115!16s%2Fg%2F11z7dgvs43!19sChIJq17aUgCZ-DkRaNvDP9CuPEU?authuser=0&hl=en&g_ep=EgoyMDI2MDgxOS4wIJJjKgBIAVAD&rclk=1\n- Facebook: n/a\n\nREAL PHOTOS (use these as actual <img src=\"...\"> — not stock, not placeholder):\n  Photo 1: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlPdyjGif5QdK5UeU1NDjI0oQEY779xIeEPjwVv2h3T67-RfwXQYL5m4VwqzkV846CJo4OMt29L4Lby13iPh5l9Mwq9pSvo6CTa-l6BBvI1Id9XBWq1Q3T2mM4GTzz1Pc4RyvlxzpQVPogZ=w32-h32-p-k-no\n  Photo 2: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkH9XJrjjVFd793zX5-wXugDmYHRITXMYZC4H4NEB0XSPDfx-uwD3Z0XxXHeBFdJqMRpxDKhZgg8SaGj7kBYHbO7nZAI8AtqHq0L2mE55LKU2c6ZRhlxI8M4B6m1Iwq8-3cij50ew=w32-h32-p-k-no\n  Photo 3: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlPdyjGif5QdK5UeU1NDjI0oQEY779xIeEPjwVv2h3T67-RfwXQYL5m4VwqzkV846CJo4OMt29L4Lby13iPh5l9Mwq9pSvo6CTa-l6BBvI1Id9XBWq1Q3T2mM4GTzz1Pc4RyvlxzpQVPogZ=w408-h306-k-no\n  Photo 4: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlPdyjGif5QdK5UeU1NDjI0oQEY779xIeEPjwVv2h3T67-RfwXQYL5m4VwqzkV846CJo4OMt29L4Lby13iPh5l9Mwq9pSvo6CTa-l6BBvI1Id9XBWq1Q3T2mM4GTzz1Pc4RyvlxzpQVPogZ=w397-h298-k-no\n  Photo 5: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmlfcNzst6tyPRHlcu-_gbiSK4g29QGyL9OyY3-eroh_ue-VHZ2uuBxkq3o47MpF2kEA77IHLZyCxupKcjzIFMQ0oWIXGS63O9xq35YT6neaJprpqZ8Syut4Z-m1kCZMHmHk4hPkmkqY6M=w397-h298-k-no\n  Photo 6: https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlr2Q6e3bheLUYqg5yIjBDq-Vcn_I2y2Ps-sXwpYzHPJNWUwp-yB2460aeoSu-G968wr3vE2Y2wbf4UT1r3IBt47vrb_ua8c9YYCF4R7hq-XEMPZfGl0lyQS9Bc3HnUGdEYuYQk8EpspuGf=w397-h298-k-no\nREAL CUSTOMER REVIEWS (use these exact quotes):\n  - \"Ambiance is very nice and the quality of exercise is also good\" — Sanchita Dey (5★)\n\n## TECHNICAL REQUIREMENTS\n- SEO: <title>6Fit Fitness Studio – Fitness center in Barasat</title>, meta description (compelling, 160 chars), LocalBusiness JSON-LD schema with real data, canonical URL, H1 with city+category.\n- PERFORMANCE: lazy-load all images below the fold (<img loading=\"lazy\">), no heavy libraries except AOS (CDN, 14kb).\n- ACCESSIBILITY: alt text on every image, aria-labels on all buttons/links, min 44px touch targets, WCAG AA contrast.\n- ZERO BUGS: no mobile overflow, all links functional, no broken images.\n- Use AOS library for scroll animations: <link rel=\"stylesheet\" href=\"https://unpkg.com/aos@2.3.4/dist/aos.css\"> and <script src=\"https://unpkg.com/aos@2.3.4/dist/aos.js\"></script>, initialize with AOS.init({duration:600,easing:'ease-out-cubic',once:true}).\n\n## CRITICAL REMINDER\nThe output must look like it was built by a ₹5,00,000+ agency. It must make the business owner's jaw drop. Use the real business data — real name, real reviews, real photos, real phone. When the owner sees this demo, they must feel: \"This is exactly what my business needs.\"\n\nOUTPUT: Use Google Stitch (stitch.withgoogle.com). Output one complete self-contained HTML file with ALL CSS inline in a <style> tag and all JS inline in a <script> tag. No external files. No React. No build step.",
+      "pitchPoints": [
+        "With a perfect 5‑star rating but no online presence or reviews, 6Fit can instantly showcase its excellence and start collecting testimonials on a professional site.",
+        "A dedicated website with online class bookings and membership plans can boost revenue by up to 30% by converting walk‑ins into recurring digital sales.",
+        "Local competitors in Barasat are already going digital—securing your site now ensures 6Fit stays top‑of‑mind and captures the growing fitness‑seeking crowd."
+      ],
+      "extraPages": [
+        {
+          "id": "class_schedule",
+          "icon": "📅",
+          "label": "Class Schedule",
+          "desc": "Displays daily workout classes so members can plan visits, increasing class attendance and reducing no‑shows."
+        },
+        {
+          "id": "online_booking",
+          "icon": "🗓️",
+          "label": "Online Booking",
+          "desc": "Allows clients to book sessions or memberships instantly, driving higher conversion rates and freeing staff time."
+        },
+        {
+          "id": "testimonials",
+          "icon": "💬",
+          "label": "Testimonials",
+          "desc": "Collects and showcases real client feedback, turning the 5‑star rating into visible social proof for new prospects."
+        },
+        {
+          "id": "about_us",
+          "icon": "🏋️",
+          "label": "About Us",
+          "desc": "Shares 6Fit’s story, trainers’ credentials, and studio values to build trust with local fitness enthusiasts."
+        },
+        {
+          "id": "blog_fitness_tips",
+          "icon": "📝",
+          "label": "Fitness Blog",
+          "desc": "Provides weekly workout and health tips, improving SEO and positioning 6Fit as a community authority."
+        }
+      ]
     }
   }
 }

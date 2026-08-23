@@ -92,36 +92,8 @@ export function Phase4Build({
       }, 10);
 
       toast.success("Website prompt generated");
-
-      // Auto-generate ALL extra page prompts in parallel
-      if (data.extraPages && data.extraPages.length > 0) {
-        setGeneratingExtraPages(true);
-        const lead = activeLead;
-        // Mark all as generating
-        const initState: Record<string, { prompt: string; generating: boolean }> = {};
-        data.extraPages.forEach(p => { initState[`${lead.id}:${p.id}`] = { prompt: "", generating: true }; });
-        setExtraPagePrompts(prev => ({ ...prev, ...initState }));
-
-        // Fire all in parallel
-        await Promise.allSettled(
-          data.extraPages.map(async (page) => {
-            const key = `${lead.id}:${page.id}`;
-            try {
-              const r = await fetch("/api/build-prompt", {
-                method: "POST",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify({ lead, platform, style: styleParam, pageType: page.id, pageLabel: page.label }),
-              });
-              const d = await r.json();
-              setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: d.prompt ?? "", generating: false } }));
-            } catch {
-              setExtraPagePrompts(prev => ({ ...prev, [key]: { prompt: "", generating: false } }));
-            }
-          })
-        );
-        setGeneratingExtraPages(false);
-        toast.success("All page prompts ready!");
-      }
+      // Extra pages are listed below with individual Generate buttons
+      // — user clicks only the ones they need (no auto-fire)
     } catch (e) {
       setError((e as Error).message ?? "Unknown error");
       toast.error("Generation failed");
