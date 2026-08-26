@@ -4701,5 +4701,42 @@
         }
       ]
     }
+  },
+  "outreachResults": {
+    "lead-005": {
+      "source": "gemini",
+      "first": "Hi Sir 👋, I’ve been checking out Srija Fitness 2.0’s reviews – members love the excellent atmosphere and the helpful trainers! 👍 One thing I noticed: only Sunday hours are listed, which can leave potential members unsure about when they can work out, possibly costing about ₹80,000 each month. I’ve prepared a demo layout/design for your website that showcases full weekly hours and highlights your strengths. Would you like me to share the screenshot via WhatsApp? Just reply YES or NO.",
+      "followUp": "Hey Sir, just a quick note – every day without clear hours could be costing Srija Fitness around ₹80,000 monthly in missed sign‑ups. A simple website update can lock that in. Can we hop on a 5‑minute call to walk through the demo? Let me know a time that works. 😊",
+      "bestSendTime": "Best to send on Tuesday morning around 10 AM IST for high open rates.",
+      "callScript": {
+        "openingLine": "Good morning! I’m calling from [Your Name] and I’ve been following Srija Fitness 2.0’s journey. I must say, the atmosphere you’ve built is truly excellent, and the trainers’ dedication shines through in every review.",
+        "painPoints": [
+          "Only Sunday hours are displayed on the current site, leaving potential members unsure about weekday access and costing you an estimated ₹80,000 per month in lost revenue",
+          "The existing website’s design and functionality are subpar, which can turn away visitors before they even sign up",
+          "There’s no online booking or membership management portal, making it inconvenient for members and missing out on automated revenue streams",
+          "Weekday operating hours are not clearly listed, causing confusion and missed opportunities for both new and existing clients"
+        ],
+        "objectionHandlers": [
+          {
+            "objection": "I don't need a website",
+            "response": "Your gym already has a 5-star rating and 200 glowing reviews, which shows a strong demand. A professional website that clearly displays hours and allows online booking will convert that demand into actual sign-ups, directly addressing the ₹80,000 monthly loss."
+          },
+          {
+            "objection": "It's too expensive",
+            "response": "Think of the website as an investment that can recover the ₹80,000 you’re losing each month. A well-designed site can bring in new members, streamline bookings, and reduce administrative costs, giving you a quick return on investment."
+          },
+          {
+            "objection": "I'll think about it",
+            "response": "I understand. However, every month you’re missing out on ₹80,000 because of unclear hours and a weak online presence. Let’s schedule a quick 15-minute call next week to explore how we can turn that lost revenue into guaranteed new members."
+          },
+          {
+            "objection": "I already have customers",
+            "response": "That’s great! A modern website can enhance the experience for those customers, keep them engaged, and attract even more clients through better visibility and convenience."
+          }
+        ],
+        "closingLine": "Let’s lock in a brief meeting this week so I can show you a tailored plan that will bring those ₹80,000 back into your business. When would be a convenient time for you?",
+        "pricingSuggestion": "₹55,000 – ₹75,000"
+      }
+    }
   }
 }

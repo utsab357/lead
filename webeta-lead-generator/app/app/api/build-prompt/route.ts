@@ -63,6 +63,38 @@ For extraPages: suggest only what genuinely fits this business type. 3-5 pages m
   };
 }
 
+/**
+ * Normalizes a Google CDN photo URL to prefer a usable higher-resolution variant.
+ * Google Maps photo URLs contain dimension params like =w32-h32 or =w408-h306.
+ * If the URL is a googleusercontent.com URL with a small dimension (w < 400 or h < 400),
+ * we replace the dimension suffix with =w800-h600-k-no (a standard Maps large variant).
+ * If the URL already has large dimensions, has no detectable dimension param, or is not
+ * a Google CDN URL, it is returned unchanged.
+ */
+function normalizeGooglePhotoUrl(url: string): string {
+  if (!url.includes("googleusercontent.com")) return url;
+  // Match trailing =wNNN-hNNN[-optional-flags] pattern
+  const suffixMatch = url.match(/=w(\d+)-h(\d+)([^&\s"']*)?$/);
+  if (suffixMatch) {
+    const w = parseInt(suffixMatch[1], 10);
+    const h = parseInt(suffixMatch[2], 10);
+    if (w < 400 || h < 400) {
+      return url.replace(/=w\d+-h\d+[^&\s"']*$/, "=w800-h600-k-no");
+    }
+    return url; // already large enough
+  }
+  // Match path-embedded /wNNN-hNNN/ pattern (less common)
+  const pathMatch = url.match(/\/w(\d+)-h(\d+)\//);
+  if (pathMatch) {
+    const w = parseInt(pathMatch[1], 10);
+    const h = parseInt(pathMatch[2], 10);
+    if (w < 400 || h < 400) {
+      return url.replace(/\/w\d+-h\d+\//, "/w800-h600/");
+    }
+  }
+  return url;
+}
+
 export const maxDuration = 300;
 
 /**
@@ -84,7 +116,7 @@ function cleanWaNumber(raw: string | null | undefined): string {
 }
 
 const PLATFORM_OUTPUT: Record<string, string> = {
-  stitch:       "Use Google Stitch (stitch.withgoogle.com). Output one complete self-contained HTML file with ALL CSS inline in a <style> tag and all JS inline in a <script> tag. No external files. No React. No build step.",
+  stitch:       "Use Google Stitch (stitch.withgoogle.com). Output ONE complete HTML file. ALL CSS must be inside a <style> tag. ALL JavaScript must be inside a <script> tag. External CDN libraries (e.g. AOS, Google Fonts via @import) are allowed. External image URLs are allowed. Google Maps iframes/links are allowed. No React. No build step. No separate CSS or JS files.",
   lovable:      "Build in Lovable (lovable.dev). Tech stack: React 18 + TypeScript + Tailwind CSS (frontend), Django 4.x + Django REST Framework (backend). Create React components with proper props and types. Use Tailwind utility classes for all styling. Backend API endpoints for contact form and appointment booking using Django REST Framework. Do NOT use plain HTML or vanilla CSS.",
   bolt:         "Build in Bolt (bolt.new). Tech stack: React 18 + TypeScript + Tailwind CSS (frontend), Django 4.x + Django REST Framework (backend). Structure as proper React components. Use Tailwind for styling. Include Django models and DRF views for form submissions. Do NOT use plain HTML or vanilla CSS.",
   "claude-code":"Build with Claude Code. Tech stack: React 18 + TypeScript + Tailwind CSS + shadcn/ui (frontend), Django 4.x + Django REST Framework (backend). Use Next.js App Router for the frontend. Include Django models, serializers, and API views. Proper folder structure for both frontend and backend.",
@@ -199,7 +231,7 @@ function buildPrompt(lead: RankedLead, platform: string, style: string): string 
   const telLink = `tel:${phone.replace(/\s/g, "")}`;
 
   const realPhotos = lead.photoUrls?.length
-    ? `\nREAL PHOTOS (use these as actual <img src="..."> — not stock, not placeholder):\n${lead.photoUrls.slice(0, 6).map((u, i) => `  Photo ${i + 1}: ${u}`).join("\n")}`
+    ? `\nREAL PHOTOS (use these as actual <img src="..."> — not stock, not placeholder):\n${lead.photoUrls.slice(0, 6).map((u, i) => `  Photo ${i + 1}: ${normalizeGooglePhotoUrl(u)}`).join("\n")}`
     : "";
   const realServices = lead.services?.length
     ? `\nACTUAL SERVICES (use exactly these, do not invent others):\n${lead.services.map(s => `  - ${s}`).join("\n")}`
@@ -227,7 +259,7 @@ ${platformNote}
 1. FULL-VIEWPORT HERO: The hero section MUST be 100dvh (full screen height). The business photo MUST be used as a full-bleed background image with a CSS gradient overlay. The headline MUST be large (clamp at minimum 2.8rem on mobile, 4.5rem on desktop). This is non-negotiable.
 2. REAL DESIGN SYSTEM: Use the complete design system below. Apply CSS custom properties (--variables) from the top. Every color, font, and spacing value must come from the system.
 3. MICRO-INTERACTIONS: Every card, button, and image must have a hover state with transform and transition. No static elements.
-4. ANIMATED STATS: Create a "trust numbers" section with big animated counters (JS IntersectionObserver + requestAnimationFrame countUp) showing: star rating, review count, years in business.
+4. ANIMATED STATS: Create a "trust numbers" section with big animated counters (JS IntersectionObserver + requestAnimationFrame countUp). Show ONLY verified statistics supplied in BUSINESS DATA (rating, review count, years in business). If a stat is not in BUSINESS DATA, omit it entirely — do NOT invent placeholder numbers.
 5. BENTO GRID or MASONRY for services — NOT a boring equal-column grid. At least one card should span 2 columns on desktop for visual interest.
 6. GLASSMORPHISM for overlapping UI elements (testimonial cards, floating badges, stat chips).
 7. GRADIENT TEXT on the main hero headline or key section heading (CSS: background:gradient; -webkit-background-clip:text; color:transparent).
@@ -248,7 +280,7 @@ ${designSystem}
 
 ### 2. HERO (100dvh)
 - Background: first real photo URL as CSS background-image with gradient overlay from the design system.
-- Floating trust badge (glassmorphism): "★ ${lead.rating ?? "5.0"} · ${lead.reviewsCount ?? "100+"}  Reviews" — positioned absolute, animated fade-in.
+- Floating trust badge (glassmorphism)${lead.rating != null || (lead.reviewsCount ?? 0) > 0 ? `: "★ ${lead.rating?.toFixed(1)} · ${lead.reviewsCount} Reviews" — positioned absolute, animated fade-in.` : `: show "Google Maps Listed" or "Now Open" — do NOT invent a rating or review count the business does not have.`}
 - H1: Bold, large, gradient or white text: "Trusted ${lead.category} in ${lead.city?.split(",")[0]}"
 - Sub-headline: short, compelling, max 12 words.
 - TWO CTA buttons: WhatsApp primary, Call secondary. Both with hover animations.
@@ -256,12 +288,16 @@ ${designSystem}
 
 ### 3. ANIMATED TRUST STATS STRIP
 - Dark or accent background (not white).
-- 3–4 stat items in a row: "${lead.rating ?? "5.0"}★ Rating" | "${lead.reviewsCount ?? "100+"}+ Reviews" | "${lead.yearsInBusiness ?? "5"}+ Years" | "100% Natural".
+- Stats strip items — include ONLY the stats for which real data is available:
+${lead.rating != null ? `  * ${lead.rating.toFixed(1)}★ Rating` : "  * (omit rating — no verified rating data)"}
+${(lead.reviewsCount ?? 0) > 0 ? `  * ${lead.reviewsCount}+ Reviews` : "  * (omit review count — business has no reviews yet)"}
+${lead.yearsInBusiness != null ? `  * ${lead.yearsInBusiness}+ Years` : "  * (omit years — not verified; do NOT invent a number)"}
+  * If fewer than 3 verified stats are available, show fewer stats. Do NOT invent percentages ("100% Satisfaction"), vague claims ("Local Experts", "Award Winning", "Trusted by 1000+"), or any statistic that is not in BUSINESS DATA.
 - Each number animates counting up when scrolled into view (JS countUp).
 - Stats separated by vertical dividers or gold/accent lines.
 
 ### 4. SERVICES — BENTO GRID LAYOUT
-${realServices || "- Use realistic services for this business category (3–6 services)"}
+${realServices || "- No verified services are available in BUSINESS DATA. Do NOT invent a list of services based on the category. Instead, create a neutral 'What We Offer' section with a single card that says the business offers professional services in their category, and a CTA to contact them via WhatsApp for details. Do NOT name specific services that are not in BUSINESS DATA."}
 - CSS Grid: on desktop, mix 1-col and 2-col spans. First card spans 2 columns. Others are 1. This creates a bento layout.
 - Each card: icon (SVG or emoji), service name as bold heading, 1 short description sentence, "Book Now →" link to ${waLink}.
 - Cards use the glassmorphism/card style from the design system.
@@ -270,11 +306,11 @@ ${realServices || "- Use realistic services for this business category (3–6 se
 ### 5. ABOUT / STORY (SPLIT SCREEN)
 - Left side: full-height stacked photos (2nd and 3rd real photo URLs, overlapping with a slight rotation/offset for visual depth).
 - Right side: "Our Story" label, H2, the about text, a "Speak with Us" button.
-${realAbout}
+${realAbout || "- No verified about/story text exists in BUSINESS DATA. Do NOT invent: business history, founder story, years in business, mission statement, staff claims, or achievements. Instead, create a visually strong neutral section with only verified facts (name, category, city) and a clear CTA: \"Get in touch to learn about us\" linking to the WhatsApp link. The section must look premium but must not fabricate any history or claims."}
 - On mobile: photos stack above text.
 
 ### 6. CUSTOMER TESTIMONIALS (CARDS WITH GLASSMORPHISM)
-${realReviews || "- Write 3 believable testimonials for this category"}
+${realReviews || "- No real reviews are available for this business yet. Instead of fabricating testimonials, build the testimonials section as a 'Leave Us a Review' invite: show 3 empty card placeholders with a star icon, the text \"Be the first to share your experience!\", and a \"Write a Review\" button linking to their Google Maps listing. Do NOT invent review quotes."}
 - Layout: 3-column grid on desktop, 1-column on mobile.
 - Each card: giant quote mark (CSS content, styled in accent color), star rating (show ★ symbols), review text (italic), reviewer name bold.
 - Cards: glassmorphism style from design system.
@@ -284,12 +320,12 @@ ${realReviews || "- Write 3 believable testimonials for this category"}
 - 5 questions relevant to ${lead.category} in ${lead.city?.split(",")[0]}.
 - Each item: question as bold clickable header, answer expands smoothly (CSS max-height transition or JS toggle).
 - Arrow icon rotates 180° when open.
-- Include question about: booking process, pricing, what to expect on first visit, location/parking, online consultation if applicable.
+- CRITICAL FAQ RULE: Questions may be category-relevant, but answers must use ONLY verified information in BUSINESS DATA. If the answer is not in BUSINESS DATA, use: "Please contact us directly for the latest information" and link to ${waLink}. Do NOT assume or invent: specific prices, parking availability, online/offline consultation, booking requirements, payment methods, emergency services, specific procedures, or opening hours. Never state as fact anything that is not explicitly in BUSINESS DATA.
 
 ### 8. LOCATION + HOURS
 - Two-column: Left = embedded Google Maps iframe using link: ${mapsLink}, height 350px, border-radius from design system.
 - Right = Address card with icon, Hours list with icon.
-${realHours || "- Show realistic hours for this business type"}
+${realHours || "- No verified business hours are available in BUSINESS DATA. Do NOT invent hours. Instead, display a message: 'Contact us for current opening hours' with the WhatsApp and phone CTA. Do NOT show hours like 'Mon-Sat 9am-8pm' or 'Sunday Closed' unless those exact hours are in BUSINESS DATA."}
 - "Get Directions" button linking to Google Maps.
 
 ### 9. FINAL CTA SECTION
@@ -301,11 +337,11 @@ ${realHours || "- Show realistic hours for this business type"}
 
 ### 10. FOOTER
 - Dark background. 3–4 columns on desktop.
-- Col 1: Business name + short tagline + social links: ${socialLinks || "WhatsApp, Facebook icons"}
+- Col 1: Business name + short tagline + social links: ${socialLinks || "(no verified social profiles — show only the WhatsApp link and phone number; do NOT add Facebook, Instagram, YouTube, or other social icons unless their URLs are in BUSINESS DATA)"}
 - Col 2: Quick links (Home, Services, About, Contact)
 - Col 3: Contact info — address with 📍 icon, phone with 📞 as click-to-call, WhatsApp link.
 - Bottom bar: © 2026 ${lead.name}. All rights reserved. | Privacy Policy | Terms
-- Social link to Facebook: ${lead.socialLinks?.find(s => s.platform === "facebook")?.url ?? "#"}
+${lead.socialLinks?.find(s => s.platform === "facebook")?.url ? `- Social link to Facebook: ${lead.socialLinks.find(s => s.platform === "facebook")!.url}` : "- (No verified Facebook URL — do NOT include a Facebook link or '#' placeholder)"}
 
 ## BUSINESS DATA
 - Name: ${lead.name}
@@ -316,7 +352,7 @@ ${realHours || "- Show realistic hours for this business type"}
 - WhatsApp link: ${waLink}
 - Tel link: ${telLink}
 - Google Maps: ${mapsLink}
-- Facebook: ${lead.socialLinks?.find(s => s.platform === "facebook")?.url ?? "n/a"}
+${lead.socialLinks?.find(s => s.platform === "facebook")?.url ? `- Facebook: ${lead.socialLinks.find(s => s.platform === "facebook")!.url}` : "- Facebook: not available (do NOT invent or include a Facebook URL)"}
 ${realPhotos}${realServices}${realHours}${realAbout}${realReviews}${socialLinks}
 
 ## TECHNICAL REQUIREMENTS
@@ -325,6 +361,25 @@ ${realPhotos}${realServices}${realHours}${realAbout}${realReviews}${socialLinks}
 - ACCESSIBILITY: alt text on every image, aria-labels on all buttons/links, min 44px touch targets, WCAG AA contrast.
 - ZERO BUGS: no mobile overflow, all links functional, no broken images.
 - Use AOS library for scroll animations: <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"> and <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>, initialize with AOS.init({duration:600,easing:'ease-out-cubic',once:true}).
+
+## VERIFIED DATA RULE — THIS IS MANDATORY
+1. Use ONLY facts explicitly present in the BUSINESS DATA section below.
+2. NEVER invent: ratings, review counts, years in business, prices, opening hours, services, certifications, awards, guarantees, statistics, social profiles, or business history.
+3. When data is missing, omit the claim rather than guessing or estimating.
+4. NEVER convert an assumption into a factual statement (e.g. do not write "5+ Years" if yearsInBusiness is not in BUSINESS DATA).
+5. Design quality must come from layout, typography, imagery, spacing, interaction, hierarchy, and visual polish — NOT fabricated business facts.
+6. Real customer reviews must only come from the REAL CUSTOMER REVIEWS section. Never create fictional customer names or testimonials.
+7. Never invent phone numbers, WhatsApp numbers, addresses, emails, map links, or social URLs.
+8. The supplied REAL PHOTOS are the actual business photos. Use those exact URLs. Do NOT replace them with stock photos, AI images, or placeholder gradients. If a photo URL fails to load, omit it or use another supplied photo — do NOT substitute unrelated imagery.
+9. Social links: include ONLY verified URLs explicitly present in BUSINESS DATA. Never infer social profile ownership from a similar name. Never output "#" as a placeholder for a social link. If a social profile is absent or uncertain, omit it entirely from header, footer, and all other sections.
+
+### MISSING DATA HANDLING
+When a requested website section depends on information not present in BUSINESS DATA:
+1. Prefer omitting the unsupported fact entirely.
+2. Never invent an answer merely to fill visual space.
+3. Neutral design is always preferable to fabricated business information.
+4. Contact/WhatsApp/call CTAs may be used when those contact details are verified in BUSINESS DATA.
+5. The website must never imply that an unavailable fact is confirmed.
 
 ## CRITICAL REMINDER
 The output must look like it was built by a ₹5,00,000+ agency. It must make the business owner's jaw drop. Use the real business data — real name, real reviews, real photos, real phone. When the owner sees this demo, they must feel: "This is exactly what my business needs."
@@ -351,12 +406,12 @@ function buildExtraPagePrompt(
   const waLink = `https://wa.me/${waNumber}?text=Hello%20${encodeURIComponent(lead.name)}`;
   const telLink = `tel:${phone.replace(/\s/g, "")}`;
   const realPhotos = lead.photoUrls?.length
-    ? lead.photoUrls.slice(0, 4).map((u, i) => `Photo ${i + 1}: ${u}`).join("\n")
+    ? lead.photoUrls.slice(0, 4).map((u, i) => `Photo ${i + 1}: ${normalizeGooglePhotoUrl(u)}`).join("\n")
     : "";
 
   const pageInstructions: Record<string, string> = {
     booking:
-      `Build a complete BOOKING / APPOINTMENT page.\n- Prominent booking form: Name, Phone, Service (dropdown), Preferred Date, Preferred Time, Message.\n- On submit: show WhatsApp link pre-filled with booking details linking to ${waLink}.\n- Above the form: 3 trust signals using their ${lead.rating ?? "5.0"} rating and ${lead.reviewsCount ?? "100+"} reviews.\n- Below the form: FAQ about the booking process (3 questions).\n- Sticky WhatsApp button always visible.`,
+      `Build a complete BOOKING / APPOINTMENT page.\n- Prominent booking form: Name, Phone, Service (dropdown), Preferred Date, Preferred Time, Message.\n- On submit: show WhatsApp link pre-filled with booking details linking to ${waLink}.\n- Above the form: ${lead.rating != null || (lead.reviewsCount ?? 0) > 0 ? `3 trust signals using their real ${lead.rating != null ? `${lead.rating.toFixed(1)}★ rating` : ""} ${(lead.reviewsCount ?? 0) > 0 ? `and ${lead.reviewsCount} Google reviews` : ""}` : "a short welcome message — do NOT invent ratings or reviews the business does not have"}.\n- Below the form: FAQ about the booking process (3 questions).\n- Sticky WhatsApp button always visible.`,
     schedule:
       `Build a complete CLASS SCHEDULE / TIMETABLE page.\n- Weekly schedule table (Mon-Sun) with realistic class slots for this business type.\n- Each slot: class name, duration, trainer, difficulty badge (Beginner/Intermediate/Advanced).\n- Filter buttons by day and class type.\n- "Book This Class" button on each row linking to ${waLink}.`,
     menu:
@@ -428,7 +483,7 @@ export async function POST(req: Request) {
 
   // ── Main landing page (Option A) ──────────────────────────────────────────
   // 1. Build the website prompt instantly in JavaScript — no AI, no tokens, never fails
-  const websitePrompt = buildPrompt(lead, platform || "stitch", style || "professional");
+  const websitePrompt = buildPrompt(lead, platform || "stitch", style || "ai-decides");
 
   // 2. Ask AI ONLY for the small creative parts (~500 tokens total)
   const { pitchPoints, extraPages } = await getCreativeInsights(lead);

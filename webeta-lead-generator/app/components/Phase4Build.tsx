@@ -48,7 +48,7 @@ export function Phase4Build({
     (initialLeadId ? ranked.find(l => l.id === initialLeadId) : null) ?? ranked[0] ?? null
   );
   const [platform, setPlatform] = useState("stitch");
-  const [styles, setStyles] = useState<string[]>(["professional"]);
+  const [styles, setStyles] = useState<string[]>(["ai-decides"]);
   const [generating, setGenerating] = useState(false);
   const [generatingExtraPages, setGeneratingExtraPages] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +66,7 @@ export function Phase4Build({
     if (!activeLead) return;
     setGenerating(true);
     setError(null);
-    const styleParam = styles.length > 0 ? styles.join("+") : "professional";
+    const styleParam = styles.length > 0 ? styles.join("+") : "ai-decides";
     try {
       const res = await fetch("/api/build-prompt", {
         method: "POST",

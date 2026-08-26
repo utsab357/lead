@@ -10,7 +10,7 @@ const STEPS = [
   { id: 3, label: "Rank", icon: Trophy },
   { id: 4, label: "Convert", icon: Target },
   { id: 5, label: "Outreach", icon: Send },
-  { id: 6, label: "Demo", icon: Sparkles },
+  { id: 6, label: "Build", icon: Sparkles },
   { id: 7, label: "Export", icon: Download },
 ];
 

@@ -197,7 +197,7 @@ export function Phase2Audit({
           <div className="font-display text-3xl tabular-nums text-[color:var(--destructive)] mt-2">{Object.values(audits).filter((a) => !a.hasWebsite).length}</div>
         </CardContent></Card>
         <Card><CardContent className="pt-6">
-          <div className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">Avg PageSpeed</div>
+          <div className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">Avg PageSpeed <span className="normal-case tracking-normal text-[10px] opacity-60">(est.)</span></div>
           <div className="font-display text-3xl tabular-nums mt-2">{auditedCount ? Math.round(Object.values(audits).reduce((s, a) => s + a.pageSpeedScore, 0) / auditedCount) : 0}</div>
         </CardContent></Card>
         <Card><CardContent className="pt-6">
@@ -350,7 +350,8 @@ export function Phase2Audit({
                       <div className="flex items-center gap-3 pt-1 border-t border-border/60">
                         <PageSpeedGauge score={a.pageSpeedScore} />
                         <div className="flex-1 min-w-0">
-                          <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">Est. lost / mo</div>
+                          <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">PageSpeed <span className="normal-case tracking-normal opacity-60">(estimated)</span></div>
+                          <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-2">Est. lost / mo</div>
                           <div className="font-display text-lg tabular-nums flex items-center mt-0.5"><IndianRupee className="h-3.5 w-3.5" strokeWidth={1.5} />{a.estLostRevenuePerMonth.toLocaleString("en-IN")}</div>
                         </div>
                       </div>

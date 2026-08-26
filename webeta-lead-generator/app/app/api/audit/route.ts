@@ -53,7 +53,12 @@ For EACH business, analyze ALL the data and return one JSON object with these ex
   * If they have Instagram but no website → "Instagram exists but no website to convert followers"
   * Be SPECIFIC using their real data.
 - "biggestGap": ONE specific sentence naming the single biggest opportunity, referencing their actual review complaints, missing features, or competitor advantages. Use REAL data from the reviews.
-- "estLostRevenuePerMonth": integer in INR. Base it on reviewsCount*400 for the review-volume factor, add 30000 if no website, adjust for the category's typical ticket size and the city's market. Never below 20000.
+- "estLostRevenuePerMonth": integer in INR. This is an ESTIMATE of potential monthly revenue opportunity from improved online presence — not a guaranteed figure. Base your estimate on:
+  * The business category's typical customer ticket size (e.g. clinic visit ₹300-2000, gym membership ₹500-3000/mo, restaurant order ₹200-800)
+  * Review volume as a demand signal — more reviews = more active business = larger opportunity
+  * Whether a website is absent or poor — no website is the biggest single gap
+  * City tier — Tier 1 cities have higher volumes than small towns
+  * Be realistic: a business with 0 reviews and no contact info may have a near-zero opportunity signal. Do NOT invent a minimum. If evidence is very thin, estimate 0.
 
 Rules:
 - Output ONLY a JSON array of objects, one per business, same order. No prose, no markdown.
@@ -109,7 +114,7 @@ export async function POST(req: Request) {
       loadTimeMs:             Number(a.loadTimeMs ?? 0),
       gaps:                   Array.isArray(a.gaps) && a.gaps.length ? a.gaps : ["No online booking", "Weak local SEO"],
       biggestGap:             a.biggestGap ?? "Limited online presence is costing this business new customers every month.",
-      estLostRevenuePerMonth: Math.max(20000, Number(a.estLostRevenuePerMonth ?? 20000)),
+      estLostRevenuePerMonth: Math.max(0, Number(a.estLostRevenuePerMonth ?? 0)),
     };
   }
 
