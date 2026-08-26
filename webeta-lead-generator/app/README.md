@@ -1,6 +1,6 @@
-# Lead → Launch (app)
+# Webeta Lead Generator
 
-Next.js 16 dashboard for the Lead → Launch pipeline: **Scrape → Audit → Rank → Build → Outreach**.
+Next.js 16 dashboard for the Webeta lead pipeline: **Scrape → Audit → Rank → Convert → Outreach**.
 
 > Setup and full usage instructions live in the package root: **`../SETUP-GUIDE.md`**.
 > Non-coders: just double-click **`../Launch.command`** (Mac) or **`../Launch.bat`** (Windows).

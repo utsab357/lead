@@ -1,12 +1,12 @@
 @echo off
-REM Lead -> Launch dashboard runner (Windows)
+REM Webeta Lead Generator — dashboard runner (Windows)
 REM Double-click this file to start the dashboard.
 
 cd /d "%~dp0app"
 
 echo.
 echo ========================================
-echo   Lead - Launch : starting dashboard
+echo   Webeta Lead Generator : starting...
 echo ========================================
 echo.
 
