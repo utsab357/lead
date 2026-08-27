@@ -54,6 +54,12 @@ export function Phase7Export({
 }) {
   const [tab, setTab] = useState<"pipeline" | "export">("pipeline");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<Set<LeadStatus>>(new Set());
+  // Lead quality filters
+  const [fNoSite,  setFNoSite]  = useState(false);
+  const [fPhone,   setFPhone]   = useState(false);
+  const [fRating,  setFRating]  = useState<"" | "3.5" | "4.0" | "4.5">("" );
+  const [fReviews, setFReviews] = useState<"" | "10" | "50" | "100">("" );
 
   // ── helpers ────────────────────────────────────────────────────────────────
   function setStatus(leadId: string, status: LeadStatus) {
@@ -73,6 +79,25 @@ export function Phase7Export({
 
   function today() { return new Date().toISOString().split("T")[0]; }
 
+  function toggleStatusFilter(s: LeadStatus) {
+    setStatusFilter(prev => {
+      const next = new Set(prev);
+      next.has(s) ? next.delete(s) : next.add(s);
+      return next;
+    });
+  }
+
+  // Leads visible in pipeline after status filter + quality filters
+  const filteredRanked = ranked.filter(l => {
+    if (statusFilter.size > 0 && !statusFilter.has(leadStatuses[l.id] ?? "new")) return false;
+    if (fNoSite  && l.website)                               return false;
+    if (fPhone   && !l.phone)                                return false;
+    if (fRating  && (l.rating        ?? 0) < parseFloat(fRating))  return false;
+    if (fReviews && (l.reviewsCount  ?? 0) < parseInt(fReviews))   return false;
+    return true;
+  });
+  const anyQualityFilter = fNoSite || fPhone || !!fRating || !!fReviews;
+
   function trigger(content: string, filename: string, mime: string) {
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
@@ -83,13 +108,16 @@ export function Phase7Export({
 
   // ── Export functions ───────────────────────────────────────────────────────
   function downloadCSV() {
-    if (!ranked.length) { toast.error("No leads to export"); return; }
+    const exportList = statusFilter.size > 0
+      ? ranked.filter(l => statusFilter.has(leadStatuses[l.id] ?? "new"))
+      : ranked;
+    if (!exportList.length) { toast.error("No leads to export"); return; }
     const headers = [
       "Rank","Name","Category","Address","City","Phone","WhatsApp","Website",
       "Maps Link","Rating","Reviews","Score","Has Website","Status","Notes",
       "Biggest Gap","Est. Lost ₹/mo","Conv. Points","Outreach Drafted","Site Prompt Ready",
     ];
-    const rows = ranked.map((lead, i) => {
+    const rows = exportList.map((lead, i) => {
       const conv = conversions[lead.id];
       const status = leadStatuses[lead.id] ?? "new";
       return [
@@ -110,7 +138,7 @@ export function Phase7Export({
       .map(row => row.map(c => `"${String(c).replace(/"/g,'""')}"`).join(","))
       .join("\n");
     trigger(csv, `leads-${today()}.csv`, "text/csv;charset=utf-8;");
-    toast.success(`Exported ${ranked.length} leads to CSV`);
+    toast.success(`Exported ${exportList.length} leads to CSV`);
   }
 
   function downloadFullJSON() {
@@ -210,8 +238,105 @@ export function Phase7Export({
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-2">
-              {ranked.map((lead, i) => {
+            <div className="space-y-3">
+              {/* Status filter bar */}
+              <div className="flex flex-wrap gap-1.5 p-2.5 rounded-lg bg-muted/40 border border-border items-center">
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mr-1">Status:</span>
+                {ALL_STATUSES.map(s => {
+                  const cfg = STATUS_CONFIG[s];
+                  const active = statusFilter.has(s);
+                  const count = ranked.filter(l => (leadStatuses[l.id] ?? "new") === s).length;
+                  if (count === 0) return null;
+                  return (
+                    <button
+                      key={s}
+                      id={`pipeline-filter-${s}`}
+                      onClick={() => toggleStatusFilter(s)}
+                      className={`flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
+                        active ? `${cfg.bg} ${cfg.color} ring-1 ring-current/30` : "bg-background border-border text-muted-foreground hover:border-primary/40"
+                      }`}
+                    >
+                      {cfg.label} <span className="tabular-nums opacity-70">({count})</span>
+                    </button>
+                  );
+                })}
+                {statusFilter.size > 0 && (
+                  <button
+                    onClick={() => setStatusFilter(new Set())}
+                    className="text-[11px] text-muted-foreground underline hover:text-foreground ml-auto"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              {/* Lead quality filter bar */}
+              <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-lg bg-muted/40 border border-border">
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mr-1">Lead:</span>
+
+                <button
+                  id="p7-filter-nosite"
+                  onClick={() => setFNoSite(v => !v)}
+                  className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
+                    fNoSite ? "bg-destructive/10 border-destructive/30 text-destructive" : "bg-background border-border text-muted-foreground hover:border-primary/40"
+                  }`}
+                >
+                  No website
+                </button>
+
+                <button
+                  id="p7-filter-phone"
+                  onClick={() => setFPhone(v => !v)}
+                  className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
+                    fPhone ? "bg-primary/10 border-primary/30 text-primary" : "bg-background border-border text-muted-foreground hover:border-primary/40"
+                  }`}
+                >
+                  Has phone
+                </button>
+
+                <select
+                  id="p7-filter-rating"
+                  value={fRating}
+                  onChange={e => setFRating(e.target.value as typeof fRating)}
+                  className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground hover:border-primary/40 focus:outline-none cursor-pointer"
+                >
+                  <option value="">Any rating</option>
+                  <option value="3.5">★ 3.5+</option>
+                  <option value="4.0">★ 4.0+</option>
+                  <option value="4.5">★ 4.5+</option>
+                </select>
+
+                <select
+                  id="p7-filter-reviews"
+                  value={fReviews}
+                  onChange={e => setFReviews(e.target.value as typeof fReviews)}
+                  className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground hover:border-primary/40 focus:outline-none cursor-pointer"
+                >
+                  <option value="">Any reviews</option>
+                  <option value="10">10+ reviews</option>
+                  <option value="50">50+ reviews</option>
+                  <option value="100">100+ reviews</option>
+                </select>
+
+                {anyQualityFilter && (
+                  <button
+                    onClick={() => { setFNoSite(false); setFPhone(false); setFRating(""); setFReviews(""); }}
+                    className="text-[11px] text-muted-foreground underline hover:text-foreground ml-auto"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              {/* Lead count after filter */}
+              {statusFilter.size > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  Showing {filteredRanked.length} of {ranked.length} leads
+                </p>
+              )}
+
+              <div className="space-y-2">
+              {filteredRanked.map((lead, i) => {
                 const status: LeadStatus = leadStatuses[lead.id] ?? "new";
                 const cfg = STATUS_CONFIG[status];
                 const StatusIcon = cfg.icon;
@@ -390,6 +515,7 @@ export function Phase7Export({
                   </div>
                 );
               })}
+            </div>
             </div>
           )}
         </>

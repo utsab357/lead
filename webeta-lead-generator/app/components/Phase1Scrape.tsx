@@ -53,6 +53,12 @@ export function Phase1Scrape({
   const [manualLoading, setManualLoading] = useState(false);
   const [manualOpen,    setManualOpen]    = useState(false);
 
+  // Post-scrape result filters
+  const [fNoSite,   setFNoSite]   = useState(false);
+  const [fPhone,    setFPhone]    = useState(false);
+  const [fRating,   setFRating]   = useState<"" | "3.5" | "4.0" | "4.5">("" );
+  const [fReviews,  setFReviews]  = useState<"" | "10" | "50" | "100">("" );
+
   async function runScrape() {
     setLoading(true);
     setLeads([]);
@@ -194,6 +200,16 @@ export function Phase1Scrape({
 
   const withPhone = leads.filter((l) => l.phone).length;
   const noSite    = leads.filter((l) => !l.website).length;
+
+  // Apply result filters
+  const displayLeads = leads.filter((l) => {
+    if (fNoSite  && l.website)                          return false;
+    if (fPhone   && !l.phone)                           return false;
+    if (fRating  && (l.rating  ?? 0) < parseFloat(fRating))  return false;
+    if (fReviews && (l.reviewsCount ?? 0) < parseInt(fReviews)) return false;
+    return true;
+  });
+  const anyFilter = fNoSite || fPhone || !!fRating || !!fReviews;
 
   return (
     <PhaseShell
@@ -383,6 +399,75 @@ export function Phase1Scrape({
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Result filter bar — shown once leads exist */}
+          {leads.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mb-4 p-2.5 rounded-lg bg-muted/40 border border-border">
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mr-1">Filter results:</span>
+
+              {/* No website toggle */}
+              <button
+                id="p1-filter-nosite"
+                onClick={() => setFNoSite(v => !v)}
+                className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
+                  fNoSite ? "bg-destructive/10 border-destructive/30 text-destructive" : "bg-background border-border text-muted-foreground hover:border-primary/40"
+                }`}
+              >
+                <Globe className="h-3 w-3" /> No website
+              </button>
+
+              {/* Has phone toggle */}
+              <button
+                id="p1-filter-phone"
+                onClick={() => setFPhone(v => !v)}
+                className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
+                  fPhone ? "bg-primary/10 border-primary/30 text-primary" : "bg-background border-border text-muted-foreground hover:border-primary/40"
+                }`}
+              >
+                <Phone className="h-3 w-3" /> Has phone
+              </button>
+
+              {/* Min rating */}
+              <select
+                id="p1-filter-rating"
+                value={fRating}
+                onChange={e => setFRating(e.target.value as typeof fRating)}
+                className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground hover:border-primary/40 focus:outline-none cursor-pointer"
+              >
+                <option value="">Any rating</option>
+                <option value="3.5">★ 3.5+</option>
+                <option value="4.0">★ 4.0+</option>
+                <option value="4.5">★ 4.5+</option>
+              </select>
+
+              {/* Min reviews */}
+              <select
+                id="p1-filter-reviews"
+                value={fReviews}
+                onChange={e => setFReviews(e.target.value as typeof fReviews)}
+                className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground hover:border-primary/40 focus:outline-none cursor-pointer"
+              >
+                <option value="">Any reviews</option>
+                <option value="10">10+ reviews</option>
+                <option value="50">50+ reviews</option>
+                <option value="100">100+ reviews</option>
+              </select>
+
+              {/* Count + clear */}
+              {anyFilter && (
+                <>
+                  <span className="text-[11px] text-muted-foreground ml-auto">
+                    Showing {displayLeads.length} of {leads.length}
+                  </span>
+                  <button
+                    onClick={() => { setFNoSite(false); setFPhone(false); setFRating(""); setFReviews(""); }}
+                    className="text-[11px] text-muted-foreground underline hover:text-foreground"
+                  >
+                    Clear
+                  </button>
+                </>
+              )}
+            </div>
+          )}
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -397,7 +482,7 @@ export function Phase1Scrape({
               </TableHeader>
               <TableBody>
                 <AnimatePresence initial={false}>
-                  {leads.map((l, i) => (
+                  {displayLeads.map((l, i) => (
                     <motion.tr
                       key={l.id}
                       initial={{ opacity: 0, x: -16 }}

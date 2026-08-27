@@ -243,40 +243,61 @@ async function scrapeGoogleMaps() {
         // EXTENDED DATA (optimized for speed — ~10s per business)
         // ──────────────────────────────────────────────────────────────
 
-        // Business hours — from the aria-label of hours button (no click needed)
+        // Business hours — click to expand, then read aria-labels from "Copy open hours" buttons
+        // Each day-row button has: aria-label="Thursday, 6 am to 10:30 pm, Copy open hours"
         let hours = [];
         try {
-          // Method 1: hours button with data-item-id
           const hoursBtn = page.locator('button[data-item-id="oh"]');
           if (await hoursBtn.count() > 0) {
-            const hoursLabel = await hoursBtn.first().getAttribute("aria-label");
-            if (hoursLabel) hours = hoursLabel.split(";").map(h => h.trim()).filter(Boolean);
-          }
-          // Method 2: any element with aria-label containing day names
-          if (hours.length === 0) {
+            await hoursBtn.first().click();
+            await delay(1000);
+            // Read all "Copy open hours" buttons — each one contains a day + time in aria-label
+            const copyBtns = page.locator('[role="main"] button[aria-label*="Copy open hours"]');
+            const copyCount = await copyBtns.count();
+            if (copyCount >= 2) {
+              for (let ci = 0; ci < copyCount; ci++) {
+                const label = await copyBtns.nth(ci).getAttribute('aria-label') || '';
+                // Format: "Thursday, 6 am to 10:30 pm, Copy open hours"
+                // Remove the trailing ", Copy open hours" part
+                const cleaned = label.replace(/,?\s*Copy open hours.*$/i, '').trim();
+                if (cleaned.length > 3) hours.push(cleaned);
+              }
+            }
+            // Fallback: if no copy buttons found, try aria-label on the oh button itself
+            if (hours.length === 0) {
+              const label = await hoursBtn.first().getAttribute('aria-label') || '';
+              if (label.length > 10) {
+                hours = label.split(/[;]/).map(h => h.trim()).filter(Boolean);
+              }
+            }
+            // Close the expanded dropdown
+            await page.keyboard.press('Escape');
+            await delay(300);
+          } else {
+            // Fallback: any aria-label with day names
             const hoursEl = page.locator('[role="main"] [aria-label*="Monday"], [role="main"] [aria-label*="Sunday"]');
             if (await hoursEl.count() > 0) {
-              const label = await hoursEl.first().getAttribute("aria-label") || "";
+              const label = await hoursEl.first().getAttribute('aria-label') || '';
               if (label.length > 10) {
                 hours = label.split(/[;.]/).map(h => h.trim()).filter(h => h.length > 3 && /\d/.test(h));
               }
             }
           }
-          // Method 3: extract from table rows with day names
-          if (hours.length === 0) {
-            hours = await page.evaluate(() => {
-              const main = document.querySelector('[role="main"]');
-              if (!main) return [];
-              const result = [];
-              for (const row of main.querySelectorAll('table tr, [role="row"]')) {
-                const text = (row.textContent || '').trim();
-                if (/Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday/i.test(text) && text.length < 80) {
-                  result.push(text.replace(/\s+/g, ' '));
-                }
-              }
-              return result.length >= 2 ? result : [];
-            });
-          }
+          // Clean all hours entries:
+          // - Strip "Copy open hours" / "Hide open hours" / "See more hours" junk
+          // - Strip Unicode thin space U+202F (Google uses it before am/pm)
+          // - Normalize en-dash U+2013 to plain hyphen
+          hours = hours
+            .map(h => h
+              .replace(/,?\s*Copy open hours.*$/i, '')
+              .replace(/,?\s*Hide open hours.*$/i, '')
+              .replace(/,?\s*See more hours.*$/i, '')
+              .replace(/[\u202F\u00A0]/g, ' ')  // thin space / nbsp → normal space
+              .replace(/\u2013/g, '-')            // en-dash → hyphen
+              .replace(/\s+/g, ' ')
+              .trim()
+            )
+            .filter(h => h.length > 3);
         } catch { /* no hours */ }
 
         // Photo URLs — Google Maps renders the photo strip as CSS background-image
@@ -356,78 +377,187 @@ async function scrapeGoogleMaps() {
         } catch { /* no photos */ }
 
 
-        // About — extract from Overview panel inline (no tab click)
-        // Filter out: feed text, review snippets, addresses, service labels
+        // About — click the "About" tab to extract:
+        //   1. A free-text business description ("From the business") — if it exists
+        //   2. Structured attributes (Amenities, Planning, Payments, Offerings, etc.)
+        // Most small businesses only have #2. Some restaurants/hotels also have #1.
         let about = "";
+        let aboutAttributes = {};
         try {
-          about = await page.evaluate(() => {
-            const feed = document.querySelector('[role="feed"]');
-            const main = document.querySelector('[role="main"]');
-            if (!main) return "";
-            const skip = ['Wheelchair', 'Delivery', 'On-site', 'Accessibility', 'Amenities', 'hotel', 'vacation', 'Maps', 'JavaScript', 'Sign in'];
-            for (const el of main.querySelectorAll('div, span, p')) {
-              if (feed && feed.contains(el)) continue;
-              if (el.children.length > 0) continue;
-              // Skip review snippets
-              let inReview = false;
-              let anc = el.parentElement;
-              while (anc && anc !== main) {
-                if (anc.hasAttribute('data-review-id')) { inReview = true; break; }
-                anc = anc.parentElement;
+          const aboutTab = page.locator('[role="main"] button[aria-label*="About"], [role="main"] [role="tab"]:has-text("About")');
+          if (await aboutTab.count() > 0) {
+            await aboutTab.first().click();
+            await delay(1500);
+
+            // Extract structured attributes: { "Amenities": ["Restroom"], "Planning": ["Membership required"], ... }
+            aboutAttributes = await page.evaluate(() => {
+              const main = document.querySelector('[role="main"]');
+              if (!main) return {};
+              const result = {};
+              // Junk headings/items from Google UI (not business attributes)
+              const junkHeadings = /get the most out|sign in|google maps|overview|review|about|photo|privacy|cookie/i;
+              const junkItems = /sign in|get the most|google maps|learn more|dismiss|privacy|cookie|personalized/i;
+              const headings = main.querySelectorAll('h2, h3, h4, [role="heading"]');
+              for (const heading of headings) {
+                const title = (heading.textContent || '').trim();
+                if (!title || title.length > 40 || title.length < 3) continue;
+                if (junkHeadings.test(title)) continue;
+                const section = heading.closest('div[class]') || heading.parentElement;
+                if (!section) continue;
+                const items = [];
+                for (const el of section.querySelectorAll('li, span, div')) {
+                  if (el.contains(heading)) continue;
+                  if (el.children.length > 1) continue;
+                  const txt = (el.textContent || '').trim();
+                  if (txt.length >= 2 && txt.length <= 60 && txt !== title &&
+                      !items.includes(txt) && /[A-Za-z]/.test(txt) &&
+                      !junkItems.test(txt)) {
+                    items.push(txt);
+                  }
+                }
+                if (items.length > 0) result[title] = items.slice(0, 15);
               }
-              if (inReview) continue;
-              const txt = (el.textContent || '').trim();
-              if (txt.length > 40 && txt.length < 800 && !skip.some(w => txt.includes(w)) &&
-                  txt.split(' ').length > 6 && /[.!?,]/.test(txt)) {
-                return txt;
+              return result;
+            }) || {};
+
+            // Extract free-text description ("From the business" paragraph) — rare but valuable
+            const skipAbout = [
+              'Wheelchair', 'Delivery', 'Accessibility', 'Amenities', 'Maps', 'JavaScript',
+              'Sign in', 'Suggest an edit', 'hotel and vacation rental', 'personalized based on',
+              'vacation', 'browsing activity', 'recent searches', 'Gmail', 'Restroom',
+              'Membership', 'Debit cards', 'Credit cards', 'NFC mobile',
+              'Get the most out of Google', 'google.com', 'Cookie', 'Privacy'
+            ];
+            about = await page.evaluate((skip) => {
+              const main = document.querySelector('[role="main"]');
+              if (!main) return '';
+              for (const el of main.querySelectorAll('div, span, p')) {
+                if (el.children.length > 0) continue;
+                const txt = (el.textContent || '').trim();
+                if (txt.length > 60 && txt.length < 800 &&
+                    !skip.some(w => txt.includes(w)) &&
+                    txt.split(' ').length > 10 &&
+                    /[.!?,]/.test(txt) &&
+                    // Skip address-like strings
+                    !/\b\d{6}\b/.test(txt) &&           // postal codes (6 digits)
+                    !/\b\d{3}\s?\d{3}\b/.test(txt) &&   // postal codes with space
+                    !/Road[,\s]/.test(txt) &&            // "Road," or "Road "
+                    !/Street[,\s]/.test(txt) &&          // "Street," or "Street "
+                    !/Plot\s+No/i.test(txt) &&           // "Plot No"
+                    !/Ward\s+No/i.test(txt) &&           // "Ward No"
+                    !/Floor[,\s]/i.test(txt) &&          // "Floor," or "2nd Floor"
+                    // Must have at least 2 sentences (real descriptions have sentences, addresses don't)
+                    (txt.match(/\.\s+[A-Z]/g) || []).length >= 1) {
+                  return txt;
+                }
               }
+              return '';
+            }, skipAbout) || '';
+
+            // Navigate back to Overview tab
+            const overviewTab = page.locator('[role="main"] button[aria-label*="Overview"], [role="main"] [role="tab"]:has-text("Overview")');
+            if (await overviewTab.count() > 0) {
+              await overviewTab.first().click();
+              await delay(800);
             }
-            return "";
-          }) || "";
+          }
+          // Fallback: try inline overview text (for businesses that show description without a tab)
+          if (!about) {
+            const skipInline = [
+              'Wheelchair', 'Delivery', 'On-site', 'Accessibility', 'Amenities', 'Maps',
+              'JavaScript', 'Sign in', 'hotel and vacation rental', 'personalized based on',
+              'vacation', 'browsing activity', 'recent searches', 'Gmail'
+            ];
+            about = await page.evaluate((skip) => {
+              const feed = document.querySelector('[role="feed"]');
+              const main = document.querySelector('[role="main"]');
+              if (!main) return '';
+              for (const el of main.querySelectorAll('div, span, p')) {
+                if (feed && feed.contains(el)) continue;
+                if (el.children.length > 0) continue;
+                let inReview = false;
+                let anc = el.parentElement;
+                while (anc && anc !== main) {
+                  if (anc.hasAttribute('data-review-id')) { inReview = true; break; }
+                  anc = anc.parentElement;
+                }
+                if (inReview) continue;
+                const txt = (el.textContent || '').trim();
+                if (txt.length > 60 && txt.length < 800 && !skip.some(w => txt.includes(w)) &&
+                    txt.split(' ').length > 10 && /[.!?,]/.test(txt) &&
+                    !/\b\d{6}\b/.test(txt) && !/\b\d{3}\s?\d{3}\b/.test(txt) &&
+                    !/Road[,\s]/.test(txt) && !/Street[,\s]/.test(txt) &&
+                    !/Plot\s+No/i.test(txt) && !/Ward\s+No/i.test(txt) && !/Floor[,\s]/i.test(txt) &&
+                    (txt.match(/\.\s+[A-Z]/g) || []).length >= 1) {
+                  return txt;
+                }
+              }
+              return '';
+            }, skipInline) || '';
+          }
         } catch { /* no about */ }
 
         // Services list — amenity/service chips shown in the Overview panel
-        // These are short labels like "On-site services", "Online classes", "Weight training"
         let services = [];
         try {
-          // Method 1: Google Maps service chips with specific selectors
-          const svcItems = page.locator(
-            '[role="main"] div[aria-label*="service"] span, ' +
-            '[role="main"] div[aria-label*="Service"] span, ' +
-            '[role="main"] [data-item-id*="merch"] span, ' +
-            '[role="main"] li[class*="hpqone"] span'
-          );
-          const svcCount = Math.min(await svcItems.count(), 12);
-          for (let s = 0; s < svcCount; s++) {
-            const txt = (await svcItems.nth(s).textContent())?.trim();
-            if (txt && txt.length > 1 && txt.length <= 40 && !txt.includes('"') && !txt.includes("'") && !services.includes(txt)) {
-              services.push(txt);
-            }
-          }
-          // Method 2: extract from aria-labeled sections (Offerings, Amenities, etc.)
-          if (services.length === 0) {
-            services = await page.evaluate(() => {
-              const main = document.querySelector('[role="main"]');
-              const feed = document.querySelector('[role="feed"]');
-              if (!main) return [];
-              const result = [];
-              for (const el of main.querySelectorAll('[aria-label]')) {
-                if (feed && feed.contains(el)) continue;
-                const label = (el.getAttribute('aria-label') || '').toLowerCase();
-                if (label.includes('offering') || label.includes('amenit') || label.includes('service') ||
-                    label.includes('activit') || label.includes('highlight') || label.includes('feature')) {
-                  for (const child of el.querySelectorAll('span, li')) {
-                    if (child.children.length > 0) continue;
-                    const txt = (child.textContent || '').trim();
-                    if (txt.length >= 3 && txt.length <= 40 && !result.includes(txt) &&
-                        !/^\d+$/.test(txt) && !txt.includes('·')) {
-                      result.push(txt);
-                    }
-                  }
+          // Method 1: evaluate DOM for service/amenity chip sections
+          services = await page.evaluate(() => {
+            const main = document.querySelector('[role="main"]');
+            const feed = document.querySelector('[role="feed"]');
+            if (!main) return [];
+            const result = new Set();
+            const skipWords = ['Wheelchair', 'Restroom', 'LGBTQ', 'Gender', 'Planning', 'Payments', 'Dogs', 'Kids'];
+
+            // Look for sections with labels like Offerings, Amenities, Highlights, Activities
+            const sectionKeywords = /offering|amenit|highlight|activit|feature|service|popular/i;
+            for (const el of main.querySelectorAll('[aria-label]')) {
+              if (feed && feed.contains(el)) continue;
+              const label = el.getAttribute('aria-label') || '';
+              if (!sectionKeywords.test(label)) continue;
+              for (const child of el.querySelectorAll('span, li, div')) {
+                if (child.children.length > 0) continue;
+                const txt = (child.textContent || '').trim();
+                if (txt.length >= 3 && txt.length <= 50 &&
+                    !skipWords.some(w => txt.toLowerCase().includes(w.toLowerCase())) &&
+                    !/^\d+$/.test(txt) && !txt.includes('·') && !txt.includes('http')) {
+                  result.add(txt);
                 }
               }
-              return result.slice(0, 12);
-            });
+            }
+
+            // Also scan for standalone chip-like elements (short bold labels in the panel)
+            if (result.size === 0) {
+              for (const el of main.querySelectorAll('li, [role="listitem"]')) {
+                if (feed && feed.contains(el)) continue;
+                if (el.children.length > 2) continue;
+                const txt = (el.textContent || '').trim().replace(/\s+/g, ' ');
+                if (txt.length >= 3 && txt.length <= 50 &&
+                    !skipWords.some(w => txt.toLowerCase().includes(w.toLowerCase())) &&
+                    !/^\d+$/.test(txt) && !txt.includes('·') && !txt.includes('http') &&
+                    /[A-Za-z]/.test(txt)) {
+                  result.add(txt);
+                }
+              }
+            }
+            return [...result].slice(0, 12);
+          });
+
+          // Method 2: Playwright locator fallback for service chip spans
+          if (services.length === 0) {
+            const svcItems = page.locator(
+              '[role="main"] [aria-label*="Offering"] span, ' +
+              '[role="main"] [aria-label*="Amenities"] span, ' +
+              '[role="main"] [aria-label*="Highlights"] span, ' +
+              '[role="main"] [aria-label*="Activities"] span, ' +
+              '[role="main"] [aria-label*="Service"] span'
+            );
+            const svcCount = Math.min(await svcItems.count(), 12);
+            for (let s = 0; s < svcCount; s++) {
+              const txt = (await svcItems.nth(s).textContent())?.trim();
+              if (txt && txt.length > 1 && txt.length <= 50 && !txt.includes('"') && !services.includes(txt)) {
+                services.push(txt);
+              }
+            }
           }
         } catch { /* no services */ }
 
@@ -486,6 +616,17 @@ async function scrapeGoogleMaps() {
         // ──────────────────────────────────────────────────────────────
         // BUILD LEAD OBJECT
         // ──────────────────────────────────────────────────────────────
+        // If services is still empty, populate from aboutAttributes (Amenities, Offerings, etc.)
+        if (services.length === 0 && Object.keys(aboutAttributes).length > 0) {
+          for (const [category, items] of Object.entries(aboutAttributes)) {
+            // Skip non-service categories
+            if (/payment|planning|parking|accessibility/i.test(category)) continue;
+            for (const item of items) {
+              if (!services.includes(item)) services.push(item);
+            }
+          }
+        }
+
         const lead = {
           id:           `maps-${String(leads.length + 1).padStart(3, "0")}`,
           name:         name.trim(),
@@ -501,16 +642,17 @@ async function scrapeGoogleMaps() {
           lat,
           lng,
           // Extended
-          hours:        hours.length > 0 ? hours : undefined,
-          photoUrls:    photoUrls.length > 0 ? photoUrls : undefined,
-          photosCount:  photosCount || undefined,
-          about:        about || undefined,
-          services:     services.length > 0 ? services : undefined,
-          priceLevel:   priceLevel || undefined,
-          socialLinks:  socialLinks.length > 0 ? socialLinks : undefined,
-          reviews:      reviewsData.length > 0 ? reviewsData : undefined,
-          ownerReplies: reviewsData.length > 0 ? ownerReplies : undefined,
-          source:       "maps",
+          hours:          hours.length > 0 ? hours : undefined,
+          photoUrls:      photoUrls.length > 0 ? photoUrls : undefined,
+          photosCount:    photosCount || undefined,
+          about:          about || undefined,
+          aboutAttributes: Object.keys(aboutAttributes).length > 0 ? aboutAttributes : undefined,
+          services:       services.length > 0 ? services : undefined,
+          priceLevel:     priceLevel || undefined,
+          socialLinks:    socialLinks.length > 0 ? socialLinks : undefined,
+          reviews:        reviewsData.length > 0 ? reviewsData : undefined,
+          ownerReplies:   reviewsData.length > 0 ? ownerReplies : undefined,
+          source:         "maps",
         };
 
         leads.push(lead);
