@@ -13,7 +13,7 @@ export default function LeadMap({ leads }: { leads: Lead[] }) {
     leads.reduce((s, l) => s + l.lng, 0) / leads.length,
   ];
   return (
-    <div className="h-[320px] rounded-lg overflow-hidden border border-border">
+    <div className="h-full min-h-[280px] rounded-lg overflow-hidden border border-border">
       <MapContainer center={center} zoom={14} className="h-full w-full" scrollWheelZoom={false}>
         <TileLayer
           attribution='&copy; OpenStreetMap &copy; CARTO'

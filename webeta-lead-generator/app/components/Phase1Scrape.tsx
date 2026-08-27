@@ -220,7 +220,7 @@ export function Phase1Scrape({
       nextDisabled={leads.length === 0}
       nextLabel="Audit these leads"
     >
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-4 gap-4">
         {/* Controls */}
         <Card className="md:col-span-1">
           <CardHeader>
@@ -376,11 +376,11 @@ export function Phase1Scrape({
         </Card>
 
         {/* Live map */}
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Live map</CardTitle>
+        <Card className="md:col-span-2 flex flex-col">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Live map</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 p-3">
             <LeadMap leads={leads} />
           </CardContent>
         </Card>
