@@ -124,16 +124,20 @@ export function Phase2Audit({
           const body = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
           const errMsg = body.error ?? `Batch ${batchNum} failed`;
 
-          // Check if it's a rate-limit / wait message — show in UI, don't abort
-          if (errMsg.toLowerCase().includes("rate limit") || errMsg.toLowerCase().includes("wait")) {
-            errors.push(`Batch ${batchNum}: rate limited — auto-retrying…`);
+          // Detect rate-limit signals (including new emoji-prefixed messages from AI clients)
+          const isRateMsg = errMsg.toLowerCase().includes("rate") ||
+            errMsg.toLowerCase().includes("wait") ||
+            errMsg.includes("⏳");
+
+          if (isRateMsg) {
+            errors.push(`Batch ${batchNum}: rate limited — auto-retrying in 65s…`);
             setProgress(p => ({ ...p!, status: "waiting", statusMsg: "Rate limited — waiting 65s for reset…", errors: [...errors] }));
             await new Promise(r => setTimeout(r, 65000));
             bi--; // retry this batch
             continue;
           }
 
-          errors.push(`Batch ${batchNum}: ${errMsg.slice(0, 120)}`);
+          errors.push(`Batch ${batchNum}: ${errMsg.slice(0, 400)}`);
           setProgress(p => ({ ...p!, errors: [...errors] }));
           continue; // skip this batch, continue with others
         }
@@ -146,7 +150,7 @@ export function Phase2Audit({
         setProgress(p => ({ ...p!, done, status: "running", statusMsg: `✓ ${done} of ${targets.length} audited`, errors }));
 
       } catch (e) {
-        const errMsg = (e as Error).message?.slice(0, 120) ?? "Network error";
+        const errMsg = (e as Error).message?.slice(0, 400) ?? "Network error";
         errors.push(`Batch ${batchNum}: ${errMsg}`);
         setProgress(p => ({ ...p!, errors: [...errors] }));
       }
@@ -311,11 +315,17 @@ export function Phase2Audit({
 
             {/* Errors (if any) */}
             {progress.errors.length > 0 && (
-              <div className="rounded-md border border-[color:var(--destructive)]/30 bg-[color:var(--destructive)]/5 p-3 space-y-1">
-                <div className="text-[11px] uppercase tracking-[0.12em] text-[color:var(--destructive)] font-medium mb-1">Errors</div>
-                {progress.errors.map((e, i) => (
-                  <div key={i} className="text-xs text-[color:var(--destructive)]/80 font-mono">{e}</div>
-                ))}
+              <div className="rounded-md border border-[color:var(--destructive)]/30 bg-[color:var(--destructive)]/5 p-3 space-y-2">
+                <div className="text-[11px] uppercase tracking-[0.12em] text-[color:var(--destructive)] font-medium mb-1">
+                  {progress.errors.length} Error{progress.errors.length > 1 ? "s" : ""} — click to expand
+                </div>
+                <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
+                  {progress.errors.map((e, i) => (
+                    <div key={i} className="text-[11px] text-[color:var(--destructive)]/80 font-mono whitespace-pre-wrap break-words leading-relaxed border-t border-[color:var(--destructive)]/10 pt-2 first:border-0 first:pt-0">
+                      {e}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </motion.div>

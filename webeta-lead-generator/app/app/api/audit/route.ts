@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { runGroqJSON } from "@/lib/groq";
-import { runGeminiJSON } from "@/lib/gemini";
+import { runAI } from "@/lib/ai";
 import type { Lead, AuditResult } from "@/lib/types";
 
 export const maxDuration = 300;
@@ -70,19 +69,6 @@ Businesses:
 ${JSON.stringify(rich, null, 2)}`;
 }
 
-/** Run prompt with Groq first, fall back to Gemini if Groq fails */
-async function runWithFallback<T>(prompt: string): Promise<{ ok: true; data: T; source: string } | { ok: false; error: string }> {
-  // Try Groq first (higher limits, no output cap)
-  const groqResult = await runGroqJSON<T>(prompt);
-  if (groqResult.ok) return { ...groqResult, source: "groq" };
-
-  // Fall back to Gemini
-  const geminiResult = await runGeminiJSON<T>(prompt);
-  if (geminiResult.ok) return { ...geminiResult, source: "gemini" };
-
-  return { ok: false, error: `Groq: ${groqResult.error} | Gemini: ${geminiResult.error}` };
-}
-
 
 export async function POST(req: Request) {
   const { leads } = (await req.json()) as { leads: Lead[] };
@@ -91,7 +77,7 @@ export async function POST(req: Request) {
   }
 
   // Client sends small batches (5 leads at a time)
-  const result = await runWithFallback<Array<Partial<AuditResult>>>(buildPrompt(leads));
+  const result = await runAI<Array<Partial<AuditResult>>>(buildPrompt(leads));
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 502 });
   }

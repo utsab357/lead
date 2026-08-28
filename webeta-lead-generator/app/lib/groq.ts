@@ -42,22 +42,65 @@ function extractJSON<T>(text: string): T | null {
   try { return JSON.parse(s.slice(start, end + 1)) as T; } catch { return null; }
 }
 
+/** Format a reset time from Groq response headers into a human-readable string. */
+function formatGroqReset(headers: Headers): string {
+  // Groq sends x-ratelimit-reset-requests as an ISO timestamp or duration like "2s", "1m30s"
+  const resetHeader = headers.get("x-ratelimit-reset-requests");
+  const retryAfter  = headers.get("retry-after"); // seconds
+
+  if (retryAfter) {
+    const sec = parseInt(retryAfter, 10);
+    if (!isNaN(sec)) {
+      if (sec < 60)  return `in ~${sec}s`;
+      if (sec < 120) return `in ~1 min`;
+      return `in ~${Math.ceil(sec / 60)} min`;
+    }
+  }
+
+  if (resetHeader) {
+    // Could be "2s", "1m30s", or an ISO date
+    const secMatch = resetHeader.match(/^(\d+)s$/);
+    const minMatch = resetHeader.match(/^(\d+)m(?:(\d+)s)?$/);
+    if (secMatch) return `in ~${secMatch[1]}s`;
+    if (minMatch) return `in ~${minMatch[1]} min`;
+    // Try as ISO date
+    const d = new Date(resetHeader);
+    if (!isNaN(d.getTime())) {
+      return `at ${d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+    }
+  }
+
+  return "shortly";
+}
+
 /**
  * Run a prompt through Groq and parse the result as JSON.
- * Tries each model in GROQ_MODELS order, skips 404 (not found).
+ * Tries each model in GROQ_MODELS order, with smart error detection.
+ *
+ * Error types detected:
+ *  - 401 → Invalid API key (stops immediately — no point retrying)
+ *  - 429 → Rate limited (reads reset time from headers)
+ *  - 404 → Model not found on this key (tries next)
+ *  - Other → Tries next model
  */
 export async function runGroqJSON<T>(
   prompt: string,
   opts: { temperature?: number } = {},
 ): Promise<GroqResult<T>> {
   const key = process.env.GROQ_API_KEY;
-  if (!key) return { ok: false, error: "GROQ_API_KEY not set in .env.local" };
+  if (!key) {
+    return {
+      ok: false,
+      error: "❌ Groq API key missing — add GROQ_API_KEY to .env.local (get a free key at console.groq.com)",
+    };
+  }
+
+  // Track the most informative error seen across all model attempts
+  let lastErrorType: "auth" | "rate_limit" | "quota" | "other" = "other";
+  let lastErrorDetail = "";
 
   for (const model of GROQ_MODELS) {
     try {
-      // Build body — qwen needs thinking disabled and lower max_tokens
-      // gpt-oss models support up to ~8k total tokens (input + output)
-      // with large build prompts (~3k input tokens), 4096 output is safe; 8192 causes 413
       const modelMaxTokens = model.includes("qwen") ? 2048 : 4096;
       const body: Record<string, unknown> = {
         model,
@@ -84,45 +127,63 @@ export async function runGroqJSON<T>(
         body: JSON.stringify(body),
       });
 
-      // Model not found on this key — try next
+      // ── Auth error — stop all retries immediately ──────────────────────────
+      if (res.status === 401) {
+        return {
+          ok: false,
+          error: "❌ Groq: Invalid API key — generate a new one at console.groq.com/keys (Settings → API Keys)",
+        };
+      }
+
+      // ── Model not found on this key — try next ─────────────────────────────
       if (res.status === 404) continue;
 
-      if (!res.ok) {
-        const errBody = await res.text();
-        if (res.status === 429) {
-          // Rate limited — wait 15s then retry once
-          await new Promise(r => setTimeout(r, 15000));
-          const res2 = await fetch(GROQ_API_URL, {
-            method:  "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${key}` },
-            body: JSON.stringify(body),
-          });
-          if (!res2.ok) {
-            // Still rate-limited or error — try next model instead of giving up
-            continue;
-          }
-          const j2   = await res2.json();
-          const raw2: string = j2?.choices?.[0]?.message?.content ?? "";
-          if (!raw2.trim()) continue; // empty response — try next model
-          const t2 = stripThinking(raw2);
-          try { return { ok: true, data: JSON.parse(t2) as T }; }
-          catch {
-            const d2 = extractJSON<T>(t2);
-            if (d2 !== null) return { ok: true, data: d2 };
-            continue; // bad JSON — try next model
-          }
+      // ── Rate limited ───────────────────────────────────────────────────────
+      if (res.status === 429) {
+        const resetMsg = formatGroqReset(res.headers);
+        lastErrorType   = "rate_limit";
+        lastErrorDetail = `Groq rate limited — resets ${resetMsg}. (This model: ${model})`;
+
+        // Wait 15s then retry once on same model before trying next
+        await new Promise(r => setTimeout(r, 15000));
+        const res2 = await fetch(GROQ_API_URL, {
+          method:  "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${key}` },
+          body: JSON.stringify(body),
+        });
+        if (!res2.ok) {
+          // Still limited — try next model
+          continue;
         }
-        // For other 4xx errors on this model, try next model
-        if (res.status >= 400 && res.status < 500) continue;
-        return { ok: false, error: `Groq API error ${res.status}: ${errBody.slice(0, 200)}` };
+        const j2   = await res2.json();
+        const raw2: string = j2?.choices?.[0]?.message?.content ?? "";
+        if (!raw2.trim()) continue;
+        const t2 = stripThinking(raw2);
+        try { return { ok: true, data: JSON.parse(t2) as T }; }
+        catch {
+          const d2 = extractJSON<T>(t2);
+          if (d2 !== null) return { ok: true, data: d2 };
+          continue;
+        }
+      }
+
+      // ── Other 4xx — try next model ─────────────────────────────────────────
+      if (res.status >= 400 && res.status < 500) {
+        const errText = await res.text().catch(() => "");
+        lastErrorDetail = `Groq error ${res.status} on ${model}: ${errText.slice(0, 150)}`;
+        continue;
+      }
+
+      // ── 5xx server error — try next model ─────────────────────────────────
+      if (!res.ok) {
+        lastErrorDetail = `Groq server error ${res.status} on ${model}`;
+        continue;
       }
 
       const json     = await res.json();
       const rawText: string = json?.choices?.[0]?.message?.content ?? "";
-      if (!rawText.trim()) continue; // empty — try next model
+      if (!rawText.trim()) continue;
 
-
-      // Strip <think>...</think> blocks (qwen thinking model)
       const text = stripThinking(rawText);
 
       try {
@@ -130,14 +191,28 @@ export async function runGroqJSON<T>(
       } catch {
         const data = extractJSON<T>(text);
         if (data !== null) return { ok: true, data };
-        // This model gave bad JSON — try next model
         continue;
       }
     } catch {
-      // Network error on this model — try next
+      lastErrorDetail = `Groq network error on ${model}`;
       continue;
     }
   }
 
-  return { ok: false, error: "Groq: all models failed. Check your API key at console.groq.com." };
+  // ── All models exhausted — return the most informative error ───────────────
+  if (lastErrorType === "rate_limit") {
+    return {
+      ok: false,
+      error: `⏳ ${lastErrorDetail} — try again in a minute, or wait for Gemini/OpenRouter fallback`,
+    };
+  }
+
+  if (lastErrorDetail) {
+    return { ok: false, error: `Groq: ${lastErrorDetail}` };
+  }
+
+  return {
+    ok: false,
+    error: "Groq: All models failed — check your API key at console.groq.com",
+  };
 }

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { runGroqJSON } from "@/lib/groq";
-import { runGeminiJSON } from "@/lib/gemini";
+import { runAI } from "@/lib/ai";
 import type { Lead, AuditResult, RankedLead } from "@/lib/types";
 
 export const maxDuration = 300;
@@ -44,13 +43,7 @@ Leads:
 ${JSON.stringify(rows, null, 2)}`;
 }
 
-async function runWithFallback<T>(prompt: string): Promise<{ ok: true; data: T; source: string } | { ok: false; error: string }> {
-  const groqResult = await runGroqJSON<T>(prompt);
-  if (groqResult.ok) return { ...groqResult, source: "groq" };
-  const geminiResult = await runGeminiJSON<T>(prompt);
-  if (geminiResult.ok) return { ...geminiResult, source: "gemini" };
-  return { ok: false, error: `Groq: ${groqResult.error} | Gemini: ${geminiResult.error}` };
-}
+
 
 function chunk<T>(arr: T[], n: number): T[][] {
   const chunks: T[][] = [];
@@ -75,7 +68,7 @@ export async function POST(req: Request) {
 
   for (let i = 0; i < batches.length; i++) {
     const batch = batches[i];
-    const result = await runWithFallback<Array<{ leadId: string; score: number; scoreReasoning: string }>>(
+    const result = await runAI<Array<{ leadId: string; score: number; scoreReasoning: string }>>(
       buildPrompt(batch, audits),
     );
     if (!result.ok) {

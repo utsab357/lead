@@ -1,11 +1,12 @@
 import { GoogleGenerativeAI, type GenerateContentResult } from "@google/generative-ai";
 import { runGroqJSON } from "./groq";
+import { runOpenRouterJSON } from "./openrouter";
 
 /**
  * Gemini AI client.
  * Uses the FREE Gemini API from Google AI Studio (1500 req/day).
  * Tries multiple models with retry on 503 overload.
- * Auto-falls back to Groq when Gemini is rate-limited (429) or overloaded (503).
+ * Fallback chain: Gemini → Groq → OpenRouter
  */
 
 export type GeminiResult<T> =
@@ -93,43 +94,67 @@ export async function runGeminiJSON<T>(
         }
       } catch (e) {
         const msg = (e as Error).message || "Unknown Gemini error";
+        const isQuota     = /quota|RESOURCE_EXHAUSTED/i.test(msg);
+        const isRateLimit = msg.includes("429") && !isQuota;
+        const isOverload  = msg.includes("503") || /high demand/i.test(msg);
 
-        if (msg.includes("429") || msg.toLowerCase().includes("quota")) {
-          // Rate limited — only retry TWICE with short waits, then fall back to Groq fast
-          // (5 retries × growing waits = 40s of pointless waiting when Gemini is quota-exhausted)
+        if (isQuota) {
+          // Daily 1500/day limit hit — no point retrying on same or next model today
+          canFallback = true;
+          break;
+        }
+
+        if (isRateLimit) {
+          // Per-minute 15 RPM limit — short retry then move on
           if (attempt <= 2) {
             await new Promise(r => setTimeout(r, attempt * 2000));
             continue;
           }
           canFallback = true;
-          break; // go straight to Groq
+          break;
         }
 
         // 503 overload — retry with increasing delay (3s, 6s, 9s, 12s, 15s)
-        if (msg.includes("503") || msg.toLowerCase().includes("high demand")) {
+        if (isOverload) {
           if (attempt < MAX_RETRIES) {
             await new Promise(r => setTimeout(r, attempt * 3000));
             continue;
           }
           canFallback = true;
-          break; // all retries on this model exhausted — try next model
+          break;
         }
 
         // 404 model not found — try next model immediately
         if (msg.includes("404")) break;
 
-        return { ok: false, error: msg.slice(0, 400) };
+        return { ok: false, error: `Gemini error on ${modelName}: ${msg.slice(0, 300)}` };
       }
     }
   }
 
-  // ── Groq fallback ───────────────────────────────────────────────────────────
-  // Gemini was rate-limited or overloaded — silently switch to Groq
+  // ── Groq fallback ──────────────────────────────────────────────────
+  // Gemini was rate-limited or overloaded — try Groq first
   if (canFallback) {
+    // Compose a helpful Gemini-specific message for the combined error
+    const geminiErrLabel = "⏳ Gemini: Daily 1,500 req/day limit hit — resets at midnight PST. Trying Groq…";
+
     const groqResult = await runGroqJSON<T>(prompt, { temperature: opts.temperature });
     if (groqResult.ok) return { ok: true, data: groqResult.data };
-    // Groq also failed — return a clear combined error
-    return { ok: false, error: `Gemini rate-limited & Groq also failed: ${groqResult.error}` };
+
+    // ── OpenRouter fallback ───────────────────────────────────
+    const orResult = await runOpenRouterJSON<T>(prompt, { temperature: opts.temperature });
+    if (orResult.ok) return { ok: true, data: orResult.data };
+
+    // All three failed — return a detailed combined message
+    return {
+      ok: false,
+      error: [
+        geminiErrLabel,
+        `Groq: ${groqResult.error}`,
+        `OpenRouter: ${orResult.error}`,
+        "All 3 AI providers failed. Options: (1) Wait and retry, (2) Check Groq key at console.groq.com/keys, (3) Add more API keys.",
+      ].join(" | "),
+    };
   }
 
   return { ok: false, error: "Gemini unavailable after retries. All models overloaded — try again in a minute." };
@@ -161,7 +186,7 @@ export async function runGeminiText(
   } catch (e) {
     const msg = (e as Error).message || "Unknown error";
 
-    // Rate limit or overload — fall back to Groq for text
+    // Rate limit or overload — fall back to Groq then OpenRouter for text
     if (msg.includes("429") || msg.includes("503") ||
         msg.toLowerCase().includes("quota") || msg.toLowerCase().includes("high demand")) {
       const groqResult = await runGroqJSON<{ text: string }>(
@@ -171,7 +196,15 @@ export async function runGeminiText(
       if (groqResult.ok && groqResult.data?.text) {
         return { ok: true, data: groqResult.data.text };
       }
-      return { ok: false, error: "Gemini rate-limited, Groq fallback also failed." };
+      // Groq also failed — try OpenRouter
+      const orResult = await runOpenRouterJSON<{ text: string }>(
+        `${prompt}\n\nReturn your response as JSON: { "text": "<your full response here>" }`,
+        { temperature: opts.temperature },
+      );
+      if (orResult.ok && orResult.data?.text) {
+        return { ok: true, data: orResult.data.text };
+      }
+      return { ok: false, error: "All AI providers failed (Gemini rate-limited, Groq failed, OpenRouter failed)." };
     }
 
     return { ok: false, error: msg.slice(0, 400) };

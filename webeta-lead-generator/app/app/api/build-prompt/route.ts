@@ -98,6 +98,67 @@ function normalizeGooglePhotoUrl(url: string): string {
 export const maxDuration = 300;
 
 /**
+ * Maps a business category to a curated Unsplash stock photo URL for use as
+ * the hero background. These are landscape, high-resolution, professionally
+ * composed photos that look great as full-bleed hero backgrounds.
+ * Real scraped Google Maps photos go to gallery/about — NOT the hero.
+ */
+function getCategoryHeroPhoto(category: string): string {
+  const c = category.toLowerCase();
+
+  if (/gym|fitness|sport|yoga|dance|zumba|aerobic|pilates|crossfit|workout|martial|mma|boxing/.test(c))
+    return "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=85";
+
+  if (/restaurant|dining|biryani|dhaba|mughlai|chinese|pizza|burger|fast food|eatery|canteen|mess|kitchen/.test(c))
+    return "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=85";
+
+  if (/cafe|coffee|tea|chai|bakery|pastry|dessert|sweet|mithai|snack/.test(c))
+    return "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1600&q=85";
+
+  if (/salon|beauty|hair|barber|grooming|makeup|cosmetic|nail|threading|spa|massage|wellness|ayurveda|therapy/.test(c))
+    return "https://images.unsplash.com/photo-1560066984-138daaa1183f?auto=format&fit=crop&w=1600&q=85";
+
+  if (/clinic|doctor|physician|medical|hospital|health centre|healthcare|nursing/.test(c))
+    return "https://images.unsplash.com/photo-1551601651-2a8555f1a136?auto=format&fit=crop&w=1600&q=85";
+
+  if (/dental|dentist|orthodontic|teeth/.test(c))
+    return "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=1600&q=85";
+
+  if (/pharmacy|chemist|medical store|drug store/.test(c))
+    return "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1600&q=85";
+
+  if (/school|college|coaching|tuition|academy|institute|university|education|classes|tutorial/.test(c))
+    return "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1600&q=85";
+
+  if (/hotel|lodge|resort|guest house|hostel|inn|accommodation|banquet|convention/.test(c))
+    return "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=85";
+
+  if (/jewel|jewellery|gold|diamond|silver|ornament/.test(c))
+    return "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1600&q=85";
+
+  if (/clothing|fashion|boutique|garment|textile|saree|readymade|tailor|apparel/.test(c))
+    return "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=85";
+
+  if (/car|auto|vehicle|motor|garage|workshop|bike|motorcycle|tyre|service centre/.test(c))
+    return "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1600&q=85";
+
+  if (/real estate|property|builder|apartment|flat|office space|construction/.test(c))
+    return "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=85";
+
+  if (/tech|software|it company|digital|computer|development|startup|agency/.test(c))
+    return "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=85";
+
+  if (/grocery|kirana|supermarket|general store|mart/.test(c))
+    return "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=1600&q=85";
+
+  if (/event|wedding|catering|photography|video|studio/.test(c))
+    return "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1600&q=85";
+
+  // Default: modern professional commercial interior
+  return "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=85";
+}
+
+/**
  * Cleans an Indian phone number to +91 XXXXXXXXXX format.
  */
 function cleanPhone(raw: string | null | undefined): string {
@@ -129,7 +190,7 @@ const STYLE_SYSTEM: Record<string, string> = {
 DESIGN SYSTEM — PROFESSIONAL TRUST (2026):
 - Fonts: Import from Google Fonts: "Plus Jakarta Sans" (weights 400,500,600,700,800) for body, "Instrument Serif" for display headings. Use: font-family: 'Plus Jakarta Sans', sans-serif globally; headings use 'Instrument Serif'.
 - Colors: --bg: #F9FAFB; --surface: #FFFFFF; --primary: #1A3C5E; --primary-light: #2563EB; --accent: #0EA5E9; --text: #0F172A; --muted: #64748B; --border: #E2E8F0;
-- Hero: full-viewport-height (100dvh). Real photo URL as background-image with dark-blue gradient overlay (linear-gradient(135deg, rgba(26,60,94,0.92) 0%, rgba(14,165,233,0.6) 100%)). White headline text, H1 font-size clamp(2.5rem,5vw,4.5rem), font-weight 800, line-height 1.1.
+- Hero: full-viewport-height (100dvh). Use the HERO STOCK PHOTO URL from the HERO section as background-image with dark-blue gradient overlay (linear-gradient(135deg, rgba(26,60,94,0.92) 0%, rgba(14,165,233,0.6) 100%)). White headline text, H1 font-size clamp(2.5rem,5vw,4.5rem), font-weight 800, line-height 1.1.
 - Cards: background white, border 1px solid var(--border), border-radius 16px, box-shadow: 0 4px 24px rgba(0,0,0,0.06). On hover: transform translateY(-4px), box-shadow 0 12px 40px rgba(0,0,0,0.12), transition 200ms ease.
 - Buttons: Primary = background linear-gradient(135deg, #1A3C5E, #2563EB), color white, border-radius 50px, padding 14px 32px, font-weight 600, box-shadow: 0 4px 20px rgba(37,99,235,0.35). Hover: brightness(1.08) scale(1.02).
 - Section alternation: sections alternate between #F9FAFB and white backgrounds. One key section uses --primary as dark background with white text.`,
@@ -172,7 +233,7 @@ DESIGN SYSTEM — DARK LUXURY PREMIUM (2026):
 - Fonts: "Cormorant Garamond" (300,400,600,700) for headings, "Montserrat" (300,400,500,600) for body from Google Fonts.
 - Colors: --bg: #080808; --surface: #0F0F0F; --card: #141414; --gold: #C9A84C; --gold-light: #E8C870; --text: #F5F0E8; --muted: #8A8070; --border: rgba(201,168,76,0.15);
 - Ultra-premium dark gold aesthetic. Think Burj Al Arab, not a regular business.
-- Hero: 100vh, pure black background. Real photo with very dark overlay (opacity 0.75). Thin gold horizontal line above H1. H1: font-family Cormorant Garamond, font-weight 300, font-size clamp(3rem,5vw,5rem), letter-spacing:0.05em, color:--text. Gold gradient on the key phrase: background:linear-gradient(90deg,#C9A84C,#E8C870), clip text.
+- Hero: 100vh, pure black background. Use the HERO STOCK PHOTO URL from the HERO section as background-image with a very dark overlay (rgba(0,0,0,0.75)). Thin gold horizontal line above H1. H1: font-family Cormorant Garamond, font-weight 300, font-size clamp(3rem,5vw,5rem), letter-spacing:0.05em, color:--text. Gold gradient on the key phrase.
 - Dividers: thin gold lines (1px, opacity 0.3) between sections.
 - Cards: --card background, gold top-border (2px solid --gold), border-radius 0 (square). No rounded corners — luxury is precise.
 - Buttons: outlined style = border 1px solid --gold, color --gold, background transparent. On hover: background fills with --gold, color #080808. Transition 300ms.
@@ -183,8 +244,8 @@ DESIGN SYSTEM — BOLD HIGH-ENERGY (2026):
 - Fonts: "Bebas Neue" for display headlines, "Manrope" (400,500,600,700,800) for body from Google Fonts.
 - Colors: --bg: #FFFFFF; --dark: #0D0D0D; --primary: #FF3300; --secondary: #FFB800; --text: #0D0D0D; --muted: #555;
 - HIGH CONTRAST. Bold. Graphic design energy.
-- Hero: split screen. Left half: solid --dark background with giant H1 in Bebas Neue, font-size clamp(4rem,10vw,9rem), line-height:0.95, color:white. "CALL" word in --primary red. Right half: real business photo (object-fit:cover). On mobile: stacked.
-- Accent elements: angled/diagonal section dividers (CSS clip-path: polygon) instead of straight horizontal. 
+- Hero: split screen. Left half: solid --dark background with giant H1 in Bebas Neue, font-size clamp(4rem,10vw,9rem), line-height:0.95, color:white. "CALL" word in --primary red. Right half: Use the HERO STOCK PHOTO URL from the HERO section (object-fit:cover). On mobile: stacked (left on top).
+- Accent elements: angled/diagonal section dividers (CSS clip-path: polygon) instead of straight horizontal.
 - Service cards: flat bold cards with thick colored left border, icon in a colored square badge, card border-radius:0. Each card has a different accent color.
 - CTA button: background --primary red, all-caps text in Bebas Neue, wide letter-spacing, no border-radius (sharp corners). On hover: background --secondary yellow, color --dark.
 - Stats: giant numbers in Bebas Neue on dark background, red underline accent.`,
@@ -193,12 +254,12 @@ DESIGN SYSTEM — BOLD HIGH-ENERGY (2026):
 AI-SELECTED DESIGN SYSTEM — INTELLIGENCE MODE:
 
 STEP 1 — ANALYZE THE BUSINESS (do this silently before any code):
-Look at the business data provided: category, name, rating, reviews count, about text, services, and photos.
+Look at the business data provided: category, name, rating, reviews count, about text, and services.
 Ask yourself:
   - What kind of customer does this business serve? (premium/luxury vs everyday/budget, young vs mature)
   - What emotion should the website evoke? (trust/calm, energy/excitement, warmth/comfort, prestige/exclusivity)
   - What industry conventions apply? (clinics = professional clean; gyms = bold energy; restaurants = warm/inviting; salons/boutiques = luxury; tech/startups = modern dark)
-  - Do the photos look dark/moody or bright/airy? Dense/urban or natural/organic?
+  - NOTE: If real photos are available below, their visual tone (dark/moody vs bright/airy) may inform the style choice. If no photos are available, base the decision on category and business name alone.
 
 STEP 2 — CHOOSE ONE of these established styles as the primary:
   A) Professional Trust — clinics, lawyers, CAs, consultants, education
@@ -212,7 +273,7 @@ STEP 3 — STATE YOUR CHOICE (as an HTML comment at the very top of your output)
 <!-- STYLE: [chosen style name] | REASON: [one sentence explaining why this fits this specific business] -->
 
 STEP 4 — IMPLEMENT THAT STYLE COMPLETELY:
-After choosing, implement the full design system for that style exactly as defined — with proper font imports, CSS custom properties, hero style, card styles, button styles, and animations. Do not mix styles randomly; be intentional and consistent.`,
+After choosing, implement the full design system for that style. For the hero background: always use the HERO STOCK PHOTO URL provided in the HERO section — apply the appropriate gradient overlay for your chosen style on top of it.`,
 };
 
 function buildPrompt(lead: RankedLead, platform: string, style: string): string {
@@ -230,9 +291,22 @@ function buildPrompt(lead: RankedLead, platform: string, style: string): string 
   const waLink = `https://wa.me/${waNumber}?text=Hello%20${encodeURIComponent(lead.name)}`;
   const telLink = `tel:${phone.replace(/\s/g, "")}`;
 
-  const realPhotos = lead.photoUrls?.length
-    ? `\nREAL PHOTOS (use these as actual <img src="..."> — not stock, not placeholder):\n${lead.photoUrls.slice(0, 6).map((u, i) => `  Photo ${i + 1}: ${normalizeGooglePhotoUrl(u)}`).join("\n")}`
-    : "";
+  const photoCount = lead.photoUrls?.length ?? 0;
+  const heroPhoto = getCategoryHeroPhoto(lead.category);
+  const realPhotos = photoCount > 0
+    ? `\nREAL BUSINESS PHOTOS FROM GOOGLE MAPS (${photoCount} available):
+${lead.photoUrls!.slice(0, 6).map((u, i) => `  Photo ${i + 1}: ${normalizeGooglePhotoUrl(u)}`).join("\n")}
+PHOTO PLACEMENT RULES — READ CAREFULLY:
+- These are customer-panel photos from Google Maps. They show the real business.
+- Photo 1 (or whichever is listed first) = the FEATURED photo for the About section left panel.
+- All photos = use in the Gallery page.
+- DO NOT use these photos as the hero background. The hero has its own professional stock photo (see HERO section below).
+- Never repeat the same URL in two sections.
+- If a section needs Photo 3 but only ${photoCount} exist, use a CSS gradient from the design system.`
+    : `\nNO REAL BUSINESS PHOTOS:
+- About section left panel: use a styled brand panel — large business name in typography, city, and a CSS decorative pattern from the design system.
+- Gallery: placeholder cards with business name and "Photos coming soon" text.
+- Do NOT embed any broken image URLs.`;
   const realServices = lead.services?.length
     ? `\nACTUAL SERVICES (use exactly these, do not invent others):\n${lead.services.map(s => `  - ${s}`).join("\n")}`
     : "";
@@ -256,7 +330,7 @@ function buildPrompt(lead: RankedLead, platform: string, style: string): string 
 ${platformNote}
 
 ## MANDATORY DESIGN RULES — READ EVERY WORD
-1. FULL-VIEWPORT HERO: The hero section MUST be 100dvh (full screen height). The business photo MUST be used as a full-bleed background image with a CSS gradient overlay. The headline MUST be large (clamp at minimum 2.8rem on mobile, 4.5rem on desktop). This is non-negotiable.
+1. FULL-VIEWPORT HERO: The hero section MUST be 100dvh. Use the HERO STOCK PHOTO URL provided in the HERO section below as the CSS background-image. Apply a gradient overlay from the design system on top of it. The headline MUST be large (clamp min 2.8rem mobile, 4.5rem desktop). Do NOT use scraped Google Maps photos in the hero.
 2. REAL DESIGN SYSTEM: Use the complete design system below. Apply CSS custom properties (--variables) from the top. Every color, font, and spacing value must come from the system.
 3. MICRO-INTERACTIONS: Every card, button, and image must have a hover state with transform and transition. No static elements.
 4. ANIMATED STATS: Create a "trust numbers" section with big animated counters (JS IntersectionObserver + requestAnimationFrame countUp). Show ONLY verified statistics supplied in BUSINESS DATA (rating, review count, years in business). If a stat is not in BUSINESS DATA, omit it entirely — do NOT invent placeholder numbers.
@@ -279,7 +353,10 @@ ${designSystem}
 - Hamburger menu on mobile that slides in a full-screen nav overlay.
 
 ### 2. HERO (100dvh)
-- Background: first real photo URL as CSS background-image with gradient overlay from the design system.
+- Background: Use this professional stock photo as the full-bleed hero background-image: ${heroPhoto}
+  This is a curated stock photo matching the business category — it always looks stunning as a hero.
+  Apply the gradient overlay from the design system on top (dark enough for white text to read clearly).
+  Do NOT use any Google Maps / googleusercontent.com photo URL in the hero background.
 - Floating trust badge (glassmorphism)${lead.rating != null || (lead.reviewsCount ?? 0) > 0 ? `: "★ ${lead.rating?.toFixed(1)} · ${lead.reviewsCount} Reviews" — positioned absolute, animated fade-in.` : `: show "Google Maps Listed" or "Now Open" — do NOT invent a rating or review count the business does not have.`}
 - H1: Bold, large, gradient or white text: "Trusted ${lead.category} in ${lead.city?.split(",")[0]}"
 - Sub-headline: short, compelling, max 12 words.
@@ -304,10 +381,10 @@ ${realServices || "- No verified services are available in BUSINESS DATA. Do NOT
 - Hover: lift + glow effect.
 
 ### 5. ABOUT / STORY (SPLIT SCREEN)
-- Left side: full-height stacked photos (2nd and 3rd real photo URLs, overlapping with a slight rotation/offset for visual depth).
+- Left side: ${photoCount >= 2 ? "Photo 1 as the featured image (full height, object-fit cover). Photo 2 overlapping at a slight angle/offset below it for visual depth. These are the real business photos — they create authenticity." : photoCount === 1 ? "Photo 1 centered and padded — the actual business photo. Do NOT reuse the hero stock photo here." : "Styled brand panel: large business name in typography, category badge, city — using design system colors and a subtle CSS geometric pattern. No images."}
 - Right side: "Our Story" label, H2, the about text, a "Speak with Us" button.
 ${realAbout || "- No verified about/story text exists in BUSINESS DATA. Do NOT invent: business history, founder story, years in business, mission statement, staff claims, or achievements. Instead, create a visually strong neutral section with only verified facts (name, category, city) and a clear CTA: \"Get in touch to learn about us\" linking to the WhatsApp link. The section must look premium but must not fabricate any history or claims."}
-- On mobile: photos stack above text.
+- On mobile: left side stacks above text.
 
 ### 6. CUSTOMER TESTIMONIALS (CARDS WITH GLASSMORPHISM)
 ${realReviews || "- No real reviews are available for this business yet. Instead of fabricating testimonials, build the testimonials section as a 'Leave Us a Review' invite: show 3 empty card placeholders with a star icon, the text \"Be the first to share your experience!\", and a \"Write a Review\" button linking to their Google Maps listing. Do NOT invent review quotes."}
@@ -400,6 +477,7 @@ function buildExtraPagePrompt(
   const platformNote = PLATFORM_OUTPUT[platform] ?? PLATFORM_OUTPUT.stitch;
   const styleIds = style.split("+").filter(Boolean);
   const designSystem = styleIds.map((id) => STYLE_SYSTEM[id] ?? "").filter(Boolean).join("\n\nADDITIONAL STYLE LAYER:\n");
+  const photoCount = lead.photoUrls?.length ?? 0;
 
   const phone = cleanPhone(lead.phone);
   const waNumber = cleanWaNumber(lead.whatsapp ?? lead.phone);
@@ -411,21 +489,21 @@ function buildExtraPagePrompt(
 
   const pageInstructions: Record<string, string> = {
     booking:
-      `Build a complete BOOKING / APPOINTMENT page.\n- Prominent booking form: Name, Phone, Service (dropdown), Preferred Date, Preferred Time, Message.\n- On submit: show WhatsApp link pre-filled with booking details linking to ${waLink}.\n- Above the form: ${lead.rating != null || (lead.reviewsCount ?? 0) > 0 ? `3 trust signals using their real ${lead.rating != null ? `${lead.rating.toFixed(1)}★ rating` : ""} ${(lead.reviewsCount ?? 0) > 0 ? `and ${lead.reviewsCount} Google reviews` : ""}` : "a short welcome message — do NOT invent ratings or reviews the business does not have"}.\n- Below the form: FAQ about the booking process (3 questions).\n- Sticky WhatsApp button always visible.`,
+      `Build a complete BOOKING / APPOINTMENT page.\n- Prominent booking form: Name, Phone, Service (dropdown using ONLY services from BUSINESS DATA — if none, use a free-text field), Preferred Date, Preferred Time, Message.\n- On submit: show WhatsApp link pre-filled with booking details linking to ${waLink}.\n- Above the form: ${lead.rating != null || (lead.reviewsCount ?? 0) > 0 ? `3 trust signals using their real ${lead.rating != null ? `${lead.rating.toFixed(1)}★ rating` : ""} ${(lead.reviewsCount ?? 0) > 0 ? `and ${lead.reviewsCount} Google reviews` : ""}` : "a short welcome message — do NOT invent ratings or reviews the business does not have"}.\n- Below the form: FAQ about the booking process (3 questions — answers must say 'Contact us for details' if not in BUSINESS DATA).\n- Sticky WhatsApp button always visible.`,
     schedule:
-      `Build a complete CLASS SCHEDULE / TIMETABLE page.\n- Weekly schedule table (Mon-Sun) with realistic class slots for this business type.\n- Each slot: class name, duration, trainer, difficulty badge (Beginner/Intermediate/Advanced).\n- Filter buttons by day and class type.\n- "Book This Class" button on each row linking to ${waLink}.`,
+      `Build a CLASS SCHEDULE / TIMETABLE page.\n- Weekly schedule table (Mon-Sun) with time slots.\n- CRITICAL: Do NOT invent class names, trainer names, or specific schedules. Label all time slots as 'Session' with a note 'Contact us for the latest class schedule'. Use ONLY class/service names that are explicitly in BUSINESS DATA services.\n- Each slot: a generic time block, a 'Book This Slot' button linking to ${waLink}.\n- Filter buttons by day only.\n- Big CTA at top: 'WhatsApp us for the current schedule' linking to ${waLink}.`,
     menu:
-      `Build a complete DIGITAL MENU page.\n- Category tabs (Starters, Mains, Desserts, Beverages, Specials) with animated tab switching.\n- Each item: name, description, price (Rs.), vegetarian/non-veg badge.\n- "Order on WhatsApp" button links to ${waLink}.\n- QR code placeholder section at bottom.\n- Search bar to filter items.`,
+      `Build a DIGITAL MENU page.\n- CRITICAL: Do NOT invent dish names, descriptions, or prices (Rs.). This is a real business — fabricated menu items damage credibility.\n- Use ONLY menu items or categories explicitly listed in BUSINESS DATA services. If none are listed: show category tabs (e.g. 'Food', 'Beverages', 'Specials') with placeholder cards that say 'Ask us about our [category]' and a WhatsApp CTA for each.\n- 'Order on WhatsApp' button links to ${waLink}.\n- QR code placeholder section at bottom linking to ${waLink}.\n- Search bar to filter categories.`,
     gallery:
-      `Build a complete PHOTO GALLERY / BEFORE & AFTER page.\n${realPhotos ? `Use these real photos:\n${realPhotos}` : "Use placeholder images with realistic alt text."}\n- Masonry grid layout (CSS columns: 3 on desktop, 2 on tablet, 1 on mobile).\n- Lightbox on click (pure JS, no library).\n- Filter buttons: All, Before & After, Facilities, Events.\n- CTA at bottom: "Book Your Session" linking to ${waLink}.`,
+      `Build a complete PHOTO GALLERY page.\n${photoCount > 0 ? `Use these real photos:\n${lead.photoUrls!.slice(0, 4).map((u, i) => `Photo ${i + 1}: ${normalizeGooglePhotoUrl(u)}`).join("\n")}` : "No real photos available — build a gallery with styled placeholder cards showing the business name and a 'Photo coming soon' message. Do NOT use random stock image URLs."}\n- Masonry grid layout (CSS columns: 3 on desktop, 2 on tablet, 1 on mobile).\n- Lightbox on click (pure JS, no library).\n- CTA at bottom: 'Book Your Session' linking to ${waLink}.`,
     team:
-      `Build a complete TEAM / STAFF page.\n- Grid of team cards (3 per row on desktop).\n- Each card: name, role, short bio, years of experience, initials avatar.\n- Hover: card lifts, WhatsApp contact button appears.\n- CTA at bottom to book a session via ${waLink}.`,
+      `Build a TEAM / STAFF page.\n- CRITICAL: Do NOT invent staff names, bios, or years of experience. Use ONLY team members explicitly mentioned in BUSINESS DATA.\n- If no team data in BUSINESS DATA: show role placeholder cards (e.g. 'Head Trainer', 'Manager', 'Specialist') with initials avatar and the text 'Meet our team in person'. Each card has a WhatsApp CTA.\n- Hover: card lifts, WhatsApp contact button appears.\n- CTA at bottom to book a session via ${waLink}.`,
     pricing:
-      `Build a complete PRICING / MEMBERSHIP PLANS page.\n- 3 plan tiers: Basic, Standard, Premium with monthly price (Rs.), features list (5-7 items), "Most Popular" badge on Standard.\n- Annual pricing toggle (monthly / yearly) with JS.\n- Each plan: "Get Started" button linking to ${waLink}.\n- Below plans: FAQ about membership (4 questions).`,
+      `Build a PRICING / MEMBERSHIP PLANS page.\n- CRITICAL: Do NOT invent rupee amounts. Use ONLY prices explicitly stated in BUSINESS DATA. If no prices in BUSINESS DATA: show 3 tiers (Basic, Standard, Premium) with features listed from BUSINESS DATA services, but replace all price fields with a 'Contact for pricing' CTA button linking to ${waLink}.\n- Annual pricing toggle only if at least one price is in BUSINESS DATA.\n- Below plans: FAQ about membership (4 questions — answers must reference WhatsApp for anything not in BUSINESS DATA).`,
     admission:
-      `Build a complete ADMISSION / ENROLLMENT FORM page.\n- Multi-step form (3 steps) with progress bar: Step 1 (personal details), Step 2 (program selection), Step 3 (confirmation).\n- Step 1: Name, DOB, Gender, Phone, Email, Address.\n- Step 2: Program dropdown, batch time, how they heard about us.\n- Step 3: Review + "Submit via WhatsApp" button linking to ${waLink}.`,
+      `Build a complete ADMISSION / ENROLLMENT FORM page.\n- Multi-step form (3 steps) with progress bar: Step 1 (personal details), Step 2 (program selection using ONLY programs from BUSINESS DATA services or a free-text field if none), Step 3 (confirmation).\n- Step 1: Name, DOB, Gender, Phone, Email, Address.\n- Step 2: Program dropdown, batch time, how they heard about us.\n- Step 3: Review + 'Submit via WhatsApp' button linking to ${waLink}.`,
     products:
-      `Build a complete PRODUCT CATALOG page.\n- Grid of product cards (3-4 per row desktop, 2 tablet, 1 mobile).\n- Each card: product image, name, description, price (Rs.), "Order on WhatsApp" button.\n- Category filter bar at top.\n- Search input to filter products.\n- Use realistic product names for this business category.`,
+      `Build a PRODUCT CATALOG page.\n- CRITICAL: Do NOT invent product names, descriptions, or prices. Use ONLY products/services explicitly in BUSINESS DATA.\n- If no product data in BUSINESS DATA: show category cards with 'Contact us for product details' and a WhatsApp CTA instead of inventing items.\n- Grid of product cards (3-4 per row desktop, 2 tablet, 1 mobile).\n- 'Enquire on WhatsApp' button linking to ${waLink} on each card.\n- Category filter bar and search input.`,
   };
 
   const specificInstructions = pageInstructions[pageType]

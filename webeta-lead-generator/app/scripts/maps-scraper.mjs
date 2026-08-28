@@ -305,13 +305,57 @@ async function scrapeGoogleMaps() {
         let photosCount = 0;
         let photoUrls = [];
         try {
-          // Count from the "See all photos" button text (e.g. "247 photos")
-          const photoBtn = page.locator('button[jsaction*="pane.heroHeaderImage"], button[aria-label*="photo" i], button[aria-label*="Photo" i]');
-          if (await photoBtn.count() > 0) {
-            for (let pb = 0; pb < Math.min(await photoBtn.count(), 4); pb++) {
-              const pText = (await photoBtn.nth(pb).textContent()) || "";
-              const pMatch = pText.match(/([\d,]+)/);
-              if (pMatch) { photosCount = parseInt(pMatch[1].replace(/,/g, ""), 10); break; }
+          // ── Try to get TOTAL photo count ──────────────────────────────
+          // Strategy 1: aria-label on hero header or "See all photos" button
+          // e.g. aria-label="See all 230 photos" or aria-label="1,234 photos"
+          const totalFromAriaLabel = await page.evaluate(() => {
+            const candidates = document.querySelectorAll(
+              'button[jsaction*="heroHeaderImage"], button[jsaction*="pane.heroHeaderImage"], ' +
+              'button[aria-label*="photo" i], button[aria-label*="Photo" i], ' +
+              'a[aria-label*="photo" i], div[aria-label*="photo" i]'
+            );
+            for (const el of candidates) {
+              const label = el.getAttribute('aria-label') || '';
+              const m = label.match(/([\d,]+)\s*photo/i);
+              if (m) return parseInt(m[1].replace(/,/g, ''), 10);
+              // Also try text content
+              const text = el.textContent || '';
+              const tm = text.match(/([\d,]+)\s*photo/i);
+              if (tm) return parseInt(tm[1].replace(/,/g, ''), 10);
+            }
+            return 0;
+          });
+          if (totalFromAriaLabel > 0) photosCount = totalFromAriaLabel;
+
+          // Strategy 2: look for plain number near "photos" anywhere in panel header
+          if (!photosCount) {
+            const totalFromText = await page.evaluate(() => {
+              const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+              let node;
+              while ((node = walker.nextNode())) {
+                const t = node.textContent.trim();
+                const m = t.match(/^([\d,]+)\s*photos?$/i);
+                if (m) {
+                  const count = parseInt(m[1].replace(/,/g, ''), 10);
+                  if (count > 0) return count;
+                }
+              }
+              return 0;
+            });
+            if (totalFromText > 0) photosCount = totalFromText;
+          }
+
+          // Strategy 3: old button locator fallback
+          if (!photosCount) {
+            const photoBtn = page.locator('button[jsaction*="pane.heroHeaderImage"], button[aria-label*="photo" i], button[aria-label*="Photo" i]');
+            if (await photoBtn.count() > 0) {
+              for (let pb = 0; pb < Math.min(await photoBtn.count(), 4); pb++) {
+                const pText = (await photoBtn.nth(pb).textContent()) || '';
+                const ariaLabel = await photoBtn.nth(pb).getAttribute('aria-label') || '';
+                const combined = pText + ' ' + ariaLabel;
+                const pMatch = combined.match(/([\d,]+)/);
+                if (pMatch) { photosCount = parseInt(pMatch[1].replace(/,/g, ''), 10); break; }
+              }
             }
           }
 
@@ -372,7 +416,7 @@ async function scrapeGoogleMaps() {
           });
 
           photoUrls = panelPhotos || [];
-          // Use found count as fallback if button text didn't give us a count
+          // Use found count as fallback if all strategies failed
           if (!photosCount && photoUrls.length > 0) photosCount = photoUrls.length;
         } catch { /* no photos */ }
 

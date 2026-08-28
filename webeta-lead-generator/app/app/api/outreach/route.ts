@@ -1,13 +1,6 @@
 import { NextResponse } from "next/server";
-import { runGroqJSON } from "@/lib/groq";
-import { runGeminiJSON } from "@/lib/gemini";
+import { runAI } from "@/lib/ai";
 import type { RankedLead, OutreachChannel, OutreachLanguage, OutreachResult, CallScript } from "@/lib/types";
-
-async function runWithFallback<T>(prompt: string): Promise<{ ok: true; data: T } | { ok: false; error: string }> {
-  const groq = await runGroqJSON<T>(prompt);
-  if (groq.ok) return groq;
-  return runGeminiJSON<T>(prompt);
-}
 
 export const maxDuration = 300;
 
@@ -35,7 +28,11 @@ function buildOutreachPrompt(lead: RankedLead, channel: OutreachChannel, languag
     lead.services?.length ? `- Services: ${lead.services.join(", ")}` : "",
     lead.hours?.length ? `- Hours: ${lead.hours.slice(0, 3).join("; ")}` : "",
     lead.socialLinks?.length ? `- Social media: ${lead.socialLinks.map(s => s.platform).join(", ")}` : "",
-    lead.photosCount ? `- Photos on Maps: ${lead.photosCount}` : "- Photos on Maps: 0",
+    lead.photosCount !== undefined
+      ? lead.photosCount < 5
+        ? `- Photos on Maps: ${lead.photosCount} (very few — gap to exploit)`
+        : `- Photos on Maps: ${lead.photosCount} (includes customer review photos)`
+      : "- Photos on Maps: 0 (no photos uploaded — major gap)",
   ].filter(Boolean).join("\n");
 
   return `You are a top cold-outreach copywriter helping a freelancer pitch a free website demo to a local business owner. Proven structure: personal hook → specific compliment grounded in their data → one-line pain (their biggest gap) → the free demo link → a low-friction yes/no ask. The day-3 follow-up restates the cost of inaction in ₹ and asks for a 5-min call.
@@ -116,8 +113,8 @@ export async function POST(req: Request) {
   };
   if (!lead) return NextResponse.json({ error: "No lead provided." }, { status: 400 });
 
-  // Generate outreach message (Groq first, Gemini fallback)
-  const outreachResult = await runWithFallback<OutreachResult>(
+  // Generate outreach message (Groq → Gemini → OpenRouter fallback chain)
+  const outreachResult = await runAI<OutreachResult>(
     buildOutreachPrompt(lead, channel || "whatsapp", language || "english"),
   );
   if (!outreachResult.ok) {
@@ -130,7 +127,7 @@ export async function POST(req: Request) {
   // Optionally generate call script
   let callScript: CallScript | null = null;
   if (includeCallScript !== false) {
-    const scriptResult = await runWithFallback<CallScript>(buildCallScriptPrompt(lead));
+    const scriptResult = await runAI<CallScript>(buildCallScriptPrompt(lead));
     if (scriptResult.ok) {
       callScript = scriptResult.data;
     }
