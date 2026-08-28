@@ -171,7 +171,8 @@ export function Phase2Audit({
     else toast.warning(`Audited with ${errors.length} error${errors.length > 1 ? "s" : ""} — check details below`);
   }
 
-  const auditedCount = Object.keys(audits).length;
+  const auditedCount  = Object.keys(audits).length;
+  const unauditedInFilter = filteredLeads.filter(l => !audits[l.id]).length;
   const totalLost    = Object.values(audits).reduce((s, a) => s + (a?.estLostRevenuePerMonth ?? 0), 0);
   const pct          = progress ? Math.round((progress.done / progress.total) * 100) : 0;
 
@@ -238,9 +239,20 @@ export function Phase2Audit({
             })}
           </div>
         </div>
-        <Button onClick={runAudit} disabled={running || selectedIds.size === 0} className="h-10 px-4">
-          {running ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Auditing…</> : `Run audit on ${selectedIds.size} selected`}
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* Quick: select only unaudited within current filter */}
+          {unauditedInFilter > 0 && unauditedInFilter < filteredLeads.length && (
+            <button
+              onClick={() => setSelectedIds(new Set(filteredLeads.filter(l => !audits[l.id]).map(l => l.id)))}
+              className="text-xs px-3 py-1.5 rounded-md border border-amber-500/40 bg-amber-500/5 text-amber-600 hover:bg-amber-500/10 transition-colors"
+            >
+              Select remaining ({unauditedInFilter} unaudited)
+            </button>
+          )}
+          <Button onClick={runAudit} disabled={running || selectedIds.size === 0} className="h-10 px-4">
+            {running ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Auditing…</> : `Run audit on ${selectedIds.size} selected`}
+          </Button>
+        </div>
       </div>
 
       {/* Live progress panel */}

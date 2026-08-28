@@ -115,7 +115,13 @@ export function Phase4Convert({
         <Button onClick={generateAll} disabled={loading || ranked.length === 0} className="h-11 transition-transform active:scale-[0.98]">
           {loading
             ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</>
-            : <><Target className="h-4 w-4 mr-2" />{Object.keys(conversions).length > 0 ? "Re-generate all" : "Generate conversion hooks"}</>}
+            : (() => {
+                const done = Object.keys(conversions).length;
+                const remaining = ranked.length - done;
+                if (done === 0) return <><Target className="h-4 w-4 mr-2" />Generate conversion hooks</>;
+                if (remaining > 0) return <><Target className="h-4 w-4 mr-2" />Generate remaining ({remaining})</>;
+                return <><Target className="h-4 w-4 mr-2" />Re-generate all</>;
+              })()}
         </Button>
         <div className="text-sm text-muted-foreground">
           {Object.keys(conversions).length} / {ranked.length} leads processed

@@ -121,13 +121,34 @@ export function Phase3Rank({
       nextLabel="Prepare pitch"
     >
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
-        <div className="text-sm text-muted-foreground">
-          {ranked.length > 0
-            ? `${ranked.length} prospects ranked`
-            : `${auditedCount} audited lead${auditedCount === 1 ? "" : "s"} ready to rank`}
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="text-sm text-muted-foreground">
+            {ranked.length > 0
+              ? `${ranked.length} prospects ranked`
+              : `${auditedCount} audited lead${auditedCount === 1 ? "" : "s"} ready to rank`}
+          </div>
+          {/* Show if there are newly audited leads not yet in ranking */}
+          {(() => {
+            const rankedIds = new Set(ranked.map(r => r.id));
+            const newlyAudited = leads.filter(l => audits[l.id] && !rankedIds.has(l.id)).length;
+            if (newlyAudited === 0) return null;
+            return (
+              <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                {newlyAudited} newly audited lead{newlyAudited > 1 ? "s" : ""} not yet ranked — re-rank to include
+              </span>
+            );
+          })()}
         </div>
         <Button onClick={runRank} disabled={running} className="h-10 px-4">
-          {running ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Ranking…</> : ranked.length > 0 ? "Re-rank" : "Rank prospects"}
+          {running
+            ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Ranking…</>
+            : (() => {
+                const rankedIds = new Set(ranked.map(r => r.id));
+                const newlyAudited = leads.filter(l => audits[l.id] && !rankedIds.has(l.id)).length;
+                if (ranked.length === 0) return "Rank prospects";
+                if (newlyAudited > 0) return `Re-rank (include ${newlyAudited} new)`;
+                return "Re-rank";
+              })()}
         </Button>
       </div>
 

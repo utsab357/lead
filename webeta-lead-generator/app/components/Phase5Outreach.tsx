@@ -34,6 +34,9 @@ export function Phase5Outreach({
   const [channel, setChannel] = useState<OutreachChannel>("whatsapp");
   const [lang, setLang] = useState<OutreachLanguage>("hinglish");
   const [generating, setGenerating] = useState(false);
+  const [batchRunning, setBatchRunning] = useState(false);
+  const [batchProgress, setBatchProgress] = useState<{done:number;total:number} | null>(null);
+  const batchCancelRef = { current: false };
   const [error, setError] = useState<string | null>(null);
   const [sidebarSearch, setSidebarSearch] = useState("");
 
@@ -91,6 +94,37 @@ export function Phase5Outreach({
     }
   }
 
+  async function generateAllRemaining() {
+    const remaining = ranked.filter(l => !outreachResults[l.id]);
+    if (remaining.length === 0) { toast.info("All leads already drafted!"); return; }
+    setBatchRunning(true);
+    batchCancelRef.current = false;
+    setBatchProgress({ done: 0, total: remaining.length });
+    let localResults = { ...outreachResults };
+    for (let i = 0; i < remaining.length; i++) {
+      if (batchCancelRef.current) break;
+      const lead = remaining[i];
+      try {
+        const res = await fetch("/api/outreach", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ lead, channel, language: lang }),
+        });
+        if (res.ok) {
+          const data = await res.json() as OutreachResult;
+          localResults = { ...localResults, [lead.id]: data };
+          setOutreachResults(localResults);
+        }
+      } catch { /* skip failed lead, continue */ }
+      setBatchProgress({ done: i + 1, total: remaining.length });
+    }
+    setBatchRunning(false);
+    setBatchProgress(null);
+    toast.success("Done generating remaining outreach!");
+  }
+
+  function stopBatch() { batchCancelRef.current = true; }
+
   function updateMessage(val: string) {
     if (!activeLead) return;
     setLocalEdits((prev) => ({ ...prev, [activeLead.id]: { ...prev[activeLead.id], message: val, followUp: prev[activeLead.id]?.followUp ?? followUp } }));
@@ -143,7 +177,24 @@ export function Phase5Outreach({
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between px-1">
             <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Select lead</div>
-            <div className="text-[10px] text-muted-foreground">{doneCount}/{ranked.length} drafted</div>
+            <div className="flex items-center gap-2">
+              <div className="text-[10px] text-muted-foreground">{doneCount}/{ranked.length} drafted</div>
+              {!batchRunning && ranked.filter(l => !outreachResults[l.id]).length > 0 && (
+                <button
+                  onClick={generateAllRemaining}
+                  disabled={generating}
+                  className="text-[10px] px-2 py-0.5 rounded border border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 transition-colors"
+                >
+                  Generate remaining ({ranked.filter(l => !outreachResults[l.id]).length})
+                </button>
+              )}
+              {batchRunning && (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-muted-foreground">{batchProgress?.done}/{batchProgress?.total}</span>
+                  <button onClick={stopBatch} className="text-[10px] px-2 py-0.5 rounded border border-destructive/30 text-destructive hover:bg-destructive/5 transition-colors">Stop</button>
+                </div>
+              )}
+            </div>
           </div>
           {/* Search */}
           <div className="relative">
