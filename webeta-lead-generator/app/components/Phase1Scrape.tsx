@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
@@ -15,6 +15,8 @@ import { Loader2, MapPin, Phone, Star, Globe, MessageCircle, Mail, ExternalLink,
 import { NicheDropdown } from "./NicheDropdown";
 import type { Lead, ScrapeInput } from "@/lib/types";
 import { toast } from "sonner";
+import { LeadHistoryDrawer } from "./LeadHistoryDrawer";
+import type { LeadHistoryEntry } from "./LeadHistoryDrawer";
 
 const LeadMap = dynamic(() => import("./LeadMap"), { ssr: false });
 
@@ -58,6 +60,36 @@ export function Phase1Scrape({
   const [fPhone,    setFPhone]    = useState(false);
   const [fRating,   setFRating]   = useState<"" | "3.5" | "4.0" | "4.5">("" );
   const [fReviews,  setFReviews]  = useState<"" | "10" | "50" | "100">("" );
+  const [fNewOnly,  setFNewOnly]  = useState(false);
+
+  // Cross-session duplicate index: normalizedPhone → { leadName, niche, city, status }
+  const [phoneIndex, setPhoneIndex] = useState<Map<string, { leadName: string; niche: string; city: string; timestamp: string; status?: string; notes?: string }>>(new Map());
+  const [historyEntry, setHistoryEntry] = useState<LeadHistoryEntry | null>(null);
+
+  // Fetch phone index whenever a new session is created (scrape finished)
+  useEffect(() => {
+    if (!sessionId) return;
+    fetch(`/api/sessions/phone-index?exclude=${sessionId}`)
+      .then(r => r.json())
+      .then(({ index = [] }) => {
+        const map = new Map<string, { leadName: string; niche: string; city: string; timestamp: string; status?: string; notes?: string }>();
+        for (const e of index) {
+          if (e.phone) map.set(e.phone, { leadName: e.leadName, niche: e.niche, city: e.city, timestamp: e.timestamp, status: e.status, notes: e.notes });
+        }
+        setPhoneIndex(map);
+      })
+      .catch(() => {});
+  }, [sessionId]);
+
+  /** Normalize phone to 10-digit string for cross-session lookup */
+  function normPhone(raw: string): string {
+    const d = raw.replace(/\D/g, "");
+    let n = d;
+    if (n.startsWith("910") && n.length === 12) n = n.slice(3);
+    else if (n.startsWith("91") && n.length === 12) n = n.slice(2);
+    else if (n.startsWith("0") && n.length === 11) n = n.slice(1);
+    return n.length === 10 ? n : "";
+  }
 
   async function runScrape() {
     setLoading(true);
@@ -207,11 +239,16 @@ export function Phase1Scrape({
     if (fPhone   && !l.phone)                           return false;
     if (fRating  && (l.rating  ?? 0) < parseFloat(fRating))  return false;
     if (fReviews && (l.reviewsCount ?? 0) < parseInt(fReviews)) return false;
+    if (fNewOnly) {
+      const np = normPhone(l.phone ?? l.whatsapp ?? "");
+      if (np && phoneIndex.has(np)) return false; // hide if seen before
+    }
     return true;
   });
-  const anyFilter = fNoSite || fPhone || !!fRating || !!fReviews;
+  const anyFilter = fNoSite || fPhone || !!fRating || !!fReviews || fNewOnly;
 
   return (
+    <>
     <PhaseShell
       title="Phase 1 — Scrape leads"
       subtitle="Search any business type in any city. Chrome opens and scrapes Google Maps — every result is real and saved."
@@ -452,6 +489,19 @@ export function Phase1Scrape({
                 <option value="100">100+ reviews</option>
               </select>
 
+              {/* New leads only toggle — shown only if phone index has entries */}
+              {phoneIndex.size > 0 && (
+                <button
+                  id="p1-filter-newonly"
+                  onClick={() => setFNewOnly(v => !v)}
+                  className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
+                    fNewOnly ? "bg-amber-500/10 border-amber-500/30 text-amber-600" : "bg-background border-border text-muted-foreground hover:border-primary/40"
+                  }`}
+                >
+                  ✨ New leads only
+                </button>
+              )}
+
               {/* Count + clear */}
               {anyFilter && (
                 <>
@@ -459,7 +509,7 @@ export function Phase1Scrape({
                     Showing {displayLeads.length} of {leads.length}
                   </span>
                   <button
-                    onClick={() => { setFNoSite(false); setFPhone(false); setFRating(""); setFReviews(""); }}
+                    onClick={() => { setFNoSite(false); setFPhone(false); setFRating(""); setFReviews(""); setFNewOnly(false); }}
                     className="text-[11px] text-muted-foreground underline hover:text-foreground"
                   >
                     Clear
@@ -492,7 +542,29 @@ export function Phase1Scrape({
                     >
                       <TableCell className="text-muted-foreground">{i + 1}</TableCell>
                       <TableCell>
-                        <div className="font-medium">{l.name}</div>
+                        <div className="font-medium flex items-center gap-1.5 flex-wrap">
+                          {l.name}
+                          {(() => {
+                            const np = normPhone(l.phone ?? l.whatsapp ?? "");
+                            const prev = np ? phoneIndex.get(np) : undefined;
+                            if (!prev) return null;
+                            return (
+                              <button
+                                onClick={() => setHistoryEntry({
+                                  leadName: l.name,
+                                  niche: prev.niche,
+                                  city: prev.city,
+                                  timestamp: prev.timestamp,
+                                  status: prev.status,
+                                  notes: prev.notes,
+                                })}
+                                className="text-[9px] font-semibold px-1.5 py-0.5 rounded-sm bg-amber-500/10 text-amber-600 border border-amber-500/20 hover:bg-amber-500/20 transition-colors cursor-pointer"
+                              >
+                                Seen before{prev.status ? ` · ${prev.status}` : ""}
+                              </button>
+                            );
+                          })()}
+                        </div>
                         <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                           <MapPin className="h-3 w-3 shrink-0" />
                           <span className="truncate max-w-[200px]">{l.address}</span>
@@ -560,6 +632,12 @@ export function Phase1Scrape({
         </CardContent>
       </Card>
     </PhaseShell>
+
+    <LeadHistoryDrawer
+      entry={historyEntry}
+      onClose={() => setHistoryEntry(null)}
+    />
+    </>
   );
 }
 

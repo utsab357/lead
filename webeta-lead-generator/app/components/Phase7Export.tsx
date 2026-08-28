@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import type { RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus } from "@/lib/types";
 import { toast } from "sonner";
+import { LeadHistoryDrawer } from "./LeadHistoryDrawer";
+import type { LeadHistoryEntry } from "./LeadHistoryDrawer";
 
 // ─── Status config ──────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<LeadStatus, { label: string; color: string; bg: string; icon: typeof Phone }> = {
@@ -40,6 +42,7 @@ export function Phase7Export({
   setLeadNotes,
   onGoToPhase,
   onPrev,
+  sessionId,
 }: {
   ranked: RankedLead[];
   conversions?: Record<string, ConversionPoints>;
@@ -51,6 +54,7 @@ export function Phase7Export({
   setLeadNotes?: (n: Record<string, string>) => void;
   onGoToPhase?: (phase: number, leadId: string) => void;
   onPrev?: () => void;
+  sessionId?: string | null;
 }) {
   const [tab, setTab] = useState<"pipeline" | "export">("pipeline");
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -60,6 +64,33 @@ export function Phase7Export({
   const [fPhone,   setFPhone]   = useState(false);
   const [fRating,  setFRating]  = useState<"" | "3.5" | "4.0" | "4.5">("" );
   const [fReviews, setFReviews] = useState<"" | "10" | "50" | "100">("" );
+
+  // Cross-session duplicate index
+  const [phoneIndex, setPhoneIndex] = useState<Map<string, { niche: string; city: string; timestamp: string; status?: string; notes?: string }>>(new Map());
+  const [historyEntry, setHistoryEntry] = useState<LeadHistoryEntry | null>(null);
+
+  useEffect(() => {
+    const excl = sessionId ? `?exclude=${sessionId}` : "";
+    fetch(`/api/sessions/phone-index${excl}`)
+      .then(r => r.json())
+      .then(({ index = [] }) => {
+        const map = new Map<string, { niche: string; city: string; timestamp: string; status?: string; notes?: string }>();
+        for (const e of index) {
+          if (e.phone) map.set(e.phone, { niche: e.niche, city: e.city, timestamp: e.timestamp, status: e.status, notes: e.notes });
+        }
+        setPhoneIndex(map);
+      })
+      .catch(() => {});
+  }, [sessionId]);
+
+  function normPhone(raw: string): string {
+    const d = raw.replace(/\D/g, "");
+    let n = d;
+    if (n.startsWith("910") && n.length === 12) n = n.slice(3);
+    else if (n.startsWith("91") && n.length === 12) n = n.slice(2);
+    else if (n.startsWith("0") && n.length === 11) n = n.slice(1);
+    return n.length === 10 ? n : "";
+  }
 
   // ── helpers ────────────────────────────────────────────────────────────────
   function setStatus(leadId: string, status: LeadStatus) {
@@ -198,6 +229,7 @@ export function Phase7Export({
   const calledCount    = ranked.filter(l => leadStatuses[l.id] === "called" || leadStatuses[l.id] === "demo_sent" || leadStatuses[l.id] === "meeting_set").length;
 
   return (
+    <>
     <PhaseShell
       title="Phase 7 — Pipeline & Export"
       subtitle="Track lead status, view all phase data, and download your full campaign."
@@ -370,7 +402,32 @@ export function Phase7Export({
 
                       {/* Name + meta */}
                       <div className="flex-1 min-w-0" onClick={() => setExpanded(isOpen ? null : lead.id)}>
-                        <div className="font-medium text-sm truncate cursor-pointer">{lead.name}</div>
+                        <div className="font-medium text-sm truncate cursor-pointer flex items-center gap-1.5 flex-wrap">
+                          {lead.name}
+                          {(() => {
+                            const np = normPhone(lead.phone ?? lead.whatsapp ?? "");
+                            const prev = np ? phoneIndex.get(np) : undefined;
+                            if (!prev) return null;
+                            return (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setHistoryEntry({
+                                    leadName: lead.name,
+                                    niche: prev.niche,
+                                    city: prev.city,
+                                    timestamp: prev.timestamp,
+                                    status: prev.status,
+                                    notes: prev.notes,
+                                  });
+                                }}
+                                className="text-[9px] font-semibold px-1.5 py-0.5 rounded-sm bg-amber-500/10 text-amber-600 border border-amber-500/20 hover:bg-amber-500/20 transition-colors cursor-pointer shrink-0"
+                              >
+                                Seen before{prev.status ? ` · ${prev.status}` : ""}
+                              </button>
+                            );
+                          })()}
+                        </div>
                         <div className="text-[11px] text-muted-foreground truncate">
                           {lead.category} · {lead.city}
                           {lead.rating ? ` · ★${lead.rating} (${lead.reviewsCount})` : ""}
@@ -615,6 +672,12 @@ export function Phase7Export({
         </>
       )}
     </PhaseShell>
+
+    <LeadHistoryDrawer
+      entry={historyEntry}
+      onClose={() => setHistoryEntry(null)}
+    />
+    </>
   );
 }
 

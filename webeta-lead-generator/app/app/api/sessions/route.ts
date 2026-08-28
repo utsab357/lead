@@ -34,10 +34,11 @@ export async function GET() {
       } catch { /* skip corrupt files */ }
     }
 
-    // Sort newest first
-    sessions.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+    // Sort newest first — safe against missing timestamps
+    sessions.sort((a, b) => (b.timestamp ?? "").localeCompare(a.timestamp ?? ""));
     return NextResponse.json({ sessions });
-  } catch {
+  } catch (e) {
+    console.error("[sessions GET] error:", e);
     return NextResponse.json({ sessions: [] });
   }
 }

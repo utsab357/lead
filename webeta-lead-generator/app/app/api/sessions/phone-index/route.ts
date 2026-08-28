@@ -6,12 +6,14 @@ import type { ScrapeSession } from "@/lib/types";
 const SESSIONS_DIR = path.join(process.cwd(), "data", "sessions");
 
 export type PhoneIndexEntry = {
-  phone: string;        // normalized digits only
+  phone: string;
   sessionId: string;
   niche: string;
   city: string;
   timestamp: string;
   leadName: string;
+  status?: string;
+  notes?: string;
 };
 
 /**
@@ -59,6 +61,8 @@ export async function GET(req: Request) {
             city: session.city,
             timestamp: session.timestamp,
             leadName: lead.name,
+            status: session.leadStatuses?.[lead.id],
+            notes:  session.leadNotes?.[lead.id],
           });
         }
       } catch { /* skip corrupt files */ }

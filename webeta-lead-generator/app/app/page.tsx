@@ -314,6 +314,7 @@ export default function Page() {
               buildPrompts={buildPrompts}
               leadStatuses={leadStatuses}
               leadNotes={leadNotes}
+              sessionId={activeSessionId}
               setLeadStatuses={(s) => { setLeadStatuses(s); saveLeadStatusesToSession(s); }}
               setLeadNotes={(n) => { setLeadNotes(n); saveLeadNotesToSession(n); }}
               onGoToPhase={(phaseNum, leadId) => {
