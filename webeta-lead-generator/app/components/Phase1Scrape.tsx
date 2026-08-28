@@ -376,7 +376,7 @@ export function Phase1Scrape({
         </Card>
 
         {/* Live map */}
-        <Card className="md:col-span-2 flex flex-col">
+        <Card className="md:col-span-2 flex flex-col isolate">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">Live map</CardTitle>
           </CardHeader>

@@ -7,7 +7,9 @@
     "dev:webpack": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "share": "D:\\projects\\webeta-lead-generator\\webeta-lead-generator\\cloudflared.exe tunnel --protocol http2 --url http://localhost:3000",
+    "share:3001": "D:\\projects\\webeta-lead-generator\\webeta-lead-generator\\cloudflared.exe tunnel --protocol http2 --url http://localhost:3001"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

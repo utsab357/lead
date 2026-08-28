@@ -6,14 +6,14 @@ import type { Lead } from "@/lib/types";
 
 export default function LeadMap({ leads }: { leads: Lead[] }) {
   if (leads.length === 0) {
-    return <div className="h-[320px] rounded-lg border border-dashed border-border flex items-center justify-center text-sm text-muted-foreground">Map appears once leads are scraped</div>;
+    return <div className="min-h-[240px] rounded-lg border border-dashed border-border flex items-center justify-center text-sm text-muted-foreground">Map appears once leads are scraped</div>;
   }
   const center: [number, number] = [
     leads.reduce((s, l) => s + l.lat, 0) / leads.length,
     leads.reduce((s, l) => s + l.lng, 0) / leads.length,
   ];
   return (
-    <div className="h-full min-h-[280px] rounded-lg overflow-hidden border border-border">
+    <div className="isolate relative z-0 h-full min-h-[240px] rounded-lg overflow-hidden border border-border">
       <MapContainer center={center} zoom={14} className="h-full w-full" scrollWheelZoom={false}>
         <TileLayer
           attribution='&copy; OpenStreetMap &copy; CARTO'

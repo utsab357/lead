@@ -29,6 +29,8 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: nearestSpacelessRoot(__dirname),
   },
+  // Allow Cloudflare tunnel URLs to reach the dev server
+  allowedDevOrigins: ["*.trycloudflare.com"],
 };
 
 export default nextConfig;

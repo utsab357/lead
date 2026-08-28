@@ -21,6 +21,9 @@ start "" "http://localhost:3000"
 echo Starting server...
 echo Open http://localhost:3000 if browser did not open.
 echo.
+echo Want to SHARE with someone? Open a second window and run:
+echo   npm run share
+echo.
 echo To STOP: press Ctrl + C in this window, or close it.
 echo.
 
