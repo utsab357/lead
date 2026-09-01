@@ -54,7 +54,7 @@ export type LeadStatus =
   | "interested"
   | "demo_sent"
   | "meeting_set"
-  | "closed"
+  | "completed"
   | "not_interested"
   | "no_response";
 
@@ -85,8 +85,24 @@ export type ScrapeSession = {
   leadStatuses?: Record<string, LeadStatus>;
   /** Freeform notes per lead — { [leadId]: string } */
   leadNotes?: Record<string, string>;
+  /** Client deal details per lead — { [leadId]: ClientDetail } */
+  clientDetails?: Record<string, ClientDetail>;
 };
 
+/** Client deal/project details filled after closing a lead */
+export type ClientDetail = {
+  clientName?:        string;
+  priceAgreed?:       string;
+  advanceReceived?:   string;
+  balanceDue?:        string;
+  domainName?:        string;
+  websiteUrl?:        string;
+  freeHostingStart?:  string;
+  freeHostingEnd?:    string;
+  paidHostingStart?:  string;
+  paidHostingEnd?:    string;
+  remarks?:           string;
+};
 
 export type AuditResult = {
   leadId: string;

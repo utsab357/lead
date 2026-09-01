@@ -26,6 +26,7 @@ export function SessionsPage({
   const [loading, setLoading] = useState(true);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [collapsedCities, setCollapsedCities] = useState<Set<string>>(new Set());
 
@@ -62,6 +63,13 @@ export function SessionsPage({
 
   async function deleteSession(id: string, e: React.MouseEvent) {
     e.stopPropagation();
+    setConfirmDeleteId(id);
+  }
+
+  async function confirmDelete() {
+    if (!confirmDeleteId) return;
+    const id = confirmDeleteId;
+    setConfirmDeleteId(null);
     setDeletingId(id);
     try {
       const res = await fetch("/api/sessions", {
@@ -309,6 +317,64 @@ export function SessionsPage({
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* ── Delete confirm popup ───────────────────────────────────────────── */}
+      {confirmDeleteId && (() => {
+        const target = sessions.find(s => s.id === confirmDeleteId);
+        return (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-[2px]"
+              onClick={() => setConfirmDeleteId(null)}
+            />
+            {/* Dialog */}
+            <div className="fixed inset-0 z-[61] flex items-center justify-center p-4" onClick={() => setConfirmDeleteId(null)}>
+              <div
+                className="bg-background border border-border rounded-2xl shadow-2xl w-full max-w-sm p-6 flex flex-col items-center gap-4"
+                onClick={e => e.stopPropagation()}
+              >
+                {/* Icon */}
+                <div className="h-14 w-14 rounded-full bg-destructive/10 border-2 border-destructive/20 flex items-center justify-center">
+                  <Trash2 className="h-6 w-6 text-destructive" />
+                </div>
+                {/* Text */}
+                <div className="text-center">
+                  <div className="font-semibold text-base mb-1">Delete this session?</div>
+                  {target && (
+                    <div className="text-xs text-muted-foreground mb-2 font-medium">
+                      {target.niche} · {target.city} · {target.leadsCount} leads
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Once deleted, this session and all its data will be 
+                    <span className="text-destructive font-semibold">gone forever</span>.
+                    It can never be recovered.
+                  </p>
+                </div>
+                {/* Buttons */}
+                <div className="flex gap-3 w-full mt-1">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setConfirmDeleteId(null)}
+                  >
+                    No, Keep It
+                  </Button>
+                  <Button
+                    className="flex-1 bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                    onClick={confirmDelete}
+                    disabled={!!deletingId}
+                  >
+                    {deletingId ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
+                    Yes, Delete Forever
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </>
+        );
+      })()}
     </div>
   );
 }

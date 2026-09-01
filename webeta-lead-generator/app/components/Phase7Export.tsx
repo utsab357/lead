@@ -11,21 +11,21 @@ import {
   ChevronDown, ChevronUp, Copy, ExternalLink, StickyNote,
   Phone, PhoneOff, ThumbsUp, Presentation, Calendar, CheckCircle2, XCircle, AlertCircle,
 } from "lucide-react";
-import type { RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus } from "@/lib/types";
+import type { RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus, ClientDetail } from "@/lib/types";
 import { toast } from "sonner";
 import { LeadHistoryDrawer } from "./LeadHistoryDrawer";
 import type { LeadHistoryEntry } from "./LeadHistoryDrawer";
 
 // ─── Status config ──────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<LeadStatus, { label: string; color: string; bg: string; icon: typeof Phone }> = {
-  new:             { label: "New",           color: "text-blue-600",   bg: "bg-blue-50 border-blue-200",    icon: AlertCircle },
-  called:          { label: "Called",        color: "text-amber-600",  bg: "bg-amber-50 border-amber-200",  icon: Phone },
-  interested:      { label: "Interested",    color: "text-emerald-600",bg: "bg-emerald-50 border-emerald-200", icon: ThumbsUp },
-  demo_sent:       { label: "Demo Sent",     color: "text-purple-600", bg: "bg-purple-50 border-purple-200",icon: Presentation },
-  meeting_set:     { label: "Meeting Set",   color: "text-indigo-600", bg: "bg-indigo-50 border-indigo-200",icon: Calendar },
-  closed:          { label: "Closed ✓",      color: "text-green-700",  bg: "bg-green-50 border-green-200",  icon: CheckCircle2 },
-  not_interested:  { label: "Not Interested",color: "text-red-600",    bg: "bg-red-50 border-red-200",      icon: XCircle },
-  no_response:     { label: "No Response",   color: "text-gray-500",   bg: "bg-gray-50 border-gray-200",    icon: PhoneOff },
+  new:             { label: "New",            color: "text-sky-700 dark:text-sky-400",      bg: "bg-sky-50 border-sky-200 dark:bg-sky-900/30 dark:border-sky-700",         icon: AlertCircle },
+  called:          { label: "Called",         color: "text-amber-700 dark:text-amber-400",  bg: "bg-amber-50 border-amber-200 dark:bg-amber-900/30 dark:border-amber-700", icon: Phone },
+  interested:      { label: "Interested",     color: "text-emerald-700 dark:text-emerald-400", bg: "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/30 dark:border-emerald-700", icon: ThumbsUp },
+  demo_sent:       { label: "Demo Sent",      color: "text-purple-700 dark:text-purple-400",bg: "bg-purple-50 border-purple-200 dark:bg-purple-900/30 dark:border-purple-700", icon: Presentation },
+  meeting_set:     { label: "Meeting Set",    color: "text-indigo-700 dark:text-indigo-400",bg: "bg-indigo-50 border-indigo-200 dark:bg-indigo-900/30 dark:border-indigo-700", icon: Calendar },
+  completed:       { label: "Completed ✓",   color: "text-green-700 dark:text-green-400",  bg: "bg-green-100 border-green-300 dark:bg-green-900/40 dark:border-green-600",  icon: CheckCircle2 },
+  not_interested:  { label: "Not Interested", color: "text-red-700 dark:text-red-400",      bg: "bg-red-50 border-red-200 dark:bg-red-900/30 dark:border-red-700",           icon: XCircle },
+  no_response:     { label: "No Response",    color: "text-slate-500 dark:text-slate-400",  bg: "bg-slate-50 border-slate-200 dark:bg-slate-800/40 dark:border-slate-600",   icon: PhoneOff },
 };
 
 const ALL_STATUSES = Object.keys(STATUS_CONFIG) as LeadStatus[];
@@ -38,8 +38,10 @@ export function Phase7Export({
   buildPrompts = {},
   leadStatuses = {},
   leadNotes = {},
+  clientDetails = {},
   setLeadStatuses,
   setLeadNotes,
+  setClientDetails,
   onGoToPhase,
   onPrev,
   sessionId,
@@ -50,15 +52,18 @@ export function Phase7Export({
   buildPrompts?: Record<string, BuildPromptResult>;
   leadStatuses?: Record<string, LeadStatus>;
   leadNotes?: Record<string, string>;
+  clientDetails?: Record<string, ClientDetail>;
   setLeadStatuses?: (s: Record<string, LeadStatus>) => void;
   setLeadNotes?: (n: Record<string, string>) => void;
+  setClientDetails?: (d: Record<string, ClientDetail>) => void;
   onGoToPhase?: (phase: number, leadId: string) => void;
   onPrev?: () => void;
   sessionId?: string | null;
 }) {
   const [tab, setTab] = useState<"pipeline" | "export">("pipeline");
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<Set<LeadStatus>>(new Set());
+  const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all");
+  const [searchQuery, setSearchQuery] = useState("");
   // Lead quality filters
   const [fNoSite,  setFNoSite]  = useState(false);
   const [fPhone,   setFPhone]   = useState(false);
@@ -68,6 +73,35 @@ export function Phase7Export({
   // Cross-session duplicate index
   const [phoneIndex, setPhoneIndex] = useState<Map<string, { niche: string; city: string; timestamp: string; status?: string; notes?: string }>>(new Map());
   const [historyEntry, setHistoryEntry] = useState<LeadHistoryEntry | null>(null);
+  // Client detail drawer
+  const [detailDrawer, setDetailDrawer] = useState<{ open: boolean; leadId: string | null }>({ open: false, leadId: null });
+  const [draftDetail, setDraftDetail] = useState<ClientDetail>({});
+
+  function openDetailDrawer(leadId: string) {
+    setDraftDetail(clientDetails[leadId] ?? {});
+    setDetailDrawer({ open: true, leadId });
+  }
+
+  function saveDetailDrawer() {
+    if (!detailDrawer.leadId) return;
+    const next = { ...clientDetails, [detailDrawer.leadId]: draftDetail };
+    setClientDetails?.(next);
+    setDetailDrawer({ open: false, leadId: null });
+    toast.success("Client details saved ✔");
+  }
+
+  function updateDraft(field: keyof ClientDetail, value: string) {
+    setDraftDetail(prev => {
+      const next = { ...prev, [field]: value };
+      // Auto-calc balance due
+      if (field === "priceAgreed" || field === "advanceReceived") {
+        const price = parseFloat(field === "priceAgreed" ? value : prev.priceAgreed ?? "0") || 0;
+        const adv   = parseFloat(field === "advanceReceived" ? value : prev.advanceReceived ?? "0") || 0;
+        if (price > 0) next.balanceDue = String(price - adv);
+      }
+      return next;
+    });
+  }
 
   useEffect(() => {
     const excl = sessionId ? `?exclude=${sessionId}` : "";
@@ -111,16 +145,13 @@ export function Phase7Export({
   function today() { return new Date().toISOString().split("T")[0]; }
 
   function toggleStatusFilter(s: LeadStatus) {
-    setStatusFilter(prev => {
-      const next = new Set(prev);
-      next.has(s) ? next.delete(s) : next.add(s);
-      return next;
-    });
+    setStatusFilter(prev => prev === s ? "all" : s);
   }
 
-  // Leads visible in pipeline after status filter + quality filters
+  // Leads visible in pipeline after search + status filter + quality filters
   const filteredRanked = ranked.filter(l => {
-    if (statusFilter.size > 0 && !statusFilter.has(leadStatuses[l.id] ?? "new")) return false;
+    if (searchQuery && !l.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (statusFilter !== "all" && (leadStatuses[l.id] ?? "new") !== statusFilter) return false;
     if (fNoSite  && l.website)                               return false;
     if (fPhone   && !l.phone)                                return false;
     if (fRating  && (l.rating        ?? 0) < parseFloat(fRating))  return false;
@@ -139,8 +170,8 @@ export function Phase7Export({
 
   // ── Export functions ───────────────────────────────────────────────────────
   function downloadCSV() {
-    const exportList = statusFilter.size > 0
-      ? ranked.filter(l => statusFilter.has(leadStatuses[l.id] ?? "new"))
+    const exportList = statusFilter !== "all"
+      ? ranked.filter(l => (leadStatuses[l.id] ?? "new") === statusFilter)
       : ranked;
     if (!exportList.length) { toast.error("No leads to export"); return; }
     const headers = [
@@ -170,6 +201,187 @@ export function Phase7Export({
       .join("\n");
     trigger(csv, `leads-${today()}.csv`, "text/csv;charset=utf-8;");
     toast.success(`Exported ${exportList.length} leads to CSV`);
+  }
+
+  function downloadClientRecords() {
+    const completed = ranked.filter(l => (leadStatuses[l.id] ?? "new") === "completed");
+    if (!completed.length) { toast.error("No completed leads yet — mark leads as 'Completed ✓' first."); return; }
+    const city = (ranked[0]?.city ?? "leads").replace(/\s+/g, "-").toLowerCase();
+    const cat  = (ranked[0]?.category ?? "clients").replace(/\s+/g, "-").toLowerCase();
+    const filename = `${city}-${cat}-clients-${today()}.csv`;
+    const headers = [
+      "Business Name", "Owner Phone", "WhatsApp", "Google Maps Link",
+      "City", "Business Category", "Your Notes",
+      "Client Name", "Price Agreed (Rs)", "Advance Received (Rs)", "Balance Due (Rs)",
+      "Domain Name", "Website Live URL",
+      "Free Hosting Start Date", "Free Hosting End Date",
+      "Paid Hosting Start Date", "Paid Hosting End Date",
+      "Remarks",
+    ];
+    // Helper: force Excel to show phone as text (prevents 9.2E+11 scientific notation)
+    const asText = (v: string) => v ? `="${v}"` : "";
+    const rows = completed.map(lead => [
+      lead.name,
+      asText(lead.phone ?? ""),
+      asText(lead.whatsapp ?? lead.phone ?? ""),
+      lead.mapUrl ?? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.name + " " + lead.city)}`,
+      lead.city,
+      lead.category,
+      leadNotes[lead.id] ?? "",
+      clientDetails[lead.id]?.clientName ?? "",
+      clientDetails[lead.id]?.priceAgreed ?? "",
+      clientDetails[lead.id]?.advanceReceived ?? "",
+      clientDetails[lead.id]?.balanceDue ?? "",
+      clientDetails[lead.id]?.domainName ?? "",
+      clientDetails[lead.id]?.websiteUrl ?? "",
+      clientDetails[lead.id]?.freeHostingStart ?? "",
+      clientDetails[lead.id]?.freeHostingEnd ?? "",
+      clientDetails[lead.id]?.paidHostingStart ?? "",
+      clientDetails[lead.id]?.paidHostingEnd ?? "",
+      clientDetails[lead.id]?.remarks ?? "",
+    ]);
+    const csv = [headers, ...rows]
+      .map(row => row.map((c, i) => {
+        // Phone columns (index 1,2) already formatted; Maps link (index 3) keep raw; rest quote-wrap
+        if (i === 1 || i === 2) return c; // already ="..." or ""
+        return `"${String(c).replace(/"/g, '""')}"`;
+      }).join(","))
+      .join("\n");
+    // BOM ensures Excel opens UTF-8 correctly (no garbled Hindi/special chars)
+    trigger("\uFEFF" + csv, filename, "text/csv;charset=utf-8;");
+    toast.success(`Exported ${completed.length} client record${completed.length > 1 ? "s" : ""} \u2192 ${filename}`);
+  }
+
+  function downloadClientHTML() {
+    const completed = ranked.filter(l => (leadStatuses[l.id] ?? "new") === "completed");
+    if (!completed.length) { toast.error("No completed leads yet \u2014 mark as 'Completed \u2713' first."); return; }
+    const city = ranked[0]?.city ?? "";
+    const cat  = ranked[0]?.category ?? "";
+    const filename = `${city}-${cat}-clients-${today()}.html`.toLowerCase().replace(/\s+/g, "-");
+    const esc = (s: string) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+    const cards = completed.map((lead, i) => {
+      const note = leadNotes[lead.id] ?? "";
+      const waNum = (lead.whatsapp ?? lead.phone ?? "").replace(/\D/g, "");
+      const d = clientDetails[lead.id] ?? {};
+      const dealFields: { label: string; value: string }[] = [
+        { label: "Client Name",           value: d.clientName       ?? "" },
+        { label: "Price Agreed (Rs)",     value: d.priceAgreed      ?? "" },
+        { label: "Advance Received (Rs)", value: d.advanceReceived  ?? "" },
+        { label: "Balance Due (Rs)",      value: d.balanceDue       ?? "" },
+        { label: "Domain Name",           value: d.domainName       ?? "" },
+        { label: "Website Live URL",      value: d.websiteUrl       ?? "" },
+        { label: "Free Hosting Start",    value: d.freeHostingStart ?? "" },
+        { label: "Free Hosting End",      value: d.freeHostingEnd   ?? "" },
+        { label: "Paid Hosting Start",    value: d.paidHostingStart ?? "" },
+        { label: "Paid Hosting End",      value: d.paidHostingEnd   ?? "" },
+        { label: "Remarks",               value: d.remarks          ?? "" },
+      ];
+      const hasDealData = dealFields.some(f => f.value);
+      const fillRows = dealFields.map(f =>
+        f.value
+          ? `<div class="fill-item"><span class="fill-label">${esc(f.label)}</span><span class="fill-value">${esc(f.value)}</span></div>`
+          : `<div class="fill-item"><span class="fill-label">${esc(f.label)}</span><span class="fill-blank"></span></div>`
+      ).join("");
+      return `
+<div class="card">
+  <div class="card-header">
+    <span class="num">${i + 1}</span>
+    <span class="name">\ud83c\udfe2 ${esc(lead.name)}</span>
+    <span class="badge">\u2705 Completed</span>
+  </div>
+  <div class="card-body">
+    <div class="info-grid">
+      <div class="info-row"><span class="label">\ud83d\udcde Phone</span><span class="val"><a href="tel:${esc(lead.phone ?? "")}">${esc(lead.phone ?? "\u2014")}</a></span></div>
+      <div class="info-row"><span class="label">\ud83d\udcac WhatsApp</span><span class="val">${waNum ? `<a href="https://wa.me/${waNum}" target="_blank">${esc(lead.whatsapp ?? lead.phone ?? "")}</a>` : "\u2014"}</span></div>
+      <div class="info-row"><span class="label">\ud83d\udccd Maps</span><span class="val">${lead.mapUrl ? `<a href="${esc(lead.mapUrl)}" target="_blank">Open in Google Maps \u2197</a>` : "\u2014"}</span></div>
+      <div class="info-row"><span class="label">\ud83c\udfd9\ufe0f City</span><span class="val">${esc(lead.city)}</span></div>
+      <div class="info-row"><span class="label">\ud83c\udff7\ufe0f Category</span><span class="val">${esc(lead.category)}</span></div>
+      <div class="info-row"><span class="label">\u2b50 Rating</span><span class="val">${lead.rating ?? "\u2014"} <span class="muted">(${lead.reviewsCount ?? 0} reviews)</span></span></div>
+      ${note ? `<div class="info-row note-row"><span class="label">\ud83d\udcdd Note</span><span class="val note-val">${esc(note)}</span></div>` : ""}
+    </div>
+    <div class="fill-section${hasDealData ? " fill-section--filled" : ""}">
+      <div class="fill-title">${hasDealData ? "\u270f\ufe0f Deal Details \u2714\ufe0f" : "\u270f\ufe0f Fill after deal"}</div>
+      <div class="fill-grid">${fillRows}</div>
+    </div>
+  </div>
+</div>`;
+    }).join("\n");
+
+    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Client Records \u2014 ${esc(city)} ${esc(cat)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:#f0fdf4;color:#1a2e1a;padding:24px 16px 60px;max-width:760px;margin:0 auto}
+a{color:#16a34a;text-decoration:none}a:hover{text-decoration:underline}
+.page-header{background:linear-gradient(135deg,#14532d,#166534);color:#fff;border-radius:14px;padding:24px 28px;margin-bottom:28px}
+.page-header h1{font-size:20px;font-weight:700;margin-bottom:4px}
+.page-header .meta{font-size:12px;opacity:.8}
+.card{background:#fff;border:1px solid #bbf7d0;border-radius:12px;margin-bottom:20px;overflow:hidden;box-shadow:0 1px 4px #00000010}
+.card-header{display:flex;align-items:center;gap:10px;padding:14px 18px;background:#f0fdf4;border-bottom:1px solid #bbf7d0}
+.num{font-size:11px;color:#16a34a;font-weight:700;background:#dcfce7;border:1px solid #86efac;border-radius:99px;padding:1px 7px}
+.name{font-weight:700;font-size:16px;flex:1}
+.badge{font-size:11px;font-weight:600;background:#dcfce7;color:#15803d;border:1px solid #86efac;padding:2px 9px;border-radius:99px}
+.card-body{padding:16px 18px;display:grid;gap:16px}
+.info-grid{display:grid;gap:0;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden}
+.info-row{display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #f1f5f9;gap:12px}
+.info-row:last-child{border-bottom:none}
+.note-row{background:#fffbeb;border-color:#fde68a}
+.label{font-size:12px;color:#64748b;font-weight:500;min-width:110px}
+.val{font-size:13px;color:#1e293b;font-weight:500}
+.note-val{color:#92400e;font-style:italic}
+.muted{font-weight:400;color:#94a3b8}
+.fill-section{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px}
+.fill-section--filled{background:#f0fdf4;border-color:#bbf7d0}
+.fill-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#64748b;font-weight:600;margin-bottom:10px}
+.fill-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fill-item{display:flex;flex-direction:column;gap:3px}
+.fill-label{font-size:11px;color:#64748b;font-weight:500}
+.fill-blank{border-bottom:1.5px solid #cbd5e1;min-height:20px}
+.fill-value{font-size:13px;color:#15803d;font-weight:600;padding:2px 0;border-bottom:1.5px solid #86efac}
+@media(max-width:500px){.fill-grid{grid-template-columns:1fr}}
+@media print{body{background:#fff}.page-header{background:#14532d!important;-webkit-print-color-adjust:exact}}
+</style></head><body>
+<div class="page-header">
+  <h1>\ud83d\udccb Client Records \u2014 ${esc(city)}, ${esc(cat)}</h1>
+  <div class="meta">Generated: ${today()} &nbsp;&bull;&nbsp; Total Clients: ${completed.length}</div>
+</div>
+${cards}
+</body></html>`;
+
+    trigger("\uFEFF" + html, filename, "text/html;charset=utf-8;");
+    toast.success(`Client summary downloaded \u2192 open the .html file in Chrome`);
+  }
+
+  function openGoogleSheets() {
+    const completed = ranked.filter(l => (leadStatuses[l.id] ?? "new") === "completed");
+    if (!completed.length) { toast.error("No completed leads yet"); return; }
+    const headers = ["Business Name","Owner Phone","WhatsApp","Google Maps Link","City","Business Category","Your Notes","Client Name","Price Agreed (Rs)","Advance Received (Rs)","Balance Due (Rs)","Domain Name","Website Live URL","Free Hosting Start","Free Hosting End","Paid Hosting Start","Paid Hosting End","Remarks"];
+    const rows = completed.map(lead => [
+      lead.name, lead.phone ?? "", lead.whatsapp ?? lead.phone ?? "",
+      lead.mapUrl ?? "", lead.city, lead.category, leadNotes[lead.id] ?? "",
+      clientDetails[lead.id]?.clientName ?? "",
+      clientDetails[lead.id]?.priceAgreed ?? "",
+      clientDetails[lead.id]?.advanceReceived ?? "",
+      clientDetails[lead.id]?.balanceDue ?? "",
+      clientDetails[lead.id]?.domainName ?? "",
+      clientDetails[lead.id]?.websiteUrl ?? "",
+      clientDetails[lead.id]?.freeHostingStart ?? "",
+      clientDetails[lead.id]?.freeHostingEnd ?? "",
+      clientDetails[lead.id]?.paidHostingStart ?? "",
+      clientDetails[lead.id]?.paidHostingEnd ?? "",
+      clientDetails[lead.id]?.remarks ?? "",
+    ]);
+    const tsv = [headers, ...rows].map(r => r.join("\t")).join("\n");
+    navigator.clipboard.writeText(tsv)
+      .then(() => {
+        toast.success("✅ Data copied! Opening Google Sheets in 2 sec — click cell A1 then press Ctrl+V to paste.", { duration: 6000 });
+        setTimeout(() => window.open("https://sheets.new", "_blank"), 2000);
+      })
+      .catch(() => {
+        downloadClientRecords();
+        toast.info("Clipboard blocked — CSV downloaded instead. In Google Sheets: File \u2192 Import \u2192 Upload that file.");
+      });
   }
 
   function downloadFullJSON() {
@@ -205,6 +417,192 @@ export function Phase7Export({
     toast.success(`Exported ${entries.length} outreach drafts`);
   }
 
+  function copyForGoogleSheets() {
+    const completed = ranked.filter(l => (leadStatuses[l.id] ?? "new") === "completed");
+    if (!completed.length) { toast.error("No completed leads yet"); return; }
+    const headers = ["Business Name","Owner Phone","WhatsApp","Google Maps Link","City","Business Category","Your Notes","Client Name","Price Agreed (Rs)","Advance Received (Rs)","Balance Due (Rs)","Domain Name","Website Live URL","Free Hosting Start","Free Hosting End","Paid Hosting Start","Paid Hosting End","Remarks"];
+    const rows = completed.map(lead => [
+      lead.name, lead.phone ?? "", lead.whatsapp ?? lead.phone ?? "",
+      lead.mapUrl ?? "", lead.city, lead.category, leadNotes[lead.id] ?? "",
+      "","","","","","","","","","","",
+    ]);
+    const tsv = [headers, ...rows].map(r => r.join("\t")).join("\n");
+    navigator.clipboard.writeText(tsv).then(() => {
+      toast.success("Copied! Open Google Sheets → click cell A1 → paste (Ctrl+V)");
+    }).catch(() => toast.error("Clipboard access denied"));
+  }
+
+  function downloadHTMLReport() {
+    const leadsWithData = ranked.filter(l => conversions[l.id] || outreachResults[l.id] || buildPrompts[l.id]);
+    if (!leadsWithData.length) { toast.error("No data to export — generate conversion points or outreach first"); return; }
+    const city = (ranked[0]?.city ?? "");
+    const cat  = (ranked[0]?.category ?? "");
+    const filename = `${city}-${cat}-report-${today()}.html`.toLowerCase().replace(/\s+/g, "-");
+
+    const statusColors: Record<string, string> = {
+      new:"#3b82f6", called:"#f59e0b", interested:"#10b981",
+      demo_sent:"#8b5cf6", meeting_set:"#6366f1", completed:"#22c55e",
+      not_interested:"#ef4444", no_response:"#64748b"
+    };
+    const statusLabel: Record<string, string> = {
+      new:"New", called:"Called", interested:"Interested",
+      demo_sent:"Demo Sent", meeting_set:"Meeting Set", completed:"Completed ✓",
+      not_interested:"Not Interested", no_response:"No Response"
+    };
+
+    const esc = (s: string) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    const pre = (s: string) => `<pre>${esc(s)}</pre>`;
+
+    const sections = leadsWithData.map((lead, i) => {
+      const conv    = conversions[lead.id];
+      const outreach = outreachResults[lead.id];
+      const prompt  = buildPrompts[lead.id];
+      const note    = leadNotes[lead.id];
+      const status  = leadStatuses[lead.id] ?? "new";
+      const sc      = statusColors[status] ?? "#64748b";
+      const sl      = statusLabel[status] ?? status;
+      const waNum   = (lead.whatsapp ?? lead.phone ?? "").replace(/\D/g, "");
+
+      return `
+<details id="l${i}" open>
+<summary>
+  <span class="lead-num">#${i+1}</span>
+  <span class="lead-name">${esc(lead.name)}</span>
+  <span class="status-pill" style="background:${sc}18;color:${sc};border-color:${sc}40">${sl}</span>
+  <span class="lead-meta">${esc(lead.category)} &bull; ${esc(lead.city ?? "")} &bull; ⭐ ${lead.rating ?? "—"} (${lead.reviewsCount ?? 0})</span>
+  <span class="chevron">&#9660;</span>
+</summary>
+<div class="contact-row">
+  ${lead.phone ? `<a class="btn-phone" href="tel:${esc(lead.phone)}">📞 ${esc(lead.phone)}</a>` : ""}
+  ${waNum ? `<a class="btn-wa" href="https://wa.me/${waNum}" target="_blank">💬 WhatsApp</a>` : ""}
+  ${lead.mapUrl ? `<a class="btn-maps" href="${esc(lead.mapUrl)}" target="_blank">📍 Google Maps</a>` : ""}
+  ${note ? `<span class="note-inline">📝 ${esc(note)}</span>` : ""}
+</div>
+<div class="lead-body">
+${ conv ? `
+<div class="section conv-section">
+  <div class="sh">🎯 Conversion Points</div>
+  <div class="sb">
+    <ul>${conv.points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>
+    ${conv.competitorInsight ? `<div class="insight">💡 ${esc(conv.competitorInsight)}</div>` : ""}
+    ${conv.revenueArgument ? `<div class="revenue">💰 ${esc(conv.revenueArgument)}</div>` : ""}
+    ${conv.urgencyHook ? `<div class="urgency">⚡ ${esc(conv.urgencyHook)}</div>` : ""}
+  </div>
+</div>
+${ conv.callScript ? `
+<div class="section script-section">
+  <div class="sh">📞 Call Script</div>
+  <div class="sb">
+    <div class="msg-label">Opening</div><div class="msg-box">${esc(conv.callScript.opener)}</div>
+    ${conv.callScript.iceBreaker ? `<div class="msg-label" style="margin-top:10px">Ice Breaker</div><div class="msg-box">${esc(conv.callScript.iceBreaker)}</div>` : ""}
+    <div class="msg-label" style="margin-top:10px">Key Points</div>
+    <ul>${conv.callScript.keyPoints.map(p => `<li>${esc(p)}</li>`).join("")}</ul>
+    <div class="msg-label" style="margin-top:10px">Objection Handler</div><div class="msg-box">${esc(conv.callScript.objectionHandler)}</div>
+    <div class="msg-label" style="margin-top:10px">Closing Line</div><div class="msg-box closer">${esc(conv.callScript.closer)}</div>
+    ${conv.callScript.doNotSay ? `<div class="do-not">⛔ Do NOT say: ${esc(conv.callScript.doNotSay)}</div>` : ""}
+  </div>
+</div>` : ""}
+${ conv.postCallWhatsApp ? `
+<div class="section wa-section">
+  <div class="sh">💬 Post-Call WhatsApp</div>
+  <div class="sb">${pre(conv.postCallWhatsApp)}${conv.bestTimeToCall ? `<div class="time-badge">🕐 Best time: ${esc(conv.bestTimeToCall)}</div>` : ""}</div>
+</div>` : ""}` : ""}
+
+${ outreach ? `
+<div class="section outreach-section">
+  <div class="sh">📱 Outreach Messages</div>
+  <div class="sb">
+    <div class="msg-label">First Message</div><div class="msg-box">${pre(outreach.first)}</div>
+    <div class="msg-label" style="margin-top:14px">Day-3 Follow-Up</div><div class="msg-box">${pre(outreach.followUp)}</div>
+    <div class="time-badge">🕐 Best send time: ${esc(outreach.bestSendTime)}</div>
+  </div>
+</div>` : ""}
+
+${ prompt ? `
+<div class="section prompt-section">
+  <div class="sh">🌐 Website Build Brief</div>
+  <div class="sb">
+    ${pre(prompt.prompt)}
+    ${prompt.pitchPoints?.length ? `<div class="msg-label" style="margin-top:10px">Pitch Points</div><ul>${prompt.pitchPoints.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
+  </div>
+</div>` : ""}
+</div>
+</details>`;
+    }).join("\n");
+
+    const toc = leadsWithData.map((l, i) => `<a href="#l${i}">${esc(l.name)}</a>`).join("");
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Webeta Report — ${esc(city)} ${esc(cat)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:#09090f;color:#e2e8f0;line-height:1.65;padding:0 12px 80px}
+a{color:inherit;text-decoration:none}
+ul{padding-left:18px}li{padding:3px 0;font-size:13.5px}
+pre{white-space:pre-wrap;font-family:-apple-system,'Segoe UI',sans-serif;font-size:13px;line-height:1.75}
+.site-header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);padding:28px 24px;margin:0 -12px 28px;border-bottom:1px solid #1e3a5f}
+.site-header h1{font-size:20px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.site-header .meta{font-size:12px;color:#94a3b8;margin-top:6px}
+.toc{background:#13131a;border:1px solid #1e1e2e;border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.toc-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-right:6px;white-space:nowrap}
+.toc a{font-size:11px;color:#818cf8;background:#6366f110;border:1px solid #6366f128;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.toc a:hover{background:#6366f122}
+details{background:#13131a;border:1px solid #1e1e2e;border-radius:12px;margin-bottom:14px;overflow:hidden}
+summary{padding:14px 18px;cursor:pointer;display:flex;align-items:center;gap:10px;list-style:none;background:#161621;border-bottom:1px solid #1e1e2e;flex-wrap:wrap}
+summary::-webkit-details-marker{display:none}
+.lead-num{font-size:11px;color:#64748b;min-width:24px}
+.lead-name{font-weight:700;font-size:15px;flex:1;min-width:160px}
+.status-pill{font-size:10px;font-weight:600;padding:2px 9px;border-radius:99px;border:1px solid;white-space:nowrap}
+.lead-meta{font-size:11px;color:#64748b;flex:1}
+.chevron{color:#64748b;font-size:11px;margin-left:auto}
+details:not([open]) .chevron{transform:rotate(-90deg)}
+.contact-row{display:flex;flex-wrap:wrap;gap:7px;padding:10px 18px;background:#0f1019;border-bottom:1px solid #1e1e2e}
+.contact-row a,.contact-row span{font-size:12px;padding:5px 12px;border-radius:8px;border:1px solid;font-weight:500;display:inline-flex;align-items:center;gap:4px}
+.btn-phone{background:#10b98110;border-color:#10b98130;color:#10b981}
+.btn-wa{background:#22c55e10;border-color:#22c55e30;color:#22c55e}
+.btn-maps{background:#3b82f610;border-color:#3b82f630;color:#60a5fa}
+.note-inline{background:#1e1e2e;border-color:#2a2a3e;color:#94a3b8;font-style:italic}
+.lead-body{padding:16px;display:grid;gap:12px}
+.section{border-radius:8px;overflow:hidden;border:1px solid}
+.sh{padding:7px 14px;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.sb{padding:14px;display:grid;gap:8px}
+.conv-section{border-color:#f59e0b30}.conv-section .sh{background:#f59e0b0e;color:#fbbf24}
+.script-section{border-color:#6366f130}.script-section .sh{background:#6366f10e;color:#a5b4fc}
+.wa-section{border-color:#22c55e30}.wa-section .sh{background:#22c55e0e;color:#4ade80}
+.outreach-section{border-color:#38bdf830}.outreach-section .sh{background:#0ea5e90e;color:#38bdf8}
+.prompt-section{border-color:#8b5cf630}.prompt-section .sh{background:#8b5cf60e;color:#c4b5fd}
+.msg-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#64748b;font-weight:600}
+.msg-box{background:#0a0a0f;border:1px solid #1e1e2e;border-radius:6px;padding:11px 13px;font-size:13px;line-height:1.75}
+.closer{border-color:#22c55e30;background:#22c55e0a}
+.do-not{background:#ef44440a;border:1px solid #ef444430;color:#f87171;padding:8px 12px;border-radius:6px;font-size:12px}
+.insight{background:#0ea5e90a;border:1px solid #0ea5e930;color:#7dd3fc;padding:8px 12px;border-radius:6px;font-size:13px}
+.revenue{background:#22c55e0a;border:1px solid #22c55e30;color:#4ade80;padding:8px 12px;border-radius:6px;font-size:13px}
+.urgency{background:#ef44440a;border:1px solid #ef444428;color:#fca5a5;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:500}
+.time-badge{font-size:11px;color:#64748b;padding:4px 0}
+@media print{body{background:#fff;color:#000}.site-header{background:#1e293b;color:#fff}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <h1>📋 Webeta Lead Report</h1>
+  <div class="meta">${esc(city)} &bull; ${esc(cat)} &bull; Generated ${today()} &bull; ${leadsWithData.length} leads</div>
+</header>
+<nav class="toc">
+  <span class="toc-label">Jump to:</span>
+  ${toc}
+</nav>
+${sections}
+</body>
+</html>`;
+
+    trigger("\uFEFF" + html, filename, "text/html;charset=utf-8;");
+    toast.success(`Report downloaded — open the .html file in Chrome or Edge`);
+  }
+
   function downloadPromptsTXT() {
     const entries = Object.entries(buildPrompts);
     if (!entries.length) { toast.error("No site prompts to export"); return; }
@@ -224,7 +622,7 @@ export function Phase7Export({
   const buildCount    = Object.keys(buildPrompts).length;
 
   // ── status summary counts ──────────────────────────────────────────────────
-  const closedCount    = ranked.filter(l => leadStatuses[l.id] === "closed").length;
+  const closedCount    = ranked.filter(l => leadStatuses[l.id] === "completed").length;
   const interestedCount= ranked.filter(l => leadStatuses[l.id] === "interested").length;
   const calledCount    = ranked.filter(l => leadStatuses[l.id] === "called" || leadStatuses[l.id] === "demo_sent" || leadStatuses[l.id] === "meeting_set").length;
 
@@ -271,30 +669,71 @@ export function Phase7Export({
             </Card>
           ) : (
             <div className="space-y-3">
-              {/* Status filter bar */}
-              <div className="flex flex-wrap gap-1.5 p-2.5 rounded-lg bg-muted/40 border border-border items-center">
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mr-1">Status:</span>
-                {ALL_STATUSES.map(s => {
-                  const cfg = STATUS_CONFIG[s];
-                  const active = statusFilter.has(s);
-                  const count = ranked.filter(l => (leadStatuses[l.id] ?? "new") === s).length;
-                  if (count === 0) return null;
-                  return (
-                    <button
-                      key={s}
-                      id={`pipeline-filter-${s}`}
-                      onClick={() => toggleStatusFilter(s)}
-                      className={`flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
-                        active ? `${cfg.bg} ${cfg.color} ring-1 ring-current/30` : "bg-background border-border text-muted-foreground hover:border-primary/40"
-                      }`}
-                    >
-                      {cfg.label} <span className="tabular-nums opacity-70">({count})</span>
+              {/* Search bar */}
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1 max-w-sm">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by business name..."
+                    className="w-full h-9 pl-8 pr-8 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50"
+                  />
+                  <svg className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  {searchQuery && (
+                    <button onClick={() => setSearchQuery("")} className="absolute right-2 top-2 h-5 w-5 flex items-center justify-center text-muted-foreground hover:text-foreground rounded">
+                      ✕
                     </button>
-                  );
-                })}
-                {statusFilter.size > 0 && (
+                  )}
+                </div>
+                {searchQuery && (
+                  <span className="text-xs text-muted-foreground">
+                    {filteredRanked.length} of {ranked.length}
+                  </span>
+                )}
+              </div>
+
+              {/* Status filter bar — single dropdown */}
+              <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-lg bg-muted/40 border border-border">
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Status:</span>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value as LeadStatus | "all")}
+                  className="h-8 px-2 pr-7 text-xs rounded-md border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 cursor-pointer"
+                >
+                  <option value="all">All ({ranked.length})</option>
+                  {ALL_STATUSES.map(s => {
+                    const count = ranked.filter(l => (leadStatuses[l.id] ?? "new") === s).length;
+                    if (count === 0) return null;
+                    return (
+                      <option key={s} value={s}>
+                        {STATUS_CONFIG[s].label} ({count})
+                      </option>
+                    );
+                  })}
+                </select>
+                {/* Count chips for quick overview */}
+                <div className="flex flex-wrap gap-1 ml-1">
+                  {ALL_STATUSES.map(s => {
+                    const cfg = STATUS_CONFIG[s];
+                    const count = ranked.filter(l => (leadStatuses[l.id] ?? "new") === s).length;
+                    if (count === 0) return null;
+                    return (
+                      <button
+                        key={s}
+                        onClick={() => setStatusFilter(statusFilter === s ? "all" : s)}
+                        className={`text-[10px] font-medium px-1.5 py-0.5 rounded border transition-all ${
+                          statusFilter === s ? `${cfg.bg} ${cfg.color}` : "bg-background border-border text-muted-foreground hover:border-primary/30"
+                        }`}
+                      >
+                        {cfg.label} {count}
+                      </button>
+                    );
+                  })}
+                </div>
+                {statusFilter !== "all" && (
                   <button
-                    onClick={() => setStatusFilter(new Set())}
+                    onClick={() => setStatusFilter("all")}
                     className="text-[11px] text-muted-foreground underline hover:text-foreground ml-auto"
                   >
                     Clear
@@ -361,7 +800,7 @@ export function Phase7Export({
               </div>
 
               {/* Lead count after filter */}
-              {statusFilter.size > 0 && (
+              {(statusFilter !== "all" || searchQuery) && (
                 <p className="text-xs text-muted-foreground">
                   Showing {filteredRanked.length} of {ranked.length} leads
                 </p>
@@ -377,6 +816,7 @@ export function Phase7Export({
                 const outreach = outreachResults[lead.id];
                 const buildPrompt = buildPrompts[lead.id];
                 const note = leadNotes[lead.id] ?? "";
+                const hasDeal = !!(clientDetails[lead.id] && Object.values(clientDetails[lead.id]).some(v => v));
 
                 return (
                   <div key={lead.id} className={`rounded-xl border transition-all duration-200 ${isOpen ? "border-primary/30 shadow-sm" : "border-border"}`}>
@@ -453,6 +893,19 @@ export function Phase7Export({
                         aria-label={isOpen ? "Collapse" : "Expand"}
                       >
                         {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      </button>
+
+                      {/* 💼 Client details button */}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); openDetailDrawer(lead.id); }}
+                        className={`shrink-0 flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-md border transition-all ${
+                          hasDeal
+                            ? "bg-green-50 border-green-300 text-green-700 dark:bg-green-900/20 dark:border-green-700 dark:text-green-400"
+                            : "bg-muted/40 border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                        }`}
+                        title="Fill client deal details"
+                      >
+                        {hasDeal ? <>✅</> : <>💼</>} Details
                       </button>
                     </div>
 
@@ -611,6 +1064,58 @@ export function Phase7Export({
               </CardContent>
             </Card>
 
+            {/* Client Records card */}
+            <Card className="border-green-200 dark:border-green-800">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <CheckCircle2 className="h-4 w-4 text-green-600" /> Client Records
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground mb-1">
+                  Exports <strong>Completed ✓ leads only</strong> — your lifetime client file.
+                </p>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Name, phone, WhatsApp, Maps, city, category, your notes + 11 empty columns.
+                </p>
+                <div className="flex gap-2 flex-wrap">
+                  {/* Button 1: Excel */}
+                  <Button
+                    onClick={downloadClientRecords}
+                    disabled={!ranked.filter(l => (leadStatuses[l.id] ?? "new") === "completed").length}
+                    className="h-9 bg-green-600 hover:bg-green-700 text-white"
+                    title="Download as .csv — opens in Excel"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    📊 Excel
+                    {(() => { const n = ranked.filter(l => (leadStatuses[l.id] ?? "new") === "completed").length; return n > 0 ? ` (${n})` : ""; })()}
+                  </Button>
+                  {/* Button 2: Google Sheets — opens sheets.new + copies data */}
+                  <Button
+                    onClick={openGoogleSheets}
+                    disabled={!ranked.filter(l => (leadStatuses[l.id] ?? "new") === "completed").length}
+                    variant="outline"
+                    className="h-9 border-green-300 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400"
+                    title="Opens Google Sheets + copies data to clipboard"
+                  >
+                    📅 Google Sheets
+                  </Button>
+                  {/* Button 3: HTML summary */}
+                  <Button
+                    onClick={downloadClientHTML}
+                    disabled={!ranked.filter(l => (leadStatuses[l.id] ?? "new") === "completed").length}
+                    variant="outline"
+                    className="h-9"
+                  >
+                    <Download className="h-4 w-4 mr-2" /> 📄 Client Summary
+                  </Button>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  📅 Google Sheets: opens a new sheet + copies data — just press Ctrl+V
+                </p>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -677,6 +1182,118 @@ export function Phase7Export({
       entry={historyEntry}
       onClose={() => setHistoryEntry(null)}
     />
+
+    {/* ── Client Detail Drawer ─────────────────────────────────────────────── */}
+    {detailDrawer.open && (() => {
+      const lead = ranked.find(l => l.id === detailDrawer.leadId);
+      if (!lead) return null;
+      const f = (label: string, field: keyof ClientDetail, type = "text", readOnly = false) => (
+        <div className="flex flex-col gap-1">
+          <label className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{label}</label>
+          <input
+            type={type}
+            value={draftDetail[field] ?? ""}
+            onChange={e => !readOnly && updateDraft(field, e.target.value)}
+            readOnly={readOnly}
+            className={`h-9 px-3 text-sm rounded-md border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 ${readOnly ? "bg-muted/40 text-muted-foreground cursor-not-allowed" : "border-border"}`}
+          />
+        </div>
+      );
+      return (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40 transition-opacity"
+            onClick={() => setDetailDrawer({ open: false, leadId: null })}
+          />
+          {/* Drawer */}
+          <div className="fixed right-0 top-0 h-full w-full max-w-md bg-background border-l border-border shadow-2xl z-50 flex flex-col overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-muted/30 shrink-0">
+              <div>
+                <div className="font-semibold text-sm">💼 Client Details</div>
+                <div className="text-[11px] text-muted-foreground truncate max-w-[280px]">{lead.name} · {lead.city}</div>
+              </div>
+              <button
+                onClick={() => setDetailDrawer({ open: false, leadId: null })}
+                className="h-7 w-7 flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors text-lg"
+              >×</button>
+            </div>
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+              {/* Deal Info */}
+              <div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
+                  <span className="h-px flex-1 bg-border" /> Deal Info <span className="h-px flex-1 bg-border" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {f("Client Name", "clientName")}
+                  {f("Price Agreed (Rs)", "priceAgreed", "number")}
+                  {f("Advance Received (Rs)", "advanceReceived", "number")}
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Balance Due (Rs)</label>
+                    <input
+                      type="number"
+                      value={draftDetail.balanceDue ?? ""}
+                      onChange={e => updateDraft("balanceDue", e.target.value)}
+                      placeholder="Auto-calculated"
+                      className="h-9 px-3 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50"
+                    />
+                    {draftDetail.priceAgreed && draftDetail.advanceReceived && (
+                      <span className="text-[10px] text-muted-foreground">Auto: {Number(draftDetail.priceAgreed) - Number(draftDetail.advanceReceived)} Rs</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              {/* Website */}
+              <div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
+                  <span className="h-px flex-1 bg-border" /> Website <span className="h-px flex-1 bg-border" />
+                </div>
+                <div className="grid grid-cols-1 gap-3">
+                  {f("Domain Name", "domainName")}
+                  {f("Website Live URL", "websiteUrl")}
+                </div>
+              </div>
+              {/* Hosting */}
+              <div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
+                  <span className="h-px flex-1 bg-border" /> Hosting <span className="h-px flex-1 bg-border" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {f("Free Start", "freeHostingStart", "date")}
+                  {f("Free End", "freeHostingEnd", "date")}
+                  {f("Paid Start", "paidHostingStart", "date")}
+                  {f("Paid End", "paidHostingEnd", "date")}
+                </div>
+              </div>
+              {/* Remarks */}
+              <div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
+                  <span className="h-px flex-1 bg-border" /> Remarks <span className="h-px flex-1 bg-border" />
+                </div>
+                <textarea
+                  value={draftDetail.remarks ?? ""}
+                  onChange={e => updateDraft("remarks", e.target.value)}
+                  rows={3}
+                  placeholder="Any notes about this client deal..."
+                  className="w-full px-3 py-2 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
+                />
+              </div>
+            </div>
+            {/* Footer */}
+            <div className="px-5 py-4 border-t border-border bg-muted/20 shrink-0 flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={() => setDetailDrawer({ open: false, leadId: null })}>
+                Cancel
+              </Button>
+              <Button className="flex-1 bg-green-600 hover:bg-green-700 text-white" onClick={saveDetailDrawer}>
+                💾 Save Details
+              </Button>
+            </div>
+          </div>
+        </>
+      );
+    })()}
     </>
   );
 }

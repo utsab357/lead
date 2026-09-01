@@ -6,16 +6,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PhaseShell } from "./PhaseShell";
-import { Loader2, Target, TrendingUp, Zap, Shield, Clock, ChevronDown, ChevronUp, Phone, MessageSquare, AlertCircle, CheckCircle2 } from "lucide-react";
-import type { RankedLead, ConversionPoints, AuditResult } from "@/lib/types";
+import { Loader2, Target, TrendingUp, Zap, Shield, Clock, ChevronDown, ChevronUp, Phone, MessageSquare, AlertCircle, CheckCircle2, MapPin, Star, ExternalLink } from "lucide-react";
+import type { RankedLead, ConversionPoints, AuditResult, LeadStatus } from "@/lib/types";
 import { toast } from "sonner";
 
 const BATCH_SIZE = 5;
+
+// Status pill config — mirrors Phase 7 STATUS_CONFIG
+const STATUS_PILL: Record<string, { label: string; color: string; bg: string }> = {
+  new:            { label: "New",            color: "text-sky-700",     bg: "bg-sky-50 border-sky-200" },
+  called:         { label: "Called",         color: "text-amber-700",   bg: "bg-amber-50 border-amber-200" },
+  interested:     { label: "Interested",     color: "text-emerald-700", bg: "bg-emerald-50 border-emerald-200" },
+  demo_sent:      { label: "Demo Sent",      color: "text-purple-700",  bg: "bg-purple-50 border-purple-200" },
+  meeting_set:    { label: "Meeting Set",    color: "text-indigo-700",  bg: "bg-indigo-50 border-indigo-200" },
+  completed:      { label: "Completed ✓",   color: "text-green-700",   bg: "bg-green-100 border-green-300" },
+  not_interested: { label: "Not Interested", color: "text-red-700",     bg: "bg-red-50 border-red-200" },
+  no_response:    { label: "No Response",    color: "text-slate-500",   bg: "bg-slate-50 border-slate-200" },
+};
+const ALL_LEAD_STATUSES = Object.keys(STATUS_PILL) as LeadStatus[];
 
 export function Phase4Convert({
   ranked,
   conversions,
   setConversions,
+  leadStatuses,
+  setLeadStatuses,
+  leadNotes,
+  setLeadNotes,
   onNext,
   onPrev,
   initialExpandedId,
@@ -23,6 +40,10 @@ export function Phase4Convert({
   ranked: RankedLead[];
   conversions: Record<string, ConversionPoints>;
   setConversions: (c: Record<string, ConversionPoints>) => void;
+  leadStatuses?: Record<string, LeadStatus>;
+  setLeadStatuses?: (s: Record<string, LeadStatus>) => void;
+  leadNotes?: Record<string, string>;
+  setLeadNotes?: (n: Record<string, string>) => void;
   onNext: () => void;
   onPrev?: () => void;
   initialExpandedId?: string | null;
@@ -31,6 +52,42 @@ export function Phase4Convert({
   const [expandedId, setExpandedId] = useState<string | null>(initialExpandedId ?? null);
   const [statusMsg, setStatusMsg] = useState("");
   const [showScriptId, setShowScriptId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all");
+  // Lead quality filters (same as Phase 7)
+  const [fNoSite,  setFNoSite]  = useState(false);
+  const [fPhone,   setFPhone]   = useState(false);
+  const [fRating,  setFRating]  = useState<"" | "3.5" | "4.0" | "4.5">("");
+  const [fReviews, setFReviews] = useState<"" | "10" | "50" | "100">("");
+  const [fConvDone, setFConvDone] = useState(false);
+
+  const hasActiveFilter = fNoSite || fPhone || fRating || fReviews || fConvDone || statusFilter !== "all" || !!searchQuery;
+
+  function applyFilters(l: (typeof ranked)[number]) {
+    const nameMatch   = !searchQuery || l.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const statusMatch = statusFilter === "all" || ((leadStatuses ?? {})[l.id] ?? "new") === statusFilter;
+    const noSiteMatch = !fNoSite  || !l.website;
+    const phoneMatch  = !fPhone   || !!(l.phone ?? l.whatsapp);
+    const ratingMatch = !fRating  || (l.rating ?? 0) >= parseFloat(fRating);
+    const reviewMatch = !fReviews || (l.reviewsCount ?? 0) >= parseInt(fReviews);
+    const convMatch   = !fConvDone || !!conversions[l.id];
+    return nameMatch && statusMatch && noSiteMatch && phoneMatch && ratingMatch && reviewMatch && convMatch;
+  }
+
+  function clearFilters() {
+    setSearchQuery(""); setStatusFilter("all");
+    setFNoSite(false); setFPhone(false); setFRating(""); setFReviews(""); setFConvDone(false);
+  }
+
+  function handleSetStatus(leadId: string, status: LeadStatus) {
+    const next = { ...(leadStatuses ?? {}), [leadId]: status };
+    setLeadStatuses?.(next);
+  }
+
+  function handleSetNote(leadId: string, note: string) {
+    const next = { ...(leadNotes ?? {}), [leadId]: note };
+    setLeadNotes?.(next);
+  }
 
   async function generateAll() {
     if (ranked.length === 0) return;
@@ -131,10 +188,105 @@ export function Phase4Convert({
         )}
       </div>
 
+      {/* Search + status filter bar */}
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
+        <div className="relative flex-1 max-w-sm">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by business name..."
+            className="w-full h-9 pl-8 pr-8 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50"
+          />
+          <svg className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          {searchQuery && (
+            <button onClick={() => setSearchQuery("")} className="absolute right-2 top-2 h-5 w-5 flex items-center justify-center text-muted-foreground hover:text-foreground rounded">
+              ✕
+            </button>
+          )}
+        </div>
+        {/* Status filter dropdown */}
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as LeadStatus | "all")}
+          className="h-9 px-2 pr-7 text-sm rounded-md border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 cursor-pointer"
+        >
+          <option value="all">All Statuses</option>
+          {ALL_LEAD_STATUSES.map(s => (
+            <option key={s} value={s}>{STATUS_PILL[s].label}</option>
+          ))}
+        </select>
+        {hasActiveFilter && (
+          <button onClick={clearFilters} className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-md px-2.5 py-1.5 hover:bg-muted/50 transition-colors">
+            Clear all
+          </button>
+        )}
+      </div>
+
+      {/* Lead quality filter bar */}
+      <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-lg bg-muted/40 border border-border mb-4">
+        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mr-1">Filter:</span>
+
+        <button
+          onClick={() => setFNoSite(v => !v)}
+          className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
+            fNoSite ? "bg-destructive/10 border-destructive/30 text-destructive" : "bg-background border-border text-muted-foreground hover:border-primary/40"
+          }`}
+        >
+          No website
+        </button>
+
+        <button
+          onClick={() => setFPhone(v => !v)}
+          className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
+            fPhone ? "bg-primary/10 border-primary/30 text-primary" : "bg-background border-border text-muted-foreground hover:border-primary/40"
+          }`}
+        >
+          Has phone
+        </button>
+
+        <select
+          value={fRating}
+          onChange={e => setFRating(e.target.value as typeof fRating)}
+          className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground hover:border-primary/40 focus:outline-none cursor-pointer"
+        >
+          <option value="">Any rating</option>
+          <option value="3.5">★ 3.5+</option>
+          <option value="4.0">★ 4.0+</option>
+          <option value="4.5">★ 4.5+</option>
+        </select>
+
+        <select
+          value={fReviews}
+          onChange={e => setFReviews(e.target.value as typeof fReviews)}
+          className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground hover:border-primary/40 focus:outline-none cursor-pointer"
+        >
+          <option value="">Any reviews</option>
+          <option value="10">10+ reviews</option>
+          <option value="50">50+ reviews</option>
+          <option value="100">100+ reviews</option>
+        </select>
+
+        <button
+          onClick={() => setFConvDone(v => !v)}
+          className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
+            fConvDone ? "bg-orange-500/10 border-orange-500/30 text-orange-600" : "bg-background border-border text-muted-foreground hover:border-primary/40"
+          }`}
+        >
+          🎯 Conv. done
+        </button>
+
+        <span className="ml-auto text-[11px] text-muted-foreground tabular-nums">
+          {ranked.filter(applyFilters).length} / {ranked.length} leads
+        </span>
+      </div>
+
       {/* All ranked leads */}
       <div className="grid gap-3">
         <AnimatePresence initial={false}>
-          {ranked.map((lead, i) => {
+          {ranked
+          .filter(applyFilters)
+            .map((lead, i) => {
             const conv = conversions[lead.id];
             const isExpanded = expandedId === lead.id;
             return (
@@ -159,14 +311,100 @@ export function Phase4Convert({
                         {conv
                           ? <Badge className="text-[10px] bg-emerald-500/10 text-emerald-600 border-emerald-500/20">✓ Ready</Badge>
                           : <Badge variant="secondary" className="text-[10px]">Pending</Badge>}
+                        {/* Status pill — visible in collapsed view */}
+                        {(() => {
+                          const s = (leadStatuses ?? {})[lead.id];
+                          if (!s || s === "new") return null;
+                          const cfg = STATUS_PILL[s];
+                          return cfg ? (
+                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${cfg.color} ${cfg.bg}`}>
+                              {cfg.label}
+                            </span>
+                          ) : null;
+                        })()}
                         {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
                       </div>
                     </div>
-                    <div className="text-xs text-muted-foreground mt-0.5">{lead.address} · {lead.category}</div>
+                    {/* Always-visible contact row */}
+                    <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                      <span className="text-xs text-muted-foreground">{lead.category}</span>
+                      {lead.phone && (
+                        <a
+                          href={`tel:${lead.phone}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition-colors"
+                        >
+                          <Phone className="h-3 w-3" />
+                          {lead.phone}
+                        </a>
+                      )}
+                      {lead.mapUrl && (
+                        <a
+                          href={lead.mapUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors"
+                        >
+                          <MapPin className="h-3 w-3" />
+                          Maps
+                          <ExternalLink className="h-2.5 w-2.5" />
+                        </a>
+                      )}
+                      {lead.rating && (
+                        <span className="flex items-center gap-0.5 text-xs text-amber-500">
+                          <Star className="h-3 w-3 fill-amber-400 stroke-amber-400" />
+                          {lead.rating}
+                          {lead.reviewsCount ? <span className="text-muted-foreground ml-0.5">({lead.reviewsCount})</span> : null}
+                        </span>
+                      )}
+                    </div>
                   </CardHeader>
 
                   {isExpanded && (
                     <CardContent className="pt-0 border-t border-border/60">
+                      {/* ── Contact strip — always shown when expanded ── */}
+                      <div className="flex flex-wrap items-center gap-2 py-3 border-b border-border/40 mb-1">
+                        {lead.phone ? (
+                          <a
+                            href={`tel:${lead.phone}`}
+                            className="flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-md px-3 py-1.5 hover:bg-emerald-500/20 transition-colors"
+                          >
+                            <Phone className="h-3.5 w-3.5" />
+                            {lead.phone}
+                          </a>
+                        ) : (
+                          <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded-md px-3 py-1.5">
+                            <Phone className="h-3.5 w-3.5" /> No phone
+                          </span>
+                        )}
+                        {lead.whatsapp && (
+                          <a
+                            href={`https://wa.me/${lead.whatsapp.replace(/\D/g, "")}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-sm font-medium text-green-600 dark:text-green-400 bg-green-500/10 border border-green-500/20 rounded-md px-3 py-1.5 hover:bg-green-500/20 transition-colors"
+                          >
+                            💬 WhatsApp
+                          </a>
+                        )}
+                        {lead.mapUrl && (
+                          <a
+                            href={lead.mapUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded-md px-3 py-1.5 hover:bg-blue-500/20 transition-colors"
+                          >
+                            <MapPin className="h-3.5 w-3.5" />
+                            Open in Maps
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
+                        {lead.address && (
+                          <span className="text-xs text-muted-foreground ml-auto hidden md:block truncate max-w-[260px]">{lead.address}</span>
+                        )}
+                      </div>
+
                       {conv ? (
                         <>
                           <div className="grid md:grid-cols-2 gap-4 pt-4">
@@ -325,6 +563,36 @@ export function Phase4Convert({
                             </AnimatePresence>
                           </div>
                         )}
+                        {/* ── After Call section ── */}
+                        <div className="mt-4 pt-4 border-t border-border/60 space-y-3">
+                          <div className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">After Call</div>
+                          <div className="flex flex-wrap gap-2">
+                            {ALL_LEAD_STATUSES.map((s) => {
+                              const cfg = STATUS_PILL[s];
+                              const active = ((leadStatuses ?? {})[lead.id] ?? "new") === s;
+                              return (
+                                <button
+                                  key={s}
+                                  onClick={() => handleSetStatus(lead.id, s)}
+                                  className={`flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full border transition-all ${
+                                    active
+                                      ? `${cfg.color} ${cfg.bg} ring-2 ring-offset-1 ring-current scale-105`
+                                      : "text-muted-foreground border-border hover:border-primary/40"
+                                  }`}
+                                >
+                                  {cfg.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                          <textarea
+                            placeholder="Note: what did they say? call back time? anything useful..."
+                            defaultValue={(leadNotes ?? {})[lead.id] ?? ""}
+                            onBlur={(e) => handleSetNote(lead.id, e.target.value)}
+                            rows={2}
+                            className="w-full text-sm rounded-md border border-border bg-muted/30 px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50"
+                          />
+                        </div>
                         </>
                       ) : (
                         <div className="py-6 text-center text-sm text-muted-foreground">

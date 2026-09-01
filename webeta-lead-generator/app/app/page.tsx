@@ -11,7 +11,7 @@ import { Phase5Outreach } from "@/components/Phase5Outreach";
 import { Phase4Build } from "@/components/Phase4Build";
 import { Phase7Export } from "@/components/Phase7Export";
 import { SessionsPage } from "@/components/SessionsPage";
-import type { Lead, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus, ScrapeSession } from "@/lib/types";
+import type { Lead, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus, ScrapeSession, ClientDetail } from "@/lib/types";
 import { Sparkles, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -26,6 +26,7 @@ export default function Page() {
   const [buildPrompts, setBuildPrompts] = useState<Record<string, BuildPromptResult>>({});
   const [leadStatuses, setLeadStatuses] = useState<Record<string, LeadStatus>>({});
   const [leadNotes, setLeadNotes] = useState<Record<string, string>>({});
+  const [clientDetails, setClientDetails] = useState<Record<string, ClientDetail>>({});
   const [goToLeadId, setGoToLeadId] = useState<string | null>(null);
   const [geminiOk, setGeminiOk] = useState<boolean | null>(null);
   const [showSessions, setShowSessions] = useState(false);
@@ -64,8 +65,17 @@ export default function Page() {
     setSelectedId(session.selectedId ?? null);
     setOutreachResults(session.outreachResults ?? {});
     setBuildPrompts(session.buildPrompts ?? {});
-    setLeadStatuses(session.leadStatuses ?? {});
+    setLeadStatuses(
+      // Migration: old sessions used "closed", new name is "completed"
+      Object.fromEntries(
+        Object.entries(session.leadStatuses ?? {}).map(([id, s]) => [
+          id,
+          (s as string) === "closed" ? "completed" : s,
+        ])
+      ) as Record<string, LeadStatus>
+    );
     setLeadNotes(session.leadNotes ?? {});
+    setClientDetails(session.clientDetails ?? {});
 
     const savedRanked   = session.ranked ?? [];
     const savedAudits   = session.audits ?? {};
@@ -176,6 +186,18 @@ export default function Page() {
     } catch { /* non-critical, ignore */ }
   }
 
+  /** Persist client deal details silently */
+  async function saveClientDetailsToSession(details: Record<string, ClientDetail>) {
+    if (!activeSessionId) return;
+    try {
+      await fetch(`/api/sessions/${activeSessionId}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ clientDetails: details }),
+      });
+    } catch { /* non-critical, ignore */ }
+  }
+
   return (
     <>
       <a
@@ -272,6 +294,10 @@ export default function Page() {
                 setConversions(c);
                 saveConversionsToSession(c);
               }}
+              leadStatuses={leadStatuses}
+              setLeadStatuses={(s) => { setLeadStatuses(s); saveLeadStatusesToSession(s); }}
+              leadNotes={leadNotes}
+              setLeadNotes={(n) => { setLeadNotes(n); saveLeadNotesToSession(n); }}
               initialExpandedId={goToLeadId}
               onNext={() => { setGoToLeadId(null); setPhase(5); }}
               onPrev={() => { setGoToLeadId(null); setPhase(3); }}
@@ -314,9 +340,11 @@ export default function Page() {
               buildPrompts={buildPrompts}
               leadStatuses={leadStatuses}
               leadNotes={leadNotes}
+              clientDetails={clientDetails}
               sessionId={activeSessionId}
               setLeadStatuses={(s) => { setLeadStatuses(s); saveLeadStatusesToSession(s); }}
               setLeadNotes={(n) => { setLeadNotes(n); saveLeadNotesToSession(n); }}
+              setClientDetails={(d) => { setClientDetails(d); saveClientDetailsToSession(d); }}
               onGoToPhase={(phaseNum, leadId) => {
                 setGoToLeadId(leadId);
                 setPhase(phaseNum);

@@ -13313,5 +13313,12 @@
         "doNotSay": "Avoid saying ‘I’ll build you a website’ right away; focus on the gap you observed."
       }
     }
+  },
+  "leadNotes": {
+    "lead-003": ""
+  },
+  "leadStatuses": {
+    "lead-003": "new",
+    "lead-006": "new"
   }
 }

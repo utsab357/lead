@@ -59,6 +59,7 @@ export function Phase4Build({
   const [sidebarSearch, setSidebarSearch] = useState("");
   const [extraPagePrompts, setExtraPagePrompts] = useState<Record<string, { prompt: string; generating: boolean }>>({});
   const [heroPhotoIndex, setHeroPhotoIndex] = useState<Record<string, number>>({});
+  const [brokenPhotos, setBrokenPhotos] = useState<Set<string>>(new Set());
 
   const result = activeLead ? buildPrompts[activeLead.id] : null;
   const prompt = result?.prompt ?? "";
@@ -326,40 +327,47 @@ export function Phase4Build({
                 ) : null}
               </div>
 
-              {/* About section photo picker — shown when lead has multiple real business photos */}
-              {activeLead.photoUrls && activeLead.photoUrls.length > 1 && (
-                <div className="mb-4">
-                  <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
-                    <span>🏢</span> About section photo <span className="text-muted-foreground/60">(pick the best real photo of this business)</span>
+              {/* About section photo picker — only shown when lead has 2+ loadable real photos */}
+              {(() => {
+                const allUrls = activeLead.photoUrls ?? [];
+                // Only show URLs that haven't failed to load
+                const loadableUrls = allUrls.slice(0, 8).filter(url => !brokenPhotos.has(url));
+                if (loadableUrls.length < 2) return null;
+                return (
+                  <div className="mb-4">
+                    <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
+                      <span>🏢</span> About section photo <span className="text-muted-foreground/60">(pick the best real photo of this business)</span>
+                    </div>
+                    <div className="flex gap-2 flex-wrap">
+                      {loadableUrls.map((url, idx) => {
+                        const selected = (heroPhotoIndex[activeLead.id] ?? 0) === idx;
+                        return (
+                          <button
+                            key={url}
+                            onClick={() => setHeroPhotoIndex(prev => ({ ...prev, [activeLead.id]: idx }))}
+                            className={`relative rounded-lg overflow-hidden border-2 transition-all ${
+                              selected ? "border-primary shadow-md shadow-primary/30 scale-105" : "border-border hover:border-primary/40"
+                            }`}
+                            title={`Feature Photo ${idx + 1} in About section`}
+                          >
+                            <img
+                              src={url}
+                              alt={`Photo ${idx + 1}`}
+                              className="w-16 h-12 object-cover"
+                              loading="lazy"
+                              onError={() => setBrokenPhotos(prev => new Set([...prev, url]))}
+                            />
+                            {selected && (
+                              <span className="absolute bottom-0 left-0 right-0 bg-primary/90 text-primary-foreground text-[9px] text-center py-0.5 font-semibold">ABOUT</span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground/70 mt-1.5">Hero always uses a professional stock photo. These real photos go in About &amp; Gallery.</p>
                   </div>
-                  <div className="flex gap-2 flex-wrap">
-                    {activeLead.photoUrls.slice(0, 8).map((url, idx) => {
-                      const selected = (heroPhotoIndex[activeLead.id] ?? 0) === idx;
-                      return (
-                        <button
-                          key={idx}
-                          onClick={() => setHeroPhotoIndex(prev => ({ ...prev, [activeLead.id]: idx }))}
-                          className={`relative rounded-lg overflow-hidden border-2 transition-all ${
-                            selected ? "border-primary shadow-md shadow-primary/30 scale-105" : "border-border hover:border-primary/40"
-                          }`}
-                          title={`Feature Photo ${idx + 1} in About section`}
-                        >
-                          <img
-                            src={url}
-                            alt={`Photo ${idx + 1}`}
-                            className="w-16 h-12 object-cover"
-                            loading="lazy"
-                          />
-                          {selected && (
-                            <span className="absolute bottom-0 left-0 right-0 bg-primary/90 text-primary-foreground text-[9px] text-center py-0.5 font-semibold">ABOUT</span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p className="text-[10px] text-muted-foreground/70 mt-1.5">Hero always uses a professional stock photo. These real photos go in About &amp; Gallery.</p>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Platform + Generate controls */}
               <div className="flex items-center gap-3 mb-4 flex-wrap">
