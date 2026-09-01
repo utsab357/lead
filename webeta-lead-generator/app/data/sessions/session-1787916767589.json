@@ -11266,5 +11266,2052 @@
       "score": 30,
       "scoreReasoning": "No site, no reviews, unreachable, $0 lost revenue → very low conversion chance."
     }
-  ]
+  ],
+  "conversions": {
+    "lead-003": {
+      "leadId": "lead-003",
+      "points": [
+        "Lion's Den Fitness Hub has a strong 4.6-star rating from 230 members, but new people cannot see your opening hours on Google.",
+        "You have an active Facebook following, but without a dedicated website, those followers are not converting into registered gym members.",
+        "Members praise your space for physical transformation, but lack of official information leaves room for negative reviews to stand out.",
+        "With only 2 photos online, prospective gym-goers in Barasat cannot inspect your workout facility before visiting."
+      ],
+      "competitorInsight": "Other fitness centers in Barasat actively display trainer schedules and photo galleries on their own websites.",
+      "revenueArgument": "Missing out on walk-ins who search online before visiting costs an estimated ₹1,80,000 in monthly membership fees.",
+      "urgencyHook": "Every single day without an informative website costs your gym roughly ₹6,000 in potential sign-ups.",
+      "postCallWhatsApp": "Hi! Thanks for the quick chat earlier. Here is a free mock-up layout I designed for Lion's Den Fitness Hub to showcase your equipment and timing clearly: [Link]. Would you like me to adjust any details on it?",
+      "bestTimeToCall": "Call Tuesday or Wednesday between 1 PM and 3 PM when morning and evening workout rushes are quiet.",
+      "callScript": {
+        "opener": "I was looking at fitness centers in Barasat and noticed Lion's Den Fitness Hub has great reviews about member body transformations.",
+        "iceBreaker": "Do most of your new members find you through word of mouth, or do they reach out on Facebook first?",
+        "keyPoints": [
+          "You have 230 solid reviews, but your daily opening hours are missing on Google.",
+          "Interested fitness seekers cannot view your full workout space because there are only 2 photos online.",
+          "I built a free mobile web layout showing your trainer schedules and facility photos clearly."
+        ],
+        "objectionHandler": "I completely understand you are busy, but since missing even one prospective member costs about ₹6,000 a day, I can just WhatsApp you a 30-second preview link.",
+        "closer": "Can I send a free 30-second mock-up layout to your WhatsApp number so you can check it when you have a break?",
+        "doNotSay": "Don't bring up negative customer complaints about unhygienic bathrooms or late trainers during your initial outreach."
+      }
+    },
+    "lead-006": {
+      "leadId": "lead-006",
+      "points": [
+        "VENUS GYM has an impressive 4.5 rating with members praising Gopal Sir's personalized workout guidance and diet plans.",
+        "Potential gym members in Barasat cannot read about your custom meal planning services online because you do not have a website.",
+        "Your Google listing has only 3 photos, which does not showcase the friendly workout atmosphere members praise.",
+        "Without visible operating hours on Google, people looking to join a local gym do not know when to visit for a trial."
+      ],
+      "competitorInsight": "Other gyms in Barasat are showcasing trainer profiles and member transformation stories on basic websites.",
+      "revenueArgument": "Not having a simple site to showcase trainer expertise costs around ₹2,00,000 each month in missed memberships.",
+      "urgencyHook": "Without an online schedule, you are losing approximately ₹6,667 every single day in uncaptured walk-ins.",
+      "postCallWhatsApp": "Hello VENUS GYM team! It was great speaking with you briefly. I put together a simple mobile layout highlighting your trainer guidance and meal planning services: [Link]. Would love to hear your thoughts!",
+      "bestTimeToCall": "Call on Tuesday or Thursday between 1 PM and 3 PM during the mid-day gym break.",
+      "callScript": {
+        "opener": "I was checking top-rated gyms in Barasat and noticed your members leave amazing reviews about Gopal Sir's diet plans at VENUS GYM.",
+        "iceBreaker": "Do most new people join VENUS GYM through local referrals, or do they search for trainers online first?",
+        "keyPoints": [
+          "You have nearly 240 positive reviews, but no website to highlight your custom meal plans.",
+          "Your profile shows only 3 photos, so online searchers cannot see your gym environment.",
+          "I created a quick mobile web demo that shows off your trainer expertise and membership options."
+        ],
+        "objectionHandler": "I know you are busy on the gym floor, but since missing online walk-ins costs around ₹6,667 a day, may I just drop a quick WhatsApp preview for you?",
+        "closer": "Shall I WhatsApp you a free demo link so you can take a 10-second look whenever you take a break?",
+        "doNotSay": "Don't try to sell a paid website package right away—focus entirely on sharing a free demo layout."
+      }
+    },
+    "lead-009": {
+      "leadId": "lead-009",
+      "points": [
+        "Fitness Workout : Yoga Centre in Barasat holds a perfect 5.0-star rating across 204 reviews, which is outstanding.",
+        "Members praise your effective free-hand, Zumba, and aerobics sessions that require no expensive machines.",
+        "Despite your flawless reputation, new clients have no online way to check your class schedule or reserve a spot.",
+        "Missing business hours on Google make it difficult for morning yoga seekers in Barasat to know when sessions start."
+      ],
+      "competitorInsight": "Similar fitness and yoga studios in Barasat use web pages to display weekly session timetables and class details.",
+      "revenueArgument": "Losing interested fitness students who cannot find a session schedule costs about ₹1,50,000 every month.",
+      "urgencyHook": "You are potentially losing around ₹5,000 per day because prospective students cannot view your timetable online.",
+      "postCallWhatsApp": "Hi team! Following up on our brief chat, here is a clean web demo showing your 5-star rating and Zumba/Yoga session schedules: [Link]. Let me know if you would like me to update any details!",
+      "bestTimeToCall": "Call on Wednesday or Thursday between 12 PM and 2 PM after morning classes wrap up.",
+      "callScript": {
+        "opener": "I was searching for wellness centers in Barasat and was amazed to see your perfect 5-star rating from over 200 members.",
+        "iceBreaker": "Do prospective yoga students usually call you directly for session timings, or do they visit the centre in person?",
+        "keyPoints": [
+          "Your 5.0 rating is incredible, but interested students cannot find your class timetable online.",
+          "People searching for Zumba or free-hand workouts have no website to request a demo class.",
+          "I designed a clean, free single-page web schedule for your centre to help manage inquiries."
+        ],
+        "objectionHandler": "No worries at all, but as uncaptured session requests can cost up to ₹5,000 daily, I can simply text you a quick WhatsApp visual mock-up.",
+        "closer": "Could I send a quick 30-second preview of the demo site to your WhatsApp number?",
+        "doNotSay": "Don't use technical jargon like hosting, domain, or coding—keep the talk strictly about simple class timetables."
+      }
+    },
+    "lead-016": {
+      "leadId": "lead-016",
+      "points": [
+        "Body Fitness Multi Gym has a solid 4.8-star rating, with members loving the supportive environment and frank training.",
+        "You currently have only 1 photo on Google, making it hard for prospective members in Jagannathpur to view your setup.",
+        "Without a simple website, new members cannot verify trainer presence or gym timings before visiting.",
+        "Displaying your workout hours and facility pictures on a basic site will help attract serious fitness enthusiasts."
+      ],
+      "competitorInsight": "Other local gyms in the Barasat area use basic websites to display facility photos and trainer hours.",
+      "revenueArgument": "Not having a basic web page to capture local search traffic costs your gym an estimated ₹13,600 every month.",
+      "urgencyHook": "Every day without an online photo gallery or info page costs around ₹453 in potential new sign-ups.",
+      "postCallWhatsApp": "Hi there! Thanks for your time earlier. Here is a simple mobile layout for Body Fitness Multi Gym showcasing your 4.8 rating and photo gallery: [Link]. Feel free to check it when free!",
+      "bestTimeToCall": "Call on Monday or Tuesday between 2 PM and 4 PM during off-peak afternoon hours.",
+      "callScript": {
+        "opener": "I was checking local gym options in Jagannathpur and noticed your members leave wonderful reviews about your friendly atmosphere.",
+        "iceBreaker": "Do most new members drop by because they live nearby, or are they finding your listing on Google Maps first?",
+        "keyPoints": [
+          "You have a great 4.8 rating, but prospective members can only view 1 photo of your gym.",
+          "Your daily operating times are not listed online for people searching for evening workout slots.",
+          "I built a simple mobile web layout showing your gym space to help convert searchers into walk-ins."
+        ],
+        "objectionHandler": "I understand you are busy, but even a small gap of ₹453 a day adds up, so I can simply send a fast WhatsApp link for you to check later.",
+        "closer": "May I WhatsApp you a quick screenshot of a basic gym page so you can look at it whenever convenient?",
+        "doNotSay": "Don't bring up negative review comments regarding air conditioning or trainer arrival times."
+      }
+    },
+    "lead-017": {
+      "leadId": "lead-017",
+      "points": [
+        "AUM FITNESS STUDIO holds a strong 4.8-star rating in Kalikapur, but lacks a website to turn searchers into members.",
+        "Your business profile does not show opening hours, making it confusing for prospective clients to visit.",
+        "Without a web page or direct booking link, people searching for local fitness studios often contact other centers.",
+        "A clean mobile website would convert your 61 positive Google reviews into direct WhatsApp inquiries."
+      ],
+      "competitorInsight": "Nearby fitness studios in Barasat are using mobile web pages with direct WhatsApp buttons to capture class bookings.",
+      "revenueArgument": "Losing local web traffic due to unlisted business details costs approximately ₹12,200 in monthly client fees.",
+      "urgencyHook": "Without an online presence, your studio is missing out on around ₹407 every single day.",
+      "postCallWhatsApp": "Hi AUM FITNESS STUDIO team! It was nice speaking briefly. I put together a quick mobile preview showing your studio details and WhatsApp booking button: [Link]. Let me know what you think!",
+      "bestTimeToCall": "Call on Wednesday or Friday between 1 PM and 3 PM when studio sessions are quiet.",
+      "callScript": {
+        "opener": "I was looking at fitness studios around Kalikapur and noticed AUM FITNESS STUDIO has a high 4.8 rating from 61 members.",
+        "iceBreaker": "When new clients reach out, do they usually call your phone directly or drop by the studio in person?",
+        "keyPoints": [
+          "You have a solid 4.8 rating, but your operating hours are missing on your Google listing.",
+          "Potential clients looking for workout times have no web page to check your studio availability.",
+          "I created a simple mobile web preview with a WhatsApp button to help you collect member inquiries easily."
+        ],
+        "objectionHandler": "Totally understand you are busy right now, but missing even ₹407 a day in walk-ins adds up, so I can just text you a quick preview.",
+        "closer": "Can I send a free WhatsApp link showing how your studio could look with a clean web design?",
+        "doNotSay": "Don't ask 'Do you want to buy a website?'—instead offer to share a free layout preview."
+      }
+    },
+    "lead-065": {
+      "leadId": "lead-065",
+      "points": [
+        "FORCE FITNESS has 275 glowing reviews, yet no website to turn that buzz into new members.",
+        "Your gym is praised as \"the best gym in Madhyamgram\" – a story that could reach more people online.",
+        "With only 2 photos, potential members miss seeing your full 3‑story setup.",
+        "Customers love the friendly trainers, but they can’t book classes or see hours without a site.",
+        "A simple website could capture leads and show your hours, turning praise into profit."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already posting class schedules online.",
+      "revenueArgument": "₹80,000 per month",
+      "urgencyHook": "You’re losing ₹2,667 each day",
+      "postCallWhatsApp": "Hi FORCE FITNESS team, thanks for chatting! I’ll send a quick mock‑up of a website that shows your 275 reviews and 3‑story layout. Will that help you attract more members? Let me know!",
+      "bestTimeToCall": "Call Tuesday or Wednesday between 2–4 PM when members are on break.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and noticed your 275 reviews and the comment that you’re the best gym in Madhyamgram…",
+        "iceBreaker": "Do most of your members find you through Google or through word of mouth?",
+        "keyPoints": [
+          "Your reviews say you’re the best gym in Madhyamgram.",
+          "Only 2 photos show your full 3‑story gym.",
+          "No website means no online booking or hours."
+        ],
+        "objectionHandler": "I understand you’re busy, but you’re losing ₹2,667 each day without a site.",
+        "closer": "I can send you a free WhatsApp mock‑up of a simple site in a few minutes.",
+        "doNotSay": "Don’t say \"I want to build you a website\" right away; first share what I saw."
+      }
+    },
+    "lead-076": {
+      "leadId": "lead-076",
+      "points": [
+        "Gym Nation has 179 five‑star reviews but no website to turn that trust into sign‑ups.",
+        "Customers say you’re the finest fitness center, yet they can’t book online.",
+        "Your Instagram exists but without a site you’re missing a conversion funnel.",
+        "Show your hours and services online and you’ll capture more leads.",
+        "A quick website could turn your Instagram followers into paying members."
+      ],
+      "competitorInsight": "Other gyms in Barasat are posting class schedules and booking links online.",
+      "revenueArgument": "₹80,000 per month",
+      "urgencyHook": "You’re losing ₹2,667 each day",
+      "postCallWhatsApp": "Hi Gym Nation team, thanks for the chat! I’ll send a quick mock‑up that shows your 179 reviews and booking option. Will that help you grow? Let me know!",
+      "bestTimeToCall": "Call Tuesday or Wednesday between 2–4 PM when members are on break.",
+      "callScript": {
+        "opener": "I was browsing gyms in Barasat and saw your 179 reviews praising you as the finest fitness center…",
+        "iceBreaker": "Do most of your members find you through Instagram or Google search?",
+        "keyPoints": [
+          "179 reviews say you’re the finest gym.",
+          "No website means no online booking.",
+          "Your Instagram is great but needs a site to convert."
+        ],
+        "objectionHandler": "I know you’re busy, but you’re losing ₹2,667 every day without a website.",
+        "closer": "Let me send you a free WhatsApp mock‑up of a simple site that showcases your services.",
+        "doNotSay": "Avoid saying \"I’ll build you a website\" immediately; first show what I noticed."
+      }
+    },
+    "lead-010": {
+      "leadId": "lead-010",
+      "points": [
+        "FittNEasy has 64 positive reviews but no website to turn Instagram followers into members.",
+        "Customers praise your welcoming environment, yet they can’t see your hours or book classes online.",
+        "Your phone number is missing online, so leads slip away.",
+        "A simple site could display your schedule and capture new sign‑ups.",
+        "With a website, you can turn your Instagram buzz into revenue."
+      ],
+      "competitorInsight": "Other gyms in Barasat share class times and booking links on their sites.",
+      "revenueArgument": "₹12,800 per month",
+      "urgencyHook": "You’re losing ₹427 each day",
+      "postCallWhatsApp": "Hi FittNEasy team, thanks for talking! I’ll send a quick mock‑up that shows your schedule and phone number. Will that help you get more members? Let me know!",
+      "bestTimeToCall": "Call Tuesday or Wednesday between 2–4 PM when members are on break.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and saw your 64 reviews that say you’re welcoming and motivating…",
+        "iceBreaker": "Do most of your members find you through Instagram or Google search?",
+        "keyPoints": [
+          "64 reviews say you’re welcoming.",
+          "No website means no online booking.",
+          "Your phone number isn’t listed online."
+        ],
+        "objectionHandler": "I understand you’re busy, but you’re losing ₹427 every day without a site.",
+        "closer": "I can send you a free WhatsApp mock‑up of a simple site that shows your schedule.",
+        "doNotSay": "Don’t say \"I’ll build you a website\" right away; first share what I saw."
+      }
+    },
+    "lead-015": {
+      "leadId": "lead-015",
+      "points": [
+        "Fitness Bar Multi has 127 reviews praising comfort and parking, but no website to showcase these perks.",
+        "Customers love the clean, well‑maintained machines, yet they can’t see your hours online.",
+        "Only one photo online makes it hard for prospects to see your gym.",
+        "A simple site could display your services and capture new sign‑ups.",
+        "With a website, you can turn praise into new memberships."
+      ],
+      "competitorInsight": "Other gyms in Barasat post photos and schedules on their sites.",
+      "revenueArgument": "₹25,400 per month",
+      "urgencyHook": "You’re losing ₹847 each day",
+      "postCallWhatsApp": "Hi Fitness Bar Multi team, thanks for the call! I’ll send a quick mock‑up that shows your single photo and services. Will that help you attract more members? Let me know!",
+      "bestTimeToCall": "Call Tuesday or Wednesday between 2–4 PM when members are on break.",
+      "callScript": {
+        "opener": "I was browsing gyms in Barasat and saw your 127 reviews that say you have great comfort and parking…",
+        "iceBreaker": "Do most of your members find you through Google or word of mouth?",
+        "keyPoints": [
+          "127 reviews praise your comfort and parking.",
+          "No website means no online booking.",
+          "Only one photo online shows your gym."
+        ],
+        "objectionHandler": "I know you’re busy, but you’re losing ₹847 each day without a site.",
+        "closer": "Let me send you a free WhatsApp mock‑up that shows your services and hours.",
+        "doNotSay": "Avoid saying \"I’ll build you a website\" immediately; first share what I noticed."
+      }
+    },
+    "lead-019": {
+      "leadId": "lead-019",
+      "points": [
+        "Body Temple Gym has 137 reviews praising trainer Koushik Da, but no website to turn that reputation into sign‑ups.",
+        "Customers love the trainer, yet they can’t see your hours or book classes online.",
+        "No online booking means you’re missing many prospects.",
+        "A simple site could list services and show your 4‑story gym.",
+        "With a website, you can convert praise into revenue."
+      ],
+      "competitorInsight": "Other gyms in Barasat share class schedules and booking links online.",
+      "revenueArgument": "₹70,000 per month",
+      "urgencyHook": "You’re losing ₹2,333 each day",
+      "postCallWhatsApp": "Hi Body Temple Gym team, thanks for the chat! I’ll send a quick mock‑up that shows your trainer and schedule. Will that help you grow? Let me know!",
+      "bestTimeToCall": "Call Tuesday or Wednesday between 2–4 PM when members are on break.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and saw your 137 reviews that say Koushik Da is the best trainer…",
+        "iceBreaker": "Do most of your members find you through Google or Instagram?",
+        "keyPoints": [
+          "137 reviews praise Koushik Da.",
+          "No website means no online booking.",
+          "Your hours aren’t listed online."
+        ],
+        "objectionHandler": "I understand you’re busy, but you’re losing ₹2,333 each day without a site.",
+        "closer": "I can send you a free WhatsApp mock‑up of a simple site that shows your trainer and hours.",
+        "doNotSay": "Don’t say \"I’ll build you a website\" right away; first share what I noticed."
+      }
+    },
+    "lead-066": {
+      "leadId": "lead-066",
+      "points": [
+        "Sukanta Nagar Recreation Club has a solid 4.4 rating from 49 happy members in Barasat.",
+        "Your members love the easy bus and train access you mentioned in reviews.",
+        "People keep saying the club feels welcoming – “Fine unless you're man enough.”",
+        "With only one photo online, a website could showcase the club’s vibe and attract more sign‑ups.",
+        "Your 49 positive reviews could turn into extra memberships worth about ₹30,000 each month."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already displaying their hours and photo galleries on their websites.",
+      "revenueArgument": "You could be missing roughly ₹30,000 every month without an online presence.",
+      "urgencyHook": "That’s about ₹1,000 lost each day right now.",
+      "postCallWhatsApp": "Hi, it was nice speaking with you about Sukanta Nagar Recreation Club. I’ve prepared a quick demo site that highlights your reviews and location – may I share it here?",
+      "bestTimeToCall": "For a gym, call Tuesday or Wednesday between 2–4 PM when the afternoon rush is lower.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and noticed your 4.4 rating with 49 great reviews, especially the comment about your convenient location.",
+        "iceBreaker": "Do most of your new members hear about the club from friends or from online searches?",
+        "keyPoints": [
+          "Your 49 positive reviews show strong community trust.",
+          "Only one photo is online – a website can add more visuals to attract visitors.",
+          "Showing your Sunday hours and contact details can stop confusion and boost sign‑ups."
+        ],
+        "objectionHandler": "I understand you’re busy, but losing about ₹1,000 each day adds up quickly.",
+        "closer": "I can send you a free WhatsApp mock‑up of a simple site so you can see how it looks.",
+        "doNotSay": "Don’t say “I want to build you a website” right away; start with what you observed instead."
+      }
+    },
+    "lead-082": {
+      "leadId": "lead-082",
+      "points": [
+        "Yogaangik enjoys a perfect 5‑star rating from 51 members in Barasat.",
+        "One reviewer said the program “genuinely improved both my physical and mental well‑being.”",
+        "Students love Shilpa ma'am’s “fantastic” sessions and never miss a class.",
+        "Your six photos are a start, but a website can add class schedules and easy booking.",
+        "Turning those happy reviews into bookings could recover about ₹12,000 each month."
+      ],
+      "competitorInsight": "Other yoga studios in Barasat already let students book classes online.",
+      "revenueArgument": "You may be leaving around ₹12,000 on the table every month.",
+      "urgencyHook": "That’s roughly ₹400 of potential income slipping away each day.",
+      "postCallWhatsApp": "Hello, thanks for chatting about Yogaangik. I’ve put together a quick demo page that displays your class schedule and reviews – can I share it here?",
+      "bestTimeToCall": "For a yoga studio, call on Monday or Thursday between 10 AM–12 PM before the morning class rush.",
+      "callScript": {
+        "opener": "I was checking yoga studios in Barasat and saw your 5‑star rating with glowing comments about Shilpa ma'am’s classes.",
+        "iceBreaker": "Do most of your students find you through word of mouth or by searching online?",
+        "keyPoints": [
+          "Your 51 five‑star reviews prove strong client satisfaction.",
+          "A website can show class times and let people book instantly.",
+          "Highlighting the mental‑wellness benefits mentioned in reviews can attract new students."
+        ],
+        "objectionHandler": "I get that you’re busy, but losing about ₹400 each day can add up fast.",
+        "closer": "I can send a free WhatsApp mock‑up of a simple site that shows your schedule and reviews.",
+        "doNotSay": "Avoid saying “I want to sell you a website” right away; focus on what you noticed first."
+      }
+    },
+    "lead-077": {
+      "leadId": "lead-077",
+      "points": [
+        "Sarkar Gym holds a 4.4 rating from 19 members in Barasat.",
+        "Reviewers call the environment “very good” and “fantastic”.",
+        "Only six photos are online – a website can showcase more of your equipment and space.",
+        "Listing your hours and services online can turn those 19 reviewers into new members.",
+        "Capturing that interest could bring back about ₹8,500 each month."
+      ],
+      "competitorInsight": "Other gyms in Barasat already list their opening times and photo galleries on their sites.",
+      "revenueArgument": "You might be missing roughly ₹8,500 per month without a web presence.",
+      "urgencyHook": "That’s about ₹283 of potential revenue slipping away every day.",
+      "postCallWhatsApp": "Hi, thanks for speaking with me about Sarkar Gym. I’ve created a quick demo page that features your reviews and photos – may I send it over?",
+      "bestTimeToCall": "For a gym, call on Tuesday or Thursday between 2–4 PM when the midday crowd is lighter.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and noticed Sarkar Gym’s 4.4 rating with comments about the great environment.",
+        "iceBreaker": "Do most of your new members hear about the gym from friends or from online searches?",
+        "keyPoints": [
+          "Your 19 positive reviews show a loyal base.",
+          "A website can display more photos and your full service list.",
+          "Showing clear hours online can reduce confusion and attract walk‑ins."
+        ],
+        "objectionHandler": "I understand you’re busy, but losing about ₹283 each day can quickly add up.",
+        "closer": "I can send a free WhatsApp mock‑up of a simple site that highlights your reviews and facilities.",
+        "doNotSay": "Don’t start with “I want to build you a website”; begin with what you observed."
+      }
+    },
+    "lead-038": {
+      "leadId": "lead-038",
+      "points": [
+        "Endeavor Indoor Climbing Gym boasts a 4.8 rating from 43 adventure lovers in Barasat.",
+        "Reviewers rave about the “amazing indoor tension board” that’s one of only three in India.",
+        "The owner is praised as “very kind and gentle” with deep climbing knowledge.",
+        "Only six photos are online – a site can highlight the unique board and safety features.",
+        "Showcasing this could recover about ₹19,000 each month in missed bookings."
+      ],
+      "competitorInsight": "Other climbing gyms in Barasat already promote their unique equipment and hours on their websites.",
+      "revenueArgument": "You could be leaving roughly ₹19,000 per month on the table without a site.",
+      "urgencyHook": "That’s about ₹633 of potential earnings lost every day.",
+      "postCallWhatsApp": "Hello, thanks for the chat about Endeavor Indoor Climbing Gym. I’ve prepared a quick demo page that highlights your tension board and reviews – can I send it to you?",
+      "bestTimeToCall": "For a climbing gym, call on Wednesday or Friday between 3–5 PM when the weekend crowd is lower.",
+      "callScript": {
+        "opener": "I was exploring climbing gyms in Barasat and saw your 4.8 rating, especially the praise for your rare tension board.",
+        "iceBreaker": "Do most climbers find you through referrals or by searching online?",
+        "keyPoints": [
+          "Your 43 five‑star reviews highlight the unique board and friendly owner.",
+          "A website can showcase the tension board and safety info to attract enthusiasts.",
+          "Displaying clear hours can help climbers plan visits beyond Sunday."
+        ],
+        "objectionHandler": "I know you’re busy, but losing about ₹633 each day adds up fast.",
+        "closer": "I can share a free WhatsApp mock‑up of a simple site that features your board and reviews.",
+        "doNotSay": "Avoid saying “I want to sell you a website” right away; start with what you observed."
+      }
+    },
+    "lead-022": {
+      "leadId": "lead-022",
+      "points": [
+        "Mahajan’s Royal Multi Gym has a 4.2 rating from 69 members in Barasat.",
+        "Members call it “the oldest multi gym in all Barasat” and love the trainer’s expertise.",
+        "Only one photo is online – a website can display the full facility and equipment.",
+        "Your strong community trust can be turned into new sign‑ups worth about ₹45,000 each month.",
+        "Listing hours and services online will help people find you easily."
+      ],
+      "competitorInsight": "Other gyms in Barasat already feature full photo galleries and service lists on their sites.",
+      "revenueArgument": "You may be missing roughly ₹45,000 per month without an online presence.",
+      "urgencyHook": "That’s about ₹1,500 of potential revenue slipping away every day.",
+      "postCallWhatsApp": "Hi, thanks for talking about Mahajan’s Royal Multi Gym. I’ve put together a quick demo page that features your reviews and photos – may I share it here?",
+      "bestTimeToCall": "For a gym, call on Monday or Thursday between 2–4 PM when the evening rush hasn’t started yet.",
+      "callScript": {
+        "opener": "I was checking gyms in Barasat and noticed Mahajan’s Royal Multi Gym’s 4.2 rating and the comment about being the oldest gym in town.",
+        "iceBreaker": "Do most of your new members hear about the gym from friends or from online searches?",
+        "keyPoints": [
+          "Your 69 reviews show strong local loyalty.",
+          "A website can add more photos to showcase the gym’s space.",
+          "Displaying clear hours and services can attract members who search online."
+        ],
+        "objectionHandler": "I understand you’re busy, but losing about ₹1,500 each day can quickly add up.",
+        "closer": "I can send a free WhatsApp mock‑up of a simple site that highlights your reviews and facilities.",
+        "doNotSay": "Don’t start with “I want to build you a website”; begin with what you observed."
+      }
+    },
+    "lead-071": {
+      "leadId": "lead-071",
+      "points": [
+        "MR8 Physiotherapy and Fitness centre has an impressive 4.9-star rating in Barasat, but lacks a phone number or website for new clients to contact you.",
+        "You have 17 great reviews, yet without listed operating hours, people searching online don't know when your Talbanda center is open.",
+        "A simple mobile web page would allow prospective clients to send fitness inquiries directly to your WhatsApp.",
+        "Right now, potential members in Barasat are choosing other local fitness centers simply because they can't find your contact details online."
+      ],
+      "competitorInsight": "Other fitness centers in Barasat display direct WhatsApp booking links and operating schedules on simple web pages.",
+      "revenueArgument": "Missing online contact options costs MR8 Physiotherapy and Fitness centre approximately ₹25,000 each month in missed inquiries.",
+      "urgencyHook": "Every day without a simple WhatsApp page is costing your center about ₹833 in lost potential bookings.",
+      "postCallWhatsApp": "Hi! Thanks for speaking briefly about MR8 Physiotherapy and Fitness centre in Barasat. Here is a quick 30-second demo link showing how clients could message you on WhatsApp directly. Would you like me to tweak any details on it?",
+      "bestTimeToCall": "For a physiotherapy and fitness center, call between 1:00 PM and 3:00 PM on Tuesday when morning patient sessions usually wind down.",
+      "callScript": {
+        "opener": "I was looking at fitness centers near Talbanda in Barasat and noticed MR8 Physiotherapy has a fantastic 4.9-star rating, but no contact phone number listed online.",
+        "iceBreaker": "Do most of your new clients find you by walking past the Talbanda center, or do they try to call ahead?",
+        "keyPoints": [
+          "You have 17 stellar reviews on Google but no direct contact info attached.",
+          "People searching for fitness and rehab in Barasat cannot see your open hours.",
+          "I built a quick sample page showing your services with a direct WhatsApp button."
+        ],
+        "objectionHandler": "I completely understand you're busy, but missing online leads is costing roughly ₹833 every day.",
+        "closer": "Can I text you a free 30-second WhatsApp demo of what your page could look like?",
+        "doNotSay": "Don't use technical jargon like web hosting, domains, or SEO optimization upfront."
+      }
+    },
+    "lead-021": {
+      "leadId": "lead-021",
+      "points": [
+        "SHAKTI GYM UNISEX has 40 top reviews in Barasat praising your air-conditioned setup and impressive member results.",
+        "Members love that beginners gain weight naturally here, but prospective gym-goers can't view your facility details without a website.",
+        "You respond actively to reviews on Google, showing great care, but miss capturing direct WhatsApp leads.",
+        "Adding a simple single-page website could display your clean facility photos and turn online searches into active members."
+      ],
+      "competitorInsight": "Other gyms near Check Post in Barasat display their workout timings and facility photos on dedicated web pages.",
+      "revenueArgument": "Not having a direct web page for SHAKTI GYM UNISEX leads to losing roughly ₹30,000 per month in new gym memberships.",
+      "urgencyHook": "You lose around ₹1,000 every single day when interested local residents cannot find your gym timings or membership details online.",
+      "postCallWhatsApp": "Hi there! Great talking to you about SHAKTI GYM UNISEX near SP Office. I put together a quick free website mock-up showing off your AC facility and member reviews. Mind if I send the screenshot link here?",
+      "bestTimeToCall": "For a busy unisex gym, call between 11:30 AM and 1:30 PM on Wednesday after the morning workout rush ends.",
+      "callScript": {
+        "opener": "I was checking out top-rated fitness spots near SP Office in Barasat and saw SHAKTI GYM UNISEX has 40 awesome reviews highlighting your air-conditioned facility.",
+        "iceBreaker": "Do new members usually ask about your workout timings on WhatsApp before coming in for a trial?",
+        "keyPoints": [
+          "Your members praise your clean AC facility and weight-gain results in reviews.",
+          "Without listed workout hours online, people hesitate to drop by.",
+          "A simple WhatsApp page would let beginners request a trial instantly."
+        ],
+        "objectionHandler": "I hear you, but not showing your AC facility online costs about ₹1,000 a day in lost memberships.",
+        "closer": "May I WhatsApp you a free demo design showcasing your AC gym equipment and trial booking button?",
+        "doNotSay": "Don't sound like a typical salesperson offering expensive monthly digital marketing retainers."
+      }
+    },
+    "lead-036": {
+      "leadId": "lead-036",
+      "points": [
+        "Fit Fiesta ✨ has a perfect 5.0 rating in Barasat with reviews calling your Zumba sessions 'therapy with music'.",
+        "You currently have only 5 photos and no website listed, which hides your vibrant dance fitness atmosphere from new clients.",
+        "Without contact details or open hours on your listing, people searching for Zumba classes near Gupta Colony can't get in touch.",
+        "A quick online landing page can highlight your rhythm classes and let women easily book a trial session."
+      ],
+      "competitorInsight": "Other dance and fitness studios in Barasat share trial class schedules online to register prospective students.",
+      "revenueArgument": "Fit Fiesta ✨ is missing out on approximately ₹2,000 per month due to a lack of online class schedules and contact options.",
+      "urgencyHook": "That is about ₹67 per day in missed trial bookings because local dance fitness seekers can't message you directly.",
+      "postCallWhatsApp": "Hello! Loved reading how members find Zumba at Fit Fiesta therapeutic. I made a free simple landing page design where people can book trial classes. Should I send over the preview link?",
+      "bestTimeToCall": "Call between 2:00 PM and 4:00 PM on Thursday when morning Zumba batches are over and evening batches haven't started.",
+      "callScript": {
+        "opener": "I was searching for Zumba studios near Gupta Colony in Barasat and loved seeing reviews calling Fit Fiesta 'therapy with music'.",
+        "iceBreaker": "Are most of your new Zumba attendees coming from word-of-mouth or online searches?",
+        "keyPoints": [
+          "Your 5-star reviews mention moving with the flow of beats, which is amazing.",
+          "You currently have no phone number or class timings listed online.",
+          "A simple WhatsApp page would let people book Zumba trials in one tap."
+        ],
+        "objectionHandler": "No worries at all, I know you're busy, but even a small gap costs about ₹67 daily in missed inquiries.",
+        "closer": "Could I send a quick photo mock-up of a sample Zumba landing page to your WhatsApp?",
+        "doNotSay": "Don't suggest high-end software features or complicated technical platforms."
+      }
+    },
+    "lead-048": {
+      "leadId": "lead-048",
+      "points": [
+        "Nabapally Gym has 15 reviews on Google, but prospective members cannot see your daily open hours.",
+        "Without a website or membership catalog, local residents in Circular Road don't know what equipment or packages you offer.",
+        "You currently have limited online visibility, missing easy inquiries from people living in Nabapally.",
+        "A straightforward mobile web page would showcase your gym photos and allow one-click WhatsApp inquiries."
+      ],
+      "competitorInsight": "Other local gyms in the Nabapally area provide simple mobile pages with membership fees and open times.",
+      "revenueArgument": "Nabapally Gym loses an estimated ₹5,000 every month by not having an online display of hours and services.",
+      "urgencyHook": "Not having your open hours online costs your gym around ₹167 daily in lost walk-in inquiries.",
+      "postCallWhatsApp": "Hi! Thanks for taking my call regarding Nabapally Gym on Circular Road. I created a clean, free mock-up showing your gym info and a WhatsApp button for new members. Can I share the image with you here?",
+      "bestTimeToCall": "Call around 1:00 PM to 3:00 PM on Monday or Tuesday between morning and evening workout peak hours.",
+      "callScript": {
+        "opener": "I was looking at fitness spots along Circular Road in Nabapally and noticed Nabapally Gym has 15 reviews, but no operating hours listed.",
+        "iceBreaker": "Do people often drop by asking for gym timings because they couldn't find them online?",
+        "keyPoints": [
+          "Local residents in Nabapally search online for workout hours before visiting.",
+          "Without a website, potential members don't know your rates or equipment.",
+          "I created a simple single-page layout to display your gym details clearly."
+        ],
+        "objectionHandler": "I understand, but missing basic info costs about ₹167 per day in prospective walk-ins.",
+        "closer": "Can I share a quick WhatsApp image of a simple site layout designed for Nabapally Gym?",
+        "doNotSay": "Don't criticize their rating score or bring up negative online comparisons."
+      }
+    },
+    "lead-058": {
+      "leadId": "lead-058",
+      "points": [
+        "Women's Fit Zone is highly praised in Rathtala as an exclusive women's gym with supportive trainers, but has no website.",
+        "Reviews highlight your physical exercise, Zumba, and dance consultancy, but these services aren't listed on an official web page.",
+        "Prospective female clients looking for a comfortable environment in Barasat cannot find your daily operational hours.",
+        "A clean mobile page would display your exclusive women-only environment and let ladies message you directly on WhatsApp."
+      ],
+      "competitorInsight": "Other fitness studios in Barasat actively feature specialized female-only programs and schedules on their websites.",
+      "revenueArgument": "Missing a dedicated web presence costs Women's Fit Zone about ₹10,000 per month in lost female memberships.",
+      "urgencyHook": "You lose roughly ₹333 every day because local women looking for a dedicated gym can't see your schedule or contact details.",
+      "postCallWhatsApp": "Hi! It was nice speaking with you about Women's Fit Zone in Rathtala. I put together a simple web page sample highlighting your Zumba and women-only environment. Would you like to take a look?",
+      "bestTimeToCall": "Call between 12:30 PM and 2:30 PM on Wednesday or Thursday when ladies' morning fitness sessions have concluded.",
+      "callScript": {
+        "opener": "I was researching female fitness options in Rathtala, Barasat and saw great reviews praising Women's Fit Zone for your professional dance and workout guidance.",
+        "iceBreaker": "Do prospective female members usually prefer messaging on WhatsApp first to ask about trainers and timings?",
+        "keyPoints": [
+          "Reviews specifically praise your friendly trainers and women-only setup.",
+          "Potential clients currently can't view your Zumba schedules or open hours online.",
+          "A simple WhatsApp page makes it easy for local women to inquire safely."
+        ],
+        "objectionHandler": "I completely get it, but missing online inquiries costs roughly ₹333 daily in prospective sign-ups.",
+        "closer": "May I WhatsApp you a free demo page showing your women-only services and Zumba details?",
+        "doNotSay": "Don't use aggressive sales pitches or try to push high-cost marketing packages upfront."
+      }
+    },
+    "lead-018": {
+      "leadId": "lead-018",
+      "points": [
+        "Palash Galaxy Fitness has a perfect 5-star rating from 170 reviews in Barasat, but lacks a website to capture new sign-ups.",
+        "Potential members searching online cannot find your gym hours or fitness program details.",
+        "Adding an online membership booking feature will turn web visitors into paying gym members.",
+        "Displaying your gym photos and 5-star rating on a dedicated site builds trust fast."
+      ],
+      "competitorInsight": "Other fitness centers in Barasat are building simple websites to collect membership inquiries automatically.",
+      "revenueArgument": "Without an online enrollment page, Palash Galaxy Fitness is missing out on around ₹80,000 per month in new memberships.",
+      "urgencyHook": "Not having a website costs your gym about ₹2,667 every single day in lost sign-ups.",
+      "postCallWhatsApp": "Hi! Loved seeing the 5-star rating for Palash Galaxy Fitness in Barasat. I made a quick mobile website concept showing your gym programs. Should I share the demo link here?",
+      "bestTimeToCall": "For a gym, call between 11 AM and 1 PM on a weekday when morning and evening workout rushes are over.",
+      "callScript": {
+        "opener": "I was looking at top-rated fitness centers in Barasat and noticed Palash Galaxy Fitness has a perfect 5-star rating across 170 reviews. That is really impressive for a local gym!",
+        "iceBreaker": "Do most of your new members walk in directly, or do they find you online first?",
+        "keyPoints": [
+          "You have 170 five-star reviews, but no website to collect online sign-ups.",
+          "Your business hours are currently missing online except for Sunday.",
+          "A 1-page site can show your fitness programs and let people join instantly."
+        ],
+        "objectionHandler": "I understand you are busy, but missing out on ₹2,667 per day in membership sign-ups is worth a 2-minute look at a demo.",
+        "closer": "Can I send you a quick 30-second website mockup on WhatsApp for free so you can take a look?",
+        "doNotSay": "Don't say 'I want to sell you a website' — focus on their 5-star rating first."
+      }
+    },
+    "lead-035": {
+      "leadId": "lead-035",
+      "points": [
+        "Freedom Yoga & Zumba has 112 reviews praising Laboni mam's caring coaching and body transformation results.",
+        "Your studio missing a website means new students cannot book classes or check schedule timings online.",
+        "Having an online class schedule will help students sign up for morning flow or zumba without calling.",
+        "Showcasing transformation stories on a web page will help turn curious searchers into enrolled students."
+      ],
+      "competitorInsight": "Other yoga and wellness studios in Barasat are using online booking pages to schedule student trial classes.",
+      "revenueArgument": "Missing an online booking page causes Freedom Yoga & Zumba to lose around ₹34,000 per month in class fees.",
+      "urgencyHook": "You are missing out on about ₹1,133 per day because potential students cannot book classes online.",
+      "postCallWhatsApp": "Hi! It was great speaking briefly. I put together a simple web layout for Freedom Yoga & Zumba highlighting your class schedules and reviews. Would it be okay if I send the screenshot here?",
+      "bestTimeToCall": "For a yoga studio, call around 2 PM to 4 PM on Tuesday or Wednesday after morning classes finish.",
+      "callScript": {
+        "opener": "I was reading about yoga studios in Barasat and saw how much your students praise Laboni mam for her amazing training at Freedom Yoga & Zumba. The reviews are so inspiring!",
+        "iceBreaker": "Are your trial class slots usually booked through WhatsApp or by word of mouth?",
+        "keyPoints": [
+          "You have 112 glowing reviews praising Laboni mam, but no online class booking link.",
+          "Your studio hours and class schedule are currently not visible online.",
+          "A simple booking site lets new students register for zumba or yoga in 1 click."
+        ],
+        "objectionHandler": "No problem at all, I just know that losing ₹1,133 per day in potential class bookings is hard to ignore.",
+        "closer": "May I WhatsApp you a free design mockup of how your class booking page could look?",
+        "doNotSay": "Don't say 'Your studio lacks digital marketing' — focus on showcasing Laboni mam's positive reviews."
+      }
+    },
+    "lead-096": {
+      "leadId": "lead-096",
+      "points": [
+        "Raasleela Dance Creation has a 5-star rating with great praise for Kavya's guidance and your Morning Flow sessions.",
+        "Without a website, parents searching for dance and yoga classes in Barasat cannot view your batch timings.",
+        "Online registration forms can help capture student enrollments automatically 24/7.",
+        "Adding a website allows you to showcase student success stories and class photos clearly."
+      ],
+      "competitorInsight": "Similar dance and activity academies in Barasat use web pages to display monthly batch schedules and fee structures.",
+      "revenueArgument": "Raasleela Dance Creation is missing about ₹15,000 every month by not capturing online student enrollments.",
+      "urgencyHook": "Not having an online registration page costs your institute ₹500 every day in uncaptured leads.",
+      "postCallWhatsApp": "Hello! Inspired by the great feedback for Raasleela Dance Creation in Barasat. I drafted a simple online schedule page for your dance and yoga batches. Can I send you the photo?",
+      "bestTimeToCall": "Call between 1 PM and 3 PM on weekdays before afternoon and evening dance classes start.",
+      "callScript": {
+        "opener": "I stumbled upon Raasleela Dance Creation while looking at dance academies in Barasat and saw such wonderful reviews about Kavya's guidance and your morning flow sessions!",
+        "iceBreaker": "Do parents usually call you directly to ask about class schedules, or do they visit the academy?",
+        "keyPoints": [
+          "You have 43 perfect five-star reviews, but parents cannot see your batch timings online.",
+          "Your studio hours currently only show Sunday open 24 hours instead of full weekly schedules.",
+          "A website would allow parents to register their children for classes online anytime."
+        ],
+        "objectionHandler": "Totally understand you are busy, I just wanted to share how to stop missing ₹500 per day in new class sign-ups.",
+        "closer": "Would you mind if I sent a free WhatsApp preview of a customized enrollment site for your academy?",
+        "doNotSay": "Don't call it a 'sales presentation' — call it a free batch registration page demo."
+      }
+    },
+    "lead-090": {
+      "leadId": "lead-090",
+      "points": [
+        "Dutta Sports is known as one of the oldest sports shops in Barasat with reasonable prices and great sports shoe collections.",
+        "Lacking an online store prevents customers from checking product availability before visiting your KB Basu Road store.",
+        "Putting your sports shoes and gear catalog online can attract buyers who prefer searching on their phones.",
+        "Showing your wide range of sports products on a website helps convert searchers into store visitors."
+      ],
+      "competitorInsight": "Other sporting goods stores in Barasat are putting product catalogs online to let local athletes browse inventory.",
+      "revenueArgument": "Without an online product catalog, Dutta Sports is missing out on roughly ₹80,000 per month in retail sales.",
+      "urgencyHook": "You are losing around ₹2,667 each day because local buyers cannot view your sports stock online.",
+      "postCallWhatsApp": "Hi team Dutta Sports! Loved reading about your legacy in Barasat. I created a mobile catalog mock-up for your sports goods. Would you like me to share the preview here?",
+      "bestTimeToCall": "Call on Wednesday or Thursday around 11:30 AM before the afternoon store footfall increases.",
+      "callScript": {
+        "opener": "I was looking up sports stores in Barasat and came across Dutta Sports, noting your long history as one of the oldest and most trusted shoe shops in the area!",
+        "iceBreaker": "Do customers often call ahead to check if you have specific sports gear or shoes in stock?",
+        "keyPoints": [
+          "You have 117 reviews praising your reasonable prices and shoe stock, but no web catalog.",
+          "With only 6 photos online, shoppers cannot see your full range of sporting goods.",
+          "A simple online product showcase allows local buyers to browse your stock before visiting."
+        ],
+        "objectionHandler": "I know retail is busy, but you might be leaving ₹2,667 per day on the table from shoppers looking online.",
+        "closer": "Can I WhatsApp you a free preview of an online catalog designed for Dutta Sports?",
+        "doNotSay": "Don't mention mosquito complaints from reviews — focus on your heritage and shoe collection praise."
+      }
+    },
+    "lead-011": {
+      "leadId": "lead-011",
+      "points": [
+        "The Workout Zone is rated 4.6 in Barasat with members highlighting friendly mentors like Sunny da, Adi, and Neel da.",
+        "Potential members currently cannot find your phone number or business hours online to inquire about joining.",
+        "A website displaying your student-friendly ₹800 monthly fee will attract budget-conscious gym-goers instantly.",
+        "Having your own web page lets you highlight your full AC setup and well-maintained equipment."
+      ],
+      "competitorInsight": "Nearby fitness centers in Barasat publish direct contact numbers and membership fees online to capture student inquiries.",
+      "revenueArgument": "The Workout Zone misses around ₹23,000 per month by not having a direct web contact channel for new members.",
+      "urgencyHook": "Missing a web landing page costs your gym approximately ₹767 per day in lost member leads.",
+      "postCallWhatsApp": "Hi! Really impressed by the member community at The Workout Zone in Barasat. I built a quick website concept showcasing your equipment and ₹800 student plan. Can I send it over?",
+      "bestTimeToCall": "Call between 12 PM and 2 PM on weekdays when gym trainers have downtime between sessions.",
+      "callScript": {
+        "opener": "I was searching for gyms in Barasat and saw The Workout Zone, where members talk so warmly about trainers like Sunny da and Neel da treating everyone like family!",
+        "iceBreaker": "Do student members usually ask about your ₹800 monthly plan through friends, or do they find your profile online?",
+        "keyPoints": [
+          "You have 115 reviews praising your affordable ₹800 plan, but no phone number listed online.",
+          "Your business hours are hidden online, so potential members don't know when to visit.",
+          "A 1-page website can show off your AC setup, maintained equipment, and let leads call directly."
+        ],
+        "objectionHandler": "I completely respect your time, but missing ₹767 per day in prospective member inquiries is worth a quick 1-minute fix.",
+        "closer": "Can I drop a free 1-page mobile layout concept to your WhatsApp to show how easy it is?",
+        "doNotSay": "Don't bring up negative staff complaints — focus on positive praise about mentors like Sunny da and Neel da."
+      }
+    },
+    "lead-033": {
+      "leadId": "lead-033",
+      "points": [
+        "The Core Gym has an impressive 4.7 rating with 388 reviews, but missing a website makes it hard for new members to find your schedule.",
+        "Your members love trainers like Subho Sir and Ajaay Da, yet prospective clients cannot see these highlights online.",
+        "Without an online booking or plan overview, you are losing out on an estimated ₹59,000 in monthly membership fees.",
+        "Having a mobile-friendly site allows local fitness seekers in Barasat to message you directly on WhatsApp.",
+        "A quick 1-page website will show off your clean facility and give instant access to class times."
+      ],
+      "competitorInsight": "Other gyms in Barasat are putting their workout schedules and monthly packages directly on Google to convert visitors instantly.",
+      "revenueArgument": "Without a simple website displaying your plans, you are losing up to ₹59,000 every month in walk-in signups.",
+      "urgencyHook": "Every single day without an online schedule costs you about ₹1,967 in missed member enrollments.",
+      "postCallWhatsApp": "Hi! Great talking to you briefly about The Core Gym. I put together a quick free demo page showing how your membership plans and trainer highlights could look online. Would it be okay if I shared the link here?",
+      "bestTimeToCall": "For a gym, call between 12 PM and 3 PM on weekdays when the morning and evening workout rushes are over.",
+      "callScript": {
+        "opener": "I was looking at fitness centers around Barasat and noticed your 4.7-star rating with members talking so highly of Subho Sir and Ajaay Da.",
+        "iceBreaker": "Do most of your new gym members drop in randomly, or do they call ahead to check membership prices?",
+        "keyPoints": [
+          "You have 388 great reviews, but no website to show your monthly plans.",
+          "People searching online in Madhyamgram can't easily see when classes run.",
+          "A simple 1-page site lets people join or WhatsApp you in one tap."
+        ],
+        "objectionHandler": "I completely understand you're busy, but missing out on ₹1,967 every day just because people can't check rates online is worth a quick fix.",
+        "closer": "Can I send you a quick mobile design demo on WhatsApp for free so you can take a look whenever you get a minute?",
+        "doNotSay": "Don't try to pitch website pricing right away — focus only on showing them how easy it is to show membership plans online."
+      }
+    },
+    "lead-028": {
+      "leadId": "lead-028",
+      "points": [
+        "Amit's Gym has an outstanding 4.9 rating across 853 reviews, showing huge community trust in Madhyamgram.",
+        "Members frequently compliment Amit Sir's personal guidance and your modern AC equipment.",
+        "Because your opening hours aren't listed online, potential members don't know when to visit.",
+        "Not having a lead-capture website costs your gym nearly ₹1,50,000 in lost monthly revenue.",
+        "A fast mobile site will let prospective gym-goers see photos and request membership details immediately."
+      ],
+      "competitorInsight": "Other top fitness centers in Madhyamgram showcase clear opening hours and online sign-up forms to catch evening leads.",
+      "revenueArgument": "Lacking a proper web page to show off your AC setup and membership fees costs you nearly ₹1,50,000 per month.",
+      "urgencyHook": "Not displaying your operational hours online is letting around ₹5,000 slip away every day to nearby alternatives.",
+      "postCallWhatsApp": "Hello Amit Sir! Thanks for taking my call. I made a free visual mock-up for Amit's Gym displaying your hours, AC facility features, and direct WhatsApp button. May I send the image preview over?",
+      "bestTimeToCall": "Call between 1 PM and 4 PM on Tuesday or Wednesday when the owner has free time between shift sessions.",
+      "callScript": {
+        "opener": "I was searching for top-rated gyms in Madhyamgram and saw your outstanding 4.9 rating with 853 reviews praising Amit Sir's coaching.",
+        "iceBreaker": "Are new members easily finding your daily opening hours online, or do they constantly call to ask when the gym is open?",
+        "keyPoints": [
+          "Your 853 reviews are amazing, but Google doesn't show your daily timing.",
+          "New visitors in Madhyamgram can't see your equipment or AC facility online.",
+          "A clean site would let leads text your front desk directly."
+        ],
+        "objectionHandler": "I hear you, but losing nearly ₹5,000 per day because prospective members can't confirm your open hours online is something we can fix in minutes.",
+        "closer": "May I drop a free 1-page website mock-up on your WhatsApp so you can see how it looks?",
+        "doNotSay": "Don't mention technical terms like domain, hosting, or schema markup — just talk about getting them more member signups."
+      }
+    },
+    "lead-029": {
+      "leadId": "lead-029",
+      "points": [
+        "Soulbeat Fitness Studio commands a high 4.9-star rating, yet lacks a dedicated site to capture leads.",
+        "Reviewers love the motivating atmosphere, but key business details are missing online.",
+        "Potential clients searching for fitness studios in Barasat cannot view your schedule or pricing.",
+        "The absence of an online presence costs you an estimated ₹1,50,000 in monthly sign-ups.",
+        "A quick digital layout will help convert online visitors into long-term studio members."
+      ],
+      "competitorInsight": "Nearby fitness studios in the Barasat area are using web pages with online session bookings to attract busy professionals.",
+      "revenueArgument": "Not having an online page for Soulbeat Fitness Studio leaves an estimated ₹1,50,000 per month on the table.",
+      "urgencyHook": "You're losing approximately ₹5,000 each day simply because prospective clients can't view your schedule online.",
+      "postCallWhatsApp": "Hi there! Enjoyed speaking with you about Soulbeat Fitness Studio. I built a simple free concept layout showing how your class info and trial sign-ups could look. Should I share it here for you to check out?",
+      "bestTimeToCall": "Call around 2 PM to 4 PM on weekdays after morning workout classes conclude.",
+      "callScript": {
+        "opener": "I was exploring fitness studios in Barasat and was really impressed by your 4.9-star rating and great customer feedback on your equipment.",
+        "iceBreaker": "Do people usually call your front desk to ask about class times, or do you have a place online where they check?",
+        "keyPoints": [
+          "Your studio has high ratings, but missing web hours confuses new clients.",
+          "People searching online in Pearabagan can't see your fitness programs.",
+          "A simple mobile page helps nearby residents book trial sessions fast."
+        ],
+        "objectionHandler": "No worries at all, I just wanted to share how you can stop losing ₹5,000 a day in potential memberships with a simple web page.",
+        "closer": "Can I send a free visual layout of a modern membership page over WhatsApp for you to glance at later?",
+        "doNotSay": "Don't sound like a typical marketer — talk like a local customer who couldn't find their operating schedule online."
+      }
+    },
+    "lead-050": {
+      "leadId": "lead-050",
+      "points": [
+        "INFINITY FITNESS WORLD has built a solid 4.9 rating across 65 reviews on Madhyamgram Bazar Road.",
+        "Having only 2 photos online prevents prospective members from seeing your full setup.",
+        "Google only lists your Sunday hours, making people assume the gym is closed during weekdays.",
+        "This lack of online visibility results in an estimated ₹60,000 per month in missed memberships.",
+        "A simple website will feature your full photo gallery and complete weekly operating hours."
+      ],
+      "competitorInsight": "Other gyms near Madhyamgram Bazar Road feature full photo galleries and weekly gym timings to convert online searchers.",
+      "revenueArgument": "Missing a functional website with gym photos is causing you to lose roughly ₹60,000 a month in potential signups.",
+      "urgencyHook": "Without clear weekday hours and photos online, you're missing out on roughly ₹2,000 per day.",
+      "postCallWhatsApp": "Hi! Thanks for your time earlier regarding INFINITY FITNESS WORLD. I designed a clean, free website sample showcasing full facility photos and weekly hours. Can I send the preview link over?",
+      "bestTimeToCall": "Best time to reach out is Monday or Thursday between 1 PM and 3 PM before evening training shifts begin.",
+      "callScript": {
+        "opener": "I came across INFINITY FITNESS WORLD on Madhyamgram Bazar Road and saw your solid 4.9 rating across 65 member reviews.",
+        "iceBreaker": "When potential members look you up online, do they usually ask you for photos of the equipment or gym timings?",
+        "keyPoints": [
+          "You have 65 great reviews, but only 2 photos showing your actual facility.",
+          "Google only lists Sunday hours, so people might think you're closed weekdays.",
+          "A basic site shows off your gym floor and helps capture local leads."
+        ],
+        "objectionHandler": "I understand you're busy running the floor, but leaving ₹2,000 on the table every day due to missing online info is easy to fix.",
+        "closer": "If it's okay, I'd love to WhatsApp you a free design preview showing how your gym photos and schedule could look online.",
+        "doNotSay": "Don't criticize their profile having only 2 photos — frame it as an opportunity to show off their facility better."
+      }
+    },
+    "lead-062": {
+      "leadId": "lead-062",
+      "points": [
+        "Power House Reloaded Gym has earned 335 positive reviews and a great reputation in New Barrackpore.",
+        "Members frequently mention your welcoming community and supportive training environment.",
+        "Having only 1 photo online doesn't do justice to your modern equipment and facilities.",
+        "Incomplete online hours and no website cause an estimated loss of ₹2,00,000 per month.",
+        "A clean website allows local fitness enthusiasts to view your community and contact you instantly."
+      ],
+      "competitorInsight": "Other established gyms around New Barrackpore use online membership forms and full photo tours to sign up members automatically.",
+      "revenueArgument": "Not having a digital storefront for your 335+ member community costs you an estimated ₹2,00,000 every month.",
+      "urgencyHook": "You are potentially giving away ₹6,667 in daily revenue to other gyms because your weekday hours aren't visible online.",
+      "postCallWhatsApp": "Hello! Thank you for speaking with me about Power House Reloaded Gym. I created a free mobile site prototype highlighting your gym community and equipment. Would you mind if I dropped the image here?",
+      "bestTimeToCall": "Call between 2 PM and 4 PM on Wednesday or Thursday when midday workout traffic is lowest.",
+      "callScript": {
+        "opener": "I was reading about gyms in New Barrackpore and noticed how members praise Power House Reloaded for its great community and supportive atmosphere.",
+        "iceBreaker": "Are new gym-goers reaching out via phone to ask for your monthly fees, or do you get mostly walk-ins?",
+        "keyPoints": [
+          "Your community has 335 great reviews, but only 1 photo on your Google listing.",
+          "Weekday hours aren't shown clearly, so potential members hesitate to visit.",
+          "A single-page website highlights your equipment and brings in daily leads."
+        ],
+        "objectionHandler": "I completely respect your time, but losing about ₹6,667 daily in untapped leads is something a simple web page can solve.",
+        "closer": "Would it be alright if I sent a free, quick mobile demo to your WhatsApp so you can review it whenever you're free?",
+        "doNotSay": "Don't sound like a pushy corporate salesperson — keep your tone warm, friendly, and community-focused."
+      }
+    },
+    "lead-040": {
+      "leadId": "lead-040",
+      "points": [
+        "A.B Energy Empire Gym 2.0 in Barasat already enjoys a 4.8 rating from 77 members, which is a strong trust signal.",
+        "Without a website, those 77 happy reviewers can’t easily book classes or see your equipment online.",
+        "A simple site would let you showcase your latest machines and membership plans in just a few clicks.",
+        "Online booking could turn casual visitors into paying members and reduce front‑desk workload.",
+        "Replying to reviews on a website would boost engagement and keep your 4.8 rating shining."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already offering online class schedules and booking on their websites.",
+      "revenueArgument": "You could be missing about ₹20,000 each month.",
+      "urgencyHook": "That’s roughly ₹667 every day you’re not capturing.",
+      "postCallWhatsApp": "Hi, it was nice speaking about A.B Energy Empire Gym 2.0. I’ve prepared a short demo showing how a website could turn your 4.8‑star reputation into more daily sign‑ups. Would you like me to share it now?",
+      "bestTimeToCall": "For a gym, try calling on Tuesday or Wednesday between 2–4 PM when the morning rush is over.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and noticed A.B Energy Empire Gym 2.0 has a great 4.8 rating from 77 happy members.",
+        "iceBreaker": "Do most of your new members hear about you from walk‑ins, referrals, or online searches?",
+        "keyPoints": [
+          "Your 4.8 rating shows strong trust, but a website can turn that into daily sign‑ups.",
+          "Online booking would let members schedule workouts without calling the front desk.",
+          "A simple site can display your equipment and membership plans, attracting more visitors."
+        ],
+        "objectionHandler": "I understand you’re busy, but even a loss of about ₹667 each day adds up quickly.",
+        "closer": "I can send you a quick WhatsApp mock‑up of a simple site that shows your equipment and lets members book online, no cost.",
+        "doNotSay": "Don't say 'I want to build you a website' right away."
+      }
+    },
+    "lead-049": {
+      "leadId": "lead-049",
+      "points": [
+        "Aviator Fitness in Barasat has a solid 4.1 rating, indicating satisfied members.",
+        "Your gym’s equipment and pricing aren’t visible online, so potential members can’t discover them.",
+        "A basic website would let you list classes, prices, and opening hours all in one place.",
+        "Online inquiry forms can capture leads that currently slip through the cracks.",
+        "Showing your location and contact details on a site makes it easier for locals to find you."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already using websites to display class timetables and take bookings.",
+      "revenueArgument": "You could be missing about ₹25,000 each month.",
+      "urgencyHook": "That’s roughly ₹833 every day you’re not converting online visitors.",
+      "postCallWhatsApp": "Hi, thanks for the chat about Aviator Fitness. I’ve put together a quick demo site that could turn your 4.1 rating into more daily sign‑ups. Shall I send it over?",
+      "bestTimeToCall": "For a gym, call on Wednesday or Thursday between 2–4 PM when the afternoon lull helps you focus.",
+      "callScript": {
+        "opener": "I was checking gyms in Barasat and saw Aviator Fitness has a nice 4.1 rating from members.",
+        "iceBreaker": "How do most people currently learn about your membership plans – walk‑ins or word of mouth?",
+        "keyPoints": [
+          "Your 4.1 rating shows quality, but a website can showcase equipment and pricing to new prospects.",
+          "Online booking would let interested people join classes without calling you first.",
+          "A simple site can list your hours and contact info, making it easier for locals to reach you."
+        ],
+        "objectionHandler": "I get that you’re busy, yet losing about ₹833 each day can quickly add up.",
+        "closer": "I can share a free WhatsApp mock‑up of a clean site that highlights your gym’s strengths, no obligation.",
+        "doNotSay": "Avoid saying 'I want to sell you a website' at the start."
+      }
+    },
+    "lead-052": {
+      "leadId": "lead-052",
+      "points": [
+        "The True North in Barasat boasts a perfect 5‑star rating, which is impressive for any gym.",
+        "Your Instagram followers love the hardcore powerlifting vibe, but they have nowhere to sign up online.",
+        "A simple website can funnel those Instagram fans directly into membership forms.",
+        "Displaying your Sunday hours and powerlifting equipment online will attract serious lifters.",
+        "Replying to reviews on a site will keep that 5‑star reputation shining."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already linking their Instagram feeds to websites that accept online sign‑ups.",
+      "revenueArgument": "You could be missing about ₹20,000 each month.",
+      "urgencyHook": "That’s roughly ₹667 every day you’re not converting Instagram traffic.",
+      "postCallWhatsApp": "Hi, great talking about The True North. I’ve created a short demo that shows how your 5‑star reputation and powerlifting focus can attract more members online. Would you like me to share it?",
+      "bestTimeToCall": "For a gym, try calling on Tuesday or Wednesday between 2–4 PM when the morning rush has settled.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and noticed The True North has a perfect 5‑star rating and a strong powerlifting community on Instagram.",
+        "iceBreaker": "Do most of your powerlifting members find you through Instagram or by visiting the gym directly?",
+        "keyPoints": [
+          "Your 5‑star rating and powerlifting focus are a great story to put on a website.",
+          "A site can turn Instagram followers into paying members with a simple sign‑up form.",
+          "Showing your Sunday schedule and equipment online will help serious lifters plan visits."
+        ],
+        "objectionHandler": "I understand you’re pressed for time, but losing about ₹667 each day can add up fast.",
+        "closer": "I can send a free WhatsApp mock‑up of a site that highlights your powerlifting strengths, no cost involved.",
+        "doNotSay": "Don’t start with 'I want to build you a website'—instead mention you saw their strong Instagram presence."
+      }
+    },
+    "lead-025": {
+      "leadId": "lead-025",
+      "points": [
+        "Sanglap Power House Gym in Barasat is praised as the best gym in town with updated equipment and a stunning interior.",
+        "Your 4.7 rating and 760 reviews show huge trust, but without a website you’re missing online bookings.",
+        "A website can showcase the hygienic environment and responsible trainers that members love.",
+        "Online booking will let the 760 happy reviewers convert their praise into new sign‑ups instantly.",
+        "Displaying your Sunday schedule and contact details online will make it easier for locals to join."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already using websites to offer online class bookings and showcase trainer profiles.",
+      "revenueArgument": "You could be missing about ₹1,20,000 each month.",
+      "urgencyHook": "That’s roughly ₹4,000 every day you’re not turning praise into revenue.",
+      "postCallWhatsApp": "Hi, thanks for the chat about Sanglap Power House Gym. I’ve prepared a quick demo site that highlights your 4.7 rating, updated equipment, and easy online booking. Shall I send it over?",
+      "bestTimeToCall": "For a gym, call on Thursday or Friday between 2–4 PM when the midday lull gives you space to talk.",
+      "callScript": {
+        "opener": "I was checking gyms in Barasat and saw Sanglap Power House Gym has a fantastic 4.7 rating and many members call it the best gym in town.",
+        "iceBreaker": "How do most of your new members currently sign up – walk‑ins, phone calls, or referrals?",
+        "keyPoints": [
+          "Your members love the updated equipment and hygienic space, which a website can highlight with photos.",
+          "Online booking would let the 760 happy reviewers become paying members without calling.",
+          "A simple site can list your Sunday hours and trainer details, making it easy for locals to choose you."
+        ],
+        "objectionHandler": "I get you’re busy, but a daily loss of about ₹4,000 can quickly add up.",
+        "closer": "I can share a free WhatsApp mock‑up of a clean site that showcases your gym’s strengths and lets members book online, no charge.",
+        "doNotSay": "Avoid saying 'I want to build you a website' right away; focus on their strong reviews first."
+      }
+    },
+    "lead-031": {
+      "leadId": "lead-031",
+      "points": [
+        "Pro Fitness Gym in Barasat enjoys a 4.9 rating and 194 positive reviews praising the ambience and trainers.",
+        "Members specifically mention trainer Arijit Bhadra’s knowledge and motivation, which a website can spotlight.",
+        "A site would let visitors see your top‑notch equipment and book classes without calling.",
+        "Online booking can capture the interest of those reading the glowing reviews you already have.",
+        "Displaying your Sunday hours and contact info online will make it easier for new members to find you."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already providing online class schedules and trainer bios on their websites.",
+      "revenueArgument": "You could be missing about ₹29,000 each month.",
+      "urgencyHook": "That’s roughly ₹967 every day you’re not converting online interest.",
+      "postCallWhatsApp": "Hi, great talking about Pro Fitness Gym. I’ve put together a short demo that showcases trainer Arijit’s expertise and lets members book online. Would you like me to share it now?",
+      "bestTimeToCall": "For a gym, try calling on Monday or Tuesday between 2–4 PM when the morning rush has settled.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and noticed Pro Fitness Gym has a strong 4.9 rating with many members praising trainer Arijit Bhadra.",
+        "iceBreaker": "Do most of your new members hear about you through online searches, referrals, or walking by the gym?",
+        "keyPoints": [
+          "Your 4.9 rating and trainer praise are perfect content for a simple website.",
+          "Online booking would let interested visitors join classes instantly after reading the reviews.",
+          "A clean site can showcase your top‑notch equipment and friendly ambience to attract more locals."
+        ],
+        "objectionHandler": "I understand you’re busy, but losing about ₹967 each day can quickly add up.",
+        "closer": "I can send you a free WhatsApp mock‑up of a site that highlights your trainers and lets members book online, no cost.",
+        "doNotSay": "Don’t start with 'I want to build you a website'—instead mention you noticed the great trainer reviews."
+      }
+    },
+    "lead-041": {
+      "leadId": "lead-041",
+      "points": [
+        "Believe 2 Achieve has a perfect 5-star rating from 65 members, but no website to turn searchers into paid members.",
+        "Google currently lists your business hours only for Sunday, which confuses prospective weekday gym-goers.",
+        "Adding a simple web schedule can help convert online searchers into roughly ₹18,000 in extra monthly memberships.",
+        "With only 2 photos on Google Maps, local fitness seekers cannot get a clear look at your training facility."
+      ],
+      "competitorInsight": "Other fitness centers in Barasat maintain clear weekly schedules online so members can check timings instantly.",
+      "revenueArgument": "Having a simple web page with full weekly hours could bring in up to ₹18,000 per month in new sign-ups.",
+      "urgencyHook": "Missing out on local search traffic costs about ₹600 per day in uncaptured gym memberships.",
+      "postCallWhatsApp": "Hi from Kolkata! It was great chatting about Believe 2 Achieve's impressive 5-star rating in Barasat. I put together a free mobile preview of how a simple membership page could look for your gym. Mind if I send the screenshot link here?",
+      "bestTimeToCall": "For a gym like this, call on Wednesday or Thursday between 11 AM and 1 PM when morning workouts have finished.",
+      "callScript": {
+        "opener": "I was checking out top-rated gyms in Barasat and noticed Believe 2 Achieve has a perfect 5-star rating across 65 reviews.",
+        "iceBreaker": "Do most of your new members walk in directly, or do they find you on Google first?",
+        "keyPoints": [
+          "Your 5-star rating is impressive, but there is no website linked for new members to book visits.",
+          "Google currently lists your hours only for Sunday, which might turn away weekday gym-goers.",
+          "A basic single-page site with your weekly timings can help convert online visitors into paid members."
+        ],
+        "objectionHandler": "I understand you are busy, but missing online leads is roughly a ₹600 daily loss in new potential sign-ups.",
+        "closer": "Can I send you a quick 30-second website mockup preview over WhatsApp to see what it could look like?",
+        "doNotSay": "Don't say 'Your online listing is completely broken' upfront — focus on their high rating first."
+      }
+    },
+    "lead-070": {
+      "leadId": "lead-070",
+      "points": [
+        "FITfactory Gym has reviews calling it the 'best gym ever' with a clean atmosphere, but lacks a site to capture new sign-ups.",
+        "Google only lists your operating hours for Sunday, which makes weekday lifters think the gym might be closed.",
+        "A simple landing page capturing local searchers could retain around ₹30,000 per month in lost membership leads.",
+        "Displaying your clean environment and equipment photos on a web portal helps build instant trust with online callers."
+      ],
+      "competitorInsight": "Similar fitness centers in Barasat feature full class schedules and registration forms on their online pages.",
+      "revenueArgument": "Without a digital registration link, FITfactory Gym is leaving an estimated ₹30,000 per month on the table.",
+      "urgencyHook": "Uncaptured search traffic is causing a daily revenue drop of about ₹1,000.",
+      "postCallWhatsApp": "Hello! Loved seeing the great reviews for FITfactory Gym praising your clean setup. I drafted a free mobile website preview to help prospective members join easily. Would you like me to share the picture here?",
+      "bestTimeToCall": "Call Tuesday or Thursday between 2 PM and 4 PM during the afternoon lull before evening crowds arrive.",
+      "callScript": {
+        "opener": "I was reading customer reviews for fitness centers in Barasat and saw someone called FITfactory Gym 'the best gym I have ever seen'.",
+        "iceBreaker": "Are you currently seeing more inquiries through direct phone calls or walk-ins?",
+        "keyPoints": [
+          "Members praise your clean atmosphere, but you have no website to turn web browsers into paying members.",
+          "Your Google profile shows hours only for Sunday, which might confuse prospective weekday members.",
+          "A small site with online membership inquiries could add steady new gym subscriptions each month."
+        ],
+        "objectionHandler": "No problem at all, I just wanted to share how to stop losing roughly ₹1,000 per day in missed online leads.",
+        "closer": "May I WhatsApp you a zero-cost design layout showing how your gym reviews can be showcased online?",
+        "doNotSay": "Don't say 'You have no digital presence' right away — focus on their great customer feedback first."
+      }
+    },
+    "lead-005": {
+      "leadId": "lead-005",
+      "points": [
+        "Raw Fitness boasts 135 positive reviews praising your clean infrastructure and positive atmosphere, yet lacks a site to collect leads.",
+        "Operating hours are missing completely on Google, making it hard for prospective members to know when to visit.",
+        "Building a simple landing page could capture up to ₹1,30,000 per month in new gym memberships.",
+        "People searching Taki Road for training facilities cannot view your membership plans or book a trial workout online."
+      ],
+      "competitorInsight": "Other gyms near Taki Road put trial pass sign-up forms directly on their website to collect leads overnight.",
+      "revenueArgument": "Missing out on online trial sign-ups costs Raw Fitness an estimated ₹1,30,000 every single month.",
+      "urgencyHook": "Every day without an online inquiry form risks around ₹4,333 in lost membership income.",
+      "postCallWhatsApp": "Hi! Thanks for taking a moment to speak about Raw Fitness on Taki Road. I designed a free sample layout for a trial-booking page showcasing your clean infrastructure. Should I drop the demo screenshot here?",
+      "bestTimeToCall": "Call on Monday or Wednesday between 1 PM and 3 PM when morning and evening workout rushes are clear.",
+      "callScript": {
+        "opener": "I was looking at workout spots around Taki Road in Barasat and saw members praising Raw Fitness for its outstanding, clean infrastructure.",
+        "iceBreaker": "Do people usually call to check trial plan fees, or do they just drop by the gym directly?",
+        "keyPoints": [
+          "You have 135 strong reviews, but prospective members have no website to view membership pricing or trial passes.",
+          "Your business hours are not listed on Google, which causes potential visitors to hesitate before coming.",
+          "A sleek one-page website can showcase your equipment photos and let visitors book gym passes directly."
+        ],
+        "objectionHandler": "I understand completely; I only wanted to help address the estimated ₹4,333 per day in uncaptured member interest.",
+        "closer": "Could I send a quick WhatsApp image of a proposed home page for Raw Fitness to your number?",
+        "doNotSay": "Don't pitch an expensive software system — frame it as a simple online front door for your gym."
+      }
+    },
+    "lead-073": {
+      "leadId": "lead-073",
+      "points": [
+        "Jagadighata Sporting Club is known as the most reputed football club in the Barasat Sub Division, but lacks a site for event updates.",
+        "With 165 reviews and annual cricket/football tournaments, missing contact info makes it tough for sponsors and new members to reach you.",
+        "Adding an online portal could capture up to ₹3,30,000 per month in event registrations and club memberships.",
+        "Google shows only 3 photos and lists Sunday hours, hiding your well-maintained sports facilities from potential recruits."
+      ],
+      "competitorInsight": "Sports clubs and academies in Barasat use web portals to take registration forms and post tournament schedules.",
+      "revenueArgument": "Lacking an online registration hub for tournaments and memberships costs an estimated ₹3,30,000 monthly.",
+      "urgencyHook": "You are missing roughly ₹11,000 per day in uncollected membership and event registration interest.",
+      "postCallWhatsApp": "Greetings! Great speaking with you about Jagadighata Sporting Club's strong football legacy in Barasat. I created a free design mockup for an online event and membership portal. Would it be okay if I share the image link here?",
+      "bestTimeToCall": "Call Saturday morning between 10 AM and 12 PM when club organizers are usually planning weekend activities.",
+      "callScript": {
+        "opener": "I was reading about local sports organizations in Barasat and saw Jagadighata Sporting Club recognized as a top football club in the area.",
+        "iceBreaker": "How do participants usually register for your annual football and cricket tournaments right now?",
+        "keyPoints": [
+          "Your club has 165 reviews, but visitors find no phone number or website to inquire about memberships.",
+          "Tournament announcements and player registrations are much easier when managed through a simple web page.",
+          "Displaying your facilities and match schedules online helps attract both young players and local sponsors."
+        ],
+        "objectionHandler": "Totally understand you are busy, but missing direct online contacts costs about ₹11,000 daily in unreached registrations.",
+        "closer": "Can I send over a sample web layout via WhatsApp showing how tournament sign-ups could work online?",
+        "doNotSay": "Don't refer to the club as poorly managed — emphasize its reputation and tournament history instead."
+      }
+    },
+    "lead-057": {
+      "leadId": "lead-057",
+      "points": [
+        "FIT BITZ GYM has a 5-star rating with reviews praising your friendly trainers and budget-friendly plans, but no website to capture leads.",
+        "Google currently displays Sunday open 24 hours without full weekly timings, creating confusion for weekday beginners.",
+        "A simple website showcasing your modern machines could collect around ₹50,000 per month in extra membership inquiries.",
+        "Highlighting your welcoming community vibe online will make nervous first-timers sign up for trial sessions easily."
+      ],
+      "competitorInsight": "Other budget-friendly gyms in Madhyamgram put pricing tables and WhatsApp links on their homepages for quick bookings.",
+      "revenueArgument": "Lacking an online portal for membership inquiries leads to an estimated loss of ₹50,000 each month.",
+      "urgencyHook": "Not having a simple inquiry page costs about ₹1,667 every single day in missed gym sign-ups.",
+      "postCallWhatsApp": "Hi there! Enjoyed reading about the friendly vibe and modern setup at FIT BITZ GYM in Madhyamgram. I drafted a free mobile website preview to help prospective members view your plans. May I send the screenshot over?",
+      "bestTimeToCall": "Call Thursday or Friday between 12 PM and 2 PM during non-rush gym hours.",
+      "callScript": {
+        "opener": "I was browsing gyms near Madhyamgram and noticed FIT BITZ GYM has a 5-star rating with members highlighting your friendly trainers and great budget pricing.",
+        "iceBreaker": "Do new members usually ask about gym plans over phone calls or by walking in directly?",
+        "keyPoints": [
+          "Your members love the welcoming community vibe, but online visitors have no website to view membership plans.",
+          "Google currently shows 'Open 24 hours' only on Sunday, which can confuse people looking for weekday timings.",
+          "A simple one-page site can display your modern equipment and let users book trial sessions in one click."
+        ],
+        "objectionHandler": "I understand your time is limited, but missing digital leads means leaving roughly ₹1,667 on the table each day.",
+        "closer": "May I WhatsApp you a free demo image showing how a budget-friendly gym page could look for FIT BITZ GYM?",
+        "doNotSay": "Don't pitch complex tech features — focus on how simple it will be for local beginners to join."
+      }
+    },
+    "lead-097": {
+      "leadId": "lead-097",
+      "points": [
+        "Your 4‑star rating and five photos show a solid reputation, but without a website many in Barasat can’t see your nutrition plans.",
+        "The comment \"number pls?\" shows a clear need for an online contact number to capture inquiries.",
+        "Listing business hours online would stop visitors from feeling uncertain about when to book a consultation.",
+        "An online booking tool could recover the ₹333 daily revenue you’re currently missing.",
+        "A simple website can showcase client success stories and turn those six reviews into new sign‑ups."
+      ],
+      "competitorInsight": "Other fitness centers in Barasat already display their hours and booking options on simple websites.",
+      "revenueArgument": "You could be earning about ₹10,000 each month if you capture the online traffic.",
+      "urgencyHook": "Right now you may be losing roughly ₹333 every day without a web presence.",
+      "postCallWhatsApp": "Hi, it was great speaking with you about Soumen Nutrition Center. I’ve prepared a quick mock‑up showing your services, contact number and hours. Would you like me to share it now?",
+      "bestTimeToCall": "For a nutrition center, call on Tuesday morning between 10 am–12 pm when the center is quieter.",
+      "callScript": {
+        "opener": "I was looking at fitness centers in Barasat and saw your 4‑star rating, but noticed the contact number isn’t listed online.",
+        "iceBreaker": "Do most of your clients find you through word of mouth or online searches?",
+        "keyPoints": [
+          "Your rating and photos already build trust, yet a website would let Barasat residents view your nutrition plans.",
+          "Adding a phone number and hours online can answer the \"number pls?\" complaint instantly.",
+          "An online booking feature could bring back the ₹333 you lose each day."
+        ],
+        "objectionHandler": "I understand you’re busy, but consider that about ₹333 walks out of your business every day without a site.",
+        "closer": "May I send you a free WhatsApp mock‑up of a simple website so you can see how it looks?",
+        "doNotSay": "Don't say \"I want to build you a website\" right away; start with the observation you made."
+      }
+    },
+    "lead-008": {
+      "leadId": "lead-008",
+      "points": [
+        "Your 4.7‑star rating and 123 reviews highlight a positive atmosphere that more Barasat residents could see with a website.",
+        "Clients love the helpful trainers and affordable pricing, but without an online site they can’t book Sunday sessions easily.",
+        "Showing the full Sunday schedule online would turn weekend browsers into members.",
+        "A website could capture the ₹3,667 you lose each day and add roughly ₹1,10,000 per month.",
+        "Displaying your trainer praise online will reinforce the strong community feel praised by members."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already online with full hour listings and class schedules.",
+      "revenueArgument": "You could be adding about ₹1,10,000 each month by converting online visitors.",
+      "urgencyHook": "That’s about ₹3,667 slipping away every day without a site.",
+      "postCallWhatsApp": "Hello, thanks for chatting about Brahmastra Gym. I’ve created a quick demo showing your Sunday hours and trainer highlights. Shall I send it over now?",
+      "bestTimeToCall": "Best to call Wednesday late afternoon around 3 pm when the gym is less busy.",
+      "callScript": {
+        "opener": "I was checking gyms in Barasat and noticed your 4.7‑star rating and glowing trainer reviews, but saw no website listed.",
+        "iceBreaker": "How do most of your new members hear about the Sunday hours?",
+        "keyPoints": [
+          "Your positive reviews already attract attention; a website would let them book instantly.",
+          "Listing the full Sunday schedule online can capture weekend traffic.",
+          "An online booking system could recover the ₹3,667 you lose each day."
+        ],
+        "objectionHandler": "I get that you’re busy, yet about ₹3,667 could be coming in daily if you had a simple site.",
+        "closer": "Can I send you a free WhatsApp screenshot of a basic website so you can see the look?",
+        "doNotSay": "Avoid saying \"I’ll build you a website\" first; focus on the observation you made."
+      }
+    },
+    "lead-083": {
+      "leadId": "lead-083",
+      "points": [
+        "Your 4.3‑star rating and 94 reviews show strong community trust, but without a website potential members can’t see membership options.",
+        "Members love that you’re open 365 days a year, yet they can’t verify that online without a site.",
+        "Adding a simple online booking form could stop the estimated ₹833 daily loss.",
+        "Showcasing the Sunday 5 am‑10 pm schedule online would attract early‑bird visitors.",
+        "A website can turn the positive feedback about your equipment into new sign‑ups."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already displaying membership plans and online sign‑up forms.",
+      "revenueArgument": "You could be earning roughly ₹25,000 per month if you capture online interest.",
+      "urgencyHook": "That’s about ₹833 each day you’re missing out.",
+      "postCallWhatsApp": "Hi, thanks for speaking about Sreenagar Byayam Mandir. I’ve put together a quick website preview highlighting your 365‑day opening and Sunday hours. Would you like me to send it?",
+      "bestTimeToCall": "For a gym, call on Tuesday or Thursday between 2 pm–4 pm when foot traffic eases.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and saw your 4.3‑star rating and the comment about being open all year, but noticed there’s no website.",
+        "iceBreaker": "Do most of your members join after visiting in person or after hearing about you online?",
+        "keyPoints": [
+          "Your year‑round availability is a strong selling point; a website would broadcast it.",
+          "Listing the Sunday schedule online can bring in early‑morning members.",
+          "An online booking page could recover the ₹833 you lose daily."
+        ],
+        "objectionHandler": "I understand you’re pressed for time, but about ₹833 walks out of the gym each day without an online presence.",
+        "closer": "May I share a free WhatsApp mock‑up of a simple site so you can see how it looks?",
+        "doNotSay": "Don’t start with \"I want to build you a website\"; begin with the observation you made."
+      }
+    },
+    "lead-089": {
+      "leadId": "lead-089",
+      "points": [
+        "Your 4.9‑star rating and 487 photos prove a great environment, yet without a website visitors can’t discover your classes.",
+        "Members rave about the experienced trainer and health benefits, which a site could showcase to attract new students.",
+        "Only Sunday hours are shown; adding a full schedule online would boost enrollment.",
+        "An online services list could turn photo viewers into paying students, recapturing the ₹1,333 daily loss.",
+        "A simple website can highlight the positive environment praised by many reviewers."
+      ],
+      "competitorInsight": "Other yoga studios in Barasat showcase class schedules and photos on their websites.",
+      "revenueArgument": "You could be adding about ₹40,000 each month by turning photo viewers into students.",
+      "urgencyHook": "That’s roughly ₹1,333 lost every day without an online presence.",
+      "postCallWhatsApp": "Hello, thanks for the chat about Vivekananda Yoga Anushilan Kendra. I’ve prepared a quick demo showing your trainer highlights and class schedule. Shall I forward it now?",
+      "bestTimeToCall": "For a yoga studio, call on Monday morning between 10 am–11 am before the first class.",
+      "callScript": {
+        "opener": "I was browsing yoga studios in Barasat and noticed your 4.9‑star rating and hundreds of photos, but saw no website.",
+        "iceBreaker": "How do most new students hear about your Sunday classes?",
+        "keyPoints": [
+          "Your excellent trainer reviews are a strong draw; a website would share them widely.",
+          "Listing the full class schedule online can bring in more than just Sunday visitors.",
+          "An online services page could recover the ₹1,333 you lose each day."
+        ],
+        "objectionHandler": "I get you’re busy, yet about ₹1,333 could be coming in daily if you had a simple site.",
+        "closer": "Can I send you a free WhatsApp mock‑up of a basic website so you can see the layout?",
+        "doNotSay": "Avoid saying \"I’ll build you a website\" right away; start with the observation you made."
+      }
+    },
+    "lead-098": {
+      "leadId": "lead-098",
+      "points": [
+        "Your 3.9‑star rating and praise for the well‑equipped gym and trainer Bapi da show strong potential, but a website would make that visible to Barasat residents.",
+        "Members appreciate the good trainer, yet without online hours they can’t plan visits easily.",
+        "Adding business hours and a service list online could stop the estimated ₹667 daily loss.",
+        "A simple site can display your equipment and trainer expertise to attract new sign‑ups.",
+        "Online booking would let interested people join without having to call first."
+      ],
+      "competitorInsight": "Other gyms in Barasat already list their timings and class calendars online.",
+      "revenueArgument": "You could be making about ₹20,000 per month by attracting online sign‑ups.",
+      "urgencyHook": "That’s about ₹667 slipping away each day.",
+      "postCallWhatsApp": "Hi, thanks for talking about Madhyamgram Yoga & Physical Education Complex. I’ve put together a quick website preview highlighting your trainer and equipment. Would you like me to share it now?",
+      "bestTimeToCall": "For a gym, call on Thursday afternoon between 2 pm–4 pm when the facility is less crowded.",
+      "callScript": {
+        "opener": "I was checking gyms in Barasat and saw your 3.9‑star rating and the great trainer comments, but noticed there’s no website.",
+        "iceBreaker": "Do most of your members hear about the gym from neighbors or from online searches?",
+        "keyPoints": [
+          "Your trainer Bapi da gets strong praise; a website would share that reputation.",
+          "Listing your hours online can help members plan visits.",
+          "An online booking page could recover the ₹667 you lose daily."
+        ],
+        "objectionHandler": "I understand you’re busy, but about ₹667 could be added each day with a simple online presence.",
+        "closer": "May I send you a free WhatsApp mock‑up of a basic website so you can see how it looks?",
+        "doNotSay": "Don’t start with \"I want to build you a website\"; begin with the observation you made."
+      }
+    },
+    "lead-034": {
+      "leadId": "lead-034",
+      "points": [
+        "BARBELLANC GYM has an outstanding 4.9 rating on Google with 47 reviews praising your strength coaching.",
+        "Local members specifically highlight your gym as the best powerlifting spot in both Barasat and Barrackpore.",
+        "Right now, people searching online for powerlifting in Barbaria cannot see a clear list of your membership options.",
+        "Adding a simple mobile web page will make it easy for strength seekers to view timings and visit in person."
+      ],
+      "competitorInsight": "Other gyms in Barasat are putting their membership plans online to capture local powerlifting leads.",
+      "revenueArgument": "Without an online class schedule, BARBELLANC GYM is missing out on around ₹8,000 every month in new gym memberships.",
+      "urgencyHook": "Every day without a mobile website costs BARBELLANC GYM about ₹267 in uncaptured membership inquiries.",
+      "postCallWhatsApp": "Hi Dada! It was great speaking briefly about BARBELLANC GYM. I created a free mobile mockup showing off your 4.9-star powerlifting reviews. Would you like me to send over the link here?",
+      "bestTimeToCall": "For a gym, call between 11 AM and 2 PM on weekdays when the morning and evening workout rushes are over.",
+      "callScript": {
+        "opener": "Hi, I was looking at fitness spots around Barbaria on Google and noticed your 4.9-star rating at BARBELLANC GYM, especially the compliments about your powerlifting coaching.",
+        "iceBreaker": "Do most of your new members walk in directly from the Barrackpore-Barasat road, or do they find you online first?",
+        "keyPoints": [
+          "You have 47 high-rated reviews praising your strength trainers.",
+          "People searching Google cannot see your membership fees or workout timing.",
+          "I built a quick free demo page showing your powerlifting setup for mobile phones."
+        ],
+        "objectionHandler": "I completely understand you are busy; I just hate seeing you miss out on roughly ₹267 a day from people searching for powerlifting online.",
+        "closer": "Can I send you a quick 30-second WhatsApp video of the free design to look at whenever you have free time?",
+        "doNotSay": "Don't say 'I am calling to sell you a website for your gym' — focus on how members praise the powerlifting trainers."
+      }
+    },
+    "lead-080": {
+      "leadId": "lead-080",
+      "points": [
+        "Avishek Fitness holds a perfect 5.0 rating from 32 happy yoga students in Barasat.",
+        "Reviewers specifically compliment your instructor's personalized attention and expert guidance.",
+        "Google currently lists your hours only as Sunday evening, which confuses people looking for weekday classes.",
+        "A clean web page will let prospective students view your full weekly batch schedule instantly."
+      ],
+      "competitorInsight": "Other fitness centers in the Badu Bazar area use simple web pages to display their weekly class schedules.",
+      "revenueArgument": "Unclear timing online is costing Avishek Fitness an estimated ₹12,000 per month in lost student enrollments.",
+      "urgencyHook": "You are losing around ₹400 every single day because interested students cannot see your full weekly class times.",
+      "postCallWhatsApp": "Hello! Thank you for your time today. I put together a clean, free website preview for Avishek Fitness so students can easily see your weekly yoga batches. Can I send the preview image here?",
+      "bestTimeToCall": "Call between 2 PM and 4 PM on Tuesday or Wednesday when morning and evening yoga batches are finished.",
+      "callScript": {
+        "opener": "Hello, I was checking out yoga centers near Badu Bazar and noticed Avishek Fitness has a perfect 5-star rating with great reviews about personalized attention.",
+        "iceBreaker": "Are your yoga batches currently full, or are you taking in new students this month?",
+        "keyPoints": [
+          "Your 32 reviews rave about the instructor's personalized yoga guidance.",
+          "Google currently shows limited Sunday hours, which might confuse new joiners.",
+          "I made a simple, free demo website showing your weekly batch timings clearly."
+        ],
+        "objectionHandler": "No problem at all; I just wanted to share this because unclear online hours cost roughly ₹400 a day in prospective students.",
+        "closer": "May I WhatsApp you a free sample screenshot of how your class schedule could look online?",
+        "doNotSay": "Don't tell them their Google profile is broken — instead frame it as making their great personal training easier to discover."
+      }
+    },
+    "lead-087": {
+      "leadId": "lead-087",
+      "points": [
+        "Yoga For Life has a top 5.0 rating with glowing feedback on Yogasana and Pranayama guidance.",
+        "Clients love that your guidance helps them improve their health and practice consistently.",
+        "You currently have no website or listed business hours, making it difficult for local residents to join.",
+        "A mobile-friendly landing page can showcase your health benefits and convert searchers into active members."
+      ],
+      "competitorInsight": "Similar yoga studios in Barasat allow prospective clients to view class packages online before calling.",
+      "revenueArgument": "Not having a digital landing page leads to missing out on about ₹30,000 per month from health-conscious searchers.",
+      "urgencyHook": "Missing online booking options means Yoga For Life loses roughly ₹1,000 per day in potential class sign-ups.",
+      "postCallWhatsApp": "Hi! It was nice speaking to you about Yoga For Life. I created a simple sample webpage showing your Yogasana and Pranayama offerings. Would you mind if I share the design link with you here?",
+      "bestTimeToCall": "Call between 1:30 PM and 3:30 PM on a weekday when afternoon studio sessions are quiet.",
+      "callScript": {
+        "opener": "Hi there, I came across Yoga For Life while searching for Pranayama classes in Sasthipukur and saw your wonderful 5-star student feedback.",
+        "iceBreaker": "Do most of your new yoga practitioners find you through neighborhood word-of-mouth or online searches?",
+        "keyPoints": [
+          "Your clients leave inspiring reviews about your Pranayama and Yogasana guidance.",
+          "There are no class schedules listed on Google for interested local residents.",
+          "I designed a free mobile mockup page to help new students register easily."
+        ],
+        "objectionHandler": "I understand your schedule is tight; I just wanted to help close the leak of about ₹1,000 per day in lost student inquiries.",
+        "closer": "Could I send a quick picture of this free website design to your WhatsApp to review later?",
+        "doNotSay": "Don't use complex web terminology like 'SEO' or 'Schema' — keep it focused on getting new yoga students."
+      }
+    },
+    "lead-027": {
+      "leadId": "lead-027",
+      "points": [
+        "Urja Gym World stands out with over 454 positive reviews and a strong 4.4 rating in Madhyamgram.",
+        "Members constantly praise your polite staff and how trainers personally correct exercise form.",
+        "Despite your popularity near APC College, you do not have an official website to capture membership leads.",
+        "A streamlined mobile site can help convert hundreds of monthly Google views into paid gym memberships."
+      ],
+      "competitorInsight": "Other large gyms in Madhyamgram are using web landing pages to offer free trial pass signups online.",
+      "revenueArgument": "Without a dedicated web funnel, Urja Gym World is leaving an estimated ₹70,000 in monthly revenue on the table.",
+      "urgencyHook": "Every day without an online lead capture page costs Urja Gym World approximately ₹2,333 in lost potential memberships.",
+      "postCallWhatsApp": "Hello team Urja Gym World! Loved seeing your amazing 454 reviews. I created a quick mobile demo page featuring a free trial pass button for Madhyamgram locals. May I send you the screenshot?",
+      "bestTimeToCall": "Call between 12 PM and 3 PM on weekdays to avoid peak morning and evening gym rushes.",
+      "callScript": {
+        "opener": "Hi, I was checking out top unisex gyms near APC College on Google and was impressed by Urja Gym World's 454 reviews highlighting your helpful form-correcting trainers.",
+        "iceBreaker": "With over 400 reviews, are you getting more inquiry calls than your front desk can handle during peak hours?",
+        "keyPoints": [
+          "You are one of the most popular gyms in Madhyamgram with 454 reviews.",
+          "You lack an official site where potential members can view membership plans and equipment.",
+          "I built a free mobile layout where visitors can request a free trial pass directly."
+        ],
+        "objectionHandler": "I hear you; I only brought this up because missing an online sign-up page costs your gym about ₹2,333 every single day.",
+        "closer": "Can I message you a free WhatsApp preview of how a trial pass feature would look for Urja Gym World?",
+        "doNotSay": "Don't act like a salesperson pushing a paid package — emphasize that you already built a free sample to help their busy front desk."
+      }
+    },
+    "lead-063": {
+      "leadId": "lead-063",
+      "points": [
+        "Anandam Healthy Body Healthy Mind holds an impressive 4.8 rating across 26 reviews in Nabapally.",
+        "Students specifically appreciate the gentle care provided by Antara ma'am and Sujit sir.",
+        "Since your studio hours are not listed online, prospective students cannot tell when classes take place.",
+        "A simple online profile would highlight your friendly approach and let new joiners contact you directly."
+      ],
+      "competitorInsight": "Other wellness and yoga centers in Barasat publish teacher bios and session times on simple web pages.",
+      "revenueArgument": "Missing an online presence costs Anandam Healthy Body Healthy Mind roughly ₹15,000 per month in uncaptured student fees.",
+      "urgencyHook": "You are potentially missing out on ₹500 every day as local residents search for yoga classes without finding your schedule.",
+      "postCallWhatsApp": "Namaste! Thank you for speaking with me today. I put together a gentle, free website demo for Anandam Healthy Body Healthy Mind highlighting your friendly teachers. Would it be okay to share it here?",
+      "bestTimeToCall": "Call between 2 PM and 4 PM on Wednesday or Thursday when daily classes are wrapped up.",
+      "callScript": {
+        "opener": "Hello, I was looking up wellness places in Nabapally and saw Anandam Healthy Body Healthy Mind with glowing reviews about Antara ma'am and Sujit sir.",
+        "iceBreaker": "Do new students usually come in through recommendations, or are people searching for your yoga classes online?",
+        "keyPoints": [
+          "Your students write beautiful reviews about your warm, pressure-free yoga atmosphere.",
+          "Your studio hours are not listed on Google, making it hard for beginners to plan a visit.",
+          "I designed a free single-page demo showcasing your trainers and session info."
+        ],
+        "objectionHandler": "I completely understand; I just wanted to share this since missing class details online costs about ₹500 a day in lost inquiries.",
+        "closer": "Would it be okay if I sent a free WhatsApp screenshot of the design for you to check out when you get a minute?",
+        "doNotSay": "Don't say 'You don't have a social media presence' — focus positively on showcasing Antara ma'am and Sujit sir's great reputation."
+      }
+    },
+    "lead-091": {
+      "leadId": "lead-091",
+      "points": [
+        "SRISHTI WELLNESS STUDIO already has a Facebook page, but interested people constantly comment asking for direct contact details.",
+        "Without a simple website link, people looking for yoga classes in Barasat cannot check batch timings or monthly fees.",
+        "You currently have only 6 photos online, which does not show off your full studio space and class environment.",
+        "Setting up a basic mobile website will turn your daily social media viewers into paid monthly members.",
+        "Adding an online schedule will save you from answering repeated phone calls about class timings."
+      ],
+      "competitorInsight": "Other yoga and wellness studios in Barasat are putting their daily batch schedules and direct WhatsApp booking buttons online.",
+      "revenueArgument": "Without an online schedule to convert social media visitors, you are missing out on roughly ₹10,000 each month.",
+      "urgencyHook": "Every day without a clear online booking page costs your studio around ₹333 in lost membership inquiries.",
+      "postCallWhatsApp": "Hi from Srishti Wellness Studio call earlier! I put together a quick, free visual mockup of how your yoga class timings and WhatsApp booking button could look online. Would you like me to send the image link over?",
+      "bestTimeToCall": "For a yoga studio, call between 11 AM and 1 PM on weekdays after morning batches finish.",
+      "callScript": {
+        "opener": "I was looking at yoga studios in Barasat and noticed people on social media asking for direct contact details for Srishti Wellness Studio.",
+        "iceBreaker": "Do most of your new yoga students find your studio through local recommendations or through online searches?",
+        "keyPoints": [
+          "Your studio has a 5-star rating, but potential members cannot find your batch timings online.",
+          "People asking for your phone contact online often drop off if they cannot book immediately.",
+          "A 1-page website showing your schedule and fees can automatically capture these local leads."
+        ],
+        "objectionHandler": "I completely understand you are busy, but even a quick phone page can stop you from losing about ₹333 every single day in missed sign-ups.",
+        "closer": "Can I WhatsApp you a free design layout of how your studio schedule could look on a phone screen?",
+        "doNotSay": "Don't say 'I want to sell you a website design service' right at the beginning."
+      }
+    },
+    "lead-085": {
+      "leadId": "lead-085",
+      "points": [
+        "Brati Sangha Club has fantastic 4.6-star reviews highlighting your free football and table tennis coaching camps.",
+        "Reviewers strongly praise your spacious venue and clean building for hosting large wedding receptions.",
+        "Without a dedicated website, event planners in Barasat cannot view hall rental details or booking availability.",
+        "People proud of your locality leave great feedback online, but new residents cannot see your complete sports schedule.",
+        "A clean club portal will help attract sponsorships and fill up your event hall dates faster."
+      ],
+      "competitorInsight": "Other community clubs and event halls in Barasat showcase their facility photos and booking forms online to attract venue rentals.",
+      "revenueArgument": "Missing out on venue booking inquiries and club memberships costs an estimated ₹50,000 per month.",
+      "urgencyHook": "Not having an official site for hall bookings means missing out on roughly ₹1,667 every single day.",
+      "postCallWhatsApp": "Hello! It was great talking about Brati Sangha Club's excellent venue space and sports camps. I built a simple, free demo page showing how local venue inquiries can reach you directly on WhatsApp. Shall I drop the preview link here?",
+      "bestTimeToCall": "For community clubs, call on Tuesday or Thursday between 4 PM and 6 PM when committee members are available.",
+      "callScript": {
+        "opener": "I was reading local reviews in Barasat and saw people highly praising Brati Sangha for your free sports camps and huge wedding reception space.",
+        "iceBreaker": "Are most of your wedding hall bookings coming from local walk-ins or do people call you after searching online?",
+        "keyPoints": [
+          "You have 97 great reviews praising your clean facility and coaching camps, but no official online home.",
+          "People looking for marriage venues in Barasat need to see hall photos and inquiry forms instantly.",
+          "A simple club page can showcase your community work and collect venue booking leads automatically."
+        ],
+        "objectionHandler": "I know club management keeps you very busy, but missing online venue inquiries costs around ₹1,667 each day.",
+        "closer": "May I send a free 30-second mobile site sample over WhatsApp so you can see how venue inquiries would work?",
+        "doNotSay": "Don't mention pitch prices or push for a formal contract during your very first conversation."
+      }
+    },
+    "lead-039": {
+      "leadId": "lead-039",
+      "points": [
+        "Sethpukur Athletic Club has earned 74 positive reviews online, especially for your Durga Puja pandals and clean playground.",
+        "You currently have only 2 photos listed on Google, which fails to highlight your spacious ground and activities.",
+        "Local residents praise your neat facilities, but potential members cannot find official club timings or service lists.",
+        "A simple website can showcase your annual events, sports activities, and community initiatives in one place.",
+        "Having an official online portal makes it much easier to handle donations, event updates, and local memberships."
+      ],
+      "competitorInsight": "Other athletic clubs in North 24 Parganas display their sports facilities and cultural event photos on simple websites.",
+      "revenueArgument": "The lack of a online presence for club activities and events leaves an estimated ₹29,000 per month on the table.",
+      "urgencyHook": "Without a clear website for your club, you are missing out on about ₹967 daily in potential event support and memberships.",
+      "postCallWhatsApp": "Hi! Thanks for your time discussing Sethpukur Athletic Club. I created a quick visual demo highlighting your clean sports ground and event gallery for mobile screens. Mind if I share the link with you?",
+      "bestTimeToCall": "Call on Wednesday or Friday between 5 PM and 7 PM when club organizers are on site.",
+      "callScript": {
+        "opener": "I was looking at athletic clubs around Barasat and noticed your great 74 reviews praising your clean playground and Durga Puja setups.",
+        "iceBreaker": "Do local youth and families usually join your club activities by visiting in person or by looking you up online?",
+        "keyPoints": [
+          "Your club has strong local goodwill, but only 2 photos exist online for prospective members to view.",
+          "Visitors looking for sports grounds in Barasat cannot easily find your contact info or schedules.",
+          "A basic single-page site would highlight your ground, annual pujas, and community programs cleanly."
+        ],
+        "objectionHandler": "I understand you might not be looking to buy anything today, but uncaptured interest costs the club about ₹967 daily.",
+        "closer": "Could I WhatsApp you a zero-cost mockup showing how your club's events and playground photos could look online?",
+        "doNotSay": "Don't sound like a technical web agency using complex words like domain hosting or backend coding."
+      }
+    },
+    "lead-030": {
+      "leadId": "lead-030",
+      "points": [
+        "Suman's Fitbox has a strong 4.3-star rating with members specifically praising the friendly trainer and reasonable pricing.",
+        "You currently have zero contact details or operating hours listed online, making it hard for prospective members to reach you.",
+        "With only 1 photo on your business profile, people searching for gyms in Barasat cannot see your equipment.",
+        "A simple mobile page displaying trainer details and monthly fees will convert map searches into walk-in workouts.",
+        "Direct WhatsApp integration on a web page lets interested fitness enthusiasts book trial sessions instantly."
+      ],
+      "competitorInsight": "Similar fitness centers in Barasat publish their membership rates, equipment photos, and open hours online to get daily sign-ups.",
+      "revenueArgument": "Missing contact info and operating hours leads to an estimated lost revenue of ₹6,000 every month.",
+      "urgencyHook": "Not displaying your gym hours and phone number costs you roughly ₹200 every single day in lost member leads.",
+      "postCallWhatsApp": "Hey Suman's Fitbox team! Loved reading your positive gym reviews. I sketched up a quick, free mobile page design featuring your friendly training setup and direct WhatsApp chat button. Can I send it over?",
+      "bestTimeToCall": "For a gym, call between 12 PM and 2 PM on weekdays when morning and evening workout rushes are over.",
+      "callScript": {
+        "opener": "I was checking out fitness spots in Barasat and noticed reviewers praising Suman's Fitbox for your friendly trainer and great pricing.",
+        "iceBreaker": "Are most of your new gym members coming from walk-ins in Sethpukur Colony or from online searches?",
+        "keyPoints": [
+          "Your 40 reviews highlight great equipment and friendly management, but there is only 1 photo online.",
+          "Your opening hours and phone number are currently missing on Google Maps.",
+          "A mobile page showing your gym equipment and monthly rates can turn online searchers into instant trial members."
+        ],
+        "objectionHandler": "I completely hear you, but leaving out contact details and hours leads to losing around ₹200 daily in trial sign-ups.",
+        "closer": "Can I WhatsApp you a quick 1-page design idea showing your gym photos and a direct 'Book Trial' WhatsApp button?",
+        "doNotSay": "Don't criticize their current online listing harshly — focus on how great their customer reviews already are."
+      }
+    },
+    "lead-053": {
+      "leadId": "lead-053",
+      "points": [
+        "Chotobazar Gym Center has online feedback where people are confused about the exact physical location.",
+        "Having an official website with a clear map, full address, and photos proves your legitimacy to everyone instantly.",
+        "Currently, your hours only show Sunday, leaving weekday lifters unsure when your gym is open.",
+        "A clean 1-page site displaying your weekday timings and equipment photos will build immediate trust in Barasat.",
+        "An official online link protects your reputation and makes it easy for local fitness lovers to contact you."
+      ],
+      "competitorInsight": "Other fitness and gymnastics centers in Barasat list exact location directions and full weekly schedules to build trust.",
+      "revenueArgument": "Confusion over location and missing weekday hours causes an estimated monthly revenue loss of ₹8,000.",
+      "urgencyHook": "Unclear location details and missing opening hours cost your gym approximately ₹267 every single day.",
+      "postCallWhatsApp": "Hi there! Thanks for speaking with me about Chotobazar Gym Center. I designed a free mobile demo page featuring your exact address map, full weekly hours, and landmark details. Would you like to check it out?",
+      "bestTimeToCall": "Call between 1 PM and 3 PM on weekdays when the gym floor is quiet.",
+      "callScript": {
+        "opener": "I was looking up gym listings in Barasat and saw Chotobazar Gym Center, but noticed some online location confusion among visitors.",
+        "iceBreaker": "Do potential members ever call you confused about your exact address or your regular weekday opening hours?",
+        "keyPoints": [
+          "Some reviews question your map location, which can easily be resolved with an official verified website.",
+          "Your profile currently only lists Sunday hours, so weekday fitness seekers don't know when to visit.",
+          "A quick official web page with landmark photos and complete timings will instantly establish 100% trust."
+        ],
+        "objectionHandler": "I know you are busy running the gym, but address confusion and hidden hours cost about ₹267 daily in missed walk-ins.",
+        "closer": "Would it be alright if I WhatsApp you a free demo link showing how your real location and full weekly schedule could look?",
+        "doNotSay": "Don't validate negative comments aggressively — frame the website as an easy way to show total authenticity."
+      }
+    },
+    "lead-067": {
+      "leadId": "lead-067",
+      "points": [
+        "KOUSHIK FITNESS LAB in Barasat has a perfect 5‑star rating with 27 happy reviewers.",
+        "Customers love the affordable tariff and the awesome ambience you provide.",
+        "Reviewers repeatedly mention how cooperative and knowledgeable the trainers are.",
+        "Without a website you could be losing about ₹667 every day."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already showcasing class schedules and online booking on their websites.",
+      "revenueArgument": "You could be missing roughly ₹20,000 each month.",
+      "urgencyHook": "That adds up to about ₹667 lost every single day.",
+      "postCallWhatsApp": "Hi, thanks for chatting about KOUSHIK FITNESS LAB. I’ve prepared a quick mock‑up showing your 5‑star reviews and affordable rates on a simple site. Would you like me to share it on WhatsApp?",
+      "bestTimeToCall": "For a gym, call Tuesday or Wednesday between 2–4 PM when the morning rush is over.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and saw KOUSHIK FITNESS LAB has a 5‑star rating and reviewers love your affordable rates and friendly trainers.",
+        "iceBreaker": "Do most of your new members hear about you from online searches or word of mouth?",
+        "keyPoints": [
+          "You have 27 five‑star reviews praising your ambience and trainers.",
+          "Your affordable tariff is a strong selling point that could attract more members online.",
+          "A simple website could showcase those strengths and capture leads you’re missing now."
+        ],
+        "objectionHandler": "I understand you’re busy, but at a loss of about ₹667 each day, even a quick look at a free demo could help stop that drain.",
+        "closer": "May I send you a free WhatsApp mock‑up of a one‑page site so you can see how it looks?",
+        "doNotSay": "Don't say 'I want to build you a website' right away; start by mentioning you noticed their great reviews."
+      }
+    },
+    "lead-079": {
+      "leadId": "lead-079",
+      "points": [
+        "New Barrackpore Common U Gym in Barasat boasts 149 reviews with praise for its ambience and professional trainers.",
+        "Members highlight the wide range of equipment and air‑conditioned space.",
+        "Your friendly staff and clean environment are repeatedly mentioned in reviews.",
+        "Missing a website could be costing you about ₹2,233 each day."
+      ],
+      "competitorInsight": "Other gyms in Barasat already display multiple photos and offer online booking on their sites.",
+      "revenueArgument": "You may be leaving around ₹67,000 on the table every month.",
+      "urgencyHook": "That’s roughly ₹2,233 lost daily.",
+      "postCallWhatsApp": "Hi, thanks for the quick chat about New Barrackpore Common U Gym. I’ve created a short mock‑up that highlights your great ambience and trainer expertise. Shall I share it on WhatsApp?",
+      "bestTimeToCall": "Call on Monday or Thursday late morning (10‑11 AM) when the gym is quieter.",
+      "callScript": {
+        "opener": "I was checking gyms in Barasat and noticed New Barrackpore Common U Gym has 149 reviews praising the ambience and professional trainers.",
+        "iceBreaker": "How do most people currently find out your opening hours and facilities?",
+        "keyPoints": [
+          "Your 149 reviewers love the ambience and equipment you provide.",
+          "Professional trainers are a key attraction that could be highlighted online.",
+          "Without a website, none of these strengths are visible to new prospects."
+        ],
+        "objectionHandler": "I get that you’re busy, but losing about ₹2,233 each day means a quick free demo could help you stop that loss.",
+        "closer": "Can I send you a free WhatsApp mock‑up of a simple site so you can see the potential?",
+        "doNotSay": "Avoid saying 'I will build a website for you' at the start; focus on their strong reviews first."
+      }
+    },
+    "lead-032": {
+      "leadId": "lead-032",
+      "points": [
+        "Worship of Health Gym & Fitness Studio in Barasat holds a 4.9 rating with 11 reviewers loving the trainer and affordable price.",
+        "Customers call the trainer \"awesome\" and say the environment is perfect for fitness.",
+        "Your affordable pricing is repeatedly praised as a major benefit.",
+        "Not having a website may be costing you about ₹50 each day."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already listing their hours and class schedules online for easy booking.",
+      "revenueArgument": "You could be missing roughly ₹1,500 per month.",
+      "urgencyHook": "That adds up to about ₹50 lost every day.",
+      "postCallWhatsApp": "Hi, thanks for speaking about Worship of Health Gym. I’ve put together a brief mock‑up that shows your trainer praise and affordable pricing. Would you like me to send it via WhatsApp?",
+      "bestTimeToCall": "Call on Wednesday mid‑morning (10‑12 AM) when classes are between sessions.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and saw Worship of Health Gym has a 4.9 rating with reviewers raving about your trainer and affordable rates.",
+        "iceBreaker": "How do members currently book their sessions with you?",
+        "keyPoints": [
+          "Your 11 reviewers highlight the helpful trainer and low price.",
+          "A 4.9 rating shows strong trust that can be showcased online.",
+          "A simple website can list hours and enable online booking, stopping the ₹50 daily loss."
+        ],
+        "objectionHandler": "I understand you’re busy, but losing about ₹50 each day means a quick free demo could help you capture that revenue.",
+        "closer": "May I send a free WhatsApp mock‑up of a one‑page site so you can see the idea?",
+        "doNotSay": "Don’t say 'I want to build you a website' right away; start by mentioning the positive trainer feedback."
+      }
+    },
+    "lead-086": {
+      "leadId": "lead-086",
+      "points": [
+        "Unicorn Ladies Gym in Barasat enjoys a perfect 5‑star rating with reviewers praising the trainer’s behavior.",
+        "Customers describe the gym as very good and the trainer as very good.",
+        "Only one photo is currently online, limiting visual appeal.",
+        "Without a website you could be losing about ₹100 each day."
+      ],
+      "competitorInsight": "Other ladies gyms in Barasat are already showcasing multiple photos and schedules on their websites.",
+      "revenueArgument": "You may be missing roughly ₹3,000 each month.",
+      "urgencyHook": "That’s about ₹100 lost daily.",
+      "postCallWhatsApp": "Hi, thanks for the chat about Unicorn Ladies Gym. I’ve prepared a short mock‑up that adds more photos and booking options. Shall I share it on WhatsApp?",
+      "bestTimeToCall": "Call on Friday late afternoon (4‑5 PM) after the evening class rush.",
+      "callScript": {
+        "opener": "I was checking gyms in Barasat and saw Unicorn Ladies Gym has a 5‑star rating with reviewers loving the trainer’s behavior.",
+        "iceBreaker": "How do you currently let new female members discover your classes and schedule?",
+        "keyPoints": [
+          "Your trainer’s good behavior is highlighted by reviewers.",
+          "You have a perfect 5‑star rating but only one photo online.",
+          "A website can display more images and let women book sessions, preventing the ₹100 daily loss."
+        ],
+        "objectionHandler": "I know you’re busy, but losing about ₹100 each day means a quick free demo could help you stop that drain.",
+        "closer": "Can I send you a free WhatsApp mock‑up of a simple site so you can see how it looks?",
+        "doNotSay": "Avoid saying 'I want to sell you a website' at the start; focus on the trainer praise first."
+      }
+    },
+    "lead-088": {
+      "leadId": "lead-088",
+      "points": [
+        "Dream Gym Hridaypur in Barasat has a 4.3 rating with reviewers saying \"Good\" and smiling.",
+        "Only three photos are online, limiting visual impact.",
+        "No phone or WhatsApp contact is listed, so prospects can’t reach you easily.",
+        "Missing a website could be costing you about ₹500 each day."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already listing phone and WhatsApp numbers on their sites for quick inquiries.",
+      "revenueArgument": "You could be missing roughly ₹15,000 per month.",
+      "urgencyHook": "That translates to about ₹500 lost every day.",
+      "postCallWhatsApp": "Hi, thanks for speaking about Dream Gym Hridaypur. I’ve created a brief mock‑up that adds phone/WhatsApp contact and a few more photos. Would you like me to send it via WhatsApp?",
+      "bestTimeToCall": "Call on Tuesday early afternoon (1‑2 PM) when the gym is quieter.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and noticed Dream Gym Hridaypur has a 4.3 rating with reviewers saying it’s good.",
+        "iceBreaker": "How do potential members usually contact you to ask about membership?",
+        "keyPoints": [
+          "Your 4.3 rating shows solid demand.",
+          "Without phone or WhatsApp listed, prospects may drop off.",
+          "A simple website with contact info could capture the ₹500 daily loss."
+        ],
+        "objectionHandler": "I understand you’re busy, but losing about ₹500 each day means a quick free demo could help you recover that revenue.",
+        "closer": "May I send a free WhatsApp mock‑up of a one‑page site so you can see the benefit?",
+        "doNotSay": "Don’t say 'I will build a website for you' right away; start by mentioning the missing contact info."
+      }
+    },
+    "lead-037": {
+      "leadId": "lead-037",
+      "points": [
+        "Fit Zone in Barasat has 12 reviews with great feedback on modern equipment and friendly atmosphere.",
+        "Some members complain trainers are busy working out themselves, which a clear service schedule on a website can clarify.",
+        "Without online operating hours listed, prospective members cannot tell when the gym is open for inquiries.",
+        "Adding a simple online page showcasing your equipment can easily capture local fitness searchers in Barasat.",
+        "You are currently missing out on an estimated ₹4,000 in monthly prospective member sign-ups."
+      ],
+      "competitorInsight": "Other fitness centers in Barasat list their full trainer profiles and class schedules online to build trust.",
+      "revenueArgument": "Without a basic website listing your hours, you could be missing out on ₹4,000 every month from local searchers.",
+      "urgencyHook": "Not having your gym hours published online costs you around ₹133 every single day in lost member leads.",
+      "postCallWhatsApp": "Hi! Thanks for speaking with me briefly about Fit Zone in Barasat. I built a quick, free mobile design showcasing your gym equipment and timings so local residents can easily find you. Would it be okay if I share the sample link here?",
+      "bestTimeToCall": "Call between 12 PM and 2 PM on Tuesday or Wednesday when morning and evening workout rushes are quiet.",
+      "callScript": {
+        "opener": "I was looking at fitness options in Barasat and noticed Fit Zone has great feedback about new equipment and friendly atmosphere.",
+        "iceBreaker": "Do most of your new members find out about you by walking past Chowdhury Para Road, or do they look you up online first?",
+        "keyPoints": [
+          "Your members love your equipment and gym atmosphere in their Google reviews.",
+          "However, your operating hours are missing online, so people don't know when to drop by.",
+          "A 1-page website can highlight your equipment and show exact open hours to get more walk-ins."
+        ],
+        "objectionHandler": "I completely understand you're busy, but missing open hours online is costing about ₹133 a day in lost prospective members.",
+        "closer": "Can I send you a free WhatsApp preview of a simple page design for Fit Zone with no obligation?",
+        "doNotSay": "Don't bring up the review complaining about busy trainers — focus positively on showcasing your great equipment."
+      }
+    },
+    "lead-054": {
+      "leadId": "lead-054",
+      "points": [
+        "Arya's Gym near Shishu Niketan School in Barasat has zero business hours listed on Google.",
+        "Parents and students looking for gymnastics training cannot find program details or fee structures online.",
+        "With only 5 photos and no website, local families cannot see the facility quality before visiting.",
+        "Creating a clear online course schedule helps capture student enrollments in the Mashidhati Road area.",
+        "Establishing an online profile gives your gymnasium school professional credibility over unlisted spots."
+      ],
+      "competitorInsight": "Other sports institutes and gymnasium schools in Barasat publish their training schedules online to attract parents.",
+      "revenueArgument": "Missing an online presence makes it difficult for local parents to discover your gymnastics programs.",
+      "urgencyHook": "Without listed operating hours, interested students in Barasat often move on to other sports options.",
+      "postCallWhatsApp": "Hello! It was nice connecting regarding Arya's Gym in Barasat. I put together a simple visual schedule layout for your gymnastics school so parents can easily view class times. Should I send over the quick preview?",
+      "bestTimeToCall": "Call between 2 PM and 4 PM on weekdays when daytime instruction classes have paused.",
+      "callScript": {
+        "opener": "I was looking at sports training options near Shishu Niketan School in Barasat and noticed Arya's Gym listed online.",
+        "iceBreaker": "Do parents usually come by the facility directly to ask about your gymnastics schedule and fees?",
+        "keyPoints": [
+          "Your location near local schools makes you ideal for students looking for sports training.",
+          "Right now, there are no hours or program details available online for parents to view.",
+          "A simple 1-page site can display your class times and photo gallery to boost inquiries."
+        ],
+        "objectionHandler": "I totally get it, I just wanted to share a free mock-up schedule page you can save for whenever you're ready to grow.",
+        "closer": "May I send a quick screenshot mockup on WhatsApp so you can see how nice your class schedule could look online?",
+        "doNotSay": "Don't ask 'Why don't you have a website yet?' — focus on making it easy for parents to see training schedules."
+      }
+    },
+    "lead-068": {
+      "leadId": "lead-068",
+      "points": [
+        "Real gym in Harish Nagar boasts an impressive 5.0-star rating across 27 customer reviews.",
+        "Your Google listing only shows Sunday operating hours, leaving weekday timings completely blank.",
+        "You currently have only 1 photo online, hiding your great workout setup from prospective members.",
+        "Adding a full weekly schedule and photo gallery will help turn online viewers into paying members.",
+        "You are likely losing an estimated ₹15,000 per month due to missing weekday schedule details."
+      ],
+      "competitorInsight": "Other fitness hubs in Madhyamgram and Barasat display full weekly schedules and photo galleries to convert searchers.",
+      "revenueArgument": "Missing weekday hours on your profile could be costing you around ₹15,000 every month in missed gym memberships.",
+      "urgencyHook": "Not showing your full weekly schedule online costs roughly ₹500 every day in lost prospective member leads.",
+      "postCallWhatsApp": "Hi there! Great speaking with you about Real gym in Harish Nagar. Congratulations on keeping a 5-star rating! I designed a free demo page showing your full weekday schedule and gallery. May I send you the link to check out?",
+      "bestTimeToCall": "Call Thursday or Friday between 1 PM and 3 PM when afternoon gym traffic drops.",
+      "callScript": {
+        "opener": "I was checking out top-rated gyms in Harish Nagar and saw Real gym has a perfect 5-star rating from 27 reviews!",
+        "iceBreaker": "Are most of your new members coming through word-of-mouth recommendations from current gym goers?",
+        "keyPoints": [
+          "Your 5-star rating shows that members absolutely love training at Real gym.",
+          "However, Google only displays your Sunday hours, so weekday searchers think you might be closed.",
+          "A clean web page displaying full weekday timings and photos would convert far more local leads."
+        ],
+        "objectionHandler": "I completely respect your time, but missing weekday hours online is costing about ₹500 a day in lost sign-up inquiries.",
+        "closer": "Would it be alright if I text you a free demo link on WhatsApp showing how your 5-star gym could look online?",
+        "doNotSay": "Don't criticize their single photo upload — focus on celebrating their perfect 5.0-star rating."
+      }
+    },
+    "lead-023": {
+      "leadId": "lead-023",
+      "points": [
+        "WOLVERINE FITNESS HUB has a high 4.7 rating, with reviews praising affordable rates and friendly trainers.",
+        "Your Google listing has no operating hours, making it hard for prospective members to know when to visit.",
+        "Without a website, potential clients in Digberia cannot view your membership plans or facility photos.",
+        "Showcasing your affordable pricing online helps differentiate you from pricier fitness alternatives.",
+        "You are estimated to lose around ₹10,000 monthly by not capturing online fitness searchers."
+      ],
+      "competitorInsight": "Other gyms in Barasat showcase membership plans and trainer profiles online to win over new clients.",
+      "revenueArgument": "Hiding your affordable pricing behind phone calls could be costing you ₹10,000 per month in lost new sign-ups.",
+      "urgencyHook": "Unclear opening hours mean losing roughly ₹333 per day to other fitness options in Barasat.",
+      "postCallWhatsApp": "Hello! Thanks for your time earlier regarding WOLVERINE FITNESS HUB. I created a quick, free mobile design highlighting your affordable gym plans and opening hours. Would you like me to share the preview link here?",
+      "bestTimeToCall": "Call Wednesday or Thursday between 1 PM and 3 PM during afternoon lull hours.",
+      "callScript": {
+        "opener": "I was searching for top workout spots in Barasat and noticed WOLVERINE FITNESS HUB has great reviews for affordable prices and friendly trainers.",
+        "iceBreaker": "Do prospective members frequently call you to ask about monthly membership rates and daily opening times?",
+        "keyPoints": [
+          "Your members frequently highlight your friendly staff and budget-friendly membership rates.",
+          "However, your opening hours aren't listed online, so people don't know when to drop by.",
+          "A simple 1-page mobile site showing your plans and hours will convert online searchers fast."
+        ],
+        "objectionHandler": "I understand you're busy, but not having your hours listed online costs about ₹333 a day in missed member leads.",
+        "closer": "Can I WhatsApp you a free 1-page demo showing your rates and schedule to see what you think?",
+        "doNotSay": "Don't try to sell high-end marketing packages — keep it focused on a simple page for membership info."
+      }
+    },
+    "lead-094": {
+      "leadId": "lead-094",
+      "points": [
+        "Adamas Gym in Barbaria is praised in reviews for having good workout infrastructure.",
+        "Your Google listing only shows Sunday hours and lacks a phone number or WhatsApp contact details.",
+        "Without online contact details, local fitness enthusiasts cannot inquire about memberships or visits.",
+        "A dedicated web page highlighting your equipment will instantly fix your online credibility.",
+        "You are missing out on an estimated ₹8,000 every month due to absent contact information and schedules."
+      ],
+      "competitorInsight": "Other gyms near Barbaria present their gym equipment and full weekly schedules clearly on simple web pages.",
+      "revenueArgument": "Lacking contact details and full hours online could be losing you up to ₹8,000 in monthly membership revenue.",
+      "urgencyHook": "Not displaying contact info online means forfeiting around ₹267 daily from local searchers in Barbaria.",
+      "postCallWhatsApp": "Hi! Thanks for taking my call regarding Adamas Gym in Barbaria. I put together a quick free demo layout putting your gym infrastructure and contact details front and center. May I send over the link?",
+      "bestTimeToCall": "Call between 2 PM and 4 PM on weekdays to avoid peak morning and evening gym hours.",
+      "callScript": {
+        "opener": "I was looking up workout spots around Barbaria and noticed reviewers praise Adamas Gym for having good infrastructure.",
+        "iceBreaker": "Do local residents usually pop in directly to check out your setup, or do they try calling you first?",
+        "keyPoints": [
+          "People who visit Adamas Gym really appreciate your solid workout infrastructure.",
+          "Right now, there is no phone number or full schedule listed online for prospective members.",
+          "A clean 1-page site displaying your setup and contact number will bring in steady walk-ins."
+        ],
+        "objectionHandler": "I completely understand, but missing online contact info costs about ₹267 a day in walk-in opportunities.",
+        "closer": "Could I text you a free WhatsApp mockup showing how your contact details and photos could look?",
+        "doNotSay": "Don't mention their 2.6 star rating — highlight their praised infrastructure instead."
+      }
+    },
+    "lead-045": {
+      "leadId": "lead-045",
+      "points": [
+        "AR GYM has a perfect 5-star rating in Barasat, with members praising your top-quality bodybuilding equipment.",
+        "Since your opening hours are missing online, local gym-goers cannot see when you are open to visit.",
+        "You currently have only 1 photo on Google, which makes it hard for prospective members to see your facilities.",
+        "Adding a simple 1-page website will help convert local search traffic near Colony More into paid memberships.",
+        "We can easily display your bodybuilding training options and equipment photos so people can contact you instantly."
+      ],
+      "competitorInsight": "Other fitness centers in Barasat are listing their full weekly schedules and gym photos to attract new members online.",
+      "revenueArgument": "Missing online hours and contact details costs AR GYM approximately ₹2,000 in missed monthly memberships.",
+      "urgencyHook": "That translates to losing around ₹67 every day just from prospective members who cannot find your opening timing.",
+      "postCallWhatsApp": "Hi! Loved seeing the glowing 5-star reviews for AR GYM in Barasat. I made a quick demo layout showcasing your equipment and timings so local fitness seekers can find you easily. Would you mind if I share the picture link here?",
+      "bestTimeToCall": "For a gym like AR GYM, call Tuesday between 2–4 PM during the afternoon quiet hours.",
+      "callScript": {
+        "opener": "I was looking at top-rated fitness centers in Barasat near Colony More and saw AR GYM has a great 5-star rating with great reviews about your equipment.",
+        "iceBreaker": "Do most of your new members walk in directly, or do they usually try to look up your timing on Google first?",
+        "keyPoints": [
+          "Your members love your bodybuilding setup, but your opening hours are missing on Google.",
+          "You currently only have 1 photo online, so people can't preview your gym floor before coming.",
+          "A simple mobile page would show your timings and equipment to potential members nearby."
+        ],
+        "objectionHandler": "I completely understand you're busy, but even missing out on ₹67 a day adds up when people can't check your gym timing.",
+        "closer": "Can I send you a free sample mobile design of AR GYM on WhatsApp just to take a look?",
+        "doNotSay": "Don't say 'I want to sell you a website' — instead say you noticed their 5-star rating and wanted to help show off their equipment online."
+      }
+    },
+    "lead-075": {
+      "leadId": "lead-075",
+      "points": [
+        "NEXA Fight has a strong 5-star rating on Google in Barasat, which shows great local interest.",
+        "Without a phone number or WhatsApp link on Google, potential members have no quick way to reach you.",
+        "Having only 3 photos online makes it difficult for prospective clients to see your training setup.",
+        "A clean 1-page website will let local fitness seekers submit inquiries and view your location easily.",
+        "Adding direct booking details will help capture walk-in interest before competitors do."
+      ],
+      "competitorInsight": "Other fitness studios in Barasat provide direct WhatsApp buttons and online inquiry forms for quick booking.",
+      "revenueArgument": "Without phone details or a website on Google, NEXA Fight is missing potential member inquiries every month.",
+      "urgencyHook": "Every week without visible contact details means interested fighters and fitness seekers join other local centers instead.",
+      "postCallWhatsApp": "Hi team NEXA Fight! Great to see your 5-star presence in Barasat. I put together a quick, simple web preview featuring a direct WhatsApp contact button for your members. May I send over the sample image?",
+      "bestTimeToCall": "For a fitness center, call Wednesday between 1–3 PM between morning and evening sessions.",
+      "callScript": {
+        "opener": "I was checking out fitness spots in Noapara, Barasat and came across NEXA Fight's 5-star rating online.",
+        "iceBreaker": "Do people usually drop by NEXA Fight in person, or do you get calls asking about your membership plans?",
+        "keyPoints": [
+          "Your profile has a great rating, but prospective members can't find a phone number to reach you.",
+          "There are only 3 photos online, so people don't get to see your training area.",
+          "A simple 1-page layout would give people a direct WhatsApp button to ask for membership fees."
+        ],
+        "objectionHandler": "I understand your time is tight, but adding a quick phone link will ensure you don't miss interested members in Barasat.",
+        "closer": "Would it be okay if I message you a quick WhatsApp preview of how your page could look?",
+        "doNotSay": "Don't ask 'Why don't you have a website?' upfront — focus on making it easy for people to call them."
+      }
+    },
+    "lead-046": {
+      "leadId": "lead-046",
+      "points": [
+        "ProActive Wellness has fantastic feedback from members who call it their second home and praise the supportive vibe.",
+        "Your current listing only shows Sunday hours, so potential clients don't know your weekday schedule.",
+        "With only 3 online reviews, displaying your inspiring customer success stories on a website will build instant trust.",
+        "A simple mobile page can highlight your medicine-free health programs to reach more families near Noapara.",
+        "We can add a quick inquiry button so people can ask about ideal weight and fitness guidance directly."
+      ],
+      "competitorInsight": "Similar wellness and fitness centers in Barasat use dedicated websites to highlight complete weekly schedules and personal trainer bios.",
+      "revenueArgument": "Not displaying your full weekly schedule and training programs causes an estimated loss of ₹1,000 per month.",
+      "urgencyHook": "That's roughly ₹33 lost per day from local clients looking for medicine-free wellness routines online.",
+      "postCallWhatsApp": "Hi ProActive Wellness team! Loved reading how much your members appreciate your supportive environment in Barasat. I created a friendly 1-page mockup displaying your wellness programs and timings. Would you like me to send the preview here?",
+      "bestTimeToCall": "For ProActive Wellness, call Thursday around 11:30 AM to 1:30 PM after their morning shift ends.",
+      "callScript": {
+        "opener": "I was looking at wellness spots near Noapara Kalibari Road and loved reading how your members call ProActive Wellness their second home.",
+        "iceBreaker": "Do most of your clients join after hearing about your medicine-free programs through word of mouth?",
+        "keyPoints": [
+          "Your members leave beautiful reviews, but only Sunday hours are showing on Google.",
+          "People searching for weight management can't find your full weekly schedule online.",
+          "A clear 1-page site would showcase your transformations and let people book consultations easily."
+        ],
+        "objectionHandler": "No problem at all, but even a small ₹33 daily gap adds up over time when people can't see your weekday timings.",
+        "closer": "Can I send you a fast WhatsApp mock-up showing how your member stories could look on a mobile page?",
+        "doNotSay": "Don't talk about technical web design jargon like frameworks — focus on their supportive culture and member stories."
+      }
+    },
+    "lead-056": {
+      "leadId": "lead-056",
+      "points": [
+        "Inspire Fitness Studio has a solid 5-star rating in Barasat on Chowdhury Para Road.",
+        "Your Google listing lacks a phone number and full weekly hours, making it difficult for new clients to contact you.",
+        "Potential members searching online cannot view your membership fees or available training options.",
+        "Adding a clear 1-page site with your phone number will help turn online searches into active gym members.",
+        "You can showcase all 5 of your studio photos neatly along with a simple 'Book a Visit' WhatsApp button."
+      ],
+      "competitorInsight": "Other gyms in Barasat display full weekly operating hours and direct call buttons to make joining effortless.",
+      "revenueArgument": "Missing contact information and full business hours leads to an estimated ₹5,000 per month in lost membership fees.",
+      "urgencyHook": "That equates to losing about ₹167 every single day when local searchers can't figure out how to call your studio.",
+      "postCallWhatsApp": "Hello Inspire Fitness Studio! Saw your excellent 5-star rating in Barasat. I put together a clean design concept that includes your studio photos and a quick tap-to-call button for new members. Can I share it with you here?",
+      "bestTimeToCall": "For Inspire Fitness Studio, call Tuesday or Wednesday between 2–4 PM during afternoon off-peak hours.",
+      "callScript": {
+        "opener": "I was searching for top fitness studios near Chowdhury Para Road in Barasat and saw Inspire Fitness Studio has a 5-star rating.",
+        "iceBreaker": "Are most of your current gym members living right in Chowdhury Para, or do people travel from across Barasat?",
+        "keyPoints": [
+          "You have a perfect 5-star rating, but there's no phone number listed for prospective members to call.",
+          "Google only displays Sunday hours right now, which confuses people looking for weekday sessions.",
+          "A basic single-page site would show your gym photos and give visitors a simple WhatsApp button to join."
+        ],
+        "objectionHandler": "I hear you, but missing out on roughly ₹167 a day happens simply because people can't find a phone number to reach you.",
+        "closer": "May I send over a quick WhatsApp demo image showing how a contact button would look for Inspire Fitness Studio?",
+        "doNotSay": "Don't sound pushy or accuse them of neglecting Google — keep it simple about helping local members call them."
+      }
+    },
+    "lead-095": {
+      "leadId": "lead-095",
+      "points": [
+        "SPH Gymnasium School has a great location in Madhyamgram near Vidyasagar Sarani Road.",
+        "Your Google profile currently displays an old name tag, which can confuse parents looking for your updated address.",
+        "Without a dedicated website, families in Barasat cannot read about your gymnastics programs or admission details.",
+        "Only Sunday hours are listed online, which doesn't reflect your actual weekday training schedules.",
+        "A clean mobile page will present your curriculum, photo gallery, and correct contact details clearly to parents."
+      ],
+      "competitorInsight": "Other gymnastics and sports schools near Madhyamgram feature clear enrollment pages with program details for parents.",
+      "revenueArgument": "An outdated online profile without program details causes potential student enrollments to drop every month.",
+      "urgencyHook": "Every week the profile remains unclear, parents looking for gymnastics training for their kids may pick another school.",
+      "postCallWhatsApp": "Hi SPH Gymnasium School team! I noticed your sports setup in Madhyamgram and designed a simple, updated web preview showing your program info for parents. May I send the image here for your feedback?",
+      "bestTimeToCall": "For a gymnastics school, call Friday between 12 PM and 2 PM before afternoon training sessions begin.",
+      "callScript": {
+        "opener": "I was looking at sports and gymnastics training centers near Vidyasagar Sarani Road in Madhyamgram and came across SPH Gymnasium School.",
+        "iceBreaker": "Do parents usually find out about your gymnastics programs through local schools or by searching online?",
+        "keyPoints": [
+          "Your Google title mentions an old profile notice, which might confuse new parents looking for admissions.",
+          "Your weekday class hours aren't clearly visible online for parents checking after work.",
+          "A simple program page would present your gymnastics courses and photos neatly for new families."
+        ],
+        "objectionHandler": "I completely understand your busy schedule, but fixing your online presentation will help parents enroll their children without confusion.",
+        "closer": "Would it be okay if I send a fast WhatsApp screenshot showing how a fresh page for SPH Gymnasium School could look?",
+        "doNotSay": "Don't tell them their profile is broken or bad — focus on presenting their sports programs clearly to local parents."
+      }
+    },
+    "lead-099": {
+      "leadId": "lead-099",
+      "points": [
+        "trainedbyankit in Barasat currently shows only 1 photo online, limiting visual appeal.",
+        "Without a website, you miss out on people searching for fitness centers nearby.",
+        "No reviews means prospects can’t see the quality of your training.",
+        "Your business hours aren’t listed, so visitors don’t know when you’re open."
+      ],
+      "competitorInsight": "Other fitness centers in Barasat already list their hours and have simple websites.",
+      "revenueArgument": "Your estimated lost revenue is ₹0 per month, so even a modest online boost could start generating income.",
+      "urgencyHook": "",
+      "postCallWhatsApp": "Hi, it was great chatting about trainedbyankit. I’ve prepared a quick mock‑up showing how a simple site could showcase your gym and hours. Would you like me to share it now?",
+      "bestTimeToCall": "For a fitness center, call Tuesday or Wednesday between 2–4 PM when the morning rush is over.",
+      "callScript": {
+        "opener": "I was looking at fitness centers in Barasat and noticed your gym has a nice photo on Google.",
+        "iceBreaker": "Do most of your new members hear about you from friends or from online searches?",
+        "keyPoints": [
+          "You have only one photo online, which limits first‑impression impact.",
+          "There’s no website or reviews, so potential members can’t learn about your services.",
+          "Your hours aren’t listed, making it hard for people to plan a visit."
+        ],
+        "objectionHandler": "I understand you’re busy, but even a ₹0 daily loss means there’s room to grow with a simple site.",
+        "closer": "I can send you a free WhatsApp mock‑up of a one‑page site right now.",
+        "doNotSay": "Don’t say “I want to build you a website” right away; start with what you observed."
+      }
+    },
+    "lead-024": {
+      "leadId": "lead-024",
+      "points": [
+        "6Fit Fitness Studio in Barasat has a 5‑star rating, showing strong client satisfaction.",
+        "Customers love the nice ambiance and quality of exercise you provide.",
+        "Without a website or phone contact, new prospects can’t reach you easily.",
+        "You have 6 photos online, but none are linked to a site to attract more members."
+      ],
+      "competitorInsight": "Other fitness studios in Barasat are already displaying contact numbers and booking links on their sites.",
+      "revenueArgument": "Your estimated lost revenue is ₹0 per month, so a simple online presence could start adding income.",
+      "urgencyHook": "",
+      "postCallWhatsApp": "Hi, thanks for the chat about 6Fit Fitness Studio. I’ve put together a quick demo page that shows your rating and photos. Shall I send it over now?",
+      "bestTimeToCall": "For a gym, call Thursday or Friday between 3–5 PM after the evening class rush.",
+      "callScript": {
+        "opener": "I was checking fitness studios in Barasat and saw your 5‑star rating and great ambiance.",
+        "iceBreaker": "How do most people currently find out about your studio – word of mouth or online?",
+        "keyPoints": [
+          "Your 5‑star rating shows you deliver quality workouts.",
+          "No website or phone number makes it hard for new members to contact you.",
+          "You have 6 photos that could be showcased on a simple site."
+        ],
+        "objectionHandler": "I get that you’re busy, but even a ₹0 daily loss means there’s potential to capture more members online.",
+        "closer": "I can send a free WhatsApp screenshot of a one‑page site that highlights your studio.",
+        "doNotSay": "Avoid saying “I want to sell you a website” right away; focus on what you noticed."
+      }
+    },
+    "lead-074": {
+      "leadId": "lead-074",
+      "points": [
+        "Sb Fitness Gym in Barasat lists only Sunday hours, which can confuse potential members.",
+        "No website means you can’t capture leads who search for gyms online.",
+        "Having just 3 photos limits the visual story you can tell about your facilities.",
+        "Without phone or WhatsApp contact, inquiries have to come in person."
+      ],
+      "competitorInsight": "Other gyms in Barasat usually list full weekly hours and provide online contact details.",
+      "revenueArgument": "Your estimated lost revenue is ₹0 per month, so a basic site could start bringing in new members.",
+      "urgencyHook": "",
+      "postCallWhatsApp": "Hi, it was nice talking about Sb Fitness Gym. I’ve created a quick demo showing how a simple site can list all your weekly hours. Would you like me to send it?",
+      "bestTimeToCall": "For a gym, call Monday or Tuesday between 2–4 PM when the morning crowd is lighter.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and saw Sb Fitness Gym only shows Sunday hours.",
+        "iceBreaker": "Do most of your new members walk in, or do they call you first?",
+        "keyPoints": [
+          "Only Sunday hours are listed, which may turn away weekday seekers.",
+          "No website means you miss people searching for gyms nearby.",
+          "Three photos limit what prospects can see online."
+        ],
+        "objectionHandler": "I understand you’re busy, but even a ₹0 daily loss suggests there’s room to grow with a simple online page.",
+        "closer": "I can share a free WhatsApp mock‑up of a one‑page site that adds your full schedule.",
+        "doNotSay": "Don’t start with “I want to build you a website”; begin with what you observed."
+      }
+    },
+    "lead-078": {
+      "leadId": "lead-078",
+      "points": [
+        "HRIDAYPUR SPORTS ASSOCIATION (HSA) in Barasat has a strong 4.7 rating from 3 reviewers.",
+        "Members praise the club’s facilities, but no website makes booking hard.",
+        "Only Sunday hours are listed, leaving potential members unsure of other days.",
+        "Your estimated loss of ₹13 per day shows a clear opportunity to gain more members.",
+        "With just 6 photos, a site could showcase more of your activities."
+      ],
+      "competitorInsight": "Other sports clubs in Barasat already have full weekly schedules and online booking on their sites.",
+      "revenueArgument": "Your estimated lost revenue is ₹400 per month, which adds up quickly.",
+      "urgencyHook": "Losing ₹13 each day means you could be missing out on many new members.",
+      "postCallWhatsApp": "Hi, thanks for speaking about HRIDAYPUR SPORTS ASSOCIATION. I’ve prepared a quick demo page that shows your rating, photos, and a booking link. Shall I share it now?",
+      "bestTimeToCall": "For a sports club, call Wednesday or Thursday between 3–5 PM when activities are slower.",
+      "callScript": {
+        "opener": "I was checking sports clubs in Barasat and noticed HSA’s 4.7 rating and great reviews.",
+        "iceBreaker": "How do most people currently sign up for activities – in person or over the phone?",
+        "keyPoints": [
+          "Your 4.7 rating shows members love the club.",
+          "No website means members can’t book classes online.",
+          "Only Sunday hours are listed, which may limit attendance."
+        ],
+        "objectionHandler": "I get you’re busy, but a ₹13 daily loss adds up, and a simple site can stop that.",
+        "closer": "I can send a free WhatsApp mock‑up of a site that adds booking and full hours.",
+        "doNotSay": "Avoid saying “I want to sell you a website”; start with the observation about your rating."
+      }
+    },
+    "lead-084": {
+      "leadId": "lead-084",
+      "points": [
+        "arix gym in Barasat has no contact details listed, making it hard for prospects to reach you.",
+        "Without a website, you miss out on people searching for gyms online.",
+        "Only 4 photos are available, limiting the visual impression of your facilities.",
+        "No business hours are shown, so visitors don’t know when you’re open."
+      ],
+      "competitorInsight": "Other gyms in Barasat typically list phone numbers and hours on a simple website.",
+      "revenueArgument": "Your estimated lost revenue is ₹0 per month, so a basic site could start generating income.",
+      "urgencyHook": "",
+      "postCallWhatsApp": "Hi, it was nice talking about arix gym. I’ve put together a quick demo page that adds your contact info and hours. Would you like me to send it now?",
+      "bestTimeToCall": "For a gym, call Friday or Saturday between 10 AM–12 PM before the peak workout times.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and saw arix gym doesn’t list any contact info online.",
+        "iceBreaker": "Do most of your new members find you by walking by, or do they call you first?",
+        "keyPoints": [
+          "No phone or WhatsApp number is shown, limiting inquiries.",
+          "Without a website, you miss online searches for gyms.",
+          "Only four photos are visible, which doesn’t fully showcase your gym."
+        ],
+        "objectionHandler": "I understand you’re busy, but even a ₹0 daily loss suggests there’s room to grow with a simple site.",
+        "closer": "I can send a free WhatsApp mock‑up of a one‑page site that adds your contact details and hours.",
+        "doNotSay": "Don’t say “I want to build you a website” right away; start with what you observed."
+      }
+    },
+    "lead-093": {
+      "leadId": "lead-093",
+      "points": [
+        "Fashion Zone Family Gym in Barasat currently has zero online photos, so potential members can’t see your facilities.",
+        "Your gym only lists Sunday hours (5‑10 pm), which limits visibility of the full schedule for weekday seekers.",
+        "Without a website, you miss out on capturing leads from the many people searching for gyms in Barasat.",
+        "No phone or WhatsApp contact appears online, making it hard for prospects to reach you instantly.",
+        "Adding a simple site can showcase your equipment and convert foot traffic into memberships."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already showcasing class schedules and photos on simple websites.",
+      "revenueArgument": "Your estimated lost revenue is ₹0 per month, which shows the baseline you can start improving from.",
+      "urgencyHook": "Even a daily loss of ₹0 adds up over time if you stay offline.",
+      "postCallWhatsApp": "Hi, it was great speaking with you about Fashion Zone Family Gym. As discussed, I’ll share a quick WhatsApp mock‑up showing your Sunday hours and a photo gallery. Would you like me to send it now?",
+      "bestTimeToCall": "For a gym, try calling on Tuesday or Wednesday between 2 – 4 PM when the morning rush is over.",
+      "callScript": {
+        "opener": "I was looking at gyms in Barasat and saw that Fashion Zone Family Gym only lists Sunday hours and has no online photos.",
+        "iceBreaker": "Do most of your new members hear about you through walk‑ins or word of mouth?",
+        "keyPoints": [
+          "You have zero photos online, so people can’t see your equipment.",
+          "Only Sunday hours are visible, which hides your weekday schedule.",
+          "No website means missed chances to capture contact info from online searches."
+        ],
+        "objectionHandler": "I understand you’re busy, but even a daily loss of ₹0 could grow if you stay invisible online.",
+        "closer": "I can send you a free WhatsApp mock‑up of a simple site showing your gym’s photos and schedule.",
+        "doNotSay": "Don’t say ‘I want to build you a website’ right away; start by mentioning you noticed their online gap."
+      }
+    },
+    "lead-069": {
+      "leadId": "lead-069",
+      "points": [
+        "Super Gym in Barasat has a perfect 5‑star rating, showing customers love your services.",
+        "You only have one photo online, so visitors can’t fully appreciate your facilities.",
+        "No website or contact details are listed, making it hard for interested people to reach you.",
+        "Business hours aren’t visible online, which may cause missed walk‑ins.",
+        "A simple website can highlight your 5‑star reputation and attract more members."
+      ],
+      "competitorInsight": "Other gyms in Barasat are already displaying their class timetables and contact info on basic websites.",
+      "revenueArgument": "Your estimated lost revenue is ₹0 per month, giving you a clean slate to grow.",
+      "urgencyHook": "Even a daily loss of ₹0 can become significant if you stay offline.",
+      "postCallWhatsApp": "Hello, thanks for chatting about Super Gym. I’ll send a quick WhatsApp mock‑up that highlights your 5‑star rating and adds a contact form. Shall I forward it now?",
+      "bestTimeToCall": "For a gym, call on Tuesday or Wednesday between 2 – 4 PM when the midday lull makes owners more available.",
+      "callScript": {
+        "opener": "I was checking gyms in Barasat and noticed Super Gym has a 5‑star rating but no website or contact info listed.",
+        "iceBreaker": "How do most people currently find out about Super Gym—through nearby flyers or personal referrals?",
+        "keyPoints": [
+          "Your 5‑star rating is a strong selling point you can showcase online.",
+          "Only one photo is visible, limiting the visual appeal for prospects.",
+          "Without a website, you miss out on capturing leads from online searches."
+        ],
+        "objectionHandler": "I get that you’re busy, yet even a daily loss of ₹0 could add up if you stay hidden online.",
+        "closer": "I can send a free WhatsApp mock‑up of a simple site that features your rating and a photo gallery.",
+        "doNotSay": "Avoid saying ‘I’ll build you a website’ right away; focus on the gap you observed."
+      }
+    }
+  }
 }
