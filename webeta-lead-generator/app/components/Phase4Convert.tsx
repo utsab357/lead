@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PhaseShell } from "./PhaseShell";
 import { Loader2, Target, TrendingUp, Zap, Shield, Clock, ChevronDown, ChevronUp, Phone, MessageSquare, AlertCircle, CheckCircle2, MapPin, Star, ExternalLink } from "lucide-react";
-import type { RankedLead, ConversionPoints, AuditResult, LeadStatus } from "@/lib/types";
+import type { RankedLead, ConversionPoints, AuditResult, LeadStatus, ClientDetail } from "@/lib/types";
+import { estimateBusinessAgeMonths, getAgeBadge } from "@/lib/businessAge";
 import { toast } from "sonner";
 
 const BATCH_SIZE = 5;
@@ -33,6 +34,8 @@ export function Phase4Convert({
   setLeadStatuses,
   leadNotes,
   setLeadNotes,
+  clientDetails = {},
+  setClientDetails,
   onNext,
   onPrev,
   initialExpandedId,
@@ -44,6 +47,8 @@ export function Phase4Convert({
   setLeadStatuses?: (s: Record<string, LeadStatus>) => void;
   leadNotes?: Record<string, string>;
   setLeadNotes?: (n: Record<string, string>) => void;
+  clientDetails?: Record<string, ClientDetail>;
+  setClientDetails?: (d: Record<string, ClientDetail>) => void;
   onNext: () => void;
   onPrev?: () => void;
   initialExpandedId?: string | null;
@@ -54,12 +59,39 @@ export function Phase4Convert({
   const [showScriptId, setShowScriptId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all");
-  // Lead quality filters (same as Phase 7)
   const [fNoSite,  setFNoSite]  = useState(false);
   const [fPhone,   setFPhone]   = useState(false);
   const [fRating,  setFRating]  = useState<"" | "3.5" | "4.0" | "4.5">("");
   const [fReviews, setFReviews] = useState<"" | "10" | "50" | "100">("");
   const [fConvDone, setFConvDone] = useState(false);
+  // Client detail drawer
+  const [detailDrawer, setDetailDrawer] = useState<{ open: boolean; leadId: string | null }>({ open: false, leadId: null });
+  const [draftDetail, setDraftDetail] = useState<ClientDetail>({});
+
+  function openDetailDrawer(leadId: string) {
+    setDraftDetail(clientDetails[leadId] ?? {});
+    setDetailDrawer({ open: true, leadId });
+  }
+
+  function saveDetailDrawer() {
+    if (!detailDrawer.leadId) return;
+    const next = { ...clientDetails, [detailDrawer.leadId]: draftDetail };
+    setClientDetails?.(next);
+    setDetailDrawer({ open: false, leadId: null });
+    toast.success("Client details saved ✔");
+  }
+
+  function updateDraft(field: keyof ClientDetail, value: string) {
+    setDraftDetail(prev => {
+      const next = { ...prev, [field]: value };
+      if (field === "priceAgreed" || field === "advanceReceived") {
+        const price = parseFloat(field === "priceAgreed" ? value : prev.priceAgreed ?? "0") || 0;
+        const adv   = parseFloat(field === "advanceReceived" ? value : prev.advanceReceived ?? "0") || 0;
+        if (price > 0) next.balanceDue = String(price - adv);
+      }
+      return next;
+    });
+  }
 
   const hasActiveFilter = fNoSite || fPhone || fRating || fReviews || fConvDone || statusFilter !== "all" || !!searchQuery;
 
@@ -322,10 +354,19 @@ export function Phase4Convert({
                             </span>
                           ) : null;
                         })()}
+                        {/* 💼 Fill after deal */}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); openDetailDrawer(lead.id); }}
+                          title="Fill after deal"
+                          className={`text-[10px] px-1.5 py-0.5 rounded border transition-all ${
+                            clientDetails[lead.id] ? "bg-violet-500/10 border-violet-400/30 text-violet-600" : "border-border text-muted-foreground hover:border-violet-400/40 hover:text-violet-500"
+                          }`}
+                        >✏️</button>
                         {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
                       </div>
                     </div>
-                    {/* Always-visible contact row */}
+                    {/* Always-visible contact row — hidden when expanded to avoid duplicate */}
+                    {!isExpanded && (
                     <div className="flex items-center gap-3 mt-1.5 flex-wrap">
                       <span className="text-xs text-muted-foreground">{lead.category}</span>
                       {lead.phone && (
@@ -359,6 +400,7 @@ export function Phase4Convert({
                         </span>
                       )}
                     </div>
+                    )}
                   </CardHeader>
 
                   {isExpanded && (
@@ -404,6 +446,20 @@ export function Phase4Convert({
                           <span className="text-xs text-muted-foreground ml-auto hidden md:block truncate max-w-[260px]">{lead.address}</span>
                         )}
                       </div>
+
+                      {/* ── Business age badge ── */}
+                      {(() => {
+                        const ageMonths = estimateBusinessAgeMonths(lead.reviews);
+                        const badge = getAgeBadge(ageMonths);
+                        return (
+                          <div className={`flex items-start gap-2.5 px-3 py-2 rounded-md border mb-3 ${badge.bg} ${badge.border}`}>
+                            <div className="flex-1 min-w-0">
+                              <div className={`text-[11px] font-semibold ${badge.color}`}>{badge.label}</div>
+                              <div className="text-[10px] text-muted-foreground mt-0.5">{badge.sublabel}</div>
+                            </div>
+                          </div>
+                        );
+                      })()}
 
                       {conv ? (
                         <>
@@ -614,8 +670,118 @@ export function Phase4Convert({
           Go to Phase 3 first to rank your leads
         </div>
       )}
+
+      {/* ── Client Detail Drawer — identical to Phase 7 ── */}
+      {detailDrawer.open && (() => {
+        const lead = ranked.find(l => l.id === detailDrawer.leadId);
+        if (!lead) return null;
+        const f = (label: string, field: keyof ClientDetail, type = "text", readOnly = false) => (
+          <div className="flex flex-col gap-1">
+            <label className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{label}</label>
+            <input
+              type={type}
+              value={draftDetail[field] ?? ""}
+              onChange={e => !readOnly && updateDraft(field, e.target.value)}
+              readOnly={readOnly}
+              className={`h-9 px-3 text-sm rounded-md border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 ${readOnly ? "bg-muted/40 text-muted-foreground cursor-not-allowed" : "border-border"}`}
+            />
+          </div>
+        );
+        return (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40 transition-opacity"
+              onClick={() => setDetailDrawer({ open: false, leadId: null })}
+            />
+            {/* Drawer */}
+            <div className="fixed right-0 top-0 h-full w-full max-w-md bg-background border-l border-border shadow-2xl z-50 flex flex-col overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-muted/30 shrink-0">
+                <div>
+                  <div className="font-semibold text-sm">💼 Client Details</div>
+                  <div className="text-[11px] text-muted-foreground truncate max-w-[280px]">{lead.name} · {lead.city}</div>
+                </div>
+                <button
+                  onClick={() => setDetailDrawer({ open: false, leadId: null })}
+                  className="h-7 w-7 flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors text-lg"
+                >×</button>
+              </div>
+              {/* Body */}
+              <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+                {/* Deal Info */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
+                    <span className="h-px flex-1 bg-border" /> Deal Info <span className="h-px flex-1 bg-border" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {f("Client Name", "clientName")}
+                    {f("Price Agreed (Rs)", "priceAgreed", "number")}
+                    {f("Advance Received (Rs)", "advanceReceived", "number")}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Balance Due (Rs)</label>
+                      <input
+                        type="number"
+                        value={draftDetail.balanceDue ?? ""}
+                        onChange={e => updateDraft("balanceDue", e.target.value)}
+                        placeholder="Auto-calculated"
+                        className="h-9 px-3 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50"
+                      />
+                      {draftDetail.priceAgreed && draftDetail.advanceReceived && (
+                        <span className="text-[10px] text-muted-foreground">Auto: {Number(draftDetail.priceAgreed) - Number(draftDetail.advanceReceived)} Rs</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {/* Website */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
+                    <span className="h-px flex-1 bg-border" /> Website <span className="h-px flex-1 bg-border" />
+                  </div>
+                  <div className="grid grid-cols-1 gap-3">
+                    {f("Domain Name", "domainName")}
+                    {f("Website Live URL", "websiteUrl")}
+                  </div>
+                </div>
+                {/* Hosting */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
+                    <span className="h-px flex-1 bg-border" /> Hosting <span className="h-px flex-1 bg-border" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {f("Free Start", "freeHostingStart", "date")}
+                    {f("Free End", "freeHostingEnd", "date")}
+                    {f("Paid Start", "paidHostingStart", "date")}
+                    {f("Paid End", "paidHostingEnd", "date")}
+                  </div>
+                </div>
+                {/* Remarks */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
+                    <span className="h-px flex-1 bg-border" /> Remarks <span className="h-px flex-1 bg-border" />
+                  </div>
+                  <textarea
+                    value={draftDetail.remarks ?? ""}
+                    onChange={e => updateDraft("remarks", e.target.value)}
+                    rows={3}
+                    placeholder="Any notes about this client deal..."
+                    className="w-full px-3 py-2 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
+                  />
+                </div>
+              </div>
+              {/* Footer */}
+              <div className="px-5 py-4 border-t border-border bg-muted/20 shrink-0 flex gap-2">
+                <button className="flex-1 border border-border rounded-md text-sm text-muted-foreground py-2 hover:bg-muted/50 transition-colors" onClick={() => setDetailDrawer({ open: false, leadId: null })}>
+                  Cancel
+                </button>
+                <button className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 rounded-md transition-colors" onClick={saveDetailDrawer}>
+                  💾 Save Details
+                </button>
+              </div>
+            </div>
+          </>
+        );
+      })()}
     </PhaseShell>
   );
 }
-
-

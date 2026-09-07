@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,56 +34,94 @@ export function Phase3Rank({
   onPrev: () => void;
   sessionId?: string | null;
 }) {
-  const [running, setRunning]     = useState(false);
-  const [error,   setError]       = useState<string | null>(null);
-  const [statusMsg, setStatusMsg] = useState("");
-  const [elapsed,   setElapsed]   = useState(0);   // seconds since rank started
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const BATCH_SIZE = 5;
+  const [running, setRunning] = useState(false);
+  const [error,   setError]   = useState<string | null>(null);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+  const cancelRef = useRef(false);
   const duplicates = useDuplicateIndex(sessionId);
 
-  // Start/stop elapsed timer when ranking runs
-  useEffect(() => {
-    if (running) {
-      setElapsed(0);
-      timerRef.current = setInterval(() => setElapsed((s) => s + 1), 1000);
-    } else {
-      if (timerRef.current) clearInterval(timerRef.current);
-    }
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [running]);
+  // Filter state
+  const [search,      setSearch]      = useState("");
+  const [scoreRange,  setScoreRange]  = useState<"all" | "high" | "mid" | "low">("all");
+  const [siteFilter,  setSiteFilter]  = useState<"all" | "none" | "poor" | "ok">("all");
+  const [fPhone,      setFPhone]      = useState(false);
 
-  function fmtElapsed(s: number) {
-    if (s < 60) return `${s}s`;
-    return `${Math.floor(s / 60)}m ${s % 60}s`;
+  const hasFilter = search || scoreRange !== "all" || siteFilter !== "all" || fPhone;
+
+  function applyFilters(lead: RankedLead) {
+    if (search && !lead.name.toLowerCase().includes(search.toLowerCase())) return false;
+    if (scoreRange === "high" && lead.score < 60)  return false;
+    if (scoreRange === "mid"  && (lead.score < 30 || lead.score >= 60)) return false;
+    if (scoreRange === "low"  && lead.score >= 30) return false;
+    if (siteFilter === "none" && lead.audit.hasWebsite) return false;
+    if (siteFilter === "poor" && (!lead.audit.hasWebsite || lead.audit.pageSpeedScore >= 50)) return false;
+    if (siteFilter === "ok"   && (!lead.audit.hasWebsite || lead.audit.pageSpeedScore < 50)) return false;
+    if (fPhone && !lead.phone && !lead.whatsapp) return false;
+    return true;
   }
 
   const auditedCount = leads.filter((l) => audits[l.id]).length;
 
   async function runRank() {
+    const auditable = leads.filter((l) => audits[l.id]);
+    if (auditable.length === 0) return;
+
     setRunning(true);
     setError(null);
-    setStatusMsg("AI is analyzing and ranking your leads…");
+    cancelRef.current = false;
+
+    // Split into batches of BATCH_SIZE
+    const batches: typeof auditable[] = [];
+    for (let i = 0; i < auditable.length; i += BATCH_SIZE)
+      batches.push(auditable.slice(i, i + BATCH_SIZE));
+
+    setProgress({ done: 0, total: auditable.length });
+
+    const allScored: RankedLead[] = [];
+    const scoreMap: Record<string, { score: number; scoreReasoning: string }> = {};
+
     try {
-      const res = await fetch("/api/rank", {
-        method:  "POST",
-        headers: { "content-type": "application/json" },
-        body:    JSON.stringify({ leads, audits }),
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? `Ranking failed (${res.status})`);
+      for (let bi = 0; bi < batches.length; bi++) {
+        if (cancelRef.current) break;
+        const batch = batches[bi];
+
+        const res = await fetch("/api/rank", {
+          method:  "POST",
+          headers: { "content-type": "application/json" },
+          body:    JSON.stringify({ leads: batch, audits }),
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error ?? `Ranking failed (${res.status})`);
+        }
+        const data = await res.json() as { scores: Array<{ leadId: string; score: number; scoreReasoning: string }> };
+        for (const s of data.scores ?? []) scoreMap[s.leadId] = s;
+
+        setProgress({ done: Math.min((bi + 1) * BATCH_SIZE, auditable.length), total: auditable.length });
+
+        if (bi < batches.length - 1) await new Promise(r => setTimeout(r, 1200));
       }
-      const data = await res.json() as { ranked: RankedLead[] };
-      setRanked(data.ranked);
-      setStatusMsg("");
-      toast.success(`Ranked ${data.ranked.length} prospects`);
+
+      // Build final ranked list
+      for (const lead of auditable) {
+        const s = scoreMap[lead.id];
+        allScored.push({
+          ...lead,
+          audit: audits[lead.id],
+          score: Math.max(0, Math.min(100, Number(s?.score ?? 50))),
+          scoreReasoning: s?.scoreReasoning ?? "",
+        });
+      }
+      allScored.sort((a, b) => b.score - a.score);
+      setRanked(allScored);
+      toast.success(`Ranked ${allScored.length} prospects`);
     } catch (e) {
-      const msg = (e as Error).message;
-      setError(msg);
-      setStatusMsg("");
+      setError((e as Error).message);
       toast.error("Ranking failed");
     } finally {
       setRunning(false);
+      setProgress(null);
     }
   }
 
@@ -152,21 +190,22 @@ export function Phase3Rank({
         </Button>
       </div>
 
-      {running && (
+      {running && progress && (
         <div className="mb-6 rounded-lg border border-border bg-card p-4 space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm font-medium">
               <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
-              <span>AI is scoring {auditedCount} leads — please wait…</span>
+              <span>Ranking leads… <span className="tabular-nums font-semibold">{progress.done} / {progress.total}</span> done</span>
             </div>
-            <span className="text-xs text-muted-foreground tabular-nums shrink-0">{fmtElapsed(elapsed)}</span>
+            <span className="text-xs text-muted-foreground tabular-nums shrink-0">{Math.round((progress.done / progress.total) * 100)}%</span>
           </div>
-          {/* Animated indeterminate bar */}
           <div className="relative h-1.5 rounded-full bg-muted overflow-hidden">
-            <div className="absolute inset-y-0 left-0 w-1/3 bg-primary rounded-full animate-[shimmer_1.5s_ease-in-out_infinite]" style={{ animation: "slide 1.5s ease-in-out infinite" }} />
-            <style>{`@keyframes slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} }`}</style>
+            <div
+              className="h-full bg-primary rounded-full transition-all duration-500"
+              style={{ width: `${Math.round((progress.done / progress.total) * 100)}%` }}
+            />
           </div>
-          <p className="text-xs text-muted-foreground">This usually takes 15–30 seconds for large lists.</p>
+          <p className="text-xs text-muted-foreground">Processing in batches of {BATCH_SIZE} — please wait…</p>
         </div>
       )}
       {error && (
@@ -190,6 +229,44 @@ export function Phase3Rank({
 
       {ranked.length > 0 && (
         <>
+          {/* Filter bar */}
+          <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-lg bg-muted/40 border border-border mb-4">
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mr-1">Filter:</span>
+            <div className="relative">
+              <input
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search name…"
+                className="h-7 pl-6 pr-2 text-[11px] rounded-full border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50"
+              />
+              <svg className="absolute left-2 top-1.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </div>
+            <select value={scoreRange} onChange={e => setScoreRange(e.target.value as typeof scoreRange)}
+              className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground focus:outline-none cursor-pointer">
+              <option value="all">Any score</option>
+              <option value="high">🔥 High (60+)</option>
+              <option value="mid">🟡 Mid (30–59)</option>
+              <option value="low">⬇️ Low (&lt;30)</option>
+            </select>
+            <select value={siteFilter} onChange={e => setSiteFilter(e.target.value as typeof siteFilter)}
+              className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground focus:outline-none cursor-pointer">
+              <option value="all">Any site</option>
+              <option value="none">No site</option>
+              <option value="poor">Poor site</option>
+              <option value="ok">Decent/Good site</option>
+            </select>
+            <button
+              onClick={() => setFPhone(v => !v)}
+              className={`text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
+                fPhone ? "bg-primary/10 border-primary/30 text-primary" : "bg-background border-border text-muted-foreground hover:border-primary/40"
+              }`}
+            >Has phone</button>
+            {hasFilter && (
+              <button onClick={() => { setSearch(""); setScoreRange("all"); setSiteFilter("all"); setFPhone(false); }}
+                className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-md px-2.5 py-1 hover:bg-muted/50 transition-colors">Clear</button>
+            )}
+            <span className="ml-auto text-[11px] text-muted-foreground tabular-nums">{ranked.filter(applyFilters).length} / {ranked.length}</span>
+          </div>
           <div className="grid lg:grid-cols-3 gap-4 mb-4">
             {ranked.slice(0, 3).map((lead, i) => (
               <motion.div
@@ -245,6 +322,8 @@ export function Phase3Rank({
                       <span className="flex items-center gap-1"><IndianRupee className="h-3 w-3 text-muted-foreground" />{lead.audit.estLostRevenuePerMonth.toLocaleString("en-IN")}/mo</span>
                       <span className="text-border">·</span>
                       <span className="text-muted-foreground">{lead.reviewsCount} reviews</span>
+                      <span className="text-border">·</span>
+                      <span className="text-muted-foreground">📷 {lead.photosCount ?? 0}</span>
                     </div>
                     <div className="mt-3 flex gap-1.5">
                       {lead.phone && <Phone className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.5} />}
@@ -259,7 +338,7 @@ export function Phase3Rank({
 
           <Card>
             <CardHeader>
-              <CardTitle>All ranked</CardTitle>
+              <CardTitle>All ranked {hasFilter && <span className="text-sm font-normal text-muted-foreground">({ranked.filter(applyFilters).length} shown)</span>}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -274,7 +353,7 @@ export function Phase3Rank({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {ranked.map((lead, i) => (
+                    {ranked.filter(applyFilters).map((lead, i) => (
                       <motion.tr
                         key={lead.id}
                         initial={{ opacity: 0 }}
@@ -295,7 +374,7 @@ export function Phase3Rank({
                               </div>
                             ) : null;
                           })()}
-                          <div className="text-xs text-muted-foreground">{lead.reviewsCount} reviews · {lead.rating}★</div>
+                          <div className="text-xs text-muted-foreground">{lead.reviewsCount} reviews · {lead.rating != null ? `${lead.rating}★` : "—"}</div>
                           {lead.scoreReasoning && (
                             <div className="text-xs text-muted-foreground/80 italic mt-1 max-w-md">{lead.scoreReasoning}</div>
                           )}
@@ -315,11 +394,15 @@ export function Phase3Rank({
                         </TableCell>
                         <TableCell className="font-mono tabular-nums text-sm align-top pt-3">₹{lead.audit.estLostRevenuePerMonth.toLocaleString("en-IN")}</TableCell>
                         <TableCell className="align-top pt-3">
-                          {lead.audit.hasWebsite ? (
-                            <Badge variant="secondary" className="text-xs font-normal">{lead.audit.pageSpeedScore} PageSpeed</Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs font-normal text-[color:var(--destructive)] border-[color:var(--destructive)]/40 bg-[color:var(--destructive)]/5">None</Badge>
-                          )}
+                          {(() => {
+                            const ps = lead.audit.pageSpeedScore;
+                            const has = lead.audit.hasWebsite;
+                            if (!has) return <Badge variant="outline" className="text-xs font-normal text-destructive border-destructive/40 bg-destructive/5">No site</Badge>;
+                            if (ps >= 70 && lead.audit.mobileFriendly && lead.audit.https) return <Badge variant="secondary" className="text-xs font-normal text-green-700 bg-green-50 border-green-200">Good · {ps}</Badge>;
+                            if (ps >= 50 && lead.audit.mobileFriendly) return <Badge variant="secondary" className="text-xs font-normal text-blue-700 bg-blue-50 border-blue-200">Decent · {ps}</Badge>;
+                            if (ps >= 30) return <Badge variant="secondary" className="text-xs font-normal text-amber-700 bg-amber-50 border-amber-200">Mediocre · {ps}</Badge>;
+                            return <Badge variant="secondary" className="text-xs font-normal text-red-700 bg-red-50 border-red-200">Poor · {ps}</Badge>;
+                          })()}
                         </TableCell>
                       </motion.tr>
                     ))}

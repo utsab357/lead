@@ -298,6 +298,8 @@ export default function Page() {
               setLeadStatuses={(s) => { setLeadStatuses(s); saveLeadStatusesToSession(s); }}
               leadNotes={leadNotes}
               setLeadNotes={(n) => { setLeadNotes(n); saveLeadNotesToSession(n); }}
+              clientDetails={clientDetails}
+              setClientDetails={(d) => { setClientDetails(d); saveClientDetailsToSession(d); }}
               initialExpandedId={goToLeadId}
               onNext={() => { setGoToLeadId(null); setPhase(5); }}
               onPrev={() => { setGoToLeadId(null); setPhase(3); }}
