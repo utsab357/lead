@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import type { RankedLead, BuildPromptResult, ExtraPage } from "@/lib/types";
 import { toast } from "sonner";
+import { PreviewPanel } from "./PreviewPanel";
 
 const PLATFORMS = [
   { id: "stitch",      label: "Google Stitch",  url: "https://stitch.withgoogle.com" },
@@ -918,6 +919,9 @@ export function Phase4Build({
                       </Button>
                     )}
                   </div>
+
+                  {/* Website Preview Generator */}
+                  <PreviewPanel ranked={ranked} activeLead={activeLead} />
                 </div>
               )}
 

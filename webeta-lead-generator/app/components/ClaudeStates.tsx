@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, TriangleAlert, ExternalLink, Cpu } from "lucide-react";
 
 /** Branded "Webeta AI Engine is processing" loading block. */
-export function ClaudeThinking({ label }: { label: string }) {
+export function WebetaThinking({ label }: { label: string }) {
   return (
     <Card className="border-dashed border-border bg-card/50">
       <CardContent className="py-14 flex flex-col items-center text-center gap-4">
@@ -43,7 +43,7 @@ export function ClaudeThinking({ label }: { label: string }) {
 }
 
 /** Shown when AI Engine API key isn't configured or is invalid. */
-export function ClaudeRequired({
+export function WebetaAIRequired({
   error,
   onRetry,
 }: {
@@ -93,6 +93,6 @@ export function ClaudeRequired({
   );
 }
 
-// Aliases for modern naming
-export const WebetaThinking = ClaudeThinking;
-export const WebetaAIRequired = ClaudeRequired;
+// Legacy aliases — keep for any components that still import the old names
+export const ClaudeThinking = WebetaThinking;
+export const ClaudeRequired = WebetaAIRequired;

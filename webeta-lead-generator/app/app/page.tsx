@@ -43,9 +43,9 @@ export default function Page() {
 
   // On mount: check AI status & auto-rehydrate active session from localStorage
   useEffect(() => {
-    fetch("/api/claude-status")
+    fetch("/api/ai-status")
       .then((r) => r.json())
-      .then((d) => setGeminiOk(!!d.installed))
+      .then((d) => setGeminiOk((d.healthyCount ?? d.configuredCount ?? 0) > 0))
       .catch(() => setGeminiOk(false));
 
     try {

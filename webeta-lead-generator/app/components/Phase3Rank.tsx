@@ -140,7 +140,7 @@ export function Phase3Rank({
           title={leads.length === 0 ? "No leads scraped yet" : "No audits yet"}
           description={
             leads.length === 0
-              ? "Run Phases 1 and 2 first. Once leads are scraped and audited, Claude ranks them by conversion potential here."
+              ? "Run Phases 1 and 2 first. Once leads are scraped and audited, Webeta AI ranks them by conversion potential here."
               : "Run an audit in Phase 2 first. Then AI ranks the audited leads by how likely they are to convert and how much a website would help them."
           }
           prevPhaseLabel={leads.length === 0 ? "Scrape" : "Audit"}

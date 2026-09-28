@@ -31,6 +31,9 @@ const nextConfig: NextConfig = {
   },
   // Allow Cloudflare tunnel URLs to reach the dev server
   allowedDevOrigins: ["*.trycloudflare.com"],
+  // Playwright must stay server-side — webpack cannot bundle native binaries
+  serverExternalPackages: ["playwright", "playwright-core"],
 };
 
 export default nextConfig;
+
