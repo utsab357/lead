@@ -221,8 +221,8 @@ export function Phase3Rank({
             <div className="h-12 w-12 rounded-full bg-primary/10 mx-auto flex items-center justify-center mb-4">
               <Sparkles className="h-5 w-5 text-primary" strokeWidth={1.5} />
             </div>
-            <div className="font-display text-xl mb-1">Ready to rank</div>
-            <p className="text-sm text-muted-foreground">Hit &ldquo;Rank prospects with Claude&rdquo; above to score and sort your leads.</p>
+            <div className="text-xl font-bold mb-1 text-foreground">Ready to rank</div>
+            <p className="text-sm text-muted-foreground">Hit &ldquo;Rank prospects&rdquo; above to score and sort your leads.</p>
           </CardContent>
         </Card>
       )}
@@ -267,7 +267,7 @@ export function Phase3Rank({
             )}
             <span className="ml-auto text-[11px] text-muted-foreground tabular-nums">{ranked.filter(applyFilters).length} / {ranked.length}</span>
           </div>
-          <div className="grid lg:grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
             {ranked.slice(0, 3).map((lead, i) => (
               <motion.div
                 key={lead.id}
@@ -288,16 +288,16 @@ export function Phase3Rank({
                     }
                   }}
                   className={`h-full cursor-pointer transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:-translate-y-0.5 ${
-                    selectedId === lead.id ? "ring-1 ring-primary border-primary/30" : "hover:border-primary/30"
+                    selectedId === lead.id ? "ring-2 ring-primary border-primary shadow-xs" : "hover:border-primary/40"
                   }`}
                 >
                   <CardHeader>
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-sm flex items-center gap-2 font-medium tracking-wide uppercase text-muted-foreground">
-                        <Crown className="h-3.5 w-3.5 text-[color:var(--chart-4)]" strokeWidth={1.5} />
+                      <CardTitle className="text-xs flex items-center gap-2 font-semibold tracking-wider uppercase text-muted-foreground">
+                        <Crown className="h-3.5 w-3.5 text-amber-500" strokeWidth={2} />
                         Rank · {String(i + 1).padStart(2, "0")}
                       </CardTitle>
-                      <div className="font-display text-3xl tabular-nums leading-none">{lead.score}</div>
+                      <div className="text-3xl font-bold tabular-nums text-foreground leading-none">{lead.score}</div>
                     </div>
                   </CardHeader>
                   <CardContent>

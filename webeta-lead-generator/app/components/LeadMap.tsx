@@ -24,7 +24,7 @@ export default function LeadMap({ leads }: { leads: Lead[] }) {
             key={l.id}
             center={[l.lat, l.lng]}
             radius={7}
-            pathOptions={{ color: "#7a5c3e", fillColor: "#a8866a", fillOpacity: 0.85, weight: 1.5 }}
+            pathOptions={{ color: "#1d4ed8", fillColor: "#3b82f6", fillOpacity: 0.85, weight: 2 }}
           >
             <Tooltip>{l.name}</Tooltip>
           </CircleMarker>

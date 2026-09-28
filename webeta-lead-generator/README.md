@@ -1,6 +1,6 @@
-# Lead → Launch
+# Webeta Lead Generator
 
-Local-first dashboard + Claude Code skill that runs a 5-phase freelance website pipeline:
+Local-first dashboard that runs a 7-phase freelance website pipeline:
 
 **Scrape** Google Maps → **Audit** (Claude) → **Rank** (Claude) → **Build** site prompt (Claude) → **Outreach** (Claude, Hinglish/English + day-3 follow-up).
 

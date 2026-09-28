@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { PhaseShell } from "./PhaseShell";
-import { Loader2, MapPin, Phone, Star, Globe, MessageCircle, Mail, ExternalLink, StopCircle, Plus, ChevronDown } from "lucide-react";
+import { Loader2, MapPin, Phone, Star, Globe, MessageCircle, Mail, ExternalLink, StopCircle, Plus, ChevronDown, Search } from "lucide-react";
 import { NicheDropdown } from "./NicheDropdown";
 import type { Lead, ScrapeInput } from "@/lib/types";
 import { toast } from "sonner";
@@ -257,15 +257,15 @@ export function Phase1Scrape({
       nextDisabled={leads.length === 0}
       nextLabel="Audit these leads"
     >
-      <div className="grid md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4">
         {/* Controls */}
-        <Card className="md:col-span-1">
-          <CardHeader>
-            <CardTitle>Target</CardTitle>
+        <Card className="md:col-span-1 lg:col-span-4 shadow-xs">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-semibold">Target</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="niche" className="text-xs uppercase tracking-[0.12em] text-muted-foreground">
+            <div className="space-y-1.5">
+              <Label htmlFor="niche" className="text-xs uppercase font-semibold tracking-wider text-muted-foreground">
                 Business type
               </Label>
               <NicheDropdown
@@ -275,8 +275,8 @@ export function Phase1Scrape({
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="city" className="text-xs uppercase tracking-[0.12em] text-muted-foreground">
+            <div className="space-y-1.5">
+              <Label htmlFor="city" className="text-xs uppercase font-semibold tracking-wider text-muted-foreground">
                 Location
               </Label>
               <Input
@@ -286,22 +286,22 @@ export function Phase1Scrape({
                 disabled={loading}
                 onChange={(e) => setInput({ ...input, city: e.target.value })}
                 placeholder="e.g. Barasat, West Bengal"
-                className="h-10 text-base"
+                className="h-10 text-sm"
               />
             </div>
 
             {/* No website filter */}
-            <div className="flex items-center gap-2 p-2.5 rounded-md border border-border bg-muted/30">
+            <div className="flex items-center gap-2.5 p-3 rounded-lg border border-border bg-muted/40">
               <input
                 type="checkbox"
                 id="noWebsiteOnly"
                 checked={input.noWebsiteOnly ?? false}
                 disabled={loading}
                 onChange={(e) => setInput({ ...input, noWebsiteOnly: e.target.checked })}
-                className="h-4 w-4 accent-primary rounded"
+                className="h-4 w-4 accent-primary rounded cursor-pointer"
               />
-              <label htmlFor="noWebsiteOnly" className="text-xs text-muted-foreground cursor-pointer">
-                Show only businesses with <strong>NO website</strong> (your targets)
+              <label htmlFor="noWebsiteOnly" className="text-xs text-muted-foreground cursor-pointer select-none leading-tight">
+                Show only businesses with <strong className="text-foreground">NO website</strong> (ideal prospects)
               </label>
             </div>
 
@@ -310,16 +310,16 @@ export function Phase1Scrape({
               <Button
                 id="run-scrape-btn"
                 onClick={runScrape}
-                className="w-full h-11 transition-transform duration-150 active:scale-[0.98]"
+                className="w-full h-11 text-sm font-semibold transition-all shadow-xs"
               >
-                🔍 Scrape leads
+                <Search className="h-4 w-4 mr-2 stroke-[2.5]" /> Scrape Leads
               </Button>
             ) : (
               <div className="space-y-2">
                 <Button
                   variant="outline"
                   onClick={cancelScrape}
-                  className="w-full h-11 border-amber-500/50 text-amber-600 hover:bg-amber-500/10"
+                  className="w-full h-11 border-rose-500/40 text-rose-600 hover:bg-rose-500/10 font-semibold"
                 >
                   <StopCircle className="h-4 w-4 mr-2" /> Stop scraping
                 </Button>
@@ -328,7 +328,7 @@ export function Phase1Scrape({
 
             {/* Live status box */}
             {loading && (
-              <div className="rounded-md border border-primary/20 bg-primary/5 p-3 space-y-2">
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-2">
                 <div className="flex items-center gap-2 text-xs text-primary font-medium">
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
                   Chrome is scraping Google Maps...
@@ -359,7 +359,7 @@ export function Phase1Scrape({
             )}
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 pt-1">
               <Stat label="Found" value={leads.length} />
               <Stat label="Phone" value={withPhone} />
               <Stat label="No site" value={noSite} />
@@ -367,42 +367,43 @@ export function Phase1Scrape({
 
             {/* Success badge after scrape */}
             {leads.length > 0 && !loading && (
-              <div className="text-[11px] text-emerald-600 bg-emerald-500/5 border border-emerald-500/20 rounded-md p-2.5">
-                ✅ <strong>Real data from Google Maps</strong> — scraped by Chrome. Saved to history.
+              <div className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 flex items-center gap-1.5">
+                <span className="font-semibold">✓</span>
+                <span>Scraped real data from Google Maps. Saved to history.</span>
               </div>
             )}
           </CardContent>
         </Card>
 
         {/* Add manually */}
-        <Card className="md:col-span-1 border-dashed">
+        <Card className="md:col-span-1 lg:col-span-3 border-dashed shadow-xs self-start">
           <button
-            className="w-full flex items-center justify-between px-5 py-3 text-left"
+            className="w-full flex items-center justify-between px-4 py-3.5 text-left cursor-pointer"
             onClick={() => setManualOpen((o) => !o)}
           >
-            <span className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <Plus className="h-4 w-4" /> Add a specific business
+            <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Plus className="h-4 w-4" /> Add specific business
             </span>
             <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${manualOpen ? "rotate-180" : ""}`} />
           </button>
           {manualOpen && (
             <CardContent className="pt-0 pb-4 space-y-3">
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
-                Paste a Google Maps URL, Zomato link, any business website, or just type the business name.
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Paste a Google Maps URL, Zomato link, business website, or type the business name.
               </p>
               <Input
-                placeholder="e.g. Gold's Gym Barasat   or paste any URL"
+                placeholder="e.g. Gold's Gym Barasat or paste URL"
                 value={manualInput}
                 onChange={(e) => setManualInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addManually()}
                 disabled={manualLoading}
-                className="h-9 text-sm"
+                className="h-9 text-xs"
               />
               <Button
                 onClick={addManually}
                 disabled={manualLoading || !manualInput.trim()}
                 size="sm"
-                className="w-full"
+                className="w-full text-xs font-medium"
               >
                 {manualLoading
                   ? <><Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />Fetching...</>
@@ -413,9 +414,9 @@ export function Phase1Scrape({
         </Card>
 
         {/* Live map */}
-        <Card className="md:col-span-2 flex flex-col isolate">
+        <Card className="md:col-span-2 lg:col-span-5 flex flex-col isolate shadow-xs min-h-[280px]">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Live map</CardTitle>
+            <CardTitle className="text-sm font-semibold">Live Map</CardTitle>
           </CardHeader>
           <CardContent className="flex-1 p-3">
             <LeadMap leads={leads} />
@@ -643,9 +644,9 @@ export function Phase1Scrape({
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-md border border-border px-2.5 py-2">
-      <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{label}</div>
-      <div className="font-display text-xl tabular-nums mt-0.5">{value}</div>
+    <div className="rounded-lg border border-border bg-card px-2.5 py-2 text-center shadow-2xs">
+      <div className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground">{label}</div>
+      <div className="text-xl font-bold tabular-nums text-foreground mt-0.5">{value}</div>
     </div>
   );
 }

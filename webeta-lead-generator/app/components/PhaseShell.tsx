@@ -27,39 +27,39 @@ export function PhaseShell({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
-      className="max-w-7xl mx-auto px-4 sm:px-6 pb-32"
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="max-w-7xl mx-auto px-4 sm:px-6 pb-28 sm:pb-32"
     >
-      <header className="mb-10">
-        <h1 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.05]">{title}</h1>
-        <p className="text-muted-foreground mt-4 text-base max-w-2xl leading-relaxed">{subtitle}</p>
+      <header className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">{title}</h1>
+        <p className="text-muted-foreground mt-1.5 text-xs sm:text-sm max-w-3xl leading-relaxed">{subtitle}</p>
       </header>
       <div>{children}</div>
-      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/65">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-md shadow-[0_-4px_16px_rgba(0,0,0,0.04)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-3">
           <Button
             variant="outline"
             onClick={onPrev}
             disabled={prevDisabled || !onPrev}
             aria-label="Go to previous phase"
-            className="h-10 px-4"
+            className="h-9 sm:h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-medium"
           >
-            <ChevronLeft className="h-4 w-4 mr-1.5" strokeWidth={1.75} /> Back
+            <ChevronLeft className="h-4 w-4 mr-1 sm:mr-1.5 stroke-[2]" /> Back
           </Button>
           <div className="flex flex-col items-end gap-0.5">
             {nextDisabled && nextDisabledHint && (
-              <span className="text-[11px] text-muted-foreground">{nextDisabledHint}</span>
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground font-medium">{nextDisabledHint}</span>
             )}
             <Button
               onClick={onNext}
               disabled={nextDisabled || !onNext}
               aria-label={nextLabel}
-              className="h-10 px-5 transition-transform duration-150 active:scale-[0.98]"
+              className="h-9 sm:h-10 px-4 sm:px-5 text-xs sm:text-sm font-semibold transition-all"
             >
-              {nextLabel} <ChevronRight className="h-4 w-4 ml-1.5" strokeWidth={1.75} />
+              {nextLabel} <ChevronRight className="h-4 w-4 ml-1 sm:ml-1.5 stroke-[2]" />
             </Button>
           </div>
         </div>
@@ -67,3 +67,4 @@ export function PhaseShell({
     </motion.div>
   );
 }
+

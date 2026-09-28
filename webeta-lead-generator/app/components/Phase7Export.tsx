@@ -1318,9 +1318,9 @@ ${sections}
 
 function Stat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`rounded-md border px-3 py-2.5 ${accent && value > 0 ? "border-emerald-300 bg-emerald-50" : "border-border"}`}>
-      <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{label}</div>
-      <div className={`font-display text-2xl tabular-nums mt-0.5 ${accent && value > 0 ? "text-emerald-700" : ""}`}>{value}</div>
+    <div className={`rounded-lg border px-3.5 py-3 shadow-2xs ${accent && value > 0 ? "border-emerald-300 bg-emerald-50/60 dark:bg-emerald-950/30" : "border-border bg-card"}`}>
+      <div className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground">{label}</div>
+      <div className={`text-2xl font-bold tabular-nums text-foreground mt-0.5 ${accent && value > 0 ? "text-emerald-700 dark:text-emerald-400" : ""}`}>{value}</div>
     </div>
   );
 }

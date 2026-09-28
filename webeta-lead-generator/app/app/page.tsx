@@ -208,27 +208,31 @@ export default function Page() {
       >
         Skip to content
       </a>
-      <header className="border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-md bg-primary flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-primary-foreground" strokeWidth={1.5} aria-hidden="true" />
+      <header className="border-b border-border bg-card/90 backdrop-blur-md sticky top-0 z-30 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm tracking-wider shadow-xs shrink-0 select-none">
+              W
             </div>
-            <div>
-              <div className="font-display text-xl leading-none">Lead <span className="text-muted-foreground">→</span> Launch</div>
-              <div className="text-[11px] text-muted-foreground leading-tight tracking-wide uppercase mt-1">Scrape · Audit · Rank · Convert · Outreach · Demo · Export</div>
+            <div className="min-w-0">
+              <div className="font-semibold text-base sm:text-lg tracking-tight text-foreground truncate">
+                Webeta Lead Generator
+              </div>
+              <div className="text-[11px] text-muted-foreground font-medium tracking-wide uppercase hidden sm:block truncate">
+                Scrape · Audit · Rank · Convert · Outreach · Build · Export
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Button
               id="open-scrape-history"
               variant="outline"
               size="sm"
               onClick={() => setShowSessions(true)}
-              className="h-8 gap-1.5 text-xs"
+              className="h-8 gap-1.5 text-xs font-medium"
             >
               <History className="h-3.5 w-3.5" />
-              History
+              <span>History</span>
             </Button>
             <GeminiBadge ok={geminiOk} />
           </div>
@@ -373,13 +377,13 @@ export default function Page() {
 }
 
 function GeminiBadge({ ok }: { ok: boolean | null }) {
-  const color =
-    ok === null ? "bg-muted-foreground/40" : ok ? "bg-emerald-500" : "bg-[color:var(--destructive)]";
-  const label = ok === null ? "Checking…" : ok ? "Gemini AI connected" : "Gemini AI not connected";
+  const dotColor =
+    ok === null ? "bg-slate-400 animate-pulse" : ok ? "bg-emerald-500" : "bg-rose-500";
+  const label = ok === null ? "Checking AI…" : ok ? "AI Ready" : "AI Disconnected";
   return (
-    <div className="hidden sm:flex items-center gap-2 text-[11px] text-muted-foreground tracking-[0.12em] uppercase">
-      <span className={`h-1.5 w-1.5 rounded-full ${color}`} aria-hidden="true" />
-      {label}
+    <div className="hidden sm:inline-flex items-center gap-1.5 text-xs text-muted-foreground font-medium px-2.5 py-1 rounded-full border border-border bg-background shadow-2xs">
+      <span className={`h-2 w-2 rounded-full ${dotColor} shrink-0`} aria-hidden="true" />
+      <span>{label}</span>
     </div>
   );
 }

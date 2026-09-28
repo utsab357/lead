@@ -192,22 +192,22 @@ export function Phase2Audit({
     <PhaseShell title="Phase 2 — Business audit" subtitle="PageSpeed, mobile readiness, schema, gaps + AI-summarized biggest opportunity. Estimated revenue left on the table." onPrev={onPrev} onNext={onNext} nextDisabled={auditedCount === 0} nextLabel="Rank prospects">
 
       {/* Stats row */}
-      <div className="grid md:grid-cols-4 gap-3 mb-6">
-        <Card><CardContent className="pt-6">
-          <div className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">Audited</div>
-          <div className="font-display text-3xl tabular-nums mt-2">{auditedCount}<span className="text-muted-foreground/50 text-2xl"> / {leads.length}</span></div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+        <Card className="shadow-xs"><CardContent className="p-4 sm:p-5">
+          <div className="text-[11px] uppercase font-semibold tracking-wider text-muted-foreground">Audited</div>
+          <div className="text-2xl sm:text-3xl font-bold tabular-nums mt-1 text-foreground">{auditedCount}<span className="text-muted-foreground/60 text-lg sm:text-xl font-normal"> / {leads.length}</span></div>
         </CardContent></Card>
-        <Card><CardContent className="pt-6">
-          <div className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">No site at all</div>
-          <div className="font-display text-3xl tabular-nums text-[color:var(--destructive)] mt-2">{Object.values(audits).filter((a) => !a.hasWebsite).length}</div>
+        <Card className="shadow-xs"><CardContent className="p-4 sm:p-5">
+          <div className="text-[11px] uppercase font-semibold tracking-wider text-muted-foreground">No site at all</div>
+          <div className="text-2xl sm:text-3xl font-bold tabular-nums text-rose-600 mt-1">{Object.values(audits).filter((a) => !a.hasWebsite).length}</div>
         </CardContent></Card>
-        <Card><CardContent className="pt-6">
-          <div className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">Avg PageSpeed <span className="normal-case tracking-normal text-[10px] opacity-60">(est.)</span></div>
-          <div className="font-display text-3xl tabular-nums mt-2">{auditedCount ? Math.round(Object.values(audits).reduce((s, a) => s + a.pageSpeedScore, 0) / auditedCount) : 0}</div>
+        <Card className="shadow-xs"><CardContent className="p-4 sm:p-5">
+          <div className="text-[11px] uppercase font-semibold tracking-wider text-muted-foreground">Avg PageSpeed <span className="normal-case tracking-normal text-[10px] opacity-60">(est.)</span></div>
+          <div className="text-2xl sm:text-3xl font-bold tabular-nums mt-1 text-foreground">{auditedCount ? Math.round(Object.values(audits).reduce((s, a) => s + a.pageSpeedScore, 0) / auditedCount) : 0}</div>
         </CardContent></Card>
-        <Card><CardContent className="pt-6">
-          <div className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">Est. ₹ lost / month</div>
-          <div className="font-display text-3xl tabular-nums flex items-center mt-2"><IndianRupee className="h-6 w-6" strokeWidth={1.5} />{totalLost.toLocaleString("en-IN")}</div>
+        <Card className="shadow-xs"><CardContent className="p-4 sm:p-5">
+          <div className="text-[11px] uppercase font-semibold tracking-wider text-muted-foreground">Est. ₹ lost / month</div>
+          <div className="text-2xl sm:text-3xl font-bold tabular-nums flex items-center mt-1 text-foreground"><IndianRupee className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />{totalLost.toLocaleString("en-IN")}</div>
         </CardContent></Card>
       </div>
 
@@ -374,7 +374,7 @@ export function Phase2Audit({
                         <div className="flex-1 min-w-0">
                           <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">PageSpeed <span className="normal-case tracking-normal opacity-60">(estimated)</span></div>
                           <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-2">Est. lost / mo</div>
-                          <div className="font-display text-lg tabular-nums flex items-center mt-0.5"><IndianRupee className="h-3.5 w-3.5" strokeWidth={1.5} />{a.estLostRevenuePerMonth.toLocaleString("en-IN")}</div>
+                          <div className="text-base font-bold tabular-nums text-foreground flex items-center mt-0.5"><IndianRupee className="h-3.5 w-3.5" strokeWidth={2} />{a.estLostRevenuePerMonth.toLocaleString("en-IN")}</div>
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-1">

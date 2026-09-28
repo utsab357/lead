@@ -6,7 +6,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PhaseShell } from "./PhaseShell";
-import { Loader2, Target, TrendingUp, Zap, Shield, Clock, ChevronDown, ChevronUp, Phone, MessageSquare, AlertCircle, CheckCircle2, MapPin, Star, ExternalLink, Copy, Check } from "lucide-react";
+import {
+  Loader2,
+  Target,
+  TrendingUp,
+  Zap,
+  Shield,
+  Clock,
+  ChevronDown,
+  ChevronUp,
+  Phone,
+  MessageSquare,
+  AlertCircle,
+  CheckCircle2,
+  MapPin,
+  Star,
+  ExternalLink,
+  Copy,
+  Check,
+  Search,
+  X,
+  Sparkles,
+  Edit3,
+} from "lucide-react";
 import type { RankedLead, ConversionPoints, AuditResult, LeadStatus, ClientDetail } from "@/lib/types";
 import { estimateBusinessAgeMonths, getAgeBadge } from "@/lib/businessAge";
 import { toast } from "sonner";
@@ -15,14 +37,14 @@ const BATCH_SIZE = 5;
 
 // Status pill config — mirrors Phase 7 STATUS_CONFIG
 const STATUS_PILL: Record<string, { label: string; color: string; bg: string }> = {
-  new:            { label: "New",            color: "text-sky-700",     bg: "bg-sky-50 border-sky-200" },
-  called:         { label: "Called",         color: "text-amber-700",   bg: "bg-amber-50 border-amber-200" },
-  interested:     { label: "Interested",     color: "text-emerald-700", bg: "bg-emerald-50 border-emerald-200" },
-  demo_sent:      { label: "Demo Sent",      color: "text-purple-700",  bg: "bg-purple-50 border-purple-200" },
-  meeting_set:    { label: "Meeting Set",    color: "text-indigo-700",  bg: "bg-indigo-50 border-indigo-200" },
-  completed:      { label: "Completed ✓",   color: "text-green-700",   bg: "bg-green-100 border-green-300" },
-  not_interested: { label: "Not Interested", color: "text-red-700",     bg: "bg-red-50 border-red-200" },
-  no_response:    { label: "No Response",    color: "text-slate-500",   bg: "bg-slate-50 border-slate-200" },
+  new:            { label: "New",            color: "text-sky-700 dark:text-sky-400",     bg: "bg-sky-50 dark:bg-sky-950/40 border-sky-200 dark:border-sky-800" },
+  called:         { label: "Called",         color: "text-amber-700 dark:text-amber-400", bg: "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800" },
+  interested:     { label: "Interested",     color: "text-emerald-700 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800" },
+  demo_sent:      { label: "Demo Sent",      color: "text-purple-700 dark:text-purple-400",  bg: "bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-800" },
+  meeting_set:    { label: "Meeting Set",    color: "text-indigo-700 dark:text-indigo-400",  bg: "bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800" },
+  completed:      { label: "Completed ✓",   color: "text-green-700 dark:text-green-400",   bg: "bg-green-100 dark:bg-green-950/60 border-green-300 dark:border-green-800" },
+  not_interested: { label: "Not Interested", color: "text-red-700 dark:text-red-400",     bg: "bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800" },
+  no_response:    { label: "No Response",    color: "text-slate-500 dark:text-slate-400", bg: "bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800" },
 };
 const ALL_LEAD_STATUSES = Object.keys(STATUS_PILL) as LeadStatus[];
 
@@ -59,14 +81,18 @@ export function Phase4Convert({
   const [showScriptId, setShowScriptId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all");
-  const [fNoSite,  setFNoSite]  = useState(false);
-  const [fPhone,   setFPhone]   = useState(false);
-  const [fRating,  setFRating]  = useState<"" | "3.5" | "4.0" | "4.5">("");
+  const [fNoSite, setFNoSite] = useState(false);
+  const [fPhone, setFPhone] = useState(false);
+  const [fRating, setFRating] = useState<"" | "3.5" | "4.0" | "4.5">("");
   const [fReviews, setFReviews] = useState<"" | "10" | "50" | "100">("");
   const [fConvDone, setFConvDone] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
   // Client detail drawer
-  const [detailDrawer, setDetailDrawer] = useState<{ open: boolean; leadId: string | null }>({ open: false, leadId: null });
+  const [detailDrawer, setDetailDrawer] = useState<{ open: boolean; leadId: string | null }>({
+    open: false,
+    leadId: null,
+  });
   const [draftDetail, setDraftDetail] = useState<ClientDetail>({});
 
   function openDetailDrawer(leadId: string) {
@@ -74,15 +100,20 @@ export function Phase4Convert({
     setDetailDrawer({ open: true, leadId });
   }
 
-  /** Copy phone digits only (strips country code +91) */
   function copyPhone(e: React.MouseEvent, phone: string, leadId: string) {
     e.stopPropagation();
     e.preventDefault();
     const digits = phone.replace(/\D/g, "");
-    // Strip Indian country code
     const clean = digits.startsWith("91") && digits.length === 12 ? digits.slice(2) : digits;
     navigator.clipboard.writeText(clean);
     setCopiedId(leadId);
+    setTimeout(() => setCopiedId(null), 1800);
+  }
+
+  function copyText(text: string, id: string, label = "Copied to clipboard") {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    toast.success(label);
     setTimeout(() => setCopiedId(null), 1800);
   }
 
@@ -95,20 +126,20 @@ export function Phase4Convert({
   }
 
   function updateDraft(field: keyof ClientDetail, value: string) {
-    setDraftDetail(prev => {
+    setDraftDetail((prev) => {
       const next = { ...prev, [field]: value };
       if (field === "priceAgreed" || field === "advanceReceived") {
         const price = parseFloat(field === "priceAgreed" ? value : prev.priceAgreed ?? "0") || 0;
-        const adv   = parseFloat(field === "advanceReceived" ? value : prev.advanceReceived ?? "0") || 0;
+        const adv = parseFloat(field === "advanceReceived" ? value : prev.advanceReceived ?? "0") || 0;
         if (price > 0) next.balanceDue = String(price - adv);
       }
       return next;
     });
   }
 
-  const hasActiveFilter = fNoSite || fPhone || fRating || fReviews || fConvDone || statusFilter !== "all" || !!searchQuery;
-  
-  // Smart search: if query is all digits (or starts with +), search phone; else search name
+  const hasActiveFilter =
+    fNoSite || fPhone || fRating || fReviews || fConvDone || statusFilter !== "all" || !!searchQuery;
+
   function matchesSearch(l: (typeof ranked)[number]): boolean {
     if (!searchQuery) return true;
     const q = searchQuery.trim();
@@ -116,26 +147,30 @@ export function Phase4Convert({
     if (isPhoneQuery) {
       const digits = q.replace(/\D/g, "");
       const rawPhone = (l.phone ?? l.whatsapp ?? "").replace(/\D/g, "");
-      // Strip Indian country code for matching
       const normPhone = rawPhone.startsWith("91") && rawPhone.length === 12 ? rawPhone.slice(2) : rawPhone;
       return normPhone.includes(digits) || rawPhone.includes(digits);
     }
-    return l.name.toLowerCase().includes(q.toLowerCase());
+    return l.name.toLowerCase().includes(q.toLowerCase()) || l.city.toLowerCase().includes(q.toLowerCase());
   }
 
   function applyFilters(l: (typeof ranked)[number]) {
     const statusMatch = statusFilter === "all" || ((leadStatuses ?? {})[l.id] ?? "new") === statusFilter;
-    const noSiteMatch = !fNoSite  || !l.website;
-    const phoneMatch  = !fPhone   || !!(l.phone ?? l.whatsapp);
-    const ratingMatch = !fRating  || (l.rating ?? 0) >= parseFloat(fRating);
+    const noSiteMatch = !fNoSite || !l.website;
+    const phoneMatch = !fPhone || !!(l.phone ?? l.whatsapp);
+    const ratingMatch = !fRating || (l.rating ?? 0) >= parseFloat(fRating);
     const reviewMatch = !fReviews || (l.reviewsCount ?? 0) >= parseInt(fReviews);
-    const convMatch   = !fConvDone || !!conversions[l.id];
+    const convMatch = !fConvDone || !!conversions[l.id];
     return matchesSearch(l) && statusMatch && noSiteMatch && phoneMatch && ratingMatch && reviewMatch && convMatch;
   }
 
   function clearFilters() {
-    setSearchQuery(""); setStatusFilter("all");
-    setFNoSite(false); setFPhone(false); setFRating(""); setFReviews(""); setFConvDone(false);
+    setSearchQuery("");
+    setStatusFilter("all");
+    setFNoSite(false);
+    setFPhone(false);
+    setFRating("");
+    setFReviews("");
+    setFConvDone(false);
   }
 
   function handleSetStatus(leadId: string, status: LeadStatus) {
@@ -154,7 +189,6 @@ export function Phase4Convert({
     const newConversions = { ...conversions };
     let count = Object.keys(newConversions).length;
 
-    // Only process leads not yet done
     const pending = ranked.filter((l) => !newConversions[l.id]);
     const batches: RankedLead[][] = [];
     for (let i = 0; i < pending.length; i += BATCH_SIZE) {
@@ -171,16 +205,27 @@ export function Phase4Convert({
       const batch = batches[bi];
       setStatusMsg(`Batch ${bi + 1} of ${batches.length} (${batch.length} leads)…`);
 
-      // Build the payload the API expects: leads array + audits map
-      // RankedLead has audit embedded, so we extract it here
       const leads = batch.map((l) => ({
-        id: l.id, name: l.name, category: l.category, city: l.city,
-        address: l.address, rating: l.rating, reviewsCount: l.reviewsCount,
-        website: l.website, phone: l.phone, whatsapp: l.whatsapp, email: l.email,
-        hours: l.hours, photosCount: l.photosCount, services: l.services,
-        priceLevel: l.priceLevel, socialLinks: l.socialLinks,
-        ownerReplies: l.ownerReplies, reviews: l.reviews,
-        lat: l.lat, lng: l.lng,
+        id: l.id,
+        name: l.name,
+        category: l.category,
+        city: l.city,
+        address: l.address,
+        rating: l.rating,
+        reviewsCount: l.reviewsCount,
+        website: l.website,
+        phone: l.phone,
+        whatsapp: l.whatsapp,
+        email: l.email,
+        hours: l.hours,
+        photosCount: l.photosCount,
+        services: l.services,
+        priceLevel: l.priceLevel,
+        socialLinks: l.socialLinks,
+        ownerReplies: l.ownerReplies,
+        reviews: l.reviews,
+        lat: l.lat,
+        lng: l.lng,
       }));
       const audits: Record<string, AuditResult> = {};
       for (const l of batch) audits[l.id] = l.audit;
@@ -197,7 +242,7 @@ export function Phase4Convert({
           throw new Error(body.error ?? `HTTP ${res.status}`);
         }
 
-        const data = await res.json() as { conversionPoints: Record<string, ConversionPoints> };
+        const data = (await res.json()) as { conversionPoints: Record<string, ConversionPoints> };
         if (data.conversionPoints) {
           Object.assign(newConversions, data.conversionPoints);
           count += Object.keys(data.conversionPoints).length;
@@ -217,6 +262,11 @@ export function Phase4Convert({
     toast.success(`Conversion hooks ready for ${count} leads`);
   }
 
+  const rankedIds = new Set(ranked.map((l) => l.id));
+  const doneCount = Object.keys(conversions).filter((id) => rankedIds.has(id)).length;
+  const remainingCount = ranked.length - doneCount;
+  const filteredLeads = ranked.filter(applyFilters);
+
   return (
     <PhaseShell
       title="Phase 4 — Conversion Points"
@@ -226,397 +276,467 @@ export function Phase4Convert({
       nextDisabled={Object.keys(conversions).length === 0}
       nextLabel="Write outreach"
     >
-      {/* Controls */}
-      <div className="flex items-center gap-4 mb-6 flex-wrap">
-        <Button onClick={generateAll} disabled={loading || ranked.length === 0} className="h-11 transition-transform active:scale-[0.98]">
-          {loading
-            ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</>
-            : (() => {
-                // Only count conversions that belong to the CURRENT ranked list
-                const rankedIds = new Set(ranked.map(l => l.id));
-                const done = Object.keys(conversions).filter(id => rankedIds.has(id)).length;
-                const remaining = ranked.length - done;
-                if (done === 0) return <><Target className="h-4 w-4 mr-2" />Generate conversion hooks</>;
-                if (remaining > 0) return <><Target className="h-4 w-4 mr-2" />Generate remaining ({remaining})</>;
-                return <><Target className="h-4 w-4 mr-2" />Re-generate all</>;
-              })()}
-        </Button>
-        <div className="text-sm text-muted-foreground">
-          {(() => {
-            const rankedIds = new Set(ranked.map(l => l.id));
-            const done = Object.keys(conversions).filter(id => rankedIds.has(id)).length;
-            return <>{done} / {ranked.length} leads processed</>;
-          })()}
+      {/* ── TOP ACTION & STATS BANNER ── */}
+      <div className="bg-card border border-border rounded-xl p-4 sm:p-5 mb-5 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={generateAll}
+              disabled={loading || ranked.length === 0}
+              className="h-10 px-4 font-semibold text-xs sm:text-sm rounded-lg transition-transform active:scale-[0.98]"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Generating hooks…
+                </>
+              ) : doneCount === 0 ? (
+                <>
+                  <Target className="h-4 w-4 mr-2" />
+                  Generate conversion hooks
+                </>
+              ) : remainingCount > 0 ? (
+                <>
+                  <Target className="h-4 w-4 mr-2" />
+                  Generate remaining ({remainingCount})
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Re-generate all hooks
+                </>
+              )}
+            </Button>
+
+            <div className="flex flex-col">
+              <span className="text-xs font-semibold text-foreground tabular-nums">
+                {doneCount} / {ranked.length} hooks ready
+              </span>
+              {loading && statusMsg && (
+                <span className="text-[11px] text-muted-foreground animate-pulse">{statusMsg}</span>
+              )}
+            </div>
+          </div>
+
+          <div className="text-xs text-muted-foreground">
+            {doneCount > 0 && remainingCount === 0 && (
+              <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-xs gap-1 font-medium">
+                <CheckCircle2 className="h-3.5 w-3.5" /> All leads ready for outreach
+              </Badge>
+            )}
+          </div>
         </div>
-        {loading && statusMsg && (
-          <span className="text-xs text-muted-foreground/70 italic">{statusMsg}</span>
-        )}
       </div>
 
-      {/* Search + status filter bar */}
-      <div className="flex items-center gap-2 mb-3 flex-wrap">
-        <div className="relative flex-1 max-w-sm">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by name or phone number..."
-            className="w-full h-9 pl-8 pr-8 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50"
-          />
-          {/* Show phone icon when in phone-search mode, else search icon */}
-          {searchQuery && /^[\d\s+\-()]+$/.test(searchQuery) && searchQuery.replace(/\D/g, "").length >= 2
-            ? <Phone className="absolute left-2.5 top-2.5 h-4 w-4 text-primary/70 pointer-events-none" />
-            : <svg className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          }
-          {searchQuery && (
-            <button onClick={() => setSearchQuery("")} className="absolute right-2 top-2 h-5 w-5 flex items-center justify-center text-muted-foreground hover:text-foreground rounded">
-              ✕
-            </button>
+      {/* ── UNIFIED SEARCH & FILTER TRACK (Mobile-optimized) ── */}
+      <div className="space-y-2.5 mb-5">
+        <div className="flex items-center gap-2">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by name, city or phone…"
+              className="w-full h-9 pl-9 pr-8 text-xs sm:text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Status Filter Dropdown */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as LeadStatus | "all")}
+            className="h-9 px-2.5 text-xs font-medium rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer shadow-2xs"
+          >
+            <option value="all">All Statuses</option>
+            {ALL_LEAD_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {STATUS_PILL[s].label}
+              </option>
+            ))}
+          </select>
+
+          {hasActiveFilter && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="h-9 text-xs px-2.5 text-muted-foreground hover:text-foreground shrink-0"
+            >
+              Reset
+            </Button>
           )}
         </div>
-        {/* Status filter dropdown */}
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as LeadStatus | "all")}
-          className="h-9 px-2 pr-7 text-sm rounded-md border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 cursor-pointer"
-        >
-          <option value="all">All Statuses</option>
-          {ALL_LEAD_STATUSES.map(s => (
-            <option key={s} value={s}>{STATUS_PILL[s].label}</option>
-          ))}
-        </select>
-        {hasActiveFilter && (
-          <button onClick={clearFilters} className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-md px-2.5 py-1.5 hover:bg-muted/50 transition-colors">
-            Clear all
+
+        {/* Scrollable Filter Chips Track */}
+        <div className="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar text-xs">
+          <button
+            onClick={() => setFNoSite((v) => !v)}
+            className={`inline-flex items-center px-2.5 py-1 rounded-full border text-[11px] font-medium transition-all shrink-0 ${
+              fNoSite
+                ? "bg-destructive/10 border-destructive/30 text-destructive font-semibold"
+                : "border-border bg-card text-muted-foreground hover:border-primary/40"
+            }`}
+          >
+            No website
           </button>
-        )}
+
+          <button
+            onClick={() => setFPhone((v) => !v)}
+            className={`inline-flex items-center px-2.5 py-1 rounded-full border text-[11px] font-medium transition-all shrink-0 ${
+              fPhone
+                ? "bg-primary/10 border-primary/30 text-primary font-semibold"
+                : "border-border bg-card text-muted-foreground hover:border-primary/40"
+            }`}
+          >
+            Has phone
+          </button>
+
+          <select
+            value={fRating}
+            onChange={(e) => setFRating(e.target.value as typeof fRating)}
+            className="text-[11px] font-medium px-2 py-1 rounded-full border border-border bg-card text-muted-foreground focus:outline-none shrink-0 cursor-pointer"
+          >
+            <option value="">Any rating</option>
+            <option value="3.5">★ 3.5+</option>
+            <option value="4.0">★ 4.0+</option>
+            <option value="4.5">★ 4.5+</option>
+          </select>
+
+          <select
+            value={fReviews}
+            onChange={(e) => setFReviews(e.target.value as typeof fReviews)}
+            className="text-[11px] font-medium px-2 py-1 rounded-full border border-border bg-card text-muted-foreground focus:outline-none shrink-0 cursor-pointer"
+          >
+            <option value="">Any reviews</option>
+            <option value="10">10+ reviews</option>
+            <option value="50">50+ reviews</option>
+            <option value="100">100+ reviews</option>
+          </select>
+
+          <button
+            onClick={() => setFConvDone((v) => !v)}
+            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full border text-[11px] font-medium transition-all shrink-0 ${
+              fConvDone
+                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 font-semibold"
+                : "border-border bg-card text-muted-foreground hover:border-primary/40"
+            }`}
+          >
+            <span>✓ Hooks ready</span>
+          </button>
+
+          <span className="ml-auto text-[11px] text-muted-foreground shrink-0 pl-2 tabular-nums">
+            {filteredLeads.length} of {ranked.length} leads
+          </span>
+        </div>
       </div>
 
-      {/* Lead quality filter bar */}
-      <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-lg bg-muted/40 border border-border mb-4">
-        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mr-1">Filter:</span>
-
-        <button
-          onClick={() => setFNoSite(v => !v)}
-          className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
-            fNoSite ? "bg-destructive/10 border-destructive/30 text-destructive" : "bg-background border-border text-muted-foreground hover:border-primary/40"
-          }`}
-        >
-          No website
-        </button>
-
-        <button
-          onClick={() => setFPhone(v => !v)}
-          className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
-            fPhone ? "bg-primary/10 border-primary/30 text-primary" : "bg-background border-border text-muted-foreground hover:border-primary/40"
-          }`}
-        >
-          Has phone
-        </button>
-
-        <select
-          value={fRating}
-          onChange={e => setFRating(e.target.value as typeof fRating)}
-          className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground hover:border-primary/40 focus:outline-none cursor-pointer"
-        >
-          <option value="">Any rating</option>
-          <option value="3.5">★ 3.5+</option>
-          <option value="4.0">★ 4.0+</option>
-          <option value="4.5">★ 4.5+</option>
-        </select>
-
-        <select
-          value={fReviews}
-          onChange={e => setFReviews(e.target.value as typeof fReviews)}
-          className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground hover:border-primary/40 focus:outline-none cursor-pointer"
-        >
-          <option value="">Any reviews</option>
-          <option value="10">10+ reviews</option>
-          <option value="50">50+ reviews</option>
-          <option value="100">100+ reviews</option>
-        </select>
-
-        <button
-          onClick={() => setFConvDone(v => !v)}
-          className={`flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all ${
-            fConvDone ? "bg-orange-500/10 border-orange-500/30 text-orange-600" : "bg-background border-border text-muted-foreground hover:border-primary/40"
-          }`}
-        >
-          🎯 Conv. done
-        </button>
-
-        <span className="ml-auto text-[11px] text-muted-foreground tabular-nums">
-          {ranked.filter(applyFilters).length} / {ranked.length} leads
-        </span>
-      </div>
-
-      {/* All ranked leads */}
+      {/* ── ALL RANKED LEADS CARDS ── */}
       <div className="grid gap-3">
         <AnimatePresence initial={false}>
-          {ranked
-          .filter(applyFilters)
-            .map((lead, i) => {
+          {filteredLeads.map((lead, i) => {
             const conv = conversions[lead.id];
             const isExpanded = expandedId === lead.id;
+            const originalIndex = ranked.indexOf(lead) + 1;
+            const currentStatus = (leadStatuses ?? {})[lead.id];
+            const statusConfig = currentStatus && currentStatus !== "new" ? STATUS_PILL[currentStatus] : null;
+
             return (
               <motion.div
                 key={lead.id}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25, delay: Math.min(i * 0.03, 0.4) }}
+                transition={{ duration: 0.2, delay: Math.min(i * 0.02, 0.3) }}
               >
-                <Card className={`transition-all duration-200 hover:border-primary/40 ${isExpanded ? "border-primary/60 shadow-md" : ""}`}>
+                <Card
+                  className={`transition-all duration-150 border-border shadow-xs hover:border-primary/40 ${
+                    isExpanded ? "border-primary/60 shadow-md ring-1 ring-primary/20" : ""
+                  }`}
+                >
                   <CardHeader
-                    className="pb-3 cursor-pointer select-none"
+                    className="p-3.5 sm:p-4 cursor-pointer select-none"
                     onClick={() => setExpandedId(isExpanded ? null : lead.id)}
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <CardTitle className="text-base flex items-center gap-2 min-w-0">
-                        <span className="text-muted-foreground tabular-nums text-sm shrink-0">#{i + 1}</span>
-                        <span className="truncate">{lead.name}</span>
-                      </CardTitle>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <Badge variant="outline" className="text-[10px] tabular-nums">Score {lead.score}</Badge>
-                        {conv
-                          ? <Badge className="text-[10px] bg-emerald-500/10 text-emerald-600 border-emerald-500/20">✓ Ready</Badge>
-                          : <Badge variant="secondary" className="text-[10px]">Pending</Badge>}
-                        {/* Status pill — visible in collapsed view */}
-                        {(() => {
-                          const s = (leadStatuses ?? {})[lead.id];
-                          if (!s || s === "new") return null;
-                          const cfg = STATUS_PILL[s];
-                          return cfg ? (
-                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${cfg.color} ${cfg.bg}`}>
-                              {cfg.label}
-                            </span>
-                          ) : null;
-                        })()}
-                        {/* 💼 Fill after deal */}
-                        <button
-                          onClick={(e) => { e.stopPropagation(); openDetailDrawer(lead.id); }}
-                          title="Fill after deal"
-                          className={`text-[10px] px-1.5 py-0.5 rounded border transition-all ${
-                            clientDetails[lead.id] ? "bg-violet-500/10 border-violet-400/30 text-violet-600" : "border-border text-muted-foreground hover:border-violet-400/40 hover:text-violet-500"
-                          }`}
-                        >✏️</button>
-                        {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+                    {/* Tier 1: Rank, Full Business Name (wrap enabled), Score & Expand Chevron */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-2 min-w-0 flex-1">
+                        <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-muted text-foreground font-bold shrink-0 mt-0.5">
+                          #{originalIndex}
+                        </span>
+                        <h3 className="font-semibold text-sm sm:text-base text-foreground leading-snug break-words">
+                          {lead.name}
+                        </h3>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0 self-start mt-0.5">
+                        <Badge variant="outline" className="font-mono text-[11px] font-semibold tabular-nums shrink-0">
+                          Score {lead.score}
+                        </Badge>
+                        <div className="h-6 w-6 rounded-md bg-muted/60 flex items-center justify-center text-muted-foreground shrink-0 transition-colors">
+                          {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                        </div>
                       </div>
                     </div>
-                    {/* Always-visible contact row — hidden when expanded to avoid duplicate */}
-                    {!isExpanded && (
-                    <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                      <span className="text-xs text-muted-foreground">{lead.category}</span>
+
+                    {/* Tier 2: Category, City, Star Rating, Status Badges */}
+                    <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border/50 text-xs text-muted-foreground flex-wrap">
+                      <span className="font-medium px-2 py-0.5 rounded-md bg-muted/60 text-foreground text-[11px]">
+                        {lead.category}
+                      </span>
+                      <span>·</span>
+                      <span className="truncate max-w-[200px]">{lead.city}</span>
+                      {lead.rating && (
+                        <span className="inline-flex items-center gap-0.5 text-amber-500 font-semibold text-[11px]">
+                          <Star className="h-3 w-3 fill-amber-400 stroke-amber-400" />
+                          {lead.rating}
+                          {lead.reviewsCount ? (
+                            <span className="text-muted-foreground font-normal">({lead.reviewsCount})</span>
+                          ) : null}
+                        </span>
+                      )}
+
+                      {/* Ready / Pending Hook Badge */}
+                      <div className="ml-auto flex items-center gap-1.5">
+                        {conv ? (
+                          <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] py-0 px-1.5 font-medium">
+                            ✓ Ready
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary" className="text-[10px] py-0 px-1.5">
+                            Pending
+                          </Badge>
+                        )}
+
+                        {statusConfig && (
+                          <span
+                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${statusConfig.color} ${statusConfig.bg}`}
+                          >
+                            {statusConfig.label}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Tier 3: Dedicated Action Toolbar (Never collides, touch-friendly) */}
+                    <div
+                      className="mt-3 pt-2.5 border-t border-border/50 flex items-center gap-1.5 overflow-x-auto no-scrollbar"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {lead.phone && (
-                        <div className="flex items-center gap-1">
+                        <div className="inline-flex items-center shrink-0">
                           <a
                             href={`tel:${lead.phone}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition-colors"
+                            className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-l-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors"
+                            title="Call business"
                           >
-                            <Phone className="h-3 w-3" />
-                            {lead.phone}
+                            <Phone className="h-3.5 w-3.5" />
+                            <span className="tabular-nums">{lead.phone}</span>
                           </a>
                           <button
-                            onClick={(e) => copyPhone(e, lead.phone!, lead.id + "-col")}
+                            onClick={(e) => copyPhone(e, lead.phone!, lead.id + "-btn")}
+                            className="px-2 py-1.5 text-xs rounded-r-lg border-y border-r border-emerald-500/30 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors"
                             title="Copy number"
-                            className="ml-0.5 flex items-center justify-center h-4 w-4 rounded text-muted-foreground/60 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all"
                           >
-                            {copiedId === lead.id + "-col"
-                              ? <Check className="h-3 w-3 text-emerald-500" />
-                              : <Copy className="h-3 w-3" />}
+                            {copiedId === lead.id + "-btn" ? (
+                              <Check className="h-3.5 w-3.5 text-emerald-600" />
+                            ) : (
+                              <Copy className="h-3.5 w-3.5" />
+                            )}
                           </button>
                         </div>
                       )}
+
+                      {lead.whatsapp && (
+                        <a
+                          href={`https://wa.me/${lead.whatsapp.replace(/\D/g, "")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border border-green-500/30 bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors shrink-0"
+                          title="Chat on WhatsApp"
+                        >
+                          <MessageSquare className="h-3.5 w-3.5" />
+                          <span>WhatsApp</span>
+                        </a>
+                      )}
+
                       {lead.mapUrl && (
                         <a
                           href={lead.mapUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors"
+                          className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                          title="Open in Google Maps"
                         >
-                          <MapPin className="h-3 w-3" />
-                          Maps
-                          <ExternalLink className="h-2.5 w-2.5" />
+                          <MapPin className="h-3.5 w-3.5 text-blue-500" />
+                          <span>Map</span>
                         </a>
                       )}
-                      {lead.rating && (
-                        <span className="flex items-center gap-0.5 text-xs text-amber-500">
-                          <Star className="h-3 w-3 fill-amber-400 stroke-amber-400" />
-                          {lead.rating}
-                          {lead.reviewsCount ? <span className="text-muted-foreground ml-0.5">({lead.reviewsCount})</span> : null}
-                        </span>
-                      )}
+
+                      <button
+                        onClick={() => openDetailDrawer(lead.id)}
+                        className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors shrink-0 ${
+                          clientDetails[lead.id]
+                            ? "bg-violet-500/15 border-violet-400/40 text-violet-600 font-semibold"
+                            : "border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted"
+                        }`}
+                        title="Client Deal Details"
+                      >
+                        <Edit3 className="h-3.5 w-3.5 text-violet-500" />
+                        <span>Deal</span>
+                      </button>
                     </div>
-                    )}
                   </CardHeader>
 
+                  {/* ── EXPANDED DETAILS ── */}
                   {isExpanded && (
-                    <CardContent className="pt-0 border-t border-border/60">
-                      {/* ── Contact strip — always shown when expanded ── */}
-                      <div className="flex flex-wrap items-center gap-2 py-3 border-b border-border/40 mb-1">
-                        {lead.phone ? (
-                          <div className="flex items-center gap-1.5">
-                            <a
-                              href={`tel:${lead.phone}`}
-                              className="flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-md px-3 py-1.5 hover:bg-emerald-500/20 transition-colors"
-                            >
-                              <Phone className="h-3.5 w-3.5" />
-                              {lead.phone}
-                            </a>
-                            <button
-                              onClick={(e) => copyPhone(e, lead.phone!, lead.id + "-exp")}
-                              title="Copy number"
-                              className={`flex items-center gap-1 text-xs px-2 py-1.5 rounded-md border transition-all ${
-                                copiedId === lead.id + "-exp"
-                                  ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-600"
-                                  : "border-border text-muted-foreground hover:border-emerald-400/40 hover:text-emerald-500 hover:bg-emerald-500/5"
-                              }`}
-                            >
-                              {copiedId === lead.id + "-exp"
-                                ? <><Check className="h-3 w-3" /> Copied!</>
-                                : <><Copy className="h-3 w-3" /> Copy</>}
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded-md px-3 py-1.5">
-                            <Phone className="h-3.5 w-3.5" /> No phone
-                          </span>
-                        )}
-                        {lead.whatsapp && (
-                          <a
-                            href={`https://wa.me/${lead.whatsapp.replace(/\D/g, "")}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 text-sm font-medium text-green-600 dark:text-green-400 bg-green-500/10 border border-green-500/20 rounded-md px-3 py-1.5 hover:bg-green-500/20 transition-colors"
-                          >
-                            💬 WhatsApp
-                          </a>
-                        )}
-                        {lead.mapUrl && (
-                          <a
-                            href={lead.mapUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded-md px-3 py-1.5 hover:bg-blue-500/20 transition-colors"
-                          >
-                            <MapPin className="h-3.5 w-3.5" />
-                            Open in Maps
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        )}
-                        {lead.address && (
-                          <span className="text-xs text-muted-foreground ml-auto hidden md:block truncate max-w-[260px]">{lead.address}</span>
-                        )}
-                      </div>
-
-                      {/* ── Business age badge ── */}
+                    <CardContent className="p-4 sm:p-5 pt-0 border-t border-border/60 space-y-4">
+                      {/* Business Age Badge */}
                       {(() => {
                         const ageMonths = estimateBusinessAgeMonths(lead.reviews);
                         const badge = getAgeBadge(ageMonths);
                         return (
-                          <div className={`flex items-start gap-2.5 px-3 py-2 rounded-md border mb-3 ${badge.bg} ${badge.border}`}>
-                            <div className="flex-1 min-w-0">
-                              <div className={`text-[11px] font-semibold ${badge.color}`}>{badge.label}</div>
-                              <div className="text-[10px] text-muted-foreground mt-0.5">{badge.sublabel}</div>
-                            </div>
+                          <div
+                            className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg border text-xs ${badge.bg} ${badge.border}`}
+                          >
+                            <span className={`font-semibold ${badge.color}`}>{badge.label}</span>
+                            <span className="text-muted-foreground text-[11px]">{badge.sublabel}</span>
                           </div>
                         );
                       })()}
 
                       {conv ? (
                         <>
-                          <div className="grid md:grid-cols-2 gap-4 pt-4">
+                          {/* Selling Points Grid */}
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {/* Left: Bullet Points */}
                             <div className="space-y-2">
-                            <div className="text-xs uppercase tracking-[0.12em] text-muted-foreground flex items-center gap-1">
-                              <Zap className="h-3 w-3 text-primary" /> Selling Points
-                            </div>
-                            <ul className="space-y-2">
-                              {conv.points.map((point, j) => (
-                                <li key={j} className="text-sm flex items-start gap-2">
-                                  <span className="text-primary mt-0.5 shrink-0">→</span>
-                                  <span>{point}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div className="space-y-3">
-                            <div>
-                              <div className="text-xs uppercase tracking-[0.12em] text-muted-foreground flex items-center gap-1 mb-1">
-                                <Shield className="h-3 w-3" /> Competitor Insight
+                              <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                                <Zap className="h-3.5 w-3.5 text-primary" />
+                                <span>Key Selling Points</span>
                               </div>
-                              <p className="text-sm text-muted-foreground">{conv.competitorInsight}</p>
+                              <ul className="space-y-2">
+                                {conv.points.map((point, j) => (
+                                  <li key={j} className="text-xs sm:text-sm flex items-start gap-2 text-foreground">
+                                    <span className="text-primary font-bold mt-0.5 shrink-0">→</span>
+                                    <span className="leading-snug">{point}</span>
+                                  </li>
+                                ))}
+                              </ul>
                             </div>
-                            <div>
-                              <div className="text-xs uppercase tracking-[0.12em] text-muted-foreground flex items-center gap-1 mb-1">
-                                <TrendingUp className="h-3 w-3" /> Revenue Argument
-                              </div>
-                              <p className="text-sm text-muted-foreground">{conv.revenueArgument}</p>
-                            </div>
-                            <div>
-                              <div className="text-xs uppercase tracking-[0.12em] text-muted-foreground flex items-center gap-1 mb-1">
-                                <Clock className="h-3 w-3" /> Urgency Hook
-                              </div>
-                              <p className="text-sm font-medium text-[color:var(--chart-4)]">{conv.urgencyHook}</p>
-                            </div>
-                          </div>
-                        </div>
 
-                        {/* Call Script Section */}
-                        {conv.callScript && (
-                          <div className="mt-4 border-t border-border/60 pt-4">
-                            <button
-                              onClick={() => setShowScriptId(showScriptId === lead.id ? null : lead.id)}
-                              className="flex items-center gap-2 text-xs uppercase tracking-[0.12em] font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition-colors w-full"
-                            >
-                              <Phone className="h-3.5 w-3.5" />
-                              Call Script
-                              {showScriptId === lead.id
-                                ? <ChevronUp className="h-3.5 w-3.5 ml-auto" />
-                                : <ChevronDown className="h-3.5 w-3.5 ml-auto" />}
-                            </button>
+                            {/* Right: Arguments */}
+                            <div className="space-y-3">
+                              <div className="bg-muted/30 border border-border rounded-lg p-3">
+                                <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 mb-1">
+                                  <Shield className="h-3 w-3 text-blue-500" />
+                                  <span>Competitor Insight</span>
+                                </div>
+                                <p className="text-xs text-muted-foreground leading-relaxed">{conv.competitorInsight}</p>
+                              </div>
 
-                            <AnimatePresence initial={false}>
-                              {showScriptId === lead.id && (
-                                <motion.div
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: "auto" }}
-                                  exit={{ opacity: 0, height: 0 }}
-                                  transition={{ duration: 0.2 }}
-                                  className="overflow-hidden"
-                                >
-                                  <div className="mt-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4 space-y-4">
-                                    {/* Step 1: Opener */}
+                              <div className="bg-muted/30 border border-border rounded-lg p-3">
+                                <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 mb-1">
+                                  <TrendingUp className="h-3 w-3 text-emerald-500" />
+                                  <span>Revenue Argument</span>
+                                </div>
+                                <p className="text-xs text-muted-foreground leading-relaxed">{conv.revenueArgument}</p>
+                              </div>
+
+                              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                                <div className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1.5 mb-1">
+                                  <Clock className="h-3 w-3" />
+                                  <span>Urgency Hook</span>
+                                </div>
+                                <p className="text-xs font-medium text-amber-700 dark:text-amber-300 leading-relaxed">
+                                  {conv.urgencyHook}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Call Script Accordion */}
+                          {conv.callScript && (
+                            <div className="border border-border rounded-xl overflow-hidden bg-card">
+                              <button
+                                onClick={() => setShowScriptId(showScriptId === lead.id ? null : lead.id)}
+                                className="w-full flex items-center justify-between p-3.5 bg-muted/20 hover:bg-muted/40 transition-colors text-left"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Phone className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                                  <span className="text-xs sm:text-sm font-semibold text-foreground">
+                                    Cold Call Pitch &amp; Script
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                                    {showScriptId === lead.id ? "Hide script" : "Show script"}
+                                  </span>
+                                  {showScriptId === lead.id ? (
+                                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                                  ) : (
+                                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                                  )}
+                                </div>
+                              </button>
+
+                              <AnimatePresence initial={false}>
+                                {showScriptId === lead.id && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="p-4 border-t border-border space-y-4"
+                                  >
+                                    {/* Opener */}
                                     <div>
-                                      <div className="text-[10px] uppercase tracking-widest text-emerald-600/70 dark:text-emerald-400/70 font-semibold mb-1 flex items-center gap-1">
-                                        <Phone className="h-3 w-3" /> Step 1 — Opening Line
+                                      <div className="flex items-center justify-between mb-1">
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                                          Step 1 — Opening Line
+                                        </span>
+                                        <Button
+                                          size="sm"
+                                          variant="ghost"
+                                          className="h-6 text-[10px] px-2 text-muted-foreground"
+                                          onClick={() => copyText(conv.callScript!.opener, `op-${lead.id}`, "Opener copied")}
+                                        >
+                                          {copiedId === `op-${lead.id}` ? "Copied" : "Copy"}
+                                        </Button>
                                       </div>
-                                      <p className="text-sm leading-relaxed rounded bg-background/60 border border-border/50 px-3 py-2 font-medium italic">
-                                        "{conv.callScript.opener}"
+                                      <p className="text-xs sm:text-sm leading-relaxed p-3 rounded-lg bg-muted/40 border border-border italic font-medium">
+                                        &ldquo;{conv.callScript.opener}&rdquo;
                                       </p>
                                     </div>
 
                                     {/* Ice Breaker */}
                                     {conv.callScript.iceBreaker && (
                                       <div>
-                                        <div className="text-[10px] uppercase tracking-widest text-teal-600/70 font-semibold mb-1 flex items-center gap-1">
-                                          <MessageSquare className="h-3 w-3" /> Ice Breaker — Get Them Talking
-                                        </div>
-                                        <p className="text-sm leading-relaxed rounded bg-background/60 border border-border/50 px-3 py-2 italic">
-                                          "{conv.callScript.iceBreaker}"
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 block mb-1">
+                                          Ice Breaker
+                                        </span>
+                                        <p className="text-xs sm:text-sm leading-relaxed p-3 rounded-lg bg-muted/40 border border-border italic">
+                                          &ldquo;{conv.callScript.iceBreaker}&rdquo;
                                         </p>
-                                        <p className="text-[10px] text-muted-foreground mt-1">Ask this after the opener. Listen — don't pitch yet.</p>
                                       </div>
                                     )}
 
-                                    {/* Step 2: Key Points */}
+                                    {/* Key Points */}
                                     <div>
-                                      <div className="text-[10px] uppercase tracking-widest text-blue-600/70 dark:text-blue-400/70 font-semibold mb-1 flex items-center gap-1">
-                                        <MessageSquare className="h-3 w-3" /> Step 2 — Key Points to Mention
-                                      </div>
+                                      <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 block mb-1.5">
+                                        Step 2 — Points to Mention
+                                      </span>
                                       <ul className="space-y-1.5">
                                         {conv.callScript.keyPoints.map((kp, ki) => (
-                                          <li key={ki} className="text-sm flex items-start gap-2">
+                                          <li key={ki} className="text-xs sm:text-sm flex items-start gap-2">
                                             <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
                                             <span>{kp}</span>
                                           </li>
@@ -624,99 +744,105 @@ export function Phase4Convert({
                                       </ul>
                                     </div>
 
-                                    {/* Step 3: If they say no */}
+                                    {/* Objection Handler */}
                                     <div>
-                                      <div className="text-[10px] uppercase tracking-widest text-amber-600/70 dark:text-amber-400/70 font-semibold mb-1 flex items-center gap-1">
-                                        <AlertCircle className="h-3 w-3" /> If They Say "Not Interested"
-                                      </div>
-                                      <p className="text-sm leading-relaxed rounded bg-background/60 border border-border/50 px-3 py-2 italic">
-                                        "{conv.callScript.objectionHandler}"
+                                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 block mb-1">
+                                        If They Say &ldquo;Not Interested&rdquo;
+                                      </span>
+                                      <p className="text-xs sm:text-sm leading-relaxed p-3 rounded-lg bg-muted/40 border border-border italic">
+                                        &ldquo;{conv.callScript.objectionHandler}&rdquo;
                                       </p>
                                     </div>
 
-                                    {/* Step 4: Closer */}
+                                    {/* Closer */}
                                     <div>
-                                      <div className="text-[10px] uppercase tracking-widest text-purple-600/70 dark:text-purple-400/70 font-semibold mb-1 flex items-center gap-1">
-                                        <CheckCircle2 className="h-3 w-3" /> Step 3 — Close the Call
-                                      </div>
-                                      <p className="text-sm leading-relaxed rounded bg-background/60 border border-border/50 px-3 py-2 italic">
-                                        "{conv.callScript.closer}"
+                                      <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 block mb-1">
+                                        Step 3 — Closing the Call
+                                      </span>
+                                      <p className="text-xs sm:text-sm leading-relaxed p-3 rounded-lg bg-muted/40 border border-border italic font-medium">
+                                        &ldquo;{conv.callScript.closer}&rdquo;
                                       </p>
                                     </div>
 
-                                    {/* Do NOT say */}
+                                    {/* Do Not Say */}
                                     {conv.callScript.doNotSay && (
-                                      <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2">
-                                        <div className="text-[10px] uppercase tracking-widest text-red-600 font-semibold mb-1">⚠ Don't Say This</div>
-                                        <p className="text-xs text-red-700">{conv.callScript.doNotSay}</p>
+                                      <div className="p-3 rounded-lg border border-red-500/20 bg-red-500/10 text-xs text-red-600 dark:text-red-400">
+                                        <div className="font-bold uppercase tracking-wider text-[10px] mb-0.5">
+                                          ⚠ Do Not Say This
+                                        </div>
+                                        <p>{conv.callScript.doNotSay}</p>
                                       </div>
                                     )}
-                                  </div>
 
-                                  {/* Post-call WhatsApp message */}
-                                  {conv.postCallWhatsApp && (
-                                    <div className="mt-3 rounded-lg border border-green-200 bg-green-50/60 p-3">
-                                      <div className="text-[10px] uppercase tracking-widest text-green-700 font-semibold mb-1.5 flex items-center gap-1">
-                                        💬 Send This WhatsApp Within 5 Min After Call
+                                    {/* Post-Call WhatsApp */}
+                                    {conv.postCallWhatsApp && (
+                                      <div className="p-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 space-y-2">
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
+                                            💬 WhatsApp to send within 5 minutes
+                                          </span>
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className="h-6 text-[10px] px-2"
+                                            onClick={() =>
+                                              copyText(conv.postCallWhatsApp!, `wa-${lead.id}`, "WhatsApp text copied")
+                                            }
+                                          >
+                                            {copiedId === `wa-${lead.id}` ? "Copied" : "Copy"}
+                                          </Button>
+                                        </div>
+                                        <pre className="text-xs font-mono leading-relaxed whitespace-pre-wrap bg-background p-2.5 rounded-md border border-border">
+                                          {conv.postCallWhatsApp}
+                                        </pre>
                                       </div>
-                                      <p className="text-sm text-gray-700 font-mono leading-relaxed whitespace-pre-wrap">{conv.postCallWhatsApp}</p>
-                                      <button
-                                        onClick={() => { navigator.clipboard.writeText(conv.postCallWhatsApp!); }}
-                                        className="mt-2 text-[10px] text-green-700 underline hover:no-underline"
-                                      >
-                                        Copy message
-                                      </button>
-                                    </div>
-                                  )}
+                                    )}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          )}
 
-                                  {/* Best time to call */}
-                                  {conv.bestTimeToCall && (
-                                    <div className="mt-2 rounded-lg border border-blue-100 bg-blue-50/60 px-3 py-2">
-                                      <div className="text-[10px] uppercase tracking-widest text-blue-600 font-semibold mb-0.5">🕐 Best Time to Call</div>
-                                      <p className="text-xs text-blue-800">{conv.bestTimeToCall}</p>
-                                    </div>
-                                  )}
+                          {/* After Call Status & Note Strip */}
+                          <div className="p-3.5 rounded-xl border border-border bg-muted/20 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-semibold text-foreground">Pipeline Status</span>
+                              <span className="text-[11px] text-muted-foreground">Tap to update status</span>
+                            </div>
 
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
+                            <div className="flex flex-wrap gap-1.5">
+                              {ALL_LEAD_STATUSES.map((s) => {
+                                const cfg = STATUS_PILL[s];
+                                const active = ((leadStatuses ?? {})[lead.id] ?? "new") === s;
+                                return (
+                                  <button
+                                    key={s}
+                                    onClick={() => handleSetStatus(lead.id, s)}
+                                    className={`text-xs font-medium px-2.5 py-1 rounded-full border transition-all ${
+                                      active
+                                        ? `${cfg.color} ${cfg.bg} ring-2 ring-primary/40 font-semibold shadow-2xs`
+                                        : "text-muted-foreground border-border hover:border-primary/40 bg-background"
+                                    }`}
+                                  >
+                                    {cfg.label}
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            <textarea
+                              placeholder="Add call notes: callback time, price discussed, client requirements..."
+                              defaultValue={(leadNotes ?? {})[lead.id] ?? ""}
+                              onBlur={(e) => handleSetNote(lead.id, e.target.value)}
+                              rows={2}
+                              className="w-full text-xs sm:text-sm rounded-lg border border-border bg-background p-2.5 resize-none focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
+                            />
                           </div>
-                        )}
-                        {/* ── After Call section ── */}
-                        <div className="mt-4 pt-4 border-t border-border/60 space-y-3">
-                          <div className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">After Call</div>
-                          <div className="flex flex-wrap gap-2">
-                            {ALL_LEAD_STATUSES.map((s) => {
-                              const cfg = STATUS_PILL[s];
-                              const active = ((leadStatuses ?? {})[lead.id] ?? "new") === s;
-                              return (
-                                <button
-                                  key={s}
-                                  onClick={() => handleSetStatus(lead.id, s)}
-                                  className={`flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full border transition-all ${
-                                    active
-                                      ? `${cfg.color} ${cfg.bg} ring-2 ring-offset-1 ring-current scale-105`
-                                      : "text-muted-foreground border-border hover:border-primary/40"
-                                  }`}
-                                >
-                                  {cfg.label}
-                                </button>
-                              );
-                            })}
-                          </div>
-                          <textarea
-                            placeholder="Note: what did they say? call back time? anything useful..."
-                            defaultValue={(leadNotes ?? {})[lead.id] ?? ""}
-                            onBlur={(e) => handleSetNote(lead.id, e.target.value)}
-                            rows={2}
-                            className="w-full text-sm rounded-md border border-border bg-muted/30 px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50"
-                          />
-                        </div>
                         </>
                       ) : (
-                        <div className="py-6 text-center text-sm text-muted-foreground">
-                          <Target className="h-6 w-6 mx-auto mb-2 opacity-30" />
-                          Hit <strong>Generate conversion hooks</strong> above to create personalized selling points for this lead.
+                        <div className="py-8 text-center text-xs sm:text-sm text-muted-foreground">
+                          <Target className="h-6 w-6 mx-auto mb-2 text-primary opacity-60" />
+                          Tap <strong>&ldquo;Generate conversion hooks&rdquo;</strong> above to create personalized sales points and call scripts for this lead.
                         </div>
                       )}
                     </CardContent>
@@ -728,88 +854,100 @@ export function Phase4Convert({
         </AnimatePresence>
       </div>
 
-      {ranked.length === 0 && (
-        <div className="text-center py-12 text-sm text-muted-foreground">
-          Go to Phase 3 first to rank your leads
+      {filteredLeads.length === 0 && (
+        <div className="text-center py-12 text-xs sm:text-sm text-muted-foreground">
+          No leads match your active filters.{" "}
+          <button onClick={clearFilters} className="text-primary underline">
+            Clear all filters
+          </button>
         </div>
       )}
 
-      {/* ── Client Detail Drawer — identical to Phase 7 ── */}
+      {/* ── CLIENT DETAIL DRAWER ── */}
       {detailDrawer.open && (() => {
-        const lead = ranked.find(l => l.id === detailDrawer.leadId);
+        const lead = ranked.find((l) => l.id === detailDrawer.leadId);
         if (!lead) return null;
         const f = (label: string, field: keyof ClientDetail, type = "text", readOnly = false) => (
           <div className="flex flex-col gap-1">
-            <label className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{label}</label>
+            <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {label}
+            </label>
             <input
               type={type}
               value={draftDetail[field] ?? ""}
-              onChange={e => !readOnly && updateDraft(field, e.target.value)}
+              onChange={(e) => !readOnly && updateDraft(field, e.target.value)}
               readOnly={readOnly}
-              className={`h-9 px-3 text-sm rounded-md border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 ${readOnly ? "bg-muted/40 text-muted-foreground cursor-not-allowed" : "border-border"}`}
+              className={`h-9 px-3 text-xs sm:text-sm rounded-lg border bg-background focus:outline-none focus:ring-1 focus:ring-primary ${
+                readOnly ? "bg-muted/40 text-muted-foreground cursor-not-allowed" : "border-border"
+              }`}
             />
           </div>
         );
+
         return (
           <>
-            {/* Backdrop */}
             <div
-              className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40 transition-opacity"
+              className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 transition-opacity"
               onClick={() => setDetailDrawer({ open: false, leadId: null })}
             />
-            {/* Drawer */}
-            <div className="fixed right-0 top-0 h-full w-full max-w-md bg-background border-l border-border shadow-2xl z-50 flex flex-col overflow-hidden">
-              {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-muted/30 shrink-0">
+            <div className="fixed right-0 top-0 h-full w-full max-w-md bg-background border-l border-border shadow-2xl z-50 flex flex-col overflow-hidden animate-in slide-in-from-right duration-200">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-muted/20 shrink-0">
                 <div>
-                  <div className="font-semibold text-sm">💼 Client Details</div>
-                  <div className="text-[11px] text-muted-foreground truncate max-w-[280px]">{lead.name} · {lead.city}</div>
+                  <div className="font-semibold text-sm">💼 Client Deal Details</div>
+                  <div className="text-xs text-muted-foreground truncate max-w-[280px]">
+                    {lead.name} · {lead.city}
+                  </div>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-lg"
                   onClick={() => setDetailDrawer({ open: false, leadId: null })}
-                  className="h-7 w-7 flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors text-lg"
-                >×</button>
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-              {/* Body */}
+
               <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
                 {/* Deal Info */}
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
-                    <span className="h-px flex-1 bg-border" /> Deal Info <span className="h-px flex-1 bg-border" />
+                <div className="space-y-3">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold border-b border-border pb-1">
+                    Deal Info
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {f("Client Name", "clientName")}
-                    {f("Price Agreed (Rs)", "priceAgreed", "number")}
-                    {f("Advance Received (Rs)", "advanceReceived", "number")}
+                    {f("Price Agreed (₹)", "priceAgreed", "number")}
+                    {f("Advance Received (₹)", "advanceReceived", "number")}
                     <div className="flex flex-col gap-1">
-                      <label className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Balance Due (Rs)</label>
+                      <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Balance Due (₹)
+                      </label>
                       <input
                         type="number"
                         value={draftDetail.balanceDue ?? ""}
-                        onChange={e => updateDraft("balanceDue", e.target.value)}
+                        onChange={(e) => updateDraft("balanceDue", e.target.value)}
                         placeholder="Auto-calculated"
-                        className="h-9 px-3 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50"
+                        className="h-9 px-3 text-xs sm:text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary"
                       />
-                      {draftDetail.priceAgreed && draftDetail.advanceReceived && (
-                        <span className="text-[10px] text-muted-foreground">Auto: {Number(draftDetail.priceAgreed) - Number(draftDetail.advanceReceived)} Rs</span>
-                      )}
                     </div>
                   </div>
                 </div>
+
                 {/* Website */}
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
-                    <span className="h-px flex-1 bg-border" /> Website <span className="h-px flex-1 bg-border" />
+                <div className="space-y-3">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold border-b border-border pb-1">
+                    Website &amp; Domain
                   </div>
                   <div className="grid grid-cols-1 gap-3">
                     {f("Domain Name", "domainName")}
                     {f("Website Live URL", "websiteUrl")}
                   </div>
                 </div>
+
                 {/* Hosting */}
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
-                    <span className="h-px flex-1 bg-border" /> Hosting <span className="h-px flex-1 bg-border" />
+                <div className="space-y-3">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold border-b border-border pb-1">
+                    Hosting Timeline
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {f("Free Start", "freeHostingStart", "date")}
@@ -818,28 +956,33 @@ export function Phase4Convert({
                     {f("Paid End", "paidHostingEnd", "date")}
                   </div>
                 </div>
+
                 {/* Remarks */}
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 flex items-center gap-2">
-                    <span className="h-px flex-1 bg-border" /> Remarks <span className="h-px flex-1 bg-border" />
+                <div className="space-y-2">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold border-b border-border pb-1">
+                    Remarks &amp; Next Steps
                   </div>
                   <textarea
                     value={draftDetail.remarks ?? ""}
-                    onChange={e => updateDraft("remarks", e.target.value)}
+                    onChange={(e) => updateDraft("remarks", e.target.value)}
                     rows={3}
-                    placeholder="Any notes about this client deal..."
-                    className="w-full px-3 py-2 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
+                    placeholder="Any specific client requirements, deliverables, notes..."
+                    className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary resize-none shadow-2xs"
                   />
                 </div>
               </div>
-              {/* Footer */}
+
               <div className="px-5 py-4 border-t border-border bg-muted/20 shrink-0 flex gap-2">
-                <button className="flex-1 border border-border rounded-md text-sm text-muted-foreground py-2 hover:bg-muted/50 transition-colors" onClick={() => setDetailDrawer({ open: false, leadId: null })}>
+                <Button
+                  variant="outline"
+                  className="flex-1 h-9 text-xs"
+                  onClick={() => setDetailDrawer({ open: false, leadId: null })}
+                >
                   Cancel
-                </button>
-                <button className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 rounded-md transition-colors" onClick={saveDetailDrawer}>
-                  💾 Save Details
-                </button>
+                </Button>
+                <Button className="flex-1 h-9 text-xs font-semibold" onClick={saveDetailDrawer}>
+                  Save Details
+                </Button>
               </div>
             </div>
           </>
