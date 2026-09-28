@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PhaseShell } from "./PhaseShell";
-import { Loader2, Target, TrendingUp, Zap, Shield, Clock, ChevronDown, ChevronUp, Phone, MessageSquare, AlertCircle, CheckCircle2, MapPin, Star, ExternalLink } from "lucide-react";
+import { Loader2, Target, TrendingUp, Zap, Shield, Clock, ChevronDown, ChevronUp, Phone, MessageSquare, AlertCircle, CheckCircle2, MapPin, Star, ExternalLink, Copy, Check } from "lucide-react";
 import type { RankedLead, ConversionPoints, AuditResult, LeadStatus, ClientDetail } from "@/lib/types";
 import { estimateBusinessAgeMonths, getAgeBadge } from "@/lib/businessAge";
 import { toast } from "sonner";
@@ -64,6 +64,7 @@ export function Phase4Convert({
   const [fRating,  setFRating]  = useState<"" | "3.5" | "4.0" | "4.5">("");
   const [fReviews, setFReviews] = useState<"" | "10" | "50" | "100">("");
   const [fConvDone, setFConvDone] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   // Client detail drawer
   const [detailDrawer, setDetailDrawer] = useState<{ open: boolean; leadId: string | null }>({ open: false, leadId: null });
   const [draftDetail, setDraftDetail] = useState<ClientDetail>({});
@@ -71,6 +72,18 @@ export function Phase4Convert({
   function openDetailDrawer(leadId: string) {
     setDraftDetail(clientDetails[leadId] ?? {});
     setDetailDrawer({ open: true, leadId });
+  }
+
+  /** Copy phone digits only (strips country code +91) */
+  function copyPhone(e: React.MouseEvent, phone: string, leadId: string) {
+    e.stopPropagation();
+    e.preventDefault();
+    const digits = phone.replace(/\D/g, "");
+    // Strip Indian country code
+    const clean = digits.startsWith("91") && digits.length === 12 ? digits.slice(2) : digits;
+    navigator.clipboard.writeText(clean);
+    setCopiedId(leadId);
+    setTimeout(() => setCopiedId(null), 1800);
   }
 
   function saveDetailDrawer() {
@@ -94,16 +107,30 @@ export function Phase4Convert({
   }
 
   const hasActiveFilter = fNoSite || fPhone || fRating || fReviews || fConvDone || statusFilter !== "all" || !!searchQuery;
+  
+  // Smart search: if query is all digits (or starts with +), search phone; else search name
+  function matchesSearch(l: (typeof ranked)[number]): boolean {
+    if (!searchQuery) return true;
+    const q = searchQuery.trim();
+    const isPhoneQuery = /^[\d\s+\-()]+$/.test(q) && q.replace(/\D/g, "").length >= 2;
+    if (isPhoneQuery) {
+      const digits = q.replace(/\D/g, "");
+      const rawPhone = (l.phone ?? l.whatsapp ?? "").replace(/\D/g, "");
+      // Strip Indian country code for matching
+      const normPhone = rawPhone.startsWith("91") && rawPhone.length === 12 ? rawPhone.slice(2) : rawPhone;
+      return normPhone.includes(digits) || rawPhone.includes(digits);
+    }
+    return l.name.toLowerCase().includes(q.toLowerCase());
+  }
 
   function applyFilters(l: (typeof ranked)[number]) {
-    const nameMatch   = !searchQuery || l.name.toLowerCase().includes(searchQuery.toLowerCase());
     const statusMatch = statusFilter === "all" || ((leadStatuses ?? {})[l.id] ?? "new") === statusFilter;
     const noSiteMatch = !fNoSite  || !l.website;
     const phoneMatch  = !fPhone   || !!(l.phone ?? l.whatsapp);
     const ratingMatch = !fRating  || (l.rating ?? 0) >= parseFloat(fRating);
     const reviewMatch = !fReviews || (l.reviewsCount ?? 0) >= parseInt(fReviews);
     const convMatch   = !fConvDone || !!conversions[l.id];
-    return nameMatch && statusMatch && noSiteMatch && phoneMatch && ratingMatch && reviewMatch && convMatch;
+    return matchesSearch(l) && statusMatch && noSiteMatch && phoneMatch && ratingMatch && reviewMatch && convMatch;
   }
 
   function clearFilters() {
@@ -205,7 +232,9 @@ export function Phase4Convert({
           {loading
             ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</>
             : (() => {
-                const done = Object.keys(conversions).length;
+                // Only count conversions that belong to the CURRENT ranked list
+                const rankedIds = new Set(ranked.map(l => l.id));
+                const done = Object.keys(conversions).filter(id => rankedIds.has(id)).length;
                 const remaining = ranked.length - done;
                 if (done === 0) return <><Target className="h-4 w-4 mr-2" />Generate conversion hooks</>;
                 if (remaining > 0) return <><Target className="h-4 w-4 mr-2" />Generate remaining ({remaining})</>;
@@ -213,7 +242,11 @@ export function Phase4Convert({
               })()}
         </Button>
         <div className="text-sm text-muted-foreground">
-          {Object.keys(conversions).length} / {ranked.length} leads processed
+          {(() => {
+            const rankedIds = new Set(ranked.map(l => l.id));
+            const done = Object.keys(conversions).filter(id => rankedIds.has(id)).length;
+            return <>{done} / {ranked.length} leads processed</>;
+          })()}
         </div>
         {loading && statusMsg && (
           <span className="text-xs text-muted-foreground/70 italic">{statusMsg}</span>
@@ -227,10 +260,14 @@ export function Phase4Convert({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by business name..."
+            placeholder="Search by name or phone number..."
             className="w-full h-9 pl-8 pr-8 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50"
           />
-          <svg className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          {/* Show phone icon when in phone-search mode, else search icon */}
+          {searchQuery && /^[\d\s+\-()]+$/.test(searchQuery) && searchQuery.replace(/\D/g, "").length >= 2
+            ? <Phone className="absolute left-2.5 top-2.5 h-4 w-4 text-primary/70 pointer-events-none" />
+            : <svg className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          }
           {searchQuery && (
             <button onClick={() => setSearchQuery("")} className="absolute right-2 top-2 h-5 w-5 flex items-center justify-center text-muted-foreground hover:text-foreground rounded">
               ✕
@@ -370,14 +407,25 @@ export function Phase4Convert({
                     <div className="flex items-center gap-3 mt-1.5 flex-wrap">
                       <span className="text-xs text-muted-foreground">{lead.category}</span>
                       {lead.phone && (
-                        <a
-                          href={`tel:${lead.phone}`}
-                          onClick={(e) => e.stopPropagation()}
-                          className="flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition-colors"
-                        >
-                          <Phone className="h-3 w-3" />
-                          {lead.phone}
-                        </a>
+                        <div className="flex items-center gap-1">
+                          <a
+                            href={`tel:${lead.phone}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition-colors"
+                          >
+                            <Phone className="h-3 w-3" />
+                            {lead.phone}
+                          </a>
+                          <button
+                            onClick={(e) => copyPhone(e, lead.phone!, lead.id + "-col")}
+                            title="Copy number"
+                            className="ml-0.5 flex items-center justify-center h-4 w-4 rounded text-muted-foreground/60 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all"
+                          >
+                            {copiedId === lead.id + "-col"
+                              ? <Check className="h-3 w-3 text-emerald-500" />
+                              : <Copy className="h-3 w-3" />}
+                          </button>
+                        </div>
                       )}
                       {lead.mapUrl && (
                         <a
@@ -408,13 +456,28 @@ export function Phase4Convert({
                       {/* ── Contact strip — always shown when expanded ── */}
                       <div className="flex flex-wrap items-center gap-2 py-3 border-b border-border/40 mb-1">
                         {lead.phone ? (
-                          <a
-                            href={`tel:${lead.phone}`}
-                            className="flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-md px-3 py-1.5 hover:bg-emerald-500/20 transition-colors"
-                          >
-                            <Phone className="h-3.5 w-3.5" />
-                            {lead.phone}
-                          </a>
+                          <div className="flex items-center gap-1.5">
+                            <a
+                              href={`tel:${lead.phone}`}
+                              className="flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-md px-3 py-1.5 hover:bg-emerald-500/20 transition-colors"
+                            >
+                              <Phone className="h-3.5 w-3.5" />
+                              {lead.phone}
+                            </a>
+                            <button
+                              onClick={(e) => copyPhone(e, lead.phone!, lead.id + "-exp")}
+                              title="Copy number"
+                              className={`flex items-center gap-1 text-xs px-2 py-1.5 rounded-md border transition-all ${
+                                copiedId === lead.id + "-exp"
+                                  ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-600"
+                                  : "border-border text-muted-foreground hover:border-emerald-400/40 hover:text-emerald-500 hover:bg-emerald-500/5"
+                              }`}
+                            >
+                              {copiedId === lead.id + "-exp"
+                                ? <><Check className="h-3 w-3" /> Copied!</>
+                                : <><Copy className="h-3 w-3" /> Copy</>}
+                            </button>
+                          </div>
                         ) : (
                           <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded-md px-3 py-1.5">
                             <Phone className="h-3.5 w-3.5" /> No phone

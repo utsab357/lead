@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import type { ScrapeSession, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus } from "@/lib/types";
+import type { ScrapeSession, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus, ClientDetail } from "@/lib/types";
 
 const SESSIONS_DIR = path.join(process.cwd(), "data", "sessions");
 
@@ -41,6 +41,7 @@ export async function PATCH(
       buildPrompts?:   Record<string, BuildPromptResult>;
       leadStatuses?:   Record<string, LeadStatus>;
       leadNotes?:      Record<string, string>;
+      clientDetails?:  Record<string, ClientDetail>;
     };
 
     if (body.leads           !== undefined) session.leads           = body.leads;
@@ -52,6 +53,7 @@ export async function PATCH(
     if (body.buildPrompts    !== undefined) session.buildPrompts    = body.buildPrompts;
     if (body.leadStatuses    !== undefined) session.leadStatuses    = body.leadStatuses;
     if (body.leadNotes       !== undefined) session.leadNotes       = body.leadNotes;
+    if (body.clientDetails   !== undefined) session.clientDetails   = body.clientDetails;
 
     await fs.writeFile(filePath, JSON.stringify(session, null, 2));
     return NextResponse.json({ success: true });

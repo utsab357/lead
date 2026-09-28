@@ -115,7 +115,7 @@ export async function runGroqJSON<T>(
         ],
       };
       if (model.includes("qwen")) {
-        body.enable_thinking = false;
+        body.max_tokens = 2048; // qwen has lower output limits
       }
 
       const res = await fetch(GROQ_API_URL, {

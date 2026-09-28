@@ -77,16 +77,18 @@ export default function Page() {
     setLeadNotes(session.leadNotes ?? {});
     setClientDetails(session.clientDetails ?? {});
 
-    const savedRanked   = session.ranked ?? [];
-    const savedAudits   = session.audits ?? {};
-    const savedOutreach = session.outreachResults ?? {};
-    const savedBuildPs  = session.buildPrompts ?? {};
+    const savedRanked      = session.ranked ?? [];
+    const savedAudits      = session.audits ?? {};
+    const savedOutreach    = session.outreachResults ?? {};
+    const savedBuildPs     = session.buildPrompts ?? {};
+    const savedConversions = session.conversions ?? {};
 
-    if (Object.keys(savedBuildPs).length > 0)   setPhase(7);
-    else if (Object.keys(savedOutreach).length > 0) setPhase(6);
+    if (Object.keys(savedBuildPs).length > 0)        setPhase(7);
+    else if (Object.keys(savedOutreach).length > 0)  setPhase(6);
     else if (session.selectedId && savedRanked.length > 0) setPhase(5);
-    else if (savedRanked.length > 0)             setPhase(3);
-    else if (Object.keys(savedAudits).length > 0) setPhase(2);
+    else if (Object.keys(savedConversions).length > 0) setPhase(4);
+    else if (savedRanked.length > 0)                 setPhase(3);
+    else if (Object.keys(savedAudits).length > 0)    setPhase(2);
     else setPhase(1);
   }
 

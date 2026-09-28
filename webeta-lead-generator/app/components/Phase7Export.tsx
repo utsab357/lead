@@ -148,9 +148,23 @@ export function Phase7Export({
     setStatusFilter(prev => prev === s ? "all" : s);
   }
 
+  // Smart search: if query is all digits (or starts with +), search phone; else search name
+  function matchesSearch(l: (typeof ranked)[number]): boolean {
+    if (!searchQuery) return true;
+    const q = searchQuery.trim();
+    const isPhoneQuery = /^[\d\s+\-()]+$/.test(q) && q.replace(/\D/g, "").length >= 2;
+    if (isPhoneQuery) {
+      const digits = q.replace(/\D/g, "");
+      const rawPhone = (l.phone ?? l.whatsapp ?? "").replace(/\D/g, "");
+      const normPhone = rawPhone.startsWith("91") && rawPhone.length === 12 ? rawPhone.slice(2) : rawPhone;
+      return normPhone.includes(digits) || rawPhone.includes(digits);
+    }
+    return l.name.toLowerCase().includes(q.toLowerCase());
+  }
+
   // Leads visible in pipeline after search + status filter + quality filters
   const filteredRanked = ranked.filter(l => {
-    if (searchQuery && !l.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (!matchesSearch(l)) return false;
     if (statusFilter !== "all" && (leadStatuses[l.id] ?? "new") !== statusFilter) return false;
     if (fNoSite  && l.website)                               return false;
     if (fPhone   && !l.phone)                                return false;
@@ -676,10 +690,14 @@ ${sections}
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by business name..."
+                    placeholder="Search by name or phone number..."
                     className="w-full h-9 pl-8 pr-8 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50"
                   />
-                  <svg className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  {/* Switch icon to phone when typing digits */}
+                  {searchQuery && /^[\d\s+\-()]+$/.test(searchQuery) && searchQuery.replace(/\D/g, "").length >= 2
+                    ? <Phone className="absolute left-2.5 top-2.5 h-4 w-4 text-primary/70 pointer-events-none" />
+                    : <svg className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  }
                   {searchQuery && (
                     <button onClick={() => setSearchQuery("")} className="absolute right-2 top-2 h-5 w-5 flex items-center justify-center text-muted-foreground hover:text-foreground rounded">
                       ✕
