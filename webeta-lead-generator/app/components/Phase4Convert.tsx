@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -61,6 +61,9 @@ export function Phase4Convert({
   onNext,
   onPrev,
   initialExpandedId,
+  selectedLeadId,
+  onSelectLead,
+  onGoToPhase,
 }: {
   ranked: RankedLead[];
   conversions: Record<string, ConversionPoints>;
@@ -74,9 +77,33 @@ export function Phase4Convert({
   onNext: () => void;
   onPrev?: () => void;
   initialExpandedId?: string | null;
+  selectedLeadId?: string | null;
+  onSelectLead?: (leadId: string | null) => void;
+  onGoToPhase?: (phaseNum: number, leadId: string) => void;
 }) {
   const [loading, setLoading] = useState(false);
-  const [expandedId, setExpandedId] = useState<string | null>(initialExpandedId ?? null);
+  const [expandedId, setExpandedId] = useState<string | null>(initialExpandedId ?? selectedLeadId ?? null);
+
+  // Sync expanded card with selected lead and scroll into view
+  useEffect(() => {
+    const targetId = initialExpandedId ?? selectedLeadId;
+    if (targetId) {
+      setExpandedId(targetId);
+      const timer = setTimeout(() => {
+        const el = document.getElementById(`convert-card-${targetId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [initialExpandedId, selectedLeadId]);
+
+  function toggleExpand(id: string) {
+    const next = expandedId === id ? null : id;
+    setExpandedId(next);
+    onSelectLead?.(next);
+  }
   const [statusMsg, setStatusMsg] = useState("");
   const [showScriptId, setShowScriptId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -458,13 +485,14 @@ export function Phase4Convert({
                 transition={{ duration: 0.2, delay: Math.min(i * 0.02, 0.3) }}
               >
                 <Card
+                  id={`convert-card-${lead.id}`}
                   className={`transition-all duration-150 border-border shadow-xs hover:border-primary/40 ${
                     isExpanded ? "border-primary/60 shadow-md ring-1 ring-primary/20" : ""
                   }`}
                 >
                   <CardHeader
                     className="p-3.5 sm:p-4 cursor-pointer select-none"
-                    onClick={() => setExpandedId(isExpanded ? null : lead.id)}
+                    onClick={() => toggleExpand(lead.id)}
                   >
                     {/* Tier 1: Rank, Full Business Name (wrap enabled), Score & Expand Chevron */}
                     <div className="flex items-start justify-between gap-3">
@@ -593,6 +621,36 @@ export function Phase4Convert({
                         <Edit3 className="h-3.5 w-3.5 text-violet-500" />
                         <span>Deal</span>
                       </button>
+
+                      {onGoToPhase && (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectLead?.(lead.id);
+                              onGoToPhase(5, lead.id);
+                            }}
+                            className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors shrink-0"
+                            title="Open in Outreach Studio (Phase 5)"
+                          >
+                            <MessageSquare className="h-3.5 w-3.5" />
+                            <span>Outreach →</span>
+                          </button>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectLead?.(lead.id);
+                              onGoToPhase(6, lead.id);
+                            }}
+                            className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-violet-500/30 bg-violet-500/10 text-violet-600 dark:text-violet-400 hover:bg-violet-500/20 transition-colors shrink-0"
+                            title="Open in Website Architect (Phase 6)"
+                          >
+                            <Sparkles className="h-3.5 w-3.5" />
+                            <span>Website →</span>
+                          </button>
+                        </>
+                      )}
                     </div>
                   </CardHeader>
 

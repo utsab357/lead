@@ -18,9 +18,13 @@ type SessionMeta = Omit<ScrapeSession, "leads">;
 export function SessionsPage({
   onLoadSession,
   onClose,
+  activeSessionId,
+  onDeleteActiveSession,
 }: {
   onLoadSession: (session: ScrapeSession) => void;
   onClose: () => void;
+  activeSessionId?: string | null;
+  onDeleteActiveSession?: () => void;
 }) {
   const [sessions, setSessions] = useState<SessionMeta[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,6 +83,9 @@ export function SessionsPage({
       });
       if (!res.ok) throw new Error("Failed to delete");
       setSessions((prev) => prev.filter((s) => s.id !== id));
+      if (id === activeSessionId) {
+        onDeleteActiveSession?.();
+      }
       toast.success("Session deleted");
     } catch {
       toast.error("Failed to delete session");
@@ -270,7 +277,14 @@ export function SessionsPage({
 
                                   {/* Info */}
                                   <div className="flex-1 min-w-0">
-                                    <div className="font-medium capitalize text-sm">{s.niche}</div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-medium capitalize text-sm">{s.niche}</span>
+                                      {s.id === activeSessionId && (
+                                        <Badge className="text-[9px] h-4 px-1.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
+                                          Active
+                                        </Badge>
+                                      )}
+                                    </div>
                                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                                       <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
                                         <Zap className="h-2.5 w-2.5" />{s.leadsCount} leads

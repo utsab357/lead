@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -51,6 +51,7 @@ export function Phase4Build({
   onNext,
   onPrev,
   initialLeadId,
+  onSelectLead,
 }: {
   ranked: RankedLead[];
   buildPrompts: Record<string, BuildPromptResult>;
@@ -58,10 +59,25 @@ export function Phase4Build({
   onNext: () => void;
   onPrev: () => void;
   initialLeadId?: string | null;
+  onSelectLead?: (leadId: string) => void;
 }) {
   const [activeLead, setActiveLead] = useState<RankedLead | null>(
     (initialLeadId ? ranked.find((l) => l.id === initialLeadId) : null) ?? ranked[0] ?? null
   );
+
+  function selectLead(lead: RankedLead) {
+    setActiveLead(lead);
+    setError(null);
+    onSelectLead?.(lead.id);
+  }
+
+  // Sync activeLead if initialLeadId changes from parent
+  useEffect(() => {
+    if (initialLeadId) {
+      const match = ranked.find((l) => l.id === initialLeadId);
+      if (match) setActiveLead(match);
+    }
+  }, [initialLeadId, ranked]);
   const [platform, setPlatform] = useState("stitch");
   const [styles, setStyles] = useState<string[]>(["ai-decides"]);
   const [showCustomStyles, setShowCustomStyles] = useState(false);
@@ -107,8 +123,7 @@ export function Phase4Build({
 
   function goToIndex(idx: number) {
     if (idx >= 0 && idx < ranked.length) {
-      setActiveLead(ranked[idx]);
-      setError(null);
+      selectLead(ranked[idx]);
     }
   }
 
@@ -343,8 +358,7 @@ export function Phase4Build({
                   <button
                     key={lead.id}
                     onClick={() => {
-                      setActiveLead(lead);
-                      setError(null);
+                      selectLead(lead);
                       setMobilePickerOpen(false);
                     }}
                     className={`w-full text-left rounded-xl border p-2.5 transition-colors flex items-center gap-2.5 ${
@@ -458,8 +472,7 @@ export function Phase4Build({
                 <button
                   key={lead.id}
                   onClick={() => {
-                    setActiveLead(lead);
-                    setError(null);
+                    selectLead(lead);
                   }}
                   className={`w-full text-left rounded-lg border px-3 py-2 transition-all flex items-center gap-2.5 cursor-pointer ${
                     active

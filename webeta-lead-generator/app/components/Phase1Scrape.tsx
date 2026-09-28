@@ -40,11 +40,28 @@ export function Phase1Scrape({
   /** Called just before a new scrape begins (use to clear downstream state) */
   onScrapeStart?: () => void;
 }) {
-  const [input, setInput] = useState<ScrapeInput>({
-    niche: "gym",
-    city: "Barasat, West Bengal",
-    noWebsiteOnly: true,
+  const [input, setInput] = useState<ScrapeInput>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("webeta_scrape_input");
+        if (saved) return JSON.parse(saved);
+      } catch { /* ignore parse error */ }
+    }
+    return {
+      niche: "gym",
+      city: "Barasat, West Bengal",
+      noWebsiteOnly: true,
+    };
   });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("webeta_scrape_input", JSON.stringify(input));
+      } catch { /* ignore */ }
+    }
+  }, [input]);
+
   const [loading, setLoading]       = useState(false);
   const [statusMsg, setStatusMsg]   = useState("");
   const [progress, setProgress]     = useState<{ index: number; total: number } | null>(null);

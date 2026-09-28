@@ -13,8 +13,9 @@ import { Phase7Export } from "@/components/Phase7Export";
 import { SessionsPage } from "@/components/SessionsPage";
 import { AIEngineDropdown } from "@/components/AIEngineDropdown";
 import type { Lead, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus, ScrapeSession, ClientDetail } from "@/lib/types";
-import { Sparkles, History } from "lucide-react";
+import { Sparkles, History, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function Page() {
   const [phase, setPhase] = useState(1);
@@ -33,11 +34,55 @@ export default function Page() {
   const [showSessions, setShowSessions] = useState(false);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
+  // Persist current phase in sessionStorage for refresh restore
+  useEffect(() => {
+    if (typeof window !== "undefined" && phase >= 1 && phase <= 7) {
+      sessionStorage.setItem("webeta_active_phase", String(phase));
+    }
+  }, [phase]);
+
+  // On mount: check AI status & auto-rehydrate active session from localStorage
   useEffect(() => {
     fetch("/api/claude-status")
       .then((r) => r.json())
       .then((d) => setGeminiOk(!!d.installed))
       .catch(() => setGeminiOk(false));
+
+    try {
+      const savedId = localStorage.getItem("webeta_active_session_id");
+      const cached = sessionStorage.getItem("webeta_cached_session");
+
+      // Fast initial hydration from tab cache if available
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached) as ScrapeSession;
+          if (parsed && (!savedId || parsed.id === savedId)) {
+            handleLoadSession(parsed);
+          }
+        } catch { /* parse error, ignore */ }
+      }
+
+      // Rehydrate freshest state from disk session
+      if (savedId) {
+        fetch(`/api/sessions/${savedId}`)
+          .then((r) => {
+            if (!r.ok) throw new Error("Session not found");
+            return r.json();
+          })
+          .then((d) => {
+            if (d?.session) {
+              handleLoadSession(d.session);
+            }
+          })
+          .catch(() => {
+            // Clean up stale pointer if file was removed
+            localStorage.removeItem("webeta_active_session_id");
+            sessionStorage.removeItem("webeta_cached_session");
+          });
+      }
+    } catch {
+      // storage disabled / private browsing
+    }
   }, []);
 
   const completed = useMemo(() => {
@@ -56,9 +101,16 @@ export default function Page() {
     [ranked, selectedId],
   );
 
-  /** Called when user clicks a past session to load it */
+  /** Called when user clicks a past session to load it or on auto-rehydrate */
   function handleLoadSession(session: ScrapeSession) {
-    setLeads(session.leads);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("webeta_active_session_id", session.id);
+        sessionStorage.setItem("webeta_cached_session", JSON.stringify(session));
+      } catch { /* storage quota */ }
+    }
+
+    setLeads(session.leads ?? []);
     setActiveSessionId(session.id);
     setAudits(session.audits ?? {});
     setRanked(session.ranked ?? []);
@@ -84,13 +136,43 @@ export default function Page() {
     const savedBuildPs     = session.buildPrompts ?? {};
     const savedConversions = session.conversions ?? {};
 
-    if (Object.keys(savedBuildPs).length > 0)        setPhase(7);
-    else if (Object.keys(savedOutreach).length > 0)  setPhase(6);
-    else if (session.selectedId && savedRanked.length > 0) setPhase(5);
-    else if (Object.keys(savedConversions).length > 0) setPhase(4);
-    else if (savedRanked.length > 0)                 setPhase(3);
-    else if (Object.keys(savedAudits).length > 0)    setPhase(2);
-    else setPhase(1);
+    // Restore last active phase if available, otherwise jump to furthest progress
+    const cachedPhase = typeof window !== "undefined" ? sessionStorage.getItem("webeta_active_phase") : null;
+    if (cachedPhase && !isNaN(Number(cachedPhase)) && Number(cachedPhase) >= 1 && Number(cachedPhase) <= 7) {
+      setPhase(Number(cachedPhase));
+    } else {
+      if (Object.keys(savedBuildPs).length > 0)        setPhase(7);
+      else if (Object.keys(savedOutreach).length > 0)  setPhase(6);
+      else if (session.selectedId && savedRanked.length > 0) setPhase(5);
+      else if (Object.keys(savedConversions).length > 0) setPhase(4);
+      else if (savedRanked.length > 0)                 setPhase(3);
+      else if (Object.keys(savedAudits).length > 0)    setPhase(2);
+      else setPhase(1);
+    }
+  }
+
+  /** Clears active session and resets to fresh state */
+  function handleStartNewSession() {
+    setLeads([]);
+    setAudits({});
+    setRanked([]);
+    setConversions({});
+    setSelectedId(null);
+    setOutreachResults({});
+    setBuildPrompts({});
+    setLeadStatuses({});
+    setLeadNotes({});
+    setClientDetails({});
+    setActiveSessionId(null);
+    setPhase(1);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem("webeta_active_session_id");
+        sessionStorage.removeItem("webeta_cached_session");
+        sessionStorage.removeItem("webeta_active_phase");
+      } catch { /* ignore */ }
+    }
+    toast.info("Started fresh discovery session");
   }
 
   /** Persist audits back to the session file silently */
@@ -228,6 +310,25 @@ export default function Page() {
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {activeSessionId && leads.length > 0 && (
+              <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted/60 text-[11px] text-muted-foreground border border-border/50">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-medium text-foreground">{leads.length} leads</span>
+                <span>in session</span>
+              </div>
+            )}
+            {activeSessionId && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleStartNewSession}
+                className="h-8 gap-1 text-xs text-muted-foreground hover:text-foreground"
+                title="Start a fresh discovery session"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">New Session</span>
+              </Button>
+            )}
             <Button
               id="open-scrape-history"
               variant="outline"
@@ -257,8 +358,22 @@ export default function Page() {
                 setRanked([]);
                 setSelectedId(null);
                 setActiveSessionId(null);
+                if (typeof window !== "undefined") {
+                  try {
+                    localStorage.removeItem("webeta_active_session_id");
+                    sessionStorage.removeItem("webeta_cached_session");
+                    sessionStorage.removeItem("webeta_active_phase");
+                  } catch { /* ignore */ }
+                }
               }}
-              onSessionCreated={(id) => setActiveSessionId(id)}
+              onSessionCreated={(id) => {
+                setActiveSessionId(id);
+                if (typeof window !== "undefined") {
+                  try {
+                    localStorage.setItem("webeta_active_session_id", id);
+                  } catch { /* ignore */ }
+                }
+              }}
               onNext={() => setPhase(2)}
             />
           )}
@@ -297,7 +412,7 @@ export default function Page() {
           )}
           {phase === 4 && (
             <Phase4Convert
-              key={`p4-${goToLeadId}`}
+              key={`p4-${goToLeadId || selectedId || "all"}`}
               ranked={ranked}
               conversions={conversions}
               setConversions={(c) => {
@@ -310,37 +425,56 @@ export default function Page() {
               setLeadNotes={(n) => { setLeadNotes(n); saveLeadNotesToSession(n); }}
               clientDetails={clientDetails}
               setClientDetails={(d) => { setClientDetails(d); saveClientDetailsToSession(d); }}
-              initialExpandedId={goToLeadId}
-              onNext={() => { setGoToLeadId(null); setPhase(5); }}
-              onPrev={() => { setGoToLeadId(null); setPhase(3); }}
+              initialExpandedId={goToLeadId || selectedId}
+              selectedLeadId={selectedId}
+              onSelectLead={(id) => {
+                setSelectedId(id);
+                saveSelectedIdToSession(id);
+              }}
+              onGoToPhase={(phaseNum, leadId) => {
+                setSelectedId(leadId);
+                saveSelectedIdToSession(leadId);
+                setGoToLeadId(leadId);
+                setPhase(phaseNum);
+              }}
+              onNext={() => setPhase(5)}
+              onPrev={() => setPhase(3)}
             />
           )}
           {phase === 5 && (
             <Phase5Outreach
-              key={`p5-${goToLeadId}`}
+              key={`p5-${goToLeadId || selectedId || "all"}`}
               ranked={ranked}
               outreachResults={outreachResults}
               setOutreachResults={(r) => {
                 setOutreachResults(r);
                 saveOutreachToSession(r);
               }}
-              initialLeadId={goToLeadId}
-              onNext={() => { setGoToLeadId(null); setPhase(6); }}
-              onPrev={() => { setGoToLeadId(null); setPhase(4); }}
+              initialLeadId={goToLeadId || selectedId}
+              onSelectLead={(id) => {
+                setSelectedId(id);
+                saveSelectedIdToSession(id);
+              }}
+              onNext={() => setPhase(6)}
+              onPrev={() => setPhase(4)}
             />
           )}
           {phase === 6 && (
             <Phase4Build
-              key={`p6-${goToLeadId}`}
+              key={`p6-${goToLeadId || selectedId || "all"}`}
               ranked={ranked}
               buildPrompts={buildPrompts}
               setBuildPrompts={(b) => {
                 setBuildPrompts(b);
                 saveBuildPromptsToSession(b);
               }}
-              initialLeadId={goToLeadId}
-              onNext={() => { setGoToLeadId(null); setPhase(7); }}
-              onPrev={() => { setGoToLeadId(null); setPhase(5); }}
+              initialLeadId={goToLeadId || selectedId}
+              onSelectLead={(id) => {
+                setSelectedId(id);
+                saveSelectedIdToSession(id);
+              }}
+              onNext={() => setPhase(7)}
+              onPrev={() => setPhase(5)}
             />
           )}
           {phase === 7 && (
@@ -358,6 +492,8 @@ export default function Page() {
               setLeadNotes={(n) => { setLeadNotes(n); saveLeadNotesToSession(n); }}
               setClientDetails={(d) => { setClientDetails(d); saveClientDetailsToSession(d); }}
               onGoToPhase={(phaseNum, leadId) => {
+                setSelectedId(leadId);
+                saveSelectedIdToSession(leadId);
                 setGoToLeadId(leadId);
                 setPhase(phaseNum);
               }}
@@ -371,7 +507,9 @@ export default function Page() {
       <AnimatePresence>
         {showSessions && (
           <SessionsPage
+            activeSessionId={activeSessionId}
             onLoadSession={handleLoadSession}
+            onDeleteActiveSession={handleStartNewSession}
             onClose={() => setShowSessions(false)}
           />
         )}
