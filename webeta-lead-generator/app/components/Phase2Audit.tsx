@@ -182,14 +182,14 @@ export function Phase2Audit({
 
   if (leads.length === 0) {
     return (
-      <PhaseShell title="Phase 2 — Business audit" subtitle="PageSpeed, mobile readiness, schema, gaps + AI-summarized biggest opportunity." onPrev={onPrev} onNext={onNext} nextDisabled nextLabel="Rank prospects">
-        <IncompleteState title="No leads to audit yet" description="Phase 1 hasn't been run. Go back, run the scraper, and we'll audit each business here." prevPhaseLabel="Scrape" onPrev={onPrev} />
+      <PhaseShell title="Phase 2 — Digital Audit" subtitle="Automated performance, mobile-readiness, schema gaps, and estimated revenue lost per month." onPrev={onPrev} onNext={onNext} nextDisabled nextLabel="Rank prospects">
+        <IncompleteState title="No leads to audit yet" description="Phase 1 hasn't been run. Go back, run lead discovery, and we'll audit each business here." prevPhaseLabel="Discovery" onPrev={onPrev} />
       </PhaseShell>
     );
   }
 
   return (
-    <PhaseShell title="Phase 2 — Business audit" subtitle="PageSpeed, mobile readiness, schema, gaps + AI-summarized biggest opportunity. Estimated revenue left on the table." onPrev={onPrev} onNext={onNext} nextDisabled={auditedCount === 0} nextLabel="Rank prospects">
+    <PhaseShell title="Phase 2 — Digital Audit" subtitle="Automated performance, mobile-readiness, schema gaps, and estimated revenue lost per month." onPrev={onPrev} onNext={onNext} nextDisabled={auditedCount === 0} nextLabel="Rank prospects">
 
       {/* Stats row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">

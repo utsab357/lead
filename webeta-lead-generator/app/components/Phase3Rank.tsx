@@ -152,8 +152,8 @@ export function Phase3Rank({
 
   return (
     <PhaseShell
-      title="Phase 3 — Ranked prospects"
-      subtitle="AI scores each lead on conversion potential and explains why. Head to Phase 4 to prepare your pitch."
+      title="Phase 3 — Opportunity Matrix"
+      subtitle="Multi-factor AI scoring algorithm prioritizing leads with the highest buying probability and immediate need for a website."
       onPrev={onPrev}
       onNext={onNext}
       nextLabel="Prepare pitch"

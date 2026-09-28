@@ -1,32 +1,64 @@
-# Webeta Lead Generator
+# Webeta Lead Generator (Pro)
 
-Local-first dashboard that runs a 7-phase freelance website pipeline:
+An autonomous local-first intelligence platform and sales pipeline built for agencies, web developers, and freelancers to discover local businesses, perform automated technical audits, generate high-converting sales scripts, compose multi-channel outreach, and close website deals.
 
-**Scrape** Google Maps → **Audit** (Claude) → **Rank** (Claude) → **Build** site prompt (Claude) → **Outreach** (Claude, Hinglish/English + day-3 follow-up).
+---
 
-Phases 2–5 run on **Claude Code locally, under your subscription — no API key.** Phase 1 uses Apify (or bundled demo data).
+## ⚡ The 7-Phase Intelligence Pipeline
 
-## Run the dashboard
+1. **Phase 1 — Lead Discovery**
+   Direct Google Maps extraction with real-time phone verification, review metrics, and website detection. Includes 1-click popular niche & location presets.
 
+2. **Phase 2 — Digital Audit**
+   Evaluates page performance, mobile-readiness, schema gaps, and calculates estimated monthly revenue lost without a modern web presence.
+
+3. **Phase 3 — Opportunity Matrix**
+   Multi-factor AI scoring algorithm prioritizing leads with the highest buying probability and immediate need for a website.
+
+4. **Phase 4 — Conversion Intelligence**
+   Generates personalized sales hooks, competitor insights, urgency triggers, step-by-step cold call scripts, and an after-call CRM tracker.
+
+5. **Phase 5 — Outreach Studio**
+   Drafts personalized first-touch and day-3 follow-up messages for WhatsApp, Email, and Instagram in English or Hinglish with 1-click send integration.
+
+6. **Phase 6 — Website Architect**
+   Constructs production-ready builder prompts tailored for Google Stitch, Lovable, Bolt.new, and Codex, with extra upsell page generators (Services, Pricing, About).
+
+7. **Phase 7 — Deal Pipeline & CRM**
+   Full client deal tracking (agreed price, advance received, balance due, domain & hosting timelines), Kanban/table pipeline management, and instant exports to Google Sheets, CSV, and standalone HTML client dossiers.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
 ```bash
 cd app
+npm install
+```
+
+### 2. Configure Environment (Optional / AI Engine)
+Add your AI key in `app/.env.local`:
+```bash
+# Supports Hermes / Groq (Recommended for ultra-fast inference)
+GROQ_API_KEY=your_groq_key_here
+
+# Or Gemini / OpenRouter fallbacks
+GEMINI_API_KEY=your_gemini_key_here
+```
+
+### 3. Run Locally
+```bash
 npm run dev
-# open http://localhost:3000
+# Open http://localhost:3000 in your browser
 ```
 
-Requirements:
-- **Node.js 18+**
-- **Claude Code** installed + logged in (for Phases 2–5) — [claude.com/claude-code](https://claude.com/claude-code)
-- Optional: `APIFY_TOKEN` in `app/.env.local` for live scraping (else Phase 1 uses the seeded 12 Bandra dentists)
+---
 
-Full walkthrough: **`SETUP-GUIDE.md`**.
+## 🛡️ Architecture & Privacy
+- **Local-First**: All session data, notes, and client deals are saved locally in `data/sessions/` on your machine.
+- **No Third-Party Scraping Subscriptions Required**: Direct scraping engine with full browser automation.
+- **Multi-Model Inference**: Optimized to run with high-efficiency open models (Hermes / Groq) with zero cloud vendor lock-in.
 
-## Run the skill
-
-The same logic, packaged as a Claude Code skill:
-
-```
-.claude/skills/lead-to-launch/SKILL.md
-```
-
-In Claude Code: ask `run /lead-to-launch` (or just describe the goal — the skill description triggers it).
+---
+© Webeta Lead Generator. Built for modern digital agencies.

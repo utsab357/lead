@@ -250,8 +250,8 @@ export function Phase1Scrape({
   return (
     <>
     <PhaseShell
-      title="Phase 1 — Scrape leads"
-      subtitle="Search any business type in any city. Chrome opens and scrapes Google Maps — every result is real and saved."
+      title="Phase 1 — Lead Discovery"
+      subtitle="Autonomous Google Maps discovery engine. Uncover verified local businesses, phone numbers, review ratings, and website status."
       onPrev={onPrev}
       onNext={onNext}
       nextDisabled={leads.length === 0}
@@ -273,6 +273,30 @@ export function Phase1Scrape({
                 onChange={(val) => setInput({ ...input, niche: val })}
                 disabled={loading}
               />
+              {/* Quick Niche Presets */}
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {[
+                  { niche: "gym", label: "🏋️ Gyms" },
+                  { niche: "cafe", label: "☕ Cafes" },
+                  { niche: "dental clinic", label: "🦷 Dentists" },
+                  { niche: "salon", label: "💇 Salons" },
+                  { niche: "hotel", label: "🏨 Hotels" },
+                  { niche: "car repair", label: "🚗 Auto Repair" },
+                ].map((p) => (
+                  <button
+                    key={p.niche}
+                    type="button"
+                    onClick={() => setInput((prev) => ({ ...prev, niche: p.niche }))}
+                    className={`text-[11px] px-2.5 py-1 rounded-md border transition-all ${
+                      input.niche.toLowerCase() === p.niche.toLowerCase()
+                        ? "bg-primary/10 border-primary/40 text-primary font-semibold"
+                        : "bg-background border-border text-muted-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-1.5">
@@ -288,6 +312,19 @@ export function Phase1Scrape({
                 placeholder="e.g. Barasat, West Bengal"
                 className="h-10 text-sm"
               />
+              {/* Quick Locations */}
+              <div className="flex flex-wrap gap-1 pt-1">
+                {["Barasat, West Bengal", "Kolkata, WB", "Mumbai, MH", "Delhi NCR", "Bangalore, KA"].map((loc) => (
+                  <button
+                    key={loc}
+                    type="button"
+                    onClick={() => setInput((prev) => ({ ...prev, city: loc }))}
+                    className="text-[10px] px-2 py-0.5 rounded border border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-all"
+                  >
+                    {loc}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* No website filter */}

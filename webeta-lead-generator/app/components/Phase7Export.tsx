@@ -643,8 +643,8 @@ ${sections}
   return (
     <>
     <PhaseShell
-      title="Phase 7 — Pipeline & Export"
-      subtitle="Track lead status, view all phase data, and download your full campaign."
+      title="Phase 7 — Deal Pipeline & CRM"
+      subtitle="Track client deals, manage pipeline stages, view complete campaign intelligence, and export client records."
       onPrev={onPrev}
       nextDisabled
       nextLabel="Done"

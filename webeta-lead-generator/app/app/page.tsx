@@ -11,6 +11,7 @@ import { Phase5Outreach } from "@/components/Phase5Outreach";
 import { Phase4Build } from "@/components/Phase4Build";
 import { Phase7Export } from "@/components/Phase7Export";
 import { SessionsPage } from "@/components/SessionsPage";
+import { AIEngineDropdown } from "@/components/AIEngineDropdown";
 import type { Lead, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus, ScrapeSession, ClientDetail } from "@/lib/types";
 import { Sparkles, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -211,15 +212,18 @@ export default function Page() {
       <header className="border-b border-border bg-card/90 backdrop-blur-md sticky top-0 z-30 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm tracking-wider shadow-xs shrink-0 select-none">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-sky-500 text-white flex items-center justify-center font-bold text-base shadow-sm shrink-0 select-none ring-2 ring-indigo-500/20">
               W
             </div>
             <div className="min-w-0">
-              <div className="font-semibold text-base sm:text-lg tracking-tight text-foreground truncate">
+              <div className="font-bold text-base sm:text-lg tracking-tight text-foreground truncate flex items-center gap-1.5">
                 Webeta Lead Generator
+                <span className="hidden sm:inline-block text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+                  Pro
+                </span>
               </div>
-              <div className="text-[11px] text-muted-foreground font-medium tracking-wide uppercase hidden sm:block truncate">
-                Scrape · Audit · Rank · Convert · Outreach · Build · Export
+              <div className="text-[10px] text-muted-foreground font-semibold tracking-wider uppercase hidden sm:block truncate">
+                Autonomous Lead Discovery · Neural Audit · Conversion Intelligence
               </div>
             </div>
           </div>
@@ -234,7 +238,7 @@ export default function Page() {
               <History className="h-3.5 w-3.5" />
               <span>History</span>
             </Button>
-            <GeminiBadge ok={geminiOk} />
+            <AIEngineDropdown />
           </div>
         </div>
         <Stepper current={phase} completed={completed} onJump={(n) => setPhase(n)} />
@@ -373,17 +377,5 @@ export default function Page() {
         )}
       </AnimatePresence>
     </>
-  );
-}
-
-function GeminiBadge({ ok }: { ok: boolean | null }) {
-  const dotColor =
-    ok === null ? "bg-slate-400 animate-pulse" : ok ? "bg-emerald-500" : "bg-rose-500";
-  const label = ok === null ? "Checking AI…" : ok ? "AI Ready" : "AI Disconnected";
-  return (
-    <div className="hidden sm:inline-flex items-center gap-1.5 text-xs text-muted-foreground font-medium px-2.5 py-1 rounded-full border border-border bg-background shadow-2xs">
-      <span className={`h-2 w-2 rounded-full ${dotColor} shrink-0`} aria-hidden="true" />
-      <span>{label}</span>
-    </div>
   );
 }
