@@ -16,8 +16,9 @@ export default function LeadMap({ leads }: { leads: Lead[] }) {
     <div className="isolate relative z-0 h-full min-h-[240px] rounded-lg overflow-hidden border border-border">
       <MapContainer center={center} zoom={14} className="h-full w-full" scrollWheelZoom={false}>
         <TileLayer
-          attribution='&copy; OpenStreetMap &copy; CARTO'
-          url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maxZoom={19}
         />
         {leads.map((l) => (
           <CircleMarker
