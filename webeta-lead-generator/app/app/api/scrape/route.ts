@@ -12,9 +12,10 @@ import type { ScrapeInput, ScrapeSession, Lead } from "@/lib/types";
 export const maxDuration = 900; // 15 minutes (two scrapers)
 
 const SESSIONS_DIR  = path.join(process.cwd(), "data", "sessions");
-const MAPS_SCRAPER  = path.join(process.cwd(), "scripts", "maps-scraper.mjs");
-const JD_SCRAPER    = path.join(process.cwd(), "scripts", "justdial-scraper.mjs");
-const ZOMATO_SCRAPER = path.join(process.cwd(), "scripts", "zomato-scraper.mjs");
+
+function getScraperPath(name: string): string {
+  return path.resolve(process.cwd(), "scripts", `${name}.mjs`);
+}
 
 /** Niche keywords that trigger Zomato scraping */
 const FOOD_NICHES = ["restaurant", "food", "cafe", "dhaba", "biryani", "pizza", "hotel",
@@ -144,13 +145,13 @@ export async function POST(req: Request) {
       // ── Run scrapers sequentially ──────────────────────────────────
       (async () => {
         // 1. Google Maps (always run)
-        await runScraper(MAPS_SCRAPER, [niche, city, sessionId], "Google Maps");
+        await runScraper(getScraperPath("maps-scraper"), [niche, city, sessionId], "Google Maps");
 
         // 2. Zomato — only for food/restaurant niches
         if (isFoodNiche(niche)) {
           try {
             enc({ type: "status", message: "🍽️ Food niche detected — also searching Zomato for more restaurants..." });
-            await runScraper(ZOMATO_SCRAPER, [niche, city, sessionId + "-zomato"], "Zomato");
+            await runScraper(getScraperPath("zomato-scraper"), [niche, city, sessionId + "-zomato"], "Zomato");
           } catch {
             enc({ type: "status", message: "Zomato scrape skipped (error). Maps data saved." });
           }

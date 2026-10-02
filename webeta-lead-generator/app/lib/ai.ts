@@ -1,6 +1,6 @@
 /**
- * Shared AI runner with full 3-provider fallback chain.
- * Chain: Groq → Gemini → OpenRouter
+ * Shared AI runner with full 4-provider fallback chain.
+ * Chain: Groq → Gemini → OpenRouter → Cloudflare Workers AI (5 accounts)
  *
  * Import this in ALL API routes instead of calling providers directly.
  * Adding a new provider here automatically applies to every phase.
@@ -9,6 +9,7 @@
 import { runGroqJSON }        from "./groq";
 import { runGeminiJSON }      from "./gemini";
 import { runOpenRouterJSON }  from "./openrouter";
+import { runCloudflareJSON }  from "./cloudflareAi";
 
 export type AIResult<T> =
   | { ok: true;  data: T; source: string }
@@ -28,22 +29,24 @@ export async function runAI<T>(
   if (groqResult.ok) return { ...groqResult, source: "groq" };
 
   // ── 2. Gemini (primary Google model) ─────────────────────────────────────
-  // NOTE: runGeminiJSON internally also retries Groq + OpenRouter,
-  // so we pass isDirectCall=false to avoid double-Groq calls.
-  // For simplicity, we call Gemini directly here with a text-only fallback.
   const geminiResult = await runGeminiJSON<T>(prompt, opts);
   if (geminiResult.ok) return { ...geminiResult, source: "gemini" };
 
-  // ── 3. OpenRouter (free models as final safety net) ───────────────────────
+  // ── 3. OpenRouter (free models as fallback) ──────────────────────────────
   const orResult = await runOpenRouterJSON<T>(prompt, opts);
   if (orResult.ok) return { ...orResult, source: "openrouter" };
 
+  // ── 4. Cloudflare Workers AI (5 accounts × 3 models = 15 attempts) ──────
+  const cfResult = await runCloudflareJSON<T>(prompt, opts);
+  if (cfResult.ok) return { ...cfResult, source: "cloudflare" };
+
   // ── All failed — return a clear, actionable combined error ─────────────────
   const lines = [
-    `❌ All 3 AI providers failed:`,
+    `❌ All 4 AI providers failed:`,
     `  • Groq: ${groqResult.error}`,
     `  • Gemini: ${geminiResult.error}`,
     `  • OpenRouter: ${orResult.error}`,
+    `  • Cloudflare: ${cfResult.error}`,
     ``,
     `What to do:`,
     `  1. If Groq key is invalid → get a new key at console.groq.com/keys`,

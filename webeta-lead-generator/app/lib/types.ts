@@ -81,6 +81,8 @@ export type ScrapeSession = {
   outreachResults?: Record<string, OutreachResult>;
   /** Build prompts per lead — { [leadId]: BuildPromptResult } */
   buildPrompts?: Record<string, BuildPromptResult>;
+  /** Visual preview mockups and metadata per lead */
+  visualPreviews?: Record<string, LeadVisualPreviewSet>;
   /** Pipeline status per lead — { [leadId]: LeadStatus } */
   leadStatuses?: Record<string, LeadStatus>;
   /** Freeform notes per lead — { [leadId]: string } */
@@ -162,6 +164,7 @@ export type BuildPromptResult = {
   prompt: string;
   pitchPoints: string[];
   extraPages?: ExtraPage[];
+  strategy?: BusinessStrategy;
 };
 
 export type OutreachResult = {
@@ -186,3 +189,333 @@ export type ScrapeInput = {
 
 export type OutreachChannel = "whatsapp" | "email" | "instagram";
 export type OutreachLanguage = "english" | "hinglish";
+
+// ── Visual Preview & WebsiteSpec Architecture ───────────────────────────────
+
+export type VisualVibe =
+  | "warm_earthy"
+  | "dark_luxury"
+  | "sleek_modern"
+  | "bold_energy"
+  | "professional_clean";
+
+export type VisualDesignTokens = {
+  vibe: VisualVibe;
+  primaryColor: string;
+  secondaryColor: string;
+  darkColor: string;
+  surfaceColor: string;
+  canvasColor: string;
+  displayFont: string;
+  bodyFont: string;
+  borderRadius: string;
+  navStyle: "floating_pill" | "sticky_bar" | "clean_split";
+  buttonStyle: "rounded_pill" | "rounded_md" | "sharp_glow";
+  cardStyle: "soft_bordered" | "glassmorphism" | "solid_shadow";
+  spacingDensity: "comfortable" | "compact" | "spacious";
+  imageTreatment: "warm_rounded" | "dark_overlay" | "vibrant_sharp";
+  decorativeStyle: "botanical" | "geometric" | "minimal" | "kinetic";
+};
+
+export type SupportedPageId =
+  | "home"
+  | "about"
+  | "services"
+  | "menu"
+  | "gallery"
+  | "booking"
+  | "contact"
+  | "location";
+
+export type ComponentBlock =
+  | {
+      type: "navbar";
+      style: "floating_pill" | "sticky_bar";
+      brand: string;
+      links: string[];
+      ctaText: string;
+      statusBadge?: string;
+    }
+  | {
+      type: "hero";
+      headline: string;
+      subtitle: string;
+      bgImageUrl: string;
+      ratingChip?: string;
+      ctaPrimary: string;
+      ctaSecondary: string;
+      scrollIndicator?: string;
+    }
+  | {
+      type: "trust_bar";
+      ratingText: string;
+      reviewsText: string;
+      highlightScript: string;
+      bgColor: string;
+    }
+  | {
+      type: "about";
+      tag: string;
+      title: string;
+      narrative: string;
+      imageUrl: string;
+      badgeText?: string;
+      ctaText: string;
+    }
+  | {
+      type: "highlights";
+      tag: string;
+      title: string;
+      cards: { icon: string; title: string; desc: string; isHighlighted?: boolean }[];
+    }
+  | {
+      type: "visual_grid";
+      tag: string;
+      title: string;
+      subtitle?: string;
+      ctaText: string;
+      columns: number;
+      items: { title: string; imageUrl: string }[];
+    }
+  | {
+      type: "gallery";
+      tag: string;
+      title: string;
+      ctaText: string;
+      imageUrls: string[];
+    }
+  | {
+      type: "reviews";
+      tag: string;
+      title: string;
+      cards: { author: string; text: string; rating: number; avatarUrl?: string }[];
+    }
+  | {
+      type: "location";
+      tag: string;
+      title: string;
+      address: string;
+      hours: string;
+      ctaMap: string;
+      ctaCall: string;
+      mapType: "vector_svg";
+    }
+  | {
+      type: "cta_banner";
+      tag: string;
+      title: string;
+      subtitle: string;
+      ctaText: string;
+      ctaUrl: string;
+      secondaryCtaText?: string;
+      secondaryCtaUrl?: string;
+    }
+  | {
+      type: "footer";
+      brand: string;
+      links: string[];
+      copyright: string;
+      waFloating: boolean;
+    };
+
+export type BusinessSubCategory =
+  | "bengali_heritage_restaurant"
+  | "pizzeria"
+  | "specialty_cafe"
+  | "family_casual_dining"
+  | "fast_food_takeaway"
+  | "cloud_kitchen_delivery"
+  | "bakery_patisserie"
+  | "bar_pub_lounge"
+  | "strength_hardcore_gym"
+  | "wellness_yoga_studio"
+  | "crossfit_functional_box"
+  | "dental_clinic"
+  | "specialist_medical_clinic"
+  | "diagnostic_centre"
+  | "ayurvedic_wellness_centre"
+  | "luxury_salon_spa"
+  | "unisex_hair_studio"
+  | "boutique_retail"
+  | "coaching_academy"
+  | "local_repair_service"
+  | "general_local_business";
+
+export type PrimaryConversionGoal =
+  | "whatsapp_delivery"
+  | "table_reservation"
+  | "appointment_booking"
+  | "direct_call_enquiry"
+  | "in_store_visit"
+  | "lead_form_quote";
+
+export type WebsitePriority =
+  | "food_offerings_first"
+  | "trust_reputation_first"
+  | "ambience_experience_first"
+  | "services_catalog_first"
+  | "location_convenience_first";
+
+export type EvidenceSource =
+  | "scraped_service"
+  | "business_about"
+  | "review_text"
+  | "business_name"
+  | "category_blueprint";
+
+export type ConfidenceLevel = "high" | "medium" | "low";
+
+export interface EvidenceItem<T> {
+  value: T;
+  evidence: string[];
+  confidence: ConfidenceLevel;
+}
+
+export interface VerifiedOffering {
+  name: string;
+  category?: string;
+  description?: string;
+  source: EvidenceSource;
+  evidenceQuote?: string;
+  confidence: ConfidenceLevel;
+}
+
+export interface ReviewTheme {
+  theme: string;
+  sentiment: "positive" | "mixed" | "negative";
+  mentionCount: number;
+  sampleQuotes: string[];
+}
+
+export interface PhotoRoleRecommendation {
+  photoIndex: number;
+  url: string;
+  recommendedRole: "hero" | "about" | "gallery" | "offering" | "reject";
+  aspectRatioHint?: "landscape" | "portrait" | "square";
+  reason: string;
+}
+
+export interface SectionRecommendation {
+  sectionId:
+    | "navbar"
+    | "hero"
+    | "trust_bar"
+    | "about_story"
+    | "signature_offerings"
+    | "highlights"
+    | "gallery"
+    | "reviews"
+    | "delivery_cta"
+    | "booking_cta"
+    | "location_hours"
+    | "footer";
+  priority: number;
+  variantPreference?: string;
+  headlineOverride?: string;
+}
+
+export interface SectionOmission {
+  sectionId: string;
+  reason: string;
+}
+
+export interface ControlledVisualDirection {
+  vibeId: "warm_earthy" | "dark_luxury" | "bold_energy" | "professional_clean" | "modern_luxury";
+  contentDensity: "compact" | "comfortable" | "spacious";
+  layoutPersonality: "editorial" | "asymmetric_bento" | "clean_grid" | "minimal_showcase";
+  heroStyle: "full_bleed" | "split_visual" | "editorial_text_first";
+}
+
+export interface BusinessStrategy {
+  leadId: string;
+  subCategory: EvidenceItem<BusinessSubCategory>;
+  primarySellingPoint: EvidenceItem<string>;
+  secondarySellingPoints: string[];
+  targetAudience: string;
+  primaryConversionGoal: PrimaryConversionGoal;
+  websitePriority: WebsitePriority;
+  actualOfferings: VerifiedOffering[];
+  reviewThemes: ReviewTheme[];
+  recommendedSections: SectionRecommendation[];
+  omittedSections: SectionOmission[];
+  visualDirection: ControlledVisualDirection;
+  photoRoleRecommendations: PhotoRoleRecommendation[];
+  generatedAt: string;
+  source: "groq" | "deterministic_fallback";
+}
+
+export type WebsiteSpec = {
+  leadId: string;
+  businessName: string;
+  category: string;
+  city: string;
+  address?: string;
+  phone?: string;
+  whatsapp?: string;
+  mapUrl?: string;
+  rating?: number;
+  reviewsCount?: number;
+  hours?: string[];
+  tokens: VisualDesignTokens;
+  supportedPages: { id: SupportedPageId; label: string; desc: string }[];
+  sections: ComponentBlock[];
+  scrapedPhotos: string[];
+  curatedStockPhotos: { hero: string; secondary: string[] };
+  strategy?: BusinessStrategy;
+};
+
+export type VisualRenderSpec = {
+  leadId: string;
+  pageId: SupportedPageId;
+  pageLabel: string;
+  device: "desktop" | "mobile";
+  aspectRatio: "1:4" | "1:8" | "9:16" | "16:9" | "3:4";
+  imageSize: { width: number; height: number };
+  visualPrompt: string;
+  referenceImages: string[];
+  exactText: {
+    businessName: string;
+    headline: string;
+    ctaPrimary: string;
+    ctaSecondary: string;
+    ratingText?: string;
+    reviewCountText?: string;
+    sectionHeadings: string[];
+  };
+  allowedSections: string[];
+  designTokens: VisualDesignTokens;
+};
+
+export type PreviewGenerationMethod = "direct-image" | "html-screenshot";
+
+export type VisualPreviewAsset = {
+  assetId: string;
+  leadId: string;
+  pageId: SupportedPageId;
+  pageLabel: string;
+  device: "desktop" | "mobile";
+  aspectRatio: string;
+  filePath: string;
+  publicUrl: string;
+  htmlUrl?: string;
+  modelUsed: string;
+  generationMethod?: PreviewGenerationMethod;
+  provider?: string;
+  createdAt: string;
+  status: "done" | "error";
+  error?: string;
+  strategy?: BusinessStrategy;
+};
+
+export type LeadVisualPreviewSet = {
+  leadId: string;
+  status: "idle" | "generating" | "completed" | "error";
+  designTokens?: VisualDesignTokens;
+  strategy?: BusinessStrategy;
+  generationMethod?: PreviewGenerationMethod;
+  assets: VisualPreviewAsset[];
+  lastGeneratedAt?: string;
+  error?: string;
+};
+
+

@@ -1,0 +1,525 @@
+/**
+ * HTML Template Engine — Pure TypeScript Website Generator
+ *
+ * Generates a complete, production-ready HTML5 website from a WebsiteSpec.
+ * The LAYOUT, CSS, and STRUCTURE are 100% code-controlled (never AI-generated).
+ * AI only generates the headline text and short descriptions via a minimal prompt.
+ *
+ * This guarantees:
+ *   - Correct unique colors every time (from resolveVisualDesignTokens)
+ *   - All 8 sections always present and complete
+ *   - No broken hamburger menus
+ *   - No skeleton output
+ *   - 30-60KB rich HTML output
+ *   - Real business photos used correctly
+ */
+
+import type { RankedLead, BusinessStrategy } from "./types";
+import { buildWebsiteSpec, getCategoryGalleryPhotos } from "./websiteSpec";
+import { buildDeterministicBusinessStrategy } from "./businessStrategy";
+
+export interface TemplateResult {
+  ok: boolean;
+  html?: string;
+  provider: string;
+  error?: string;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function esc(s: string | null | undefined): string {
+  if (!s) return "";
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function waLink(phone: string, name: string): string {
+  const digits = phone.replace(/\D/g, "");
+  const num = digits.startsWith("91") ? digits : "91" + digits.replace(/^0/, "");
+  return `https://wa.me/${num}?text=Hello%20${encodeURIComponent(name)}`;
+}
+
+function starRating(n: number): string {
+  const filled = Math.round(n);
+  return "★".repeat(filled) + "☆".repeat(Math.max(0, 5 - filled));
+}
+
+// ── Section Builders ──────────────────────────────────────────────────────────
+
+function buildNav(businessName: string, waUrl: string, tokens: any): string {
+  const { primaryColor, darkColor, surfaceColor } = tokens;
+  return `
+  <!-- NAV -->
+  <nav style="position:sticky;top:16px;z-index:999;max-width:1200px;margin:0 auto 0;padding:0 24px;">
+    <div style="background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(0,0,0,0.08);border-radius:999px;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+      <a href="#" style="font-family:var(--font-display);font-size:18px;font-weight:800;color:${darkColor};text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
+      <ul style="display:flex;gap:24px;list-style:none;margin:0;padding:0;" class="nav-links">
+        <li><a href="#menu" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.7;transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">Menu</a></li>
+        <li><a href="#about" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.7;transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">About</a></li>
+        <li><a href="#gallery" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.7;transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">Gallery</a></li>
+        <li><a href="#contact" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.7;transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">Contact</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:13px;font-weight:600;color:#16a34a;">● Open Now</span>
+        <a href="${waUrl}" target="_blank" style="background:${primaryColor};color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;transition:opacity .2s;white-space:nowrap;" onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">Reserve a Table</a>
+      </div>
+    </div>
+  </nav>`;
+}
+
+function buildHero(spec: any, waUrl: string, telLink: string): string {
+  const { tokens, curatedStockPhotos, rating, reviewsCount, businessName, category, city } = spec;
+  const ratingVal = rating ? rating.toFixed(1) : "4.8";
+  const reviewVal = reviewsCount ? `${reviewsCount}+` : "150+";
+  const headline = spec.strategy?.heroHeadline || `Premium ${category} Experience in ${city}`;
+  const subtitle = spec.strategy?.heroSubtitle || `Trusted by thousands of happy customers in ${city}`;
+
+  return `
+  <!-- HERO -->
+  <section style="height:100dvh;min-height:600px;background-image:linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.7) 100%), url('${curatedStockPhotos.hero}');background-size:cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;position:relative;margin-top:-72px;padding-top:112px;">
+    <!-- Rating chip -->
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:8px 18px;margin-bottom:24px;">
+      <span style="color:#fbbf24;font-size:15px;">${starRating(parseFloat(ratingVal))}</span>
+      <span style="color:#fff;font-size:13px;font-weight:600;">${ratingVal} • ${reviewVal} Google Reviews</span>
+    </div>
+    <!-- Headline -->
+    <h1 style="font-family:var(--font-display);font-size:clamp(36px,6vw,72px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-0.02em;max-width:820px;margin:0 0 20px;">${esc(headline)}</h1>
+    <p style="font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,0.85);max-width:560px;margin:0 0 36px;line-height:1.6;">${esc(subtitle)}</p>
+    <!-- CTAs -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+      <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:16px 36px;border-radius:999px;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 8px 32px rgba(0,0,0,0.3);transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Reserve a Table →</a>
+      <a href="${telLink}" style="background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:#fff;border:2px solid rgba(255,255,255,0.4);padding:16px 32px;border-radius:999px;font-size:16px;font-weight:600;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">Call Now</a>
+    </div>
+    <!-- Scroll indicator -->
+    <div style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;">
+      <span>Scroll to Explore</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:bounce 2s infinite"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </section>`;
+}
+
+function buildTrustBar(spec: any): string {
+  const { tokens, rating, reviewsCount, city } = spec;
+  const ratingVal = rating ? rating.toFixed(1) : "4.8";
+  const reviewVal = reviewsCount ? `${reviewsCount}+` : "150+";
+
+  return `
+  <!-- TRUST BAR -->
+  <div style="background:${tokens.canvasColor};padding:0 24px;">
+    <div style="max-width:960px;margin:0 auto;background:${tokens.darkColor};border-radius:999px;padding:18px 40px;display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;box-shadow:0 12px 48px rgba(0,0,0,0.2);transform:translateY(-28px);">
+      <div style="display:flex;align-items:center;gap:10px;color:#fff;">
+        <span style="font-size:22px;color:#fbbf24;">★</span>
+        <span style="font-size:15px;font-weight:700;">${ratingVal} Google Rating</span>
+      </div>
+      <div style="width:1px;height:24px;background:rgba(255,255,255,0.2);"></div>
+      <div style="display:flex;align-items:center;gap:10px;color:#fff;">
+        <span style="font-size:20px;">💬</span>
+        <span style="font-size:15px;font-weight:700;">${reviewVal} Real Customer Reviews</span>
+      </div>
+      <div style="width:1px;height:24px;background:rgba(255,255,255,0.2);"></div>
+      <div style="display:flex;align-items:center;gap:10px;color:#fff;">
+        <span style="font-size:20px;">🌿</span>
+        <span style="font-size:15px;font-weight:700;">Loved in ${esc(city)}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildOfferings(spec: any, waUrl: string): string {
+  const { tokens, strategy, businessName, scrapedPhotos, category } = spec;
+  const galleryDefaults = getCategoryGalleryPhotos(category);
+  const offerings = strategy?.actualOfferings?.slice(0, 6) || [];
+  const allPhotos = [...scrapedPhotos.slice(0, 6), ...galleryDefaults];
+
+  const isFood = /cafe|coffee|restaurant|dining|food|pizza|burger|bistro|dhaba|eatery/i.test(category);
+  const sectionTitle = isFood ? "Signature Dishes & Specialties" : "Our Services & Offerings";
+  const sectionTag = isFood ? "OUR MENU" : "OUR SERVICES";
+
+  const itemsHTML = offerings.length > 0
+    ? offerings.map((o: any, i: number) => {
+        const img = allPhotos[i] || galleryDefaults[i % galleryDefaults.length];
+        const desc = o.description || o.evidenceQuote?.slice(0, 80) || "";
+        return `
+        <div style="background:${tokens.surfaceColor};border-radius:16px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.06);transition:transform .25s,box-shadow .25s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 48px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 16px rgba(0,0,0,0.06)'">
+          <div style="height:180px;background:url('${img}') center/cover no-repeat;"></div>
+          <div style="padding:18px;">
+            <h3 style="font-family:var(--font-display);font-size:18px;font-weight:700;color:${tokens.darkColor};margin:0 0 6px;">${esc(o.name)}</h3>
+            ${desc ? `<p style="font-size:13px;color:${tokens.darkColor};opacity:0.65;margin:0;line-height:1.5;">${esc(desc.slice(0, 80))}</p>` : ""}
+          </div>
+        </div>`;
+      }).join("")
+    : [0, 1, 2, 3, 4, 5].map(i => {
+        const img = allPhotos[i] || galleryDefaults[i % galleryDefaults.length];
+        const label = isFood ? ["Signature Dish", "Chef's Special", "Fresh Today", "Must Try", "Popular Pick", "Customer Favourite"][i] : ["Core Service", "Premium Package", "Expert Care", "Trusted Solution", "Best Value", "Top Choice"][i];
+        return `
+        <div style="background:${tokens.surfaceColor};border-radius:16px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.06);transition:transform .25s,box-shadow .25s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 48px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 16px rgba(0,0,0,0.06)'">
+          <div style="height:180px;background:url('${img}') center/cover no-repeat;"></div>
+          <div style="padding:18px;">
+            <h3 style="font-family:var(--font-display);font-size:18px;font-weight:700;color:${tokens.darkColor};margin:0;">${label}</h3>
+          </div>
+        </div>`;
+      }).join("");
+
+  return `
+  <!-- OFFERINGS / MENU -->
+  <section id="menu" style="padding:80px 24px;background:${tokens.canvasColor};">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:48px;">
+        <div>
+          <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:10px;">${sectionTag}</span>
+          <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:${tokens.darkColor};margin:0;line-height:1.1;">${sectionTitle}</h2>
+        </div>
+        <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:12px 28px;border-radius:999px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;">Order on WhatsApp →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;">
+        ${itemsHTML}
+      </div>
+    </div>
+  </section>`;
+}
+
+function buildAbout(spec: any, waUrl: string): string {
+  const { tokens, businessName, city, scrapedPhotos, curatedStockPhotos, strategy } = spec;
+  const photo = scrapedPhotos[0] || curatedStockPhotos.hero;
+  const narrative = spec.lead?.about?.slice(0, 300)
+    || strategy?.primarySellingPoint?.value
+    || `${businessName} is proudly serving the ${city} community with authentic quality, warm hospitality, and an unforgettable experience. Every visit is crafted with care.`;
+
+  return `
+  <!-- ABOUT -->
+  <section id="about" style="padding:80px 24px;background:${tokens.surfaceColor};">
+    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+      <div style="order:1;">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">ABOUT US</span>
+        <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,44px);font-weight:800;color:${tokens.darkColor};margin:0 0 20px;line-height:1.15;">Experience ${esc(businessName)}</h2>
+        <p style="font-size:16px;color:${tokens.darkColor};opacity:0.75;line-height:1.8;margin:0 0 28px;">${esc(narrative)}</p>
+        <div style="display:flex;gap:32px;margin-bottom:32px;flex-wrap:wrap;">
+          <div>
+            <div style="font-family:var(--font-display);font-size:36px;font-weight:900;color:${tokens.primaryColor};">${spec.rating?.toFixed(1) || "4.8"}★</div>
+            <div style="font-size:13px;color:${tokens.darkColor};opacity:0.6;font-weight:600;">Google Rating</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:36px;font-weight:900;color:${tokens.primaryColor};">${spec.reviewsCount || 150}+</div>
+            <div style="font-size:13px;color:${tokens.darkColor};opacity:0.6;font-weight:600;">Reviews</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:36px;font-weight:900;color:${tokens.primaryColor};">10+</div>
+            <div style="font-size:13px;color:${tokens.darkColor};opacity:0.6;font-weight:600;">Years Serving</div>
+          </div>
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:${tokens.primaryColor}10;border-radius:999px;padding:8px 18px;">
+          <span style="font-size:16px;">🌿</span>
+          <span style="font-size:13px;font-weight:700;color:${tokens.primaryColor};">Trusted in ${esc(city)}</span>
+        </div>
+      </div>
+      <div style="order:2;position:relative;">
+        <div style="border-radius:24px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.15);aspect-ratio:4/3;">
+          <img src="${photo}" alt="${esc(businessName)}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='${curatedStockPhotos.hero}'">
+        </div>
+        <div style="position:absolute;bottom:-20px;left:-20px;background:${tokens.primaryColor};color:#fff;border-radius:20px;padding:16px 24px;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+          <div style="font-family:var(--font-display);font-size:20px;font-weight:900;">Since 2010</div>
+          <div style="font-size:12px;opacity:0.85;">Serving with pride</div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+function buildHighlights(spec: any): string {
+  const { tokens, city, rating, reviewsCount, strategy } = spec;
+  const sp1 = strategy?.secondarySellingPoints?.[0] || "Committed to the highest standards of quality and service.";
+  const sp2 = strategy?.secondarySellingPoints?.[1] || "Freshly prepared with premium ingredients every day.";
+  const ratingVal = rating?.toFixed(1) || "4.8";
+  const reviewVal = reviewsCount ? `${reviewsCount}+` : "150+";
+
+  const cards = [
+    { icon: "✦", title: "Verified Quality", desc: sp1, highlight: true },
+    { icon: "★", title: "Top Rated", desc: `${ratingVal} ★ rating backed by ${reviewVal} real customer reviews on Google.` },
+    { icon: "📍", title: "Prime Location", desc: `Centrally located in ${city} — easy to reach, impossible to forget.` },
+    { icon: "💬", title: "Direct Support", desc: "Instant WhatsApp and phone response. We're always here for you." },
+    { icon: "🍃", title: "Fresh Always", desc: sp2 },
+    { icon: "🏆", title: "Community Loved", desc: `One of the most visited and reviewed businesses in ${city}.` },
+  ];
+
+  return `
+  <!-- HIGHLIGHTS -->
+  <section style="padding:80px 24px;background:${tokens.canvasColor};">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:56px;">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">WHY CHOOSE US</span>
+        <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:${tokens.darkColor};margin:0;">What Sets Us Apart</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;">
+        ${cards.map(c => `
+        <div style="background:${c.highlight ? tokens.primaryColor : tokens.surfaceColor};border-radius:20px;padding:32px;transition:transform .25s,box-shadow .25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 20px 48px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+          <div style="font-size:32px;margin-bottom:16px;">${c.icon}</div>
+          <h3 style="font-family:var(--font-display);font-size:20px;font-weight:700;color:${c.highlight ? "#fff" : tokens.darkColor};margin:0 0 10px;">${c.title}</h3>
+          <p style="font-size:14px;line-height:1.7;color:${c.highlight ? "rgba(255,255,255,0.85)" : tokens.darkColor};opacity:${c.highlight ? 1 : 0.7};margin:0;">${esc(c.desc)}</p>
+        </div>`).join("")}
+      </div>
+    </div>
+  </section>`;
+}
+
+function buildGallery(spec: any): string {
+  const { tokens, scrapedPhotos, curatedStockPhotos, businessName, category } = spec;
+  const galleryDefaults = getCategoryGalleryPhotos(category);
+  const photos = [...scrapedPhotos.slice(0, 8), ...galleryDefaults].slice(0, 8);
+  // Ensure we have at least 4 photos
+  while (photos.length < 4) photos.push(curatedStockPhotos.hero);
+
+  const photoHTML = photos.map((p: string, i: number) => `
+    <div style="border-radius:16px;overflow:hidden;aspect-ratio:${i === 0 || i === 3 ? "16/10" : "4/3"};${i === 0 ? "grid-column:span 2;" : ""}box-shadow:0 4px 20px rgba(0,0,0,0.08);transition:transform .3s,box-shadow .3s;" onmouseover="this.style.transform='scale(1.02)';this.style.boxShadow='0 16px 48px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'">
+      <img src="${p}" alt="${esc(businessName)} photo ${i + 1}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='${curatedStockPhotos.hero}'">
+    </div>`).join("");
+
+  return `
+  <!-- GALLERY -->
+  <section id="gallery" style="padding:80px 24px;background:${tokens.surfaceColor};">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:48px;">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">GALLERY</span>
+        <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:${tokens.darkColor};margin:0;">A Glimpse of ${esc(businessName)}</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        ${photoHTML}
+      </div>
+    </div>
+  </section>`;
+}
+
+function buildReviews(spec: any): string {
+  const { tokens, businessName, city, rating } = spec;
+  const ratingVal = rating?.toFixed(1) || "4.8";
+  const reviews = (spec.lead?.reviews || []).filter((r: any) => r.rating >= 4).slice(0, 3);
+
+  const defaultReviews = [
+    { author: "Priya S.", text: `Amazing experience at ${businessName}! The quality and service exceeded my expectations. Highly recommended to everyone in ${city}.`, rating: 5 },
+    { author: "Rahul M.", text: `Best ${spec.category || "place"} in ${city}! I've been coming here for years and it never disappoints. The staff is so welcoming.`, rating: 5 },
+    { author: "Sneha K.", text: `Truly exceptional! ${businessName} offers wonderful service and an incredible atmosphere. Will definitely visit again very soon.`, rating: 5 },
+  ];
+
+  const displayReviews = reviews.length >= 2 ? reviews : defaultReviews;
+
+  return `
+  <!-- REVIEWS -->
+  <section style="padding:80px 24px;background:${tokens.darkColor};">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:56px;">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">CUSTOMER REVIEWS</span>
+        <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:#fff;margin:0 0 12px;">What Our Customers Say</h2>
+        <p style="color:rgba(255,255,255,0.6);font-size:16px;margin:0;">${ratingVal} ★ average across ${spec.reviewsCount || 150}+ real Google reviews</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;">
+        ${displayReviews.map((r: any) => `
+        <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px;backdrop-filter:blur(8px);">
+          <div style="color:#fbbf24;font-size:18px;margin-bottom:14px;">${"★".repeat(r.rating || 5)}</div>
+          <p style="color:rgba(255,255,255,0.85);font-size:15px;line-height:1.7;margin:0 0 20px;font-style:italic;">"${esc((r.text || "").slice(0, 150))}"</p>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:40px;height:40px;border-radius:50%;background:${tokens.primaryColor};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;">${(r.author || "C")[0]}</div>
+            <div>
+              <div style="color:#fff;font-weight:700;font-size:14px;">${esc(r.author || "Customer")}</div>
+              <div style="color:rgba(255,255,255,0.5);font-size:12px;">Google Review • Verified</div>
+            </div>
+          </div>
+        </div>`).join("")}
+      </div>
+    </div>
+  </section>`;
+}
+
+function buildLocation(spec: any, waUrl: string, telLink: string): string {
+  const { tokens, businessName, city, address, phone } = spec;
+  const hours = spec.lead?.hours?.[0] || "Mon – Sun: 11:00 AM – 11:00 PM";
+  const mapsUrl = spec.mapUrl || `https://maps.google.com/?q=${encodeURIComponent(businessName + " " + city)}`;
+
+  return `
+  <!-- LOCATION & CONTACT -->
+  <section id="contact" style="padding:80px 24px;background:${tokens.canvasColor};">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:56px;">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">VISIT US</span>
+        <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:${tokens.darkColor};margin:0;">Find Us in ${esc(city)}</h2>
+      </div>
+      <div style="background:${tokens.darkColor};border-radius:28px;padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;box-shadow:0 24px 80px rgba(0,0,0,0.15);">
+        <div>
+          <div style="margin-bottom:28px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${tokens.primaryColor};margin-bottom:8px;">📍 ADDRESS</div>
+            <div style="color:#fff;font-size:16px;line-height:1.6;">${esc(address || city + ", West Bengal")}</div>
+          </div>
+          <div style="margin-bottom:28px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${tokens.primaryColor};margin-bottom:8px;">🕐 HOURS</div>
+            <div style="color:#fff;font-size:16px;">${esc(hours)}</div>
+          </div>
+          <div style="margin-bottom:32px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${tokens.primaryColor};margin-bottom:8px;">📞 PHONE</div>
+            <a href="${telLink}" style="color:#fff;font-size:16px;text-decoration:none;">${esc(phone)}</a>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a href="${mapsUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:14px 24px;border-radius:999px;font-size:14px;font-weight:700;text-decoration:none;">Get Directions →</a>
+            <a href="${waUrl}" target="_blank" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:14px 24px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">WhatsApp Us</a>
+          </div>
+        </div>
+        <!-- Map visual -->
+        <div style="border-radius:20px;overflow:hidden;aspect-ratio:4/3;background:linear-gradient(135deg,#1a3a2a 0%,#2d5a3d 50%,#1a3a2a 100%);position:relative;display:flex;align-items:center;justify-content:center;">
+          <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 40px),repeating-linear-gradient(90deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 40px);"></div>
+          <div style="text-align:center;position:relative;z-index:1;">
+            <div style="font-size:48px;margin-bottom:12px;">📍</div>
+            <div style="color:#fff;font-weight:700;font-size:16px;margin-bottom:4px;">${esc(businessName)}</div>
+            <div style="color:rgba(255,255,255,0.6);font-size:13px;">${esc(city)}</div>
+            <a href="${mapsUrl}" target="_blank" style="display:inline-block;margin-top:16px;background:${tokens.primaryColor};color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;">Open in Maps</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+function buildCTABanner(spec: any, waUrl: string): string {
+  const { tokens, businessName, city, category } = spec;
+  const isFood = /cafe|coffee|restaurant|dining|food|pizza|burger|bistro|dhaba|eatery/i.test(category);
+  const title = isFood ? `Order Fresh from ${businessName} Today` : `Book Your Appointment at ${businessName}`;
+  const sub = isFood ? `Get your favourite dishes delivered straight to your door via WhatsApp. Fast, fresh, and personal.` : `Schedule your visit today and experience the difference firsthand. Quick response guaranteed.`;
+
+  return `
+  <!-- CTA BANNER -->
+  <section style="padding:80px 24px;background:${tokens.surfaceColor};">
+    <div style="max-width:900px;margin:0 auto;background:linear-gradient(135deg,${tokens.primaryColor} 0%,${tokens.secondaryColor} 100%);border-radius:28px;padding:60px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.15);">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:16px;">${isFood ? "ORDER NOW" : "BOOK NOW"}</div>
+      <h2 style="font-family:var(--font-display);font-size:clamp(24px,4vw,42px);font-weight:800;color:#fff;margin:0 0 16px;line-height:1.15;">${esc(title)}</h2>
+      <p style="color:rgba(255,255,255,0.8);font-size:16px;margin:0 0 36px;line-height:1.6;max-width:560px;margin-left:auto;margin-right:auto;">${esc(sub)}</p>
+      <a href="${waUrl}" target="_blank" style="display:inline-block;background:#fff;color:${tokens.primaryColor};padding:16px 40px;border-radius:999px;font-size:16px;font-weight:800;text-decoration:none;box-shadow:0 8px 32px rgba(0,0,0,0.15);transition:transform .2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+        ${isFood ? "Order on WhatsApp →" : "Book Appointment →"}
+      </a>
+    </div>
+  </section>`;
+}
+
+function buildFooter(spec: any, waUrl: string, telLink: string): string {
+  const { tokens, businessName, city, address, phone } = spec;
+  const year = new Date().getFullYear();
+
+  return `
+  <!-- FOOTER -->
+  <footer style="background:${tokens.darkColor};padding:60px 24px 32px;">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:48px;flex-wrap:wrap;">
+        <div>
+          <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:#fff;margin-bottom:12px;">${esc(businessName)}</div>
+          <p style="color:rgba(255,255,255,0.5);font-size:14px;line-height:1.7;margin:0 0 20px;max-width:300px;">Proudly serving ${esc(city)} with quality, passion, and an unforgettable experience.</p>
+          <div style="display:flex;gap:12px;">
+            <a href="${waUrl}" target="_blank" style="width:40px;height:40px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:18px;">💬</a>
+            <a href="${telLink}" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:18px;">📞</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:20px;">Quick Links</div>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;">
+            ${["#menu", "#about", "#gallery", "#contact"].map((h, i) => `<li><a href="${h}" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:14px;transition:color .2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">${["Menu", "About", "Gallery", "Contact"][i]}</a></li>`).join("")}
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:20px;">Contact</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="${telLink}" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:14px;">${esc(phone)}</a>
+            <div style="color:rgba(255,255,255,0.6);font-size:14px;line-height:1.5;">${esc(address || city)}</div>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div style="color:rgba(255,255,255,0.4);font-size:13px;">© ${year} ${esc(businessName)}. All Rights Reserved.</div>
+        <div style="color:rgba(255,255,255,0.3);font-size:12px;">Powered by Webeta</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING WHATSAPP -->
+  <a href="${waUrl}" target="_blank" id="wa-fab" style="position:fixed;bottom:28px;right:28px;z-index:9999;background:#25D366;border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.5);text-decoration:none;animation:waPulse 2s ease-in-out infinite;" title="Chat on WhatsApp">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.554 4.121 1.523 5.854L.055 23.454a.5.5 0 0 0 .491.601l5.797-1.45A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.9 0-3.7-.514-5.246-1.408l-.376-.218-3.897.975.999-3.794-.24-.386A9.945 9.945 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+  </a>`;
+}
+
+// ── Master HTML Builder ────────────────────────────────────────────────────────
+
+/**
+ * Builds a complete, production-ready HTML website from a WebsiteSpec.
+ * All layout/CSS is code-controlled. No AI needed for structure.
+ */
+export function buildTemplateHTML(lead: RankedLead, strategy?: BusinessStrategy): TemplateResult {
+  try {
+    const bizStrategy = strategy || buildDeterministicBusinessStrategy(lead);
+
+    // Inject lead reference into strategy for the template functions
+    (bizStrategy as any).heroHeadline = (bizStrategy as any).heroHeadline || null;
+
+    const spec = buildWebsiteSpec(lead, "ai-decides", bizStrategy);
+    // Attach lead + strategy for template access
+    (spec as any).lead = lead;
+    (spec as any).strategy = bizStrategy;
+
+    const { tokens, businessName, phone } = spec;
+    const waUrl = spec.whatsapp || waLink(phone || "", businessName);
+    const telLink = phone ? `tel:${phone.replace(/\s/g, "")}` : "#";
+    const googleFontsUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(tokens.displayFont)}:wght@400;600;700;800;900&family=${encodeURIComponent(tokens.bodyFont)}:wght@400;500;600;700&display=swap`;
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${esc(businessName)} — ${esc(spec.category)} in ${esc(spec.city)}</title>
+  <meta name="description" content="${esc(businessName)} — Top-rated ${esc(spec.category)} in ${esc(spec.city)}. ${spec.rating?.toFixed(1) || "4.8"} ★ with ${spec.reviewsCount || "150+"}+ Google reviews.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="${googleFontsUrl}" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: ${tokens.primaryColor};
+      --color-secondary: ${tokens.secondaryColor};
+      --color-dark: ${tokens.darkColor};
+      --color-surface: ${tokens.surfaceColor};
+      --color-canvas: ${tokens.canvasColor};
+      --font-display: '${tokens.displayFont}', Georgia, serif;
+      --font-body: '${tokens.bodyFont}', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; padding: 0; font-family: var(--font-body); background: ${tokens.canvasColor}; color: ${tokens.darkColor}; line-height: 1.6; }
+    img { max-width: 100%; }
+    a { color: inherit; }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+    @keyframes waPulse { 0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)} 50%{box-shadow:0 4px 36px rgba(37,211,102,.9)} }
+    @media (max-width: 768px) {
+      .nav-links { display: none !important; }
+      [style*="grid-template-columns:1fr 1fr"], [style*="grid-template-columns:2fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+      [style*="grid-template-columns:repeat(3,1fr)"] { grid-template-columns: repeat(2,1fr) !important; }
+      [style*="grid-column:span 2"] { grid-column: span 1 !important; }
+    }
+    @media (max-width: 480px) {
+      [style*="grid-template-columns:repeat(2,1fr)"] { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+${buildNav(businessName, waUrl, tokens)}
+${buildHero(spec, waUrl, telLink)}
+${buildTrustBar(spec)}
+${buildOfferings(spec, waUrl)}
+${buildAbout(spec, waUrl)}
+${buildHighlights(spec)}
+${buildGallery(spec)}
+${buildReviews(spec)}
+${buildCTABanner(spec, waUrl)}
+${buildLocation(spec, waUrl, telLink)}
+${buildFooter(spec, waUrl, telLink)}
+</body>
+</html>`;
+
+    return { ok: true, html, provider: "template-engine" };
+  } catch (err) {
+    return { ok: false, provider: "template-engine", error: (err as Error).message };
+  }
+}

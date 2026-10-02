@@ -10,7 +10,9 @@ import type { Lead } from "@/lib/types";
 
 export const maxDuration = 120; // 2 minutes
 
-const SINGLE_SCRAPER = path.join(process.cwd(), "scripts", "single-scraper.mjs");
+function getSingleScraperPath(): string {
+  return path.resolve(process.cwd(), "scripts", "single-scraper.mjs");
+}
 
 export async function POST(req: Request) {
   const { input } = (await req.json()) as { input: string };
@@ -24,7 +26,8 @@ export async function POST(req: Request) {
     let lead: Lead | null = null;
     let error: string | null = null;
 
-    const child = spawn("node", [SINGLE_SCRAPER, input.trim(), sessionId], {
+    const args = [getSingleScraperPath(), input.trim(), sessionId];
+    const child = spawn("node", [...args], {
       cwd: process.cwd(),
       stdio: ["ignore", "pipe", "pipe"],
     });

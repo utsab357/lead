@@ -1,0 +1,29 @@
+{
+  "id": "session-1790905938840",
+  "niche": "manual",
+  "city": "mixed",
+  "timestamp": "2026-10-02T01:52:18.841Z",
+  "leadsCount": 1,
+  "noWebsiteCount": 0,
+  "withPhoneCount": 0,
+  "expandedTerms": [],
+  "leads": [
+    {
+      "id": "manual-1790905937660",
+      "name": "The Food Assembly",
+      "category": "Business",
+      "address": "PCRP+4GF, Berunanpukhuria, West Bengal 700126",
+      "city": "",
+      "website": "https://maps.app.goo.gl/JfSGdKdXJs5pT2TE7",
+      "mapUrl": "https://maps.app.goo.gl/JfSGdKdXJs5pT2TE7",
+      "rating": null,
+      "lat": 22.72,
+      "lng": 88.48,
+      "about": "Find local businesses, view maps and get driving directions in Google Maps.",
+      "photoUrls": [
+        "https://maps.google.com/maps/api/staticmap?center=22.7403919%2C88.4364037&zoom=21&size=900x900&language=en&sensor=false&key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&signature=DQh1AV3-ERLM54hyDu97EnyLafk"
+      ],
+      "source": "manual"
+    }
+  ]
+}

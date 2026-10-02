@@ -16295,29 +16295,725 @@
       }
     }
   },
-  "selectedId": "maps-012",
+  "selectedId": "maps-005",
   "buildPrompts": {
     "maps-005": {
       "source": "code",
       "style": "ai-decides",
-      "prompt": "You are a WORLD-CLASS web designer and developer in 2026. Your job is to write a complete, production-ready website prompt for a local Indian business. The output MUST look like a premium 2026 agency-built website — NOT a WordPress template from 2015.\n\n## PLATFORM\nUse Google Stitch (stitch.withgoogle.com). Output ONE complete HTML file. ALL CSS must be inside a <style> tag. ALL JavaScript must be inside a <script> tag. External CDN libraries (e.g. AOS, Google Fonts via @import) are allowed. External image URLs are allowed. Google Maps iframes/links are allowed. No React. No build step. No separate CSS or JS files.\n\n## MANDATORY DESIGN RULES — READ EVERY WORD\n1. FULL-VIEWPORT HERO: The hero section MUST be 100dvh. Use the HERO STOCK PHOTO URL provided in the HERO section below as the CSS background-image. Apply a gradient overlay from the design system on top of it. The headline MUST be large (clamp min 2.8rem mobile, 4.5rem desktop). Do NOT use scraped Google Maps photos in the hero.\n2. REAL DESIGN SYSTEM: Use the complete design system below. Apply CSS custom properties (--variables) from the top. Every color, font, and spacing value must come from the system.\n3. MICRO-INTERACTIONS: Every card, button, and image must have a hover state with transform and transition. No static elements.\n4. ANIMATED STATS: Create a \"trust numbers\" section with big animated counters (JS IntersectionObserver + requestAnimationFrame countUp). Show ONLY verified statistics supplied in BUSINESS DATA (rating, review count, years in business). If a stat is not in BUSINESS DATA, omit it entirely — do NOT invent placeholder numbers.\n5. BENTO GRID or MASONRY for services — NOT a boring equal-column grid. At least one card should span 2 columns on desktop for visual interest.\n6. GLASSMORPHISM for overlapping UI elements (testimonial cards, floating badges, stat chips).\n7. GRADIENT TEXT on the main hero headline or key section heading (CSS: background:gradient; -webkit-background-clip:text; color:transparent).\n8. FLOATING WHATSAPP: Fixed bottom-right, pulsing glow animation, always visible.\n9. SMOOTH SCROLL: html { scroll-behavior: smooth; }\n10. MOBILE FIRST: Design for 375px, enhance at 768px, maximize at 1280px. EVERY section must be tested mentally for mobile overflow.\n\n## DESIGN SYSTEM\n\nAI-SELECTED DESIGN SYSTEM — INTELLIGENCE MODE:\n\nSTEP 1 — ANALYZE THE BUSINESS (do this silently before any code):\nLook at the business data provided: category, name, rating, reviews count, about text, and services.\nAsk yourself:\n  - What kind of customer does this business serve? (premium/luxury vs everyday/budget, young vs mature)\n  - What emotion should the website evoke? (trust/calm, energy/excitement, warmth/comfort, prestige/exclusivity)\n  - What industry conventions apply? (clinics = professional clean; gyms = bold energy; restaurants = warm/inviting; salons/boutiques = luxury; tech/startups = modern dark)\n  - NOTE: If real photos are available below, their visual tone (dark/moody vs bright/airy) may inform the style choice. If no photos are available, base the decision on category and business name alone.\n\nSTEP 2 — CHOOSE ONE of these established styles as the primary:\n  A) Professional Trust — clinics, lawyers, CAs, consultants, education\n  B) Sleek Modern Dark — tech, agencies, co-working, modern gyms, studios\n  C) Animated Kinetic — fitness, events, sports, entertainment, youth brands\n  D) Warm Earthy Premium — restaurants, cafes, Ayurveda, wellness, food retail\n  E) Dark Luxury — high-end salons, boutiques, jewellery, premium hotels, spas\n  F) Bold High-Energy — gyms, MMA, street food, nightlife, streetwear\n\nSTEP 3 — STATE YOUR CHOICE (as an HTML comment at the very top of your output):\n<!-- STYLE: [chosen style name] | REASON: [one sentence explaining why this fits this specific business] -->\n\nSTEP 4 — IMPLEMENT THAT STYLE COMPLETELY:\nAfter choosing, implement the full design system for that style. For the hero background: always use the HERO STOCK PHOTO URL provided in the HERO section — apply the appropriate gradient overlay for your chosen style on top of it.\n\n## REQUIRED SECTIONS (do not skip any)\n\n### 1. STICKY HEADER\n- Height: 64px. backdrop-filter: blur(20px). Semi-transparent background.\n- Left: business name as wordmark (bold, styled).\n- Right: Click-to-call phone as <a href=\"tel:+918981113940\">+91 8981113940</a> with a phone icon. WhatsApp icon linking to https://wa.me/918981113940?text=Hello%20THE%20FOREST%20BREW%20CAFE%20AND%20RESTRO.\n- Hamburger menu on mobile that slides in a full-screen nav overlay.\n\n### 2. HERO (100dvh)\n- Background: Use this professional stock photo as the full-bleed hero background-image: https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1600&q=85\n  This is a curated stock photo matching the business category — it always looks stunning as a hero.\n  Apply the gradient overlay from the design system on top (dark enough for white text to read clearly).\n  Do NOT use any Google Maps / googleusercontent.com photo URL in the hero background.\n- Floating trust badge (glassmorphism): \"★ 4.7 · 152 Reviews\" — positioned absolute, animated fade-in.\n- H1: Bold, large, gradient or white text: \"Trusted Cafe in Barasat\"\n- Sub-headline: short, compelling, max 12 words.\n- TWO CTA buttons: WhatsApp primary, Call secondary. Both with hover animations.\n- Scroll indicator (animated bouncing chevron or dot at bottom).\n\n### 3. ANIMATED TRUST STATS STRIP\n- Dark or accent background (not white).\n- Stats strip items — include ONLY the stats for which real data is available:\n  * 4.7★ Rating\n  * 152+ Reviews\n  * (omit years — not verified; do NOT invent a number)\n  * If fewer than 3 verified stats are available, show fewer stats. Do NOT invent percentages (\"100% Satisfaction\"), vague claims (\"Local Experts\", \"Award Winning\", \"Trusted by 1000+\"), or any statistic that is not in BUSINESS DATA.\n- Each number animates counting up when scrolled into view (JS countUp).\n- Stats separated by vertical dividers or gold/accent lines.\n\n### 4. SERVICES — BENTO GRID LAYOUT\n- No verified services are available in BUSINESS DATA. Do NOT invent a list of services based on the category. Instead, create a neutral 'What We Offer' section with a single card that says the business offers professional services in their category, and a CTA to contact them via WhatsApp for details. Do NOT name specific services that are not in BUSINESS DATA.\n- CSS Grid: on desktop, mix 1-col and 2-col spans. First card spans 2 columns. Others are 1. This creates a bento layout.\n- Each card: icon (SVG or emoji), service name as bold heading, 1 short description sentence, \"Book Now →\" link to https://wa.me/918981113940?text=Hello%20THE%20FOREST%20BREW%20CAFE%20AND%20RESTRO.\n- Cards use the glassmorphism/card style from the design system.\n- Hover: lift + glow effect.\n\n### 5. ABOUT / STORY (SPLIT SCREEN)\n- Left side: Photo 1 as the featured image (full height, object-fit cover). Photo 2 overlapping at a slight angle/offset below it for visual depth. These are the real business photos — they create authenticity.\n- Right side: \"Our Story\" label, H2, the about text, a \"Speak with Us\" button.\n- No verified about/story text exists in BUSINESS DATA. Do NOT invent: business history, founder story, years in business, mission statement, staff claims, or achievements. Instead, create a visually strong neutral section with only verified facts (name, category, city) and a clear CTA: \"Get in touch to learn about us\" linking to the WhatsApp link. The section must look premium but must not fabricate any history or claims.\n- On mobile: left side stacks above text.\n\n### 6. CUSTOMER TESTIMONIALS (CARDS WITH GLASSMORPHISM)\n\nREAL CUSTOMER REVIEWS (use these exact quotes):\n  - \"Very affordable and delicious food with a simple, cozy ambiance—and the owner’s warm behaviour makes it even better. The must-try is the Non-Veg Overload Pizza… absolutely amazing!\" — Rupsha Paul (5★)\n  - \"Good for 2 to 4 ppl dine out. Food and service was not bad either.\" — Tandrima Saha (5★)\n  - \"The ambiance is very soothing and comforting. The food quality and the service is phenomenal. The staffs are very friendly and attentive. One item is just extremely good and that i\" — David (5★)\n- Layout: 3-column grid on desktop, 1-column on mobile.\n- Each card: giant quote mark (CSS content, styled in accent color), star rating (show ★ symbols), review text (italic), reviewer name bold.\n- Cards: glassmorphism style from design system.\n- Add subtle fade-up animation (AOS or CSS @keyframes).\n\n### 7. FAQ ACCORDION\n- 5 questions relevant to Cafe in Barasat.\n- Each item: question as bold clickable header, answer expands smoothly (CSS max-height transition or JS toggle).\n- Arrow icon rotates 180° when open.\n- CRITICAL FAQ RULE: Questions may be category-relevant, but answers must use ONLY verified information in BUSINESS DATA. If the answer is not in BUSINESS DATA, use: \"Please contact us directly for the latest information\" and link to https://wa.me/918981113940?text=Hello%20THE%20FOREST%20BREW%20CAFE%20AND%20RESTRO. Do NOT assume or invent: specific prices, parking availability, online/offline consultation, booking requirements, payment methods, emergency services, specific procedures, or opening hours. Never state as fact anything that is not explicitly in BUSINESS DATA.\n\n### 8. LOCATION + HOURS\n- Two-column: Left = embedded Google Maps iframe using link: https://www.google.com/maps/place/THE+FOREST+BREW+CAFE+AND+RESTRO/data=!4m7!3m6!1s0x39f8a3efd5ffc943:0x69cb28ce914e3aad!8m2!3d22.7237437!4d88.4810658!16s%2Fg%2F11mdfm6n1l!19sChIJQ8n_1e-j-DkRrTpOkc4oy2k?authuser=0&hl=en&g_ep=EgoyMDI2MDkwMi4wIJJjKgBIAVAD&rclk=1, height 350px, border-radius from design system.\n- Right = Address card with icon, Hours list with icon.\n\nBUSINESS HOURS:\n  - Sunday, 11 am to 10 pm\n- \"Get Directions\" button linking to Google Maps.\n\n### 9. FINAL CTA SECTION\n- Accent/dark colored background (not white — use the primary or dark color from design system).\n- Bold large closing headline: \"Ready to get started?\"\n- Sub-text: one compelling sentence referencing Barasat.\n- Two buttons: WhatsApp + Call. Both large and prominent.\n- Optional: subtle background pattern or noise texture.\n\n### 10. FOOTER\n- Dark background. 3–4 columns on desktop.\n- Col 1: Business name + short tagline + social links: (no verified social profiles — show only the WhatsApp link and phone number; do NOT add Facebook, Instagram, YouTube, or other social icons unless their URLs are in BUSINESS DATA)\n- Col 2: Quick links (Home, Services, About, Contact)\n- Col 3: Contact info — address with 📍 icon, phone with 📞 as click-to-call, WhatsApp link.\n- Bottom bar: © 2026 THE FOREST BREW CAFE AND RESTRO. All rights reserved. | Privacy Policy | Terms\n- (No verified Facebook URL — do NOT include a Facebook link or '#' placeholder)\n\n## BUSINESS DATA\n- Name: THE FOREST BREW CAFE AND RESTRO\n- Category: Cafe\n- Address: Pioneer Park Rd, Barasat, West Bengal 700124, Barasat, West Bengal\n- Rating: 4.7 ⭐ (152 reviews)\n- Phone: +91 8981113940\n- WhatsApp link: https://wa.me/918981113940?text=Hello%20THE%20FOREST%20BREW%20CAFE%20AND%20RESTRO\n- Tel link: tel:+918981113940\n- Google Maps: https://www.google.com/maps/place/THE+FOREST+BREW+CAFE+AND+RESTRO/data=!4m7!3m6!1s0x39f8a3efd5ffc943:0x69cb28ce914e3aad!8m2!3d22.7237437!4d88.4810658!16s%2Fg%2F11mdfm6n1l!19sChIJQ8n_1e-j-DkRrTpOkc4oy2k?authuser=0&hl=en&g_ep=EgoyMDI2MDkwMi4wIJJjKgBIAVAD&rclk=1\n- Facebook: not available (do NOT invent or include a Facebook URL)\n\nREAL BUSINESS PHOTOS FROM GOOGLE MAPS (6 available):\n  Photo 1: https://lh3.googleusercontent.com/grass-cs/ACvplmOyuhOzdK6rUBmqgii55VNjTG63iM-B4ZI_ICrpVxxGuVeD81dEvx-4md1n__dwzosoSLu6OTWe6p-WzLEY6JjtYojtExbFsdGb-485YGLN1kLNOf3dldC-fmil2_A_Si99ilziGPua_NdH=w800-h600-k-no\n  Photo 2: https://lh3.googleusercontent.com/grass-cs/ACvplmOJZHMW6MKqXthZD5mVzlMpcPSXMSP6a8sB71LHbMKFG8gDlmxgTtMamqXqklUoh8cGe1B5gmX0_eIgy4w6woYxY7ApsZXAMG8tOcs-h-NWTLr0TqcxZ2SBkORwAmwqj5lSx6TYHUhrF2s=w800-h600-k-no\n  Photo 3: https://lh3.googleusercontent.com/grass-cs/ACvplmNTU1ClssFaSfq-3-XslyukQYUuM50CECb5VgBuPn23AsbABTcysOHMHy-9t8W43t-bJ5J6ytGMKkC3eLeuQOzIxKbWHiChHduWVgqe-W4Yay7nyofIcHig0vOg9ZS-Pccp03pulyJCGSTI=w800-h600-k-no\n  Photo 4: https://lh3.googleusercontent.com/grass-cs/ACvplmM4fm1G4Ql8BGCiUFRJTA2Z5sr1JMbXhqIUd3dJrWBSVr2vpn81CJCHfR7ER14o8dJApr_4TzMNWe_w77GZ4taqqn6iBWIR5jEnnhGomqAnP-9Rc6zFFCuodQdBqK2jH7kKLaSgwCz-CV1D=w800-h600-k-no\n  Photo 5: https://lh3.googleusercontent.com/grass-cs/ACvplmNucj3GKIq-Yxf1xHFcQFRqADuBBWm02jtF2UYd03Jl6_pdBZIVJxqddFELfpHSdgKZ7REPmSm5e5fs_ZfKE87Pnc-GnNfOZcLrp_yd52Lzj0AVLgGN-Y1Lurvi46xR1nnjvEswXNXXodCu=w800-h600-k-no\n  Photo 6: https://lh3.googleusercontent.com/grass-cs/ACvplmMtnEbiR6pwOqkUT_n4ZNwM0UmzyHwJ9hJwWKfDs1udASA-zNCHcUVrobNNsQqPZI-HPZmIx2UIB-dsK-uCkf-fMLNLxLiNxLyCREG9Sg3vYQcN2wsVg3lGz8_Tr_JVo1nDwVKBV3cfiANW=w800-h600-k-no\nPHOTO PLACEMENT RULES — READ CAREFULLY:\n- These are customer-panel photos from Google Maps. They show the real business.\n- Photo 1 (or whichever is listed first) = the FEATURED photo for the About section left panel.\n- All photos = use in the Gallery page.\n- DO NOT use these photos as the hero background. The hero has its own professional stock photo (see HERO section below).\n- Never repeat the same URL in two sections.\n- If a section needs Photo 3 but only 6 exist, use a CSS gradient from the design system.\nBUSINESS HOURS:\n  - Sunday, 11 am to 10 pm\nREAL CUSTOMER REVIEWS (use these exact quotes):\n  - \"Very affordable and delicious food with a simple, cozy ambiance—and the owner’s warm behaviour makes it even better. The must-try is the Non-Veg Overload Pizza… absolutely amazing!\" — Rupsha Paul (5★)\n  - \"Good for 2 to 4 ppl dine out. Food and service was not bad either.\" — Tandrima Saha (5★)\n  - \"The ambiance is very soothing and comforting. The food quality and the service is phenomenal. The staffs are very friendly and attentive. One item is just extremely good and that i\" — David (5★)\n\n## TECHNICAL REQUIREMENTS\n- SEO: <title>THE FOREST BREW CAFE AND RESTRO – Cafe in Barasat</title>, meta description (compelling, 160 chars), LocalBusiness JSON-LD schema with real data, canonical URL, H1 with city+category.\n- PERFORMANCE: lazy-load all images below the fold (<img loading=\"lazy\">), no heavy libraries except AOS (CDN, 14kb).\n- ACCESSIBILITY: alt text on every image, aria-labels on all buttons/links, min 44px touch targets, WCAG AA contrast.\n- ZERO BUGS: no mobile overflow, all links functional, no broken images.\n- Use AOS library for scroll animations: <link rel=\"stylesheet\" href=\"https://unpkg.com/aos@2.3.4/dist/aos.css\"> and <script src=\"https://unpkg.com/aos@2.3.4/dist/aos.js\"></script>, initialize with AOS.init({duration:600,easing:'ease-out-cubic',once:true}).\n\n## VERIFIED DATA RULE — THIS IS MANDATORY\n1. Use ONLY facts explicitly present in the BUSINESS DATA section below.\n2. NEVER invent: ratings, review counts, years in business, prices, opening hours, services, certifications, awards, guarantees, statistics, social profiles, or business history.\n3. When data is missing, omit the claim rather than guessing or estimating.\n4. NEVER convert an assumption into a factual statement (e.g. do not write \"5+ Years\" if yearsInBusiness is not in BUSINESS DATA).\n5. Design quality must come from layout, typography, imagery, spacing, interaction, hierarchy, and visual polish — NOT fabricated business facts.\n6. Real customer reviews must only come from the REAL CUSTOMER REVIEWS section. Never create fictional customer names or testimonials.\n7. Never invent phone numbers, WhatsApp numbers, addresses, emails, map links, or social URLs.\n8. The supplied REAL PHOTOS are the actual business photos. Use those exact URLs. Do NOT replace them with stock photos, AI images, or placeholder gradients. If a photo URL fails to load, omit it or use another supplied photo — do NOT substitute unrelated imagery.\n9. Social links: include ONLY verified URLs explicitly present in BUSINESS DATA. Never infer social profile ownership from a similar name. Never output \"#\" as a placeholder for a social link. If a social profile is absent or uncertain, omit it entirely from header, footer, and all other sections.\n\n### MISSING DATA HANDLING\nWhen a requested website section depends on information not present in BUSINESS DATA:\n1. Prefer omitting the unsupported fact entirely.\n2. Never invent an answer merely to fill visual space.\n3. Neutral design is always preferable to fabricated business information.\n4. Contact/WhatsApp/call CTAs may be used when those contact details are verified in BUSINESS DATA.\n5. The website must never imply that an unavailable fact is confirmed.\n\n## CRITICAL REMINDER\nThe output must look like it was built by a ₹5,00,000+ agency. It must make the business owner's jaw drop. Use the real business data — real name, real reviews, real photos, real phone. When the owner sees this demo, they must feel: \"This is exactly what my business needs.\"\n\nOUTPUT: Use Google Stitch (stitch.withgoogle.com). Output ONE complete HTML file. ALL CSS must be inside a <style> tag. ALL JavaScript must be inside a <script> tag. External CDN libraries (e.g. AOS, Google Fonts via @import) are allowed. External image URLs are allowed. Google Maps iframes/links are allowed. No React. No build step. No separate CSS or JS files.",
+      "prompt": "You are an elite, world-class frontend engineer in 2026. Your objective is to build a complete, single-file, production-ready HTML5 website for \"THE FOREST BREW CAFE AND RESTRO\" (Cafe in Barasat). The output MUST look like an award-winning, agency-built website ahead of its time, exactly matching the 2026 aesthetic standards.\n\n## COMPILATION & ARCHITECTURE TARGET\nOutput ONE complete, self-contained HTML5 file.\n- Framework/Styling: Tailwind CSS via CDN (<script src=\"https://cdn.tailwindcss.com\"></script>).\n- Theme Configuration: You MUST include the exact <script>tailwind.config = { ... }</script> block in <head> immediately after the CDN script as specified in the DESIGN SYSTEM.\n- Fallback CSS: In the <style> block in <head>, include the exact fallback CSS rules provided in the DESIGN SYSTEM so colors NEVER fail even if Tailwind CDN takes time to initialize.\n- STRICT CONTRAST RULES:\n  * On light cream/white backgrounds, ALL text MUST be dark (#0F172A). NEVER use text-white on cream!\n  * Sections with white text (Hero, Trust Bar, Location card, Footer) MUST have explicit dark backgrounds (#0F172A).\n- Navigation: Use a centered Floating Glass Pill Header. NO mobile hamburger overlays or uncollapsed checkbox menus.\n- Static Numbers: Write the exact verified numbers directly in the HTML (e.g. 4.7 ★ and 152+). DO NOT render \"0\" with countUp JavaScript that fails in screenshots.\n- Output format: Output ONLY the complete valid HTML file starting immediately with <!DOCTYPE html>. No markdown fences, no explanations.\n\n## MANDATORY DESIGN RULES\n1. FULL-VIEWPORT HERO: The hero section MUST be 100dvh. Use the HERO STOCK PHOTO URL (https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1920&q=85) as the CSS background-image with a rich gradient overlay from the design system.\n2. STRICT CONTRAST RULES:\n   - On light cream/white backgrounds (#F8FAFC / #FFFFFF), ALL text MUST be dark (#0F172A). NEVER use text-white on cream!\n   - Sections with white text (Hero with dark overlay, Trust Bar, Location container, Footer) MUST have explicit dark backgrounds (#0F172A).\n3. STATIC VERIFIED NUMBERS: Write verified numbers directly into the HTML (\"4.7 ★\" and \"152+\"). DO NOT use \"0\" with countUp JavaScript intervals.\n4. MICRO-INTERACTIONS: Every card, button, and image must have smooth CSS transitions and hover states.\n5. FLOATING WHATSAPP BUTTON: Fixed at bottom-right, pulsing glow animation, always visible (https://wa.me/918981113940?text=Hello%20THE%20FOREST%20BREW%20CAFE%20AND%20RESTRO).\n6. SMOOTH SCROLL: html { scroll-behavior: smooth; }\n7. MOBILE FIRST: Zero mobile horizontal overflow, responsive layout for 375px to 1440px.\n8. ZERO BROKEN ELEMENTS: No hamburger drawer overlays or uncollapsed checkbox menus that obscure hero content.\n\n## DESIGN SYSTEM (PROFESSIONAL CLEAN):\n- Fonts: Import from Google Fonts: \"Playfair Display\" for headings, \"Plus Jakarta Sans\" for body.\n- Colors:\n  * Canvas/Body: #F8FAFC\n  * Surface/Cards: #FFFFFF\n  * Primary Accent: #1E3A8A\n  * Secondary Accent: #2563EB\n  * Dark Accent: #0F172A\n  * Main Text: #0F172A\n- Tailwind Configuration Script (REQUIRED IN <head>):\n  <script>\n    tailwind.config = {\n      theme: {\n        extend: {\n          colors: {\n            primary: '#1E3A8A',\n            secondary: '#2563EB',\n            dark: '#0F172A',\n            surface: '#FFFFFF',\n            cream: '#F8FAFC',\n          }\n        }\n      }\n    };\n  </script>\n- Fallback CSS in <style>:\n  body { background-color: #F8FAFC; color: #0F172A; font-family: 'Plus Jakarta Sans', sans-serif; }\n  h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }\n  .bg-primary { background-color: #1E3A8A !important; }\n  .text-primary { color: #1E3A8A !important; }\n  .bg-dark { background-color: #0F172A !important; }\n  .text-dark { color: #0F172A !important; }\n  .bg-surface { background-color: #FFFFFF !important; }\n\n## REQUIRED SECTIONS TO CODE (IN ORDER):\n### 1. FLOATING GLASS PILL NAVBAR\n- Centered floating glass pill: max-w-4xl mx-auto px-6 py-2.5 rounded-full bg-white/90 backdrop-blur-md border border-[#F0E0D0] flex items-center justify-between shadow-sm sticky top-4 z-50.\n- Brand name as stylized wordmark: \"THE FOREST BREW CAFE AND RESTRO\".\n- Nav links (hidden on mobile, visible md+): Home, About, Offerings, Gallery, Contact.\n- Status badge: \"● Open Now\" (emerald pulsing dot).\n- Action CTA: Pill button <a href=\"https://wa.me/918981113940?text=Hello%20THE%20FOREST%20BREW%20CAFE%20AND%20RESTRO\">Reserve a Table</a>.\n- NO mobile hamburger overlays, drawer panels, or checkbox menus!\n\n### 2. HERO SECTION (100dvh)\n- Background: https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1920&q=85 (full-bleed, rich multi-stop overlay).\n- Top frosted pill chip: \"★ 4.7 ★ • 152+ Google Reviews\".\n- H1: Bold typography: \"Taste the Best Pizza in Barasat\".\n- Subtitle: \"Affordable, delicious pizza served in a cozy, welcoming cafe atmosphere\".\n- Dual CTA Buttons: Reserve a Table → (<a href=\"https://wa.me/918981113940?text=Hello%20THE%20FOREST%20BREW%20CAFE%20AND%20RESTRO\">) + View Menu (<a href=\"tel:+918981113940\">).\n- Scroll indicator: \"Scroll to Explore\" with circular down-chevron icon.\n- Bottom organic curved wave divider connecting smoothly to the cream section below.\n\n### 3. FLOATING DARK TRUST BAR\n- Floating dark pill bar overlapping the bottom seam of the hero:\n  bg-[#0F172A] text-white rounded-full py-3.5 px-8 max-w-4xl mx-auto shadow-2xl flex flex-wrap items-center justify-center gap-6.\n- Static values: 4.7 ★ Google Rating | 152+ Real Customer Reviews | Loved by Clients in Barasat 🌿.\n\n### 4. OUR MENU — HANDCRAFTED PIZZAS & SPECIALTIES\n- Header: Tag: \"OUR MENU\", Heading: \"Handcrafted Pizzas & Specialties\", Subtitle: \"Explore verified specialties curated with exceptional quality at THE FOREST BREW CAFE AND RESTRO.\", Action button: <a href=\"https://wa.me/918981113940?text=Hello%20THE%20FOREST%20BREW%20CAFE%20AND%20RESTRO\">Reserve a Table →</a>\n- 2 visual cards (grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4):\n  1. Non-Veg Overload Pizza (Hearty pizza loaded with non-vegetarian toppings): https://lh3.googleusercontent.com/grass-cs/ACvplmOyuhOzdK6rUBmqgii55VNjTG63iM-B4ZI_ICrpVxxGuVeD81dEvx-4md1n__dwzosoSLu6OTWe6p-WzLEY6JjtYojtExbFsdGb-485YGLN1kLNOf3dldC-fmil2_A_Si99ilziGPua_NdH=w1600-h1000-k-no\n  2. Fresh Lime Soda (Refreshing lime-flavored soda): https://lh3.googleusercontent.com/grass-cs/ACvplmOJZHMW6MKqXthZD5mVzlMpcPSXMSP6a8sB71LHbMKFG8gDlmxgTtMamqXqklUoh8cGe1B5gmX0_eIgy4w6woYxY7ApsZXAMG8tOcs-h-NWTLr0TqcxZ2SBkORwAmwqj5lSx6TYHUhrF2s=w1600-h1000-k-no\n\n### 5. ABOUT US (THE FOREST BREW CAFE AND RESTRO)\n- Background: #F8FAFC, text: #0F172A.\n- Narrative: \"THE FOREST BREW CAFE AND RESTRO is a renowned Cafe in Barasat. Affordable, delicious pizza served in a cozy, welcoming cafe atmosphere. Warm, friendly owner and staff. Comfortable, soothing ambience.\"\n- Photo: <img src=\"https://lh3.googleusercontent.com/grass-cs/ACvplmOyuhOzdK6rUBmqgii55VNjTG63iM-B4ZI_ICrpVxxGuVeD81dEvx-4md1n__dwzosoSLu6OTWe6p-WzLEY6JjtYojtExbFsdGb-485YGLN1kLNOf3dldC-fmil2_A_Si99ilziGPua_NdH=w1600-h1000-k-no\" class=\"rounded-2xl shadow-lg object-cover w-full h-[320px]\">\n- Badge: \"🌿 Trusted in Barasat\".\n\n### 6. HIGHLIGHTS — WHAT SETS US APART\n- 4 benefit cards showcasing quality, verified reputation, prime location, and dedicated customer care.\n\n### 7. GALLERY — A GLIMPSE OF THE FOREST BREW CAFE AND RESTRO\n- 4 wide ambient photos in a row.\n\n### 8. CUSTOMER REVIEWS — WHAT OUR CLIENTS SAY\n- 3 clean review cards with 5 stars, real reviews, and reviewer avatars.\n\n### 9. VISIT US — FIND US IN BARASAT\n- Dark container: bg-[#1D2E24] text-white rounded-3xl p-8 lg:p-10 shadow-xl grid md:grid-cols-2 gap-8 items-center.\n- Address: \"Pioneer Park Rd, Barasat, West Bengal 700124\".\n- Hours: \"Sunday, 11 am to 10 pm\".\n- Visual Google Maps preview card: styled vector map graphic with street lines, park patches, and red location pin badge.\n\n### 10. 2026 AGENCY FOOTER & FLOATING WHATSAPP\n- Minimalist dark footer with quick links, copyright © 2026 THE FOREST BREW CAFE AND RESTRO, and floating WhatsApp button.\n\n## VERIFIED BUSINESS DATA (USE ONLY THESE REAL FACTS)\n- Business Name: THE FOREST BREW CAFE AND RESTRO\n- Category: Cafe\n- City / Area: Barasat\n- Address: Pioneer Park Rd, Barasat, West Bengal 700124\n- Phone: +91 8981113940\n- WhatsApp: https://wa.me/918981113940?text=Hello%20THE%20FOREST%20BREW%20CAFE%20AND%20RESTRO\n- Google Rating: 4.7 ★ (152+ reviews)\n- Google Maps URL: https://www.google.com/maps/place/THE+FOREST+BREW+CAFE+AND+RESTRO/data=!4m7!3m6!1s0x39f8a3efd5ffc943:0x69cb28ce914e3aad!8m2!3d22.7237437!4d88.4810658!16s%2Fg%2F11mdfm6n1l!19sChIJQ8n_1e-j-DkRrTpOkc4oy2k?authuser=0&hl=en&g_ep=EgoyMDI2MDkwMi4wIJJjKgBIAVAD&rclk=1\n- Real Google Photos:\n  Photo 1: https://lh3.googleusercontent.com/grass-cs/ACvplmOyuhOzdK6rUBmqgii55VNjTG63iM-B4ZI_ICrpVxxGuVeD81dEvx-4md1n__dwzosoSLu6OTWe6p-WzLEY6JjtYojtExbFsdGb-485YGLN1kLNOf3dldC-fmil2_A_Si99ilziGPua_NdH=w1600-h1000-k-no\n  Photo 2: https://lh3.googleusercontent.com/grass-cs/ACvplmOJZHMW6MKqXthZD5mVzlMpcPSXMSP6a8sB71LHbMKFG8gDlmxgTtMamqXqklUoh8cGe1B5gmX0_eIgy4w6woYxY7ApsZXAMG8tOcs-h-NWTLr0TqcxZ2SBkORwAmwqj5lSx6TYHUhrF2s=w1600-h1000-k-no\n  Photo 3: https://lh3.googleusercontent.com/grass-cs/ACvplmNTU1ClssFaSfq-3-XslyukQYUuM50CECb5VgBuPn23AsbABTcysOHMHy-9t8W43t-bJ5J6ytGMKkC3eLeuQOzIxKbWHiChHduWVgqe-W4Yay7nyofIcHig0vOg9ZS-Pccp03pulyJCGSTI=w1600-h1000-k-no\n  Photo 4: https://lh3.googleusercontent.com/grass-cs/ACvplmM4fm1G4Ql8BGCiUFRJTA2Z5sr1JMbXhqIUd3dJrWBSVr2vpn81CJCHfR7ER14o8dJApr_4TzMNWe_w77GZ4taqqn6iBWIR5jEnnhGomqAnP-9Rc6zFFCuodQdBqK2jH7kKLaSgwCz-CV1D=w1600-h1000-k-no\n\n## CRITICAL EXECUTION RULES\n1. Output ONLY the complete, single-file HTML5 code starting with <!DOCTYPE html>.\n2. Do NOT output any markdown fences, do NOT output explanations.\n3. Every section must be fully written and closed with valid tags.\n4. Never invent fake prices, fake staff bios, or unverified facts.\n5. ZERO HIDDEN SECTIONS: All sections and elements MUST be immediately 100% visible (opacity: 1, visibility: visible). DO NOT hide sections with opacity: 0, translateY, or scroll-reveal CSS classes like .reveal { opacity: 0 } that require JavaScript scrolling to appear.",
       "pitchPoints": [
-        "THE FOREST BREW CAFE AND RESTRO has 152 Google reviews but no website — every competitor with a website is taking their customers.",
-        "A professional website turns their 4.7⭐ rating into a 24/7 sales tool that books clients even when the phone is off.",
-        "Local businesses in Barasat are moving online fast — being first in Cafe here is a real advantage."
+        "With an impressive 4.7-star rating from 152 satisfied guests in Barasat, THE FOREST BREW CAFE AND RESTRO already has great word-of-mouth, but you are losing out on new customers searching online because you don't have an official website.",
+        "A dedicated website with an online digital menu and direct booking system lets you capture high-margin table reservations and party bookings without paying hefty commissions to third-party food delivery aggregators.",
+        "As Barasat's cafe culture grows rapidly, having your own branded digital presence ensures that youth and families searching for the best hangout spots discover your unique forest-themed experience first."
       ],
-      "extraPages": []
+      "extraPages": [
+        {
+          "id": "digital_menu",
+          "icon": "☕",
+          "label": "Interactive Menu",
+          "desc": "Showcase your full range of artisanal brews, mocktails, continental dishes, and daily chef specials with enticing photos and up-to-date pricing."
+        },
+        {
+          "id": "table_reservation",
+          "icon": "🍽️",
+          "label": "Table & Party Booking",
+          "desc": "Allow guests to easily reserve tables for dates or book group celebrations and birthday parties directly without waiting on call confirmations."
+        },
+        {
+          "id": "ambience_gallery",
+          "icon": "🌿",
+          "label": "Forest Vibe Gallery",
+          "desc": "Feature high-resolution photos of your distinctive forest-themed decor and cozy seating to attract Instagram-savvy cafe hoppers."
+        },
+        {
+          "id": "events_and_offers",
+          "icon": "🎉",
+          "label": "Events & Specials",
+          "desc": "Promote weekend live acoustic sessions, festival combos, and student discounts to keep local patrons engaged and visiting regularly."
+        }
+      ],
+      "strategy": {
+        "leadId": "maps-005",
+        "subCategory": {
+          "value": "pizzeria",
+          "evidence": [
+            "\"The must-try is the Non-Veg Overload Pizza… absolutely amazing!\""
+          ],
+          "confidence": "high"
+        },
+        "primarySellingPoint": {
+          "value": "Affordable, delicious pizza served in a cozy, welcoming cafe atmosphere",
+          "evidence": [
+            "\"Very affordable and delicious food with a simple, cozy ambiance—and the owner’s warm behaviour makes it even better. The must-try is the Non-Veg Overload Pizza… absolutely amazing!\""
+          ],
+          "confidence": "high"
+        },
+        "secondarySellingPoints": [
+          "Warm, friendly owner and staff",
+          "Comfortable, soothing ambience",
+          "Great value for the price"
+        ],
+        "targetAudience": "Local families, friends, and budget-conscious pizza lovers seeking a relaxed dining experience in Barasat",
+        "primaryConversionGoal": "table_reservation",
+        "websitePriority": "food_offerings_first",
+        "actualOfferings": [
+          {
+            "name": "Non-Veg Overload Pizza",
+            "category": "pizza",
+            "description": "Hearty pizza loaded with non-vegetarian toppings",
+            "source": "review_text",
+            "evidenceQuote": "\"The must-try is the Non-Veg Overload Pizza… absolutely amazing!\"",
+            "confidence": "high"
+          },
+          {
+            "name": "Fresh Lime Soda",
+            "category": "beverage",
+            "description": "Refreshing lime-flavored soda",
+            "source": "review_text",
+            "evidenceQuote": "\"One item is just extremely good and that is the Fresh Lime Sod\"",
+            "confidence": "high"
+          }
+        ],
+        "reviewThemes": [
+          {
+            "theme": "Cozy ambience",
+            "sentiment": "positive",
+            "mentionCount": 1,
+            "sampleQuotes": [
+              "\"Very affordable and delicious food with a simple, cozy ambiance—and the owner’s warm behaviour makes it even better.\""
+            ]
+          },
+          {
+            "theme": "Friendly staff",
+            "sentiment": "positive",
+            "mentionCount": 1,
+            "sampleQuotes": [
+              "\"The staffs are very friendly and attentive.\""
+            ]
+          },
+          {
+            "theme": "Delicious pizza",
+            "sentiment": "positive",
+            "mentionCount": 1,
+            "sampleQuotes": [
+              "\"The must-try is the Non-Veg Overload Pizza… absolutely amazing!\""
+            ]
+          }
+        ],
+        "recommendedSections": [
+          {
+            "sectionId": "hero",
+            "priority": 1,
+            "headlineOverride": "Taste the Best Pizza in Barasat"
+          },
+          {
+            "sectionId": "trust_bar",
+            "priority": 2
+          },
+          {
+            "sectionId": "signature_offerings",
+            "priority": 3
+          },
+          {
+            "sectionId": "highlights",
+            "priority": 4
+          },
+          {
+            "sectionId": "gallery",
+            "priority": 5
+          },
+          {
+            "sectionId": "reviews",
+            "priority": 6
+          },
+          {
+            "sectionId": "location_hours",
+            "priority": 7
+          },
+          {
+            "sectionId": "footer",
+            "priority": 8
+          }
+        ],
+        "omittedSections": [
+          {
+            "sectionId": "delivery_cta",
+            "reason": "No evidence of delivery service"
+          }
+        ],
+        "visualDirection": {
+          "vibeId": "warm_earthy",
+          "contentDensity": "comfortable",
+          "layoutPersonality": "editorial",
+          "heroStyle": "full_bleed"
+        },
+        "photoRoleRecommendations": [
+          {
+            "photoIndex": 0,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmOyuhOzdK6rUBmqgii55VNjTG63iM-B4ZI_ICrpVxxGuVeD81dEvx-4md1n__dwzosoSLu6OTWe6p-WzLEY6JjtYojtExbFsdGb-485YGLN1kLNOf3dldC-fmil2_A_Si99ilziGPua_NdH=w300-h450-p-k-no",
+            "recommendedRole": "about",
+            "aspectRatioHint": "portrait",
+            "reason": "Featured business photo suitable for split about showcase"
+          },
+          {
+            "photoIndex": 1,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmOJZHMW6MKqXthZD5mVzlMpcPSXMSP6a8sB71LHbMKFG8gDlmxgTtMamqXqklUoh8cGe1B5gmX0_eIgy4w6woYxY7ApsZXAMG8tOcs-h-NWTLr0TqcxZ2SBkORwAmwqj5lSx6TYHUhrF2s=w300-h450-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "portrait",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 2,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmNTU1ClssFaSfq-3-XslyukQYUuM50CECb5VgBuPn23AsbABTcysOHMHy-9t8W43t-bJ5J6ytGMKkC3eLeuQOzIxKbWHiChHduWVgqe-W4Yay7nyofIcHig0vOg9ZS-Pccp03pulyJCGSTI=w300-h450-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "portrait",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 3,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmM4fm1G4Ql8BGCiUFRJTA2Z5sr1JMbXhqIUd3dJrWBSVr2vpn81CJCHfR7ER14o8dJApr_4TzMNWe_w77GZ4taqqn6iBWIR5jEnnhGomqAnP-9Rc6zFFCuodQdBqK2jH7kKLaSgwCz-CV1D=w300-h450-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "portrait",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 4,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmNucj3GKIq-Yxf1xHFcQFRqADuBBWm02jtF2UYd03Jl6_pdBZIVJxqddFELfpHSdgKZ7REPmSm5e5fs_ZfKE87Pnc-GnNfOZcLrp_yd52Lzj0AVLgGN-Y1Lurvi46xR1nnjvEswXNXXodCu=w300-h450-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "portrait",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 5,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmMtnEbiR6pwOqkUT_n4ZNwM0UmzyHwJ9hJwWKfDs1udASA-zNCHcUVrobNNsQqPZI-HPZmIx2UIB-dsK-uCkf-fMLNLxLiNxLyCREG9Sg3vYQcN2wsVg3lGz8_Tr_JVo1nDwVKBV3cfiANW=w300-h225-p-k-no",
+            "recommendedRole": "hero",
+            "aspectRatioHint": "landscape",
+            "reason": "High-resolution landscape photo suitable for hero background"
+          }
+        ],
+        "generatedAt": "2026-10-02T06:52:53.132Z",
+        "source": "groq"
+      }
     },
     "maps-012": {
       "source": "code",
       "style": "ai-decides",
-      "prompt": "You are a WORLD-CLASS web designer and developer in 2026. Your job is to write a complete, production-ready website prompt for a local Indian business. The output MUST look like a premium 2026 agency-built website — NOT a WordPress template from 2015.\n\n## PLATFORM\nUse Google Stitch (stitch.withgoogle.com). Output ONE complete HTML file. ALL CSS must be inside a <style> tag. ALL JavaScript must be inside a <script> tag. External CDN libraries (e.g. AOS, Google Fonts via @import) are allowed. External image URLs are allowed. Google Maps iframes/links are allowed. No React. No build step. No separate CSS or JS files.\n\n## MANDATORY DESIGN RULES — READ EVERY WORD\n1. FULL-VIEWPORT HERO: The hero section MUST be 100dvh. Use the HERO STOCK PHOTO URL provided in the HERO section below as the CSS background-image. Apply a gradient overlay from the design system on top of it. The headline MUST be large (clamp min 2.8rem mobile, 4.5rem desktop). Do NOT use scraped Google Maps photos in the hero.\n2. REAL DESIGN SYSTEM: Use the complete design system below. Apply CSS custom properties (--variables) from the top. Every color, font, and spacing value must come from the system.\n3. MICRO-INTERACTIONS: Every card, button, and image must have a hover state with transform and transition. No static elements.\n4. ANIMATED STATS: Create a \"trust numbers\" section with big animated counters (JS IntersectionObserver + requestAnimationFrame countUp). Show ONLY verified statistics supplied in BUSINESS DATA (rating, review count, years in business). If a stat is not in BUSINESS DATA, omit it entirely — do NOT invent placeholder numbers.\n5. BENTO GRID or MASONRY for services — NOT a boring equal-column grid. At least one card should span 2 columns on desktop for visual interest.\n6. GLASSMORPHISM for overlapping UI elements (testimonial cards, floating badges, stat chips).\n7. GRADIENT TEXT on the main hero headline or key section heading (CSS: background:gradient; -webkit-background-clip:text; color:transparent).\n8. FLOATING WHATSAPP: Fixed bottom-right, pulsing glow animation, always visible.\n9. SMOOTH SCROLL: html { scroll-behavior: smooth; }\n10. MOBILE FIRST: Design for 375px, enhance at 768px, maximize at 1280px. EVERY section must be tested mentally for mobile overflow.\n\n## DESIGN SYSTEM\n\nAI-SELECTED DESIGN SYSTEM — INTELLIGENCE MODE:\n\nSTEP 1 — ANALYZE THE BUSINESS (do this silently before any code):\nLook at the business data provided: category, name, rating, reviews count, about text, and services.\nAsk yourself:\n  - What kind of customer does this business serve? (premium/luxury vs everyday/budget, young vs mature)\n  - What emotion should the website evoke? (trust/calm, energy/excitement, warmth/comfort, prestige/exclusivity)\n  - What industry conventions apply? (clinics = professional clean; gyms = bold energy; restaurants = warm/inviting; salons/boutiques = luxury; tech/startups = modern dark)\n  - NOTE: If real photos are available below, their visual tone (dark/moody vs bright/airy) may inform the style choice. If no photos are available, base the decision on category and business name alone.\n\nSTEP 2 — CHOOSE ONE of these established styles as the primary:\n  A) Professional Trust — clinics, lawyers, CAs, consultants, education\n  B) Sleek Modern Dark — tech, agencies, co-working, modern gyms, studios\n  C) Animated Kinetic — fitness, events, sports, entertainment, youth brands\n  D) Warm Earthy Premium — restaurants, cafes, Ayurveda, wellness, food retail\n  E) Dark Luxury — high-end salons, boutiques, jewellery, premium hotels, spas\n  F) Bold High-Energy — gyms, MMA, street food, nightlife, streetwear\n\nSTEP 3 — STATE YOUR CHOICE (as an HTML comment at the very top of your output):\n<!-- STYLE: [chosen style name] | REASON: [one sentence explaining why this fits this specific business] -->\n\nSTEP 4 — IMPLEMENT THAT STYLE COMPLETELY:\nAfter choosing, implement the full design system for that style. For the hero background: always use the HERO STOCK PHOTO URL provided in the HERO section — apply the appropriate gradient overlay for your chosen style on top of it.\n\n## REQUIRED SECTIONS (do not skip any)\n\n### 1. STICKY HEADER\n- Height: 64px. backdrop-filter: blur(20px). Semi-transparent background.\n- Left: business name as wordmark (bold, styled).\n- Right: Click-to-call phone as <a href=\"tel:+918264449636\">+91 8264449636</a> with a phone icon. WhatsApp icon linking to https://wa.me/918264449636?text=Hello%20He%20%26%20She%20Cafe.\n- Hamburger menu on mobile that slides in a full-screen nav overlay.\n\n### 2. HERO (100dvh)\n- Background: Use this professional stock photo as the full-bleed hero background-image: https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1600&q=85\n  This is a curated stock photo matching the business category — it always looks stunning as a hero.\n  Apply the gradient overlay from the design system on top (dark enough for white text to read clearly).\n  Do NOT use any Google Maps / googleusercontent.com photo URL in the hero background.\n- Floating trust badge (glassmorphism): \"★ 4.2 · 193 Reviews\" — positioned absolute, animated fade-in.\n- H1: Bold, large, gradient or white text: \"Trusted Coffee shop in Barasat\"\n- Sub-headline: short, compelling, max 12 words.\n- TWO CTA buttons: WhatsApp primary, Call secondary. Both with hover animations.\n- Scroll indicator (animated bouncing chevron or dot at bottom).\n\n### 3. ANIMATED TRUST STATS STRIP\n- Dark or accent background (not white).\n- Stats strip items — include ONLY the stats for which real data is available:\n  * 4.2★ Rating\n  * 193+ Reviews\n  * (omit years — not verified; do NOT invent a number)\n  * If fewer than 3 verified stats are available, show fewer stats. Do NOT invent percentages (\"100% Satisfaction\"), vague claims (\"Local Experts\", \"Award Winning\", \"Trusted by 1000+\"), or any statistic that is not in BUSINESS DATA.\n- Each number animates counting up when scrolled into view (JS countUp).\n- Stats separated by vertical dividers or gold/accent lines.\n\n### 4. SERVICES — BENTO GRID LAYOUT\n- No verified services are available in BUSINESS DATA. Do NOT invent a list of services based on the category. Instead, create a neutral 'What We Offer' section with a single card that says the business offers professional services in their category, and a CTA to contact them via WhatsApp for details. Do NOT name specific services that are not in BUSINESS DATA.\n- CSS Grid: on desktop, mix 1-col and 2-col spans. First card spans 2 columns. Others are 1. This creates a bento layout.\n- Each card: icon (SVG or emoji), service name as bold heading, 1 short description sentence, \"Book Now →\" link to https://wa.me/918264449636?text=Hello%20He%20%26%20She%20Cafe.\n- Cards use the glassmorphism/card style from the design system.\n- Hover: lift + glow effect.\n\n### 5. ABOUT / STORY (SPLIT SCREEN)\n- Left side: Photo 1 as the featured image (full height, object-fit cover). Photo 2 overlapping at a slight angle/offset below it for visual depth. These are the real business photos — they create authenticity.\n- Right side: \"Our Story\" label, H2, the about text, a \"Speak with Us\" button.\n- No verified about/story text exists in BUSINESS DATA. Do NOT invent: business history, founder story, years in business, mission statement, staff claims, or achievements. Instead, create a visually strong neutral section with only verified facts (name, category, city) and a clear CTA: \"Get in touch to learn about us\" linking to the WhatsApp link. The section must look premium but must not fabricate any history or claims.\n- On mobile: left side stacks above text.\n\n### 6. CUSTOMER TESTIMONIALS (CARDS WITH GLASSMORPHISM)\n\nREAL CUSTOMER REVIEWS (use these exact quotes):\n  - \"He & She Cafe is a cozy place to relax and hang out. The ambience is pleasant and comfortable, perfect for spending time with friends. The coffee and snacks were good, though a bit\" — Somnath Mistri (5★)\n  - \"Good place for hang out. Momo is very tasty. Tea is also good. Small but well decorated. Only drawback is stray dogs enter and can seat beneath your table.\" — Saumya Basu (4★)\n  - \"It's a small pocket friendly cafe...\nThey provide good food.\nWe ordered tea, chicken sandwich, double egg toast, chicken momo, chicken pakora, chicken burger.\" — Moumita Das (4★)\n- Layout: 3-column grid on desktop, 1-column on mobile.\n- Each card: giant quote mark (CSS content, styled in accent color), star rating (show ★ symbols), review text (italic), reviewer name bold.\n- Cards: glassmorphism style from design system.\n- Add subtle fade-up animation (AOS or CSS @keyframes).\n\n### 7. FAQ ACCORDION\n- 5 questions relevant to Coffee shop in Barasat.\n- Each item: question as bold clickable header, answer expands smoothly (CSS max-height transition or JS toggle).\n- Arrow icon rotates 180° when open.\n- CRITICAL FAQ RULE: Questions may be category-relevant, but answers must use ONLY verified information in BUSINESS DATA. If the answer is not in BUSINESS DATA, use: \"Please contact us directly for the latest information\" and link to https://wa.me/918264449636?text=Hello%20He%20%26%20She%20Cafe. Do NOT assume or invent: specific prices, parking availability, online/offline consultation, booking requirements, payment methods, emergency services, specific procedures, or opening hours. Never state as fact anything that is not explicitly in BUSINESS DATA.\n\n### 8. LOCATION + HOURS\n- Two-column: Left = embedded Google Maps iframe using link: https://www.google.com/maps/place/He+%26+She+Cafe/data=!4m7!3m6!1s0x39f899544bc394d5:0x31691eb425b4380d!8m2!3d22.726844!4d88.4759276!16s%2Fg%2F11p66hq_6w!19sChIJ1ZTDS1SZ-DkRDTi0JbQeaTE?authuser=0&hl=en&g_ep=EgoyMDI2MDkwMi4wIJJjKgBIAVAD&rclk=1, height 350px, border-radius from design system.\n- Right = Address card with icon, Hours list with icon.\n\nBUSINESS HOURS:\n  - Sunday, 3:30 to 10:30 pm\n- \"Get Directions\" button linking to Google Maps.\n\n### 9. FINAL CTA SECTION\n- Accent/dark colored background (not white — use the primary or dark color from design system).\n- Bold large closing headline: \"Ready to get started?\"\n- Sub-text: one compelling sentence referencing Barasat.\n- Two buttons: WhatsApp + Call. Both large and prominent.\n- Optional: subtle background pattern or noise texture.\n\n### 10. FOOTER\n- Dark background. 3–4 columns on desktop.\n- Col 1: Business name + short tagline + social links: (no verified social profiles — show only the WhatsApp link and phone number; do NOT add Facebook, Instagram, YouTube, or other social icons unless their URLs are in BUSINESS DATA)\n- Col 2: Quick links (Home, Services, About, Contact)\n- Col 3: Contact info — address with 📍 icon, phone with 📞 as click-to-call, WhatsApp link.\n- Bottom bar: © 2026 He & She Cafe. All rights reserved. | Privacy Policy | Terms\n- (No verified Facebook URL — do NOT include a Facebook link or '#' placeholder)\n\n## BUSINESS DATA\n- Name: He & She Cafe\n- Category: Coffee shop\n- Address: PFGG+P9M, SH 2, Bijaylakshmi Colony, Chkravartipara, Nabapally, Kolkata, West Bengal 700126, Barasat, West Bengal\n- Rating: 4.2 ⭐ (193 reviews)\n- Phone: +91 8264449636\n- WhatsApp link: https://wa.me/918264449636?text=Hello%20He%20%26%20She%20Cafe\n- Tel link: tel:+918264449636\n- Google Maps: https://www.google.com/maps/place/He+%26+She+Cafe/data=!4m7!3m6!1s0x39f899544bc394d5:0x31691eb425b4380d!8m2!3d22.726844!4d88.4759276!16s%2Fg%2F11p66hq_6w!19sChIJ1ZTDS1SZ-DkRDTi0JbQeaTE?authuser=0&hl=en&g_ep=EgoyMDI2MDkwMi4wIJJjKgBIAVAD&rclk=1\n- Facebook: not available (do NOT invent or include a Facebook URL)\n\nREAL BUSINESS PHOTOS FROM GOOGLE MAPS (6 available):\n  Photo 1: https://lh3.googleusercontent.com/grass-cs/ACvplmMhkq0tsBx7dzyC7XleFxGs6kFQF33thFmeX6x4akNin_NA4nAkHQUmZN3sb1b7YyMEJ-d3IER7gkiRfua75m_B-pmT_320ccjT2od1DtopPWJuf16MvzSHwUQJAzmbl-wV8kuC09JXKC_a=w800-h600-k-no\n  Photo 2: https://lh3.googleusercontent.com/grass-cs/ACvplmPRbm-dlcqBgsFIm0cPYnU97uKFD1ZUa_eDKIVL5fehnKAjG-kSO8o1tM-ikCI8qC1mRzPEeUVrcNUdMWLufgc00ooQqoEQoluyxMPBVRFfRs3IMlfbqS3MND1UvilPVp3-N7m3b0uJbkA=w800-h600-k-no\n  Photo 3: https://lh3.googleusercontent.com/grass-cs/ACvplmORIThQHutb_BJ0VNI_GaVWUbVr-5Vc3w8kkthzzg01cQizCer5u_z_Sec5DZmTzuUz3Bp8PIKUcgDTLR4e0bU6PyQD-QDi3YB39tVtox2fRii8EsDFdM7vqL7Wx9_cd0NA2MHYBbQVZmBG=w800-h600-k-no\n  Photo 4: https://lh3.googleusercontent.com/grass-cs/ACvplmMYgtrqW_05MKW6LmczNtPKfk6L-7x8K9pzUIe_-gAFOx1QYFmk7lTp0Map47tcZ4lsuvDKnxzuLXLZRf3jN6lVE9LYtsCqxPQlpSGLKSu_UXeVi_ILnDINiw1fx0sY1DjjHjGLXpVKifXY=w800-h600-k-no\n  Photo 5: https://lh3.googleusercontent.com/grass-cs/ACvplmMBd4GJmwO3gFPRKsHxQ75i87kzNJR-yCjWeUUXKzhBV_mVdLs1_DHOx9JkbUIIMFSHY1UqxkSjB2tB3caVJwnjrQhR3FmFmXrQmoPazRxws3JUm-u3tfGUnunpFVGtQsyotV7NBA=w800-h600-k-no\n  Photo 6: https://lh3.googleusercontent.com/grass-cs/ACvplmOijh6h5dPpHJ2IkvNLSLcjRN59KRdDm15JUfKr71hu4K53b2yhRZWcdDW7-oatHWDIe9px9UyfxmKpZiDjMHqG8RK0hq7YG0oXBKvSsBC9z2QC3M3V8upJRhZWD81xmJ5E16s=w800-h600-k-no\nPHOTO PLACEMENT RULES — READ CAREFULLY:\n- These are customer-panel photos from Google Maps. They show the real business.\n- Photo 1 (or whichever is listed first) = the FEATURED photo for the About section left panel.\n- All photos = use in the Gallery page.\n- DO NOT use these photos as the hero background. The hero has its own professional stock photo (see HERO section below).\n- Never repeat the same URL in two sections.\n- If a section needs Photo 3 but only 6 exist, use a CSS gradient from the design system.\nBUSINESS HOURS:\n  - Sunday, 3:30 to 10:30 pm\nREAL CUSTOMER REVIEWS (use these exact quotes):\n  - \"He & She Cafe is a cozy place to relax and hang out. The ambience is pleasant and comfortable, perfect for spending time with friends. The coffee and snacks were good, though a bit\" — Somnath Mistri (5★)\n  - \"Good place for hang out. Momo is very tasty. Tea is also good. Small but well decorated. Only drawback is stray dogs enter and can seat beneath your table.\" — Saumya Basu (4★)\n  - \"It's a small pocket friendly cafe...\nThey provide good food.\nWe ordered tea, chicken sandwich, double egg toast, chicken momo, chicken pakora, chicken burger.\" — Moumita Das (4★)\n\n## TECHNICAL REQUIREMENTS\n- SEO: <title>He & She Cafe – Coffee shop in Barasat</title>, meta description (compelling, 160 chars), LocalBusiness JSON-LD schema with real data, canonical URL, H1 with city+category.\n- PERFORMANCE: lazy-load all images below the fold (<img loading=\"lazy\">), no heavy libraries except AOS (CDN, 14kb).\n- ACCESSIBILITY: alt text on every image, aria-labels on all buttons/links, min 44px touch targets, WCAG AA contrast.\n- ZERO BUGS: no mobile overflow, all links functional, no broken images.\n- Use AOS library for scroll animations: <link rel=\"stylesheet\" href=\"https://unpkg.com/aos@2.3.4/dist/aos.css\"> and <script src=\"https://unpkg.com/aos@2.3.4/dist/aos.js\"></script>, initialize with AOS.init({duration:600,easing:'ease-out-cubic',once:true}).\n\n## VERIFIED DATA RULE — THIS IS MANDATORY\n1. Use ONLY facts explicitly present in the BUSINESS DATA section below.\n2. NEVER invent: ratings, review counts, years in business, prices, opening hours, services, certifications, awards, guarantees, statistics, social profiles, or business history.\n3. When data is missing, omit the claim rather than guessing or estimating.\n4. NEVER convert an assumption into a factual statement (e.g. do not write \"5+ Years\" if yearsInBusiness is not in BUSINESS DATA).\n5. Design quality must come from layout, typography, imagery, spacing, interaction, hierarchy, and visual polish — NOT fabricated business facts.\n6. Real customer reviews must only come from the REAL CUSTOMER REVIEWS section. Never create fictional customer names or testimonials.\n7. Never invent phone numbers, WhatsApp numbers, addresses, emails, map links, or social URLs.\n8. The supplied REAL PHOTOS are the actual business photos. Use those exact URLs. Do NOT replace them with stock photos, AI images, or placeholder gradients. If a photo URL fails to load, omit it or use another supplied photo — do NOT substitute unrelated imagery.\n9. Social links: include ONLY verified URLs explicitly present in BUSINESS DATA. Never infer social profile ownership from a similar name. Never output \"#\" as a placeholder for a social link. If a social profile is absent or uncertain, omit it entirely from header, footer, and all other sections.\n\n### MISSING DATA HANDLING\nWhen a requested website section depends on information not present in BUSINESS DATA:\n1. Prefer omitting the unsupported fact entirely.\n2. Never invent an answer merely to fill visual space.\n3. Neutral design is always preferable to fabricated business information.\n4. Contact/WhatsApp/call CTAs may be used when those contact details are verified in BUSINESS DATA.\n5. The website must never imply that an unavailable fact is confirmed.\n\n## CRITICAL REMINDER\nThe output must look like it was built by a ₹5,00,000+ agency. It must make the business owner's jaw drop. Use the real business data — real name, real reviews, real photos, real phone. When the owner sees this demo, they must feel: \"This is exactly what my business needs.\"\n\nOUTPUT: Use Google Stitch (stitch.withgoogle.com). Output ONE complete HTML file. ALL CSS must be inside a <style> tag. ALL JavaScript must be inside a <script> tag. External CDN libraries (e.g. AOS, Google Fonts via @import) are allowed. External image URLs are allowed. Google Maps iframes/links are allowed. No React. No build step. No separate CSS or JS files.",
+      "prompt": "You are an elite, world-class frontend engineer in 2026. Your objective is to build a complete, single-file, production-ready HTML5 website for \"He & She Cafe\" (Coffee shop in Barasat). The output MUST look like an award-winning, agency-built website ahead of its time, exactly matching the 2026 aesthetic standards.\n\n## COMPILATION & ARCHITECTURE TARGET\nOutput ONE complete, self-contained HTML5 file.\n- Framework/Styling: Tailwind CSS via CDN (<script src=\"https://cdn.tailwindcss.com\"></script>).\n- Theme Configuration: You MUST include the exact <script>tailwind.config = { ... }</script> block in <head> immediately after the CDN script as specified in the DESIGN SYSTEM.\n- Fallback CSS: In the <style> block in <head>, include the exact fallback CSS rules provided in the DESIGN SYSTEM so colors NEVER fail even if Tailwind CDN takes time to initialize.\n- STRICT CONTRAST RULES:\n  * On light cream/white backgrounds, ALL text MUST be dark (#0F172A). NEVER use text-white on cream!\n  * Sections with white text (Hero, Trust Bar, Location card, Footer) MUST have explicit dark backgrounds (#0F172A).\n- Navigation: Use a centered Floating Glass Pill Header. NO mobile hamburger overlays or uncollapsed checkbox menus.\n- Static Numbers: Write the exact verified numbers directly in the HTML (e.g. 4.2 ★ and 193+). DO NOT render \"0\" with countUp JavaScript that fails in screenshots.\n- Output format: Output ONLY the complete valid HTML file starting immediately with <!DOCTYPE html>. No markdown fences, no explanations.\n\n## MANDATORY DESIGN RULES\n1. FULL-VIEWPORT HERO: The hero section MUST be 100dvh. Use the HERO STOCK PHOTO URL (https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1920&q=85) as the CSS background-image with a rich gradient overlay from the design system.\n2. STRICT CONTRAST RULES:\n   - On light cream/white backgrounds (#F8FAFC / #FFFFFF), ALL text MUST be dark (#0F172A). NEVER use text-white on cream!\n   - Sections with white text (Hero with dark overlay, Trust Bar, Location container, Footer) MUST have explicit dark backgrounds (#0F172A).\n3. STATIC VERIFIED NUMBERS: Write verified numbers directly into the HTML (\"4.2 ★\" and \"193+\"). DO NOT use \"0\" with countUp JavaScript intervals.\n4. MICRO-INTERACTIONS: Every card, button, and image must have smooth CSS transitions and hover states.\n5. FLOATING WHATSAPP BUTTON: Fixed at bottom-right, pulsing glow animation, always visible (https://wa.me/918264449636?text=Hello%20He%20%26%20She%20Cafe).\n6. SMOOTH SCROLL: html { scroll-behavior: smooth; }\n7. MOBILE FIRST: Zero mobile horizontal overflow, responsive layout for 375px to 1440px.\n8. ZERO BROKEN ELEMENTS: No hamburger drawer overlays or uncollapsed checkbox menus that obscure hero content.\n\n## DESIGN SYSTEM (PROFESSIONAL CLEAN):\n- Fonts: Import from Google Fonts: \"Playfair Display\" for headings, \"Plus Jakarta Sans\" for body.\n- Colors:\n  * Canvas/Body: #F8FAFC\n  * Surface/Cards: #FFFFFF\n  * Primary Accent: #1E3A8A\n  * Secondary Accent: #2563EB\n  * Dark Accent: #0F172A\n  * Main Text: #0F172A\n- Tailwind Configuration Script (REQUIRED IN <head>):\n  <script>\n    tailwind.config = {\n      theme: {\n        extend: {\n          colors: {\n            primary: '#1E3A8A',\n            secondary: '#2563EB',\n            dark: '#0F172A',\n            surface: '#FFFFFF',\n            cream: '#F8FAFC',\n          }\n        }\n      }\n    };\n  </script>\n- Fallback CSS in <style>:\n  body { background-color: #F8FAFC; color: #0F172A; font-family: 'Plus Jakarta Sans', sans-serif; }\n  h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }\n  .bg-primary { background-color: #1E3A8A !important; }\n  .text-primary { color: #1E3A8A !important; }\n  .bg-dark { background-color: #0F172A !important; }\n  .text-dark { color: #0F172A !important; }\n  .bg-surface { background-color: #FFFFFF !important; }\n\n## REQUIRED SECTIONS TO CODE (IN ORDER):\n### 1. FLOATING GLASS PILL NAVBAR\n- Centered floating glass pill: max-w-4xl mx-auto px-6 py-2.5 rounded-full bg-white/90 backdrop-blur-md border border-[#F0E0D0] flex items-center justify-between shadow-sm sticky top-4 z-50.\n- Brand name as stylized wordmark: \"He & She Cafe\".\n- Nav links (hidden on mobile, visible md+): Home, About, Offerings, Gallery, Contact.\n- Status badge: \"● Open Now\" (emerald pulsing dot).\n- Action CTA: Pill button <a href=\"https://wa.me/918264449636?text=Hello%20He%20%26%20She%20Cafe\">Reserve a Table</a>.\n- NO mobile hamburger overlays, drawer panels, or checkbox menus!\n\n### 2. HERO SECTION (100dvh)\n- Background: https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1920&q=85 (full-bleed, rich multi-stop overlay).\n- Top frosted pill chip: \"★ 4.2 ★ • 193+ Google Reviews\".\n- H1: Bold typography: \"Artisanal Coffee & Cozy Atmosphere in Barasat\".\n- Subtitle: \"Top-rated Coffee shop in Barasat with 193+ verified Google reviews\".\n- Dual CTA Buttons: Reserve a Table → (<a href=\"https://wa.me/918264449636?text=Hello%20He%20%26%20She%20Cafe\">) + View Menu (<a href=\"tel:+918264449636\">).\n- Scroll indicator: \"Scroll to Explore\" with circular down-chevron icon.\n- Bottom organic curved wave divider connecting smoothly to the cream section below.\n\n### 3. FLOATING DARK TRUST BAR\n- Floating dark pill bar overlapping the bottom seam of the hero:\n  bg-[#0F172A] text-white rounded-full py-3.5 px-8 max-w-4xl mx-auto shadow-2xl flex flex-wrap items-center justify-center gap-6.\n- Static values: 4.2 ★ Google Rating | 193+ Real Customer Reviews | Loved by Clients in Barasat 🌿.\n\n### 4. OUR MENU — ARTISANAL COFFEE & FRESH BAKES\n- Header: Tag: \"OUR MENU\", Heading: \"Artisanal Coffee & Fresh Bakes\", Subtitle: \"Explore verified specialties curated with exceptional quality at He & She Cafe.\", Action button: <a href=\"https://wa.me/918264449636?text=Hello%20He%20%26%20She%20Cafe\">Reserve a Table →</a>\n- 5 visual cards (grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4):\n  1. Chicken (\"It's a small pocket friendly cafe...\nThey provide good food.\nWe ordere...\"): https://lh3.googleusercontent.com/grass-cs/ACvplmMhkq0tsBx7dzyC7XleFxGs6kFQF33thFmeX6x4akNin_NA4nAkHQUmZN3sb1b7YyMEJ-d3IER7gkiRfua75m_B-pmT_320ccjT2od1DtopPWJuf16MvzSHwUQJAzmbl-wV8kuC09JXKC_a=w1600-h1000-k-no\n  2. Burger (\"It's a small pocket friendly cafe...\nThey provide good food.\nWe ordere...\"): https://lh3.googleusercontent.com/grass-cs/ACvplmPRbm-dlcqBgsFIm0cPYnU97uKFD1ZUa_eDKIVL5fehnKAjG-kSO8o1tM-ikCI8qC1mRzPEeUVrcNUdMWLufgc00ooQqoEQoluyxMPBVRFfRs3IMlfbqS3MND1UvilPVp3-N7m3b0uJbkA=w1600-h1000-k-no\n  3. Coffee (\"He & She Cafe is a cozy place to relax and hang out. The ambience is p...\"): https://lh3.googleusercontent.com/grass-cs/ACvplmORIThQHutb_BJ0VNI_GaVWUbVr-5Vc3w8kkthzzg01cQizCer5u_z_Sec5DZmTzuUz3Bp8PIKUcgDTLR4e0bU6PyQD-QDi3YB39tVtox2fRii8EsDFdM7vqL7Wx9_cd0NA2MHYBbQVZmBG=w1600-h1000-k-no\n  4. Tea (\"Good place for hang out. Momo is very tasty. Tea is also good. Small b...\"): https://lh3.googleusercontent.com/grass-cs/ACvplmMYgtrqW_05MKW6LmczNtPKfk6L-7x8K9pzUIe_-gAFOx1QYFmk7lTp0Map47tcZ4lsuvDKnxzuLXLZRf3jN6lVE9LYtsCqxPQlpSGLKSu_UXeVi_ILnDINiw1fx0sY1DjjHjGLXpVKifXY=w1600-h1000-k-no\n  5. Sandwich (\"It's a small pocket friendly cafe...\nThey provide good food.\nWe ordere...\"): https://lh3.googleusercontent.com/grass-cs/ACvplmMBd4GJmwO3gFPRKsHxQ75i87kzNJR-yCjWeUUXKzhBV_mVdLs1_DHOx9JkbUIIMFSHY1UqxkSjB2tB3caVJwnjrQhR3FmFmXrQmoPazRxws3JUm-u3tfGUnunpFVGtQsyotV7NBA=w1600-h1000-k-no\n\n### 5. ABOUT US (HE & SHE CAFE)\n- Background: #F8FAFC, text: #0F172A.\n- Narrative: \"He & She Cafe is a renowned Coffee shop in Barasat. Top-rated Coffee shop in Barasat with 193+ verified Google reviews. Specializing in Chicken. Specializing in Burger.\"\n- Photo: <img src=\"https://lh3.googleusercontent.com/grass-cs/ACvplmMhkq0tsBx7dzyC7XleFxGs6kFQF33thFmeX6x4akNin_NA4nAkHQUmZN3sb1b7YyMEJ-d3IER7gkiRfua75m_B-pmT_320ccjT2od1DtopPWJuf16MvzSHwUQJAzmbl-wV8kuC09JXKC_a=w1600-h1000-k-no\" class=\"rounded-2xl shadow-lg object-cover w-full h-[320px]\">\n- Badge: \"🌿 Trusted in Barasat\".\n\n### 6. HIGHLIGHTS — WHAT SETS US APART\n- 4 benefit cards showcasing quality, verified reputation, prime location, and dedicated customer care.\n\n### 7. GALLERY — A GLIMPSE OF HE & SHE CAFE\n- 4 wide ambient photos in a row.\n\n### 8. CUSTOMER REVIEWS — WHAT OUR CLIENTS SAY\n- 3 clean review cards with 5 stars, real reviews, and reviewer avatars.\n\n### 9. VISIT US — FIND US IN BARASAT\n- Dark container: bg-[#1D2E24] text-white rounded-3xl p-8 lg:p-10 shadow-xl grid md:grid-cols-2 gap-8 items-center.\n- Address: \"PFGG+P9M, SH 2, Bijaylakshmi Colony, Chkravartipara, Nabapally, Kolkata, West Bengal 700126\".\n- Hours: \"Sunday, 3:30 to 10:30 pm\".\n- Visual Google Maps preview card: styled vector map graphic with street lines, park patches, and red location pin badge.\n\n### 10. 2026 AGENCY FOOTER & FLOATING WHATSAPP\n- Minimalist dark footer with quick links, copyright © 2026 He & She Cafe, and floating WhatsApp button.\n\n## VERIFIED BUSINESS DATA (USE ONLY THESE REAL FACTS)\n- Business Name: He & She Cafe\n- Category: Coffee shop\n- City / Area: Barasat\n- Address: PFGG+P9M, SH 2, Bijaylakshmi Colony, Chkravartipara, Nabapally, Kolkata, West Bengal 700126\n- Phone: +91 8264449636\n- WhatsApp: https://wa.me/918264449636?text=Hello%20He%20%26%20She%20Cafe\n- Google Rating: 4.2 ★ (193+ reviews)\n- Google Maps URL: https://www.google.com/maps/place/He+%26+She+Cafe/data=!4m7!3m6!1s0x39f899544bc394d5:0x31691eb425b4380d!8m2!3d22.726844!4d88.4759276!16s%2Fg%2F11p66hq_6w!19sChIJ1ZTDS1SZ-DkRDTi0JbQeaTE?authuser=0&hl=en&g_ep=EgoyMDI2MDkwMi4wIJJjKgBIAVAD&rclk=1\n- Real Google Photos:\n  Photo 1: https://lh3.googleusercontent.com/grass-cs/ACvplmMhkq0tsBx7dzyC7XleFxGs6kFQF33thFmeX6x4akNin_NA4nAkHQUmZN3sb1b7YyMEJ-d3IER7gkiRfua75m_B-pmT_320ccjT2od1DtopPWJuf16MvzSHwUQJAzmbl-wV8kuC09JXKC_a=w1600-h1000-k-no\n  Photo 2: https://lh3.googleusercontent.com/grass-cs/ACvplmPRbm-dlcqBgsFIm0cPYnU97uKFD1ZUa_eDKIVL5fehnKAjG-kSO8o1tM-ikCI8qC1mRzPEeUVrcNUdMWLufgc00ooQqoEQoluyxMPBVRFfRs3IMlfbqS3MND1UvilPVp3-N7m3b0uJbkA=w1600-h1000-k-no\n  Photo 3: https://lh3.googleusercontent.com/grass-cs/ACvplmORIThQHutb_BJ0VNI_GaVWUbVr-5Vc3w8kkthzzg01cQizCer5u_z_Sec5DZmTzuUz3Bp8PIKUcgDTLR4e0bU6PyQD-QDi3YB39tVtox2fRii8EsDFdM7vqL7Wx9_cd0NA2MHYBbQVZmBG=w1600-h1000-k-no\n  Photo 4: https://lh3.googleusercontent.com/grass-cs/ACvplmMYgtrqW_05MKW6LmczNtPKfk6L-7x8K9pzUIe_-gAFOx1QYFmk7lTp0Map47tcZ4lsuvDKnxzuLXLZRf3jN6lVE9LYtsCqxPQlpSGLKSu_UXeVi_ILnDINiw1fx0sY1DjjHjGLXpVKifXY=w1600-h1000-k-no\n\n## CRITICAL EXECUTION RULES\n1. Output ONLY the complete, single-file HTML5 code starting with <!DOCTYPE html>.\n2. Do NOT output any markdown fences, do NOT output explanations.\n3. Every section must be fully written and closed with valid tags.\n4. Never invent fake prices, fake staff bios, or unverified facts.\n5. ZERO HIDDEN SECTIONS: All sections and elements MUST be immediately 100% visible (opacity: 1, visibility: visible). DO NOT hide sections with opacity: 0, translateY, or scroll-reveal CSS classes like .reveal { opacity: 0 } that require JavaScript scrolling to appear.",
       "pitchPoints": [
         "He & She Cafe has 193 Google reviews but no website — every competitor with a website is taking their customers.",
         "A professional website turns their 4.2⭐ rating into a 24/7 sales tool that books clients even when the phone is off.",
         "Local businesses in Barasat are moving online fast — being first in Coffee shop here is a real advantage."
       ],
-      "extraPages": []
+      "extraPages": [],
+      "strategy": {
+        "leadId": "maps-012",
+        "subCategory": {
+          "value": "specialty_cafe",
+          "evidence": [
+            "name_or_cat_keyword:cafe"
+          ],
+          "confidence": "medium"
+        },
+        "primarySellingPoint": {
+          "value": "Top-rated Coffee shop in Barasat with 193+ verified Google reviews",
+          "evidence": [
+            "lead_rating",
+            "review_count"
+          ],
+          "confidence": "high"
+        },
+        "secondarySellingPoints": [
+          "Specializing in Chicken",
+          "Specializing in Burger",
+          "Specializing in Coffee"
+        ],
+        "targetAudience": "Patrons, diners, and families living in or visiting Barasat",
+        "primaryConversionGoal": "table_reservation",
+        "websitePriority": "food_offerings_first",
+        "actualOfferings": [
+          {
+            "name": "Chicken",
+            "category": "Customer Favorite",
+            "source": "review_text",
+            "evidenceQuote": "It's a small pocket friendly cafe...\nThey provide good food.\nWe ordered tea, chicken sandwich, doubl",
+            "confidence": "medium"
+          },
+          {
+            "name": "Burger",
+            "category": "Customer Favorite",
+            "source": "review_text",
+            "evidenceQuote": "It's a small pocket friendly cafe...\nThey provide good food.\nWe ordered tea, chicken sandwich, doubl",
+            "confidence": "medium"
+          },
+          {
+            "name": "Coffee",
+            "category": "Customer Favorite",
+            "source": "review_text",
+            "evidenceQuote": "He & She Cafe is a cozy place to relax and hang out. The ambience is pleasant and comfortable, perfe",
+            "confidence": "medium"
+          },
+          {
+            "name": "Tea",
+            "category": "Customer Favorite",
+            "source": "review_text",
+            "evidenceQuote": "Good place for hang out. Momo is very tasty. Tea is also good. Small but well decorated. Only drawba",
+            "confidence": "medium"
+          },
+          {
+            "name": "Sandwich",
+            "category": "Customer Favorite",
+            "source": "review_text",
+            "evidenceQuote": "It's a small pocket friendly cafe...\nThey provide good food.\nWe ordered tea, chicken sandwich, doubl",
+            "confidence": "medium"
+          }
+        ],
+        "reviewThemes": [],
+        "recommendedSections": [
+          {
+            "sectionId": "navbar",
+            "priority": 1
+          },
+          {
+            "sectionId": "hero",
+            "priority": 2
+          },
+          {
+            "sectionId": "trust_bar",
+            "priority": 3
+          },
+          {
+            "sectionId": "signature_offerings",
+            "priority": 4
+          },
+          {
+            "sectionId": "about_story",
+            "priority": 6
+          },
+          {
+            "sectionId": "gallery",
+            "priority": 7
+          },
+          {
+            "sectionId": "reviews",
+            "priority": 8
+          },
+          {
+            "sectionId": "location_hours",
+            "priority": 9
+          },
+          {
+            "sectionId": "footer",
+            "priority": 10
+          }
+        ],
+        "omittedSections": [],
+        "visualDirection": {
+          "vibeId": "warm_earthy",
+          "contentDensity": "comfortable",
+          "layoutPersonality": "editorial",
+          "heroStyle": "full_bleed"
+        },
+        "photoRoleRecommendations": [
+          {
+            "photoIndex": 0,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmMhkq0tsBx7dzyC7XleFxGs6kFQF33thFmeX6x4akNin_NA4nAkHQUmZN3sb1b7YyMEJ-d3IER7gkiRfua75m_B-pmT_320ccjT2od1DtopPWJuf16MvzSHwUQJAzmbl-wV8kuC09JXKC_a=w300-h225-p-k-no",
+            "recommendedRole": "hero",
+            "aspectRatioHint": "landscape",
+            "reason": "High-resolution landscape photo suitable for hero background"
+          },
+          {
+            "photoIndex": 1,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmPRbm-dlcqBgsFIm0cPYnU97uKFD1ZUa_eDKIVL5fehnKAjG-kSO8o1tM-ikCI8qC1mRzPEeUVrcNUdMWLufgc00ooQqoEQoluyxMPBVRFfRs3IMlfbqS3MND1UvilPVp3-N7m3b0uJbkA=w300-h225-p-k-no",
+            "recommendedRole": "about",
+            "aspectRatioHint": "landscape",
+            "reason": "Featured business photo suitable for split about showcase"
+          },
+          {
+            "photoIndex": 2,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmORIThQHutb_BJ0VNI_GaVWUbVr-5Vc3w8kkthzzg01cQizCer5u_z_Sec5DZmTzuUz3Bp8PIKUcgDTLR4e0bU6PyQD-QDi3YB39tVtox2fRii8EsDFdM7vqL7Wx9_cd0NA2MHYBbQVZmBG=w300-h225-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "landscape",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 3,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmMYgtrqW_05MKW6LmczNtPKfk6L-7x8K9pzUIe_-gAFOx1QYFmk7lTp0Map47tcZ4lsuvDKnxzuLXLZRf3jN6lVE9LYtsCqxPQlpSGLKSu_UXeVi_ILnDINiw1fx0sY1DjjHjGLXpVKifXY=w300-h225-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "landscape",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 4,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmMBd4GJmwO3gFPRKsHxQ75i87kzNJR-yCjWeUUXKzhBV_mVdLs1_DHOx9JkbUIIMFSHY1UqxkSjB2tB3caVJwnjrQhR3FmFmXrQmoPazRxws3JUm-u3tfGUnunpFVGtQsyotV7NBA=w300-h450-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "portrait",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 5,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmOijh6h5dPpHJ2IkvNLSLcjRN59KRdDm15JUfKr71hu4K53b2yhRZWcdDW7-oatHWDIe9px9UyfxmKpZiDjMHqG8RK0hq7YG0oXBKvSsBC9z2QC3M3V8upJRhZWD81xmJ5E16s=w300-h450-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "portrait",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          }
+        ],
+        "generatedAt": "2026-10-02T10:07:27.268Z",
+        "source": "deterministic_fallback"
+      }
+    },
+    "maps-020": {
+      "source": "code",
+      "style": "ai-decides",
+      "prompt": "You are an elite, world-class frontend engineer in 2026. Your objective is to build a complete, single-file, production-ready HTML5 website for \"Ishan's Cafe & More\" (Biryani restaurant in Barasat). The output MUST look like an award-winning, agency-built website ahead of its time, exactly matching the 2026 aesthetic standards.\n\n## COMPILATION & ARCHITECTURE TARGET\nOutput ONE complete, self-contained HTML5 file.\n- Framework/Styling: Tailwind CSS via CDN (<script src=\"https://cdn.tailwindcss.com\"></script>).\n- Theme Configuration: You MUST include the exact <script>tailwind.config = { ... }</script> block in <head> immediately after the CDN script as specified in the DESIGN SYSTEM.\n- Fallback CSS: In the <style> block in <head>, include the exact fallback CSS rules provided in the DESIGN SYSTEM so colors NEVER fail even if Tailwind CDN takes time to initialize.\n- STRICT CONTRAST RULES:\n  * On light cream/white backgrounds, ALL text MUST be dark (#0F172A). NEVER use text-white on cream!\n  * Sections with white text (Hero, Trust Bar, Location card, Footer) MUST have explicit dark backgrounds (#0F172A).\n- Navigation: Use a centered Floating Glass Pill Header. NO mobile hamburger overlays or uncollapsed checkbox menus.\n- Static Numbers: Write the exact verified numbers directly in the HTML (e.g. 3.9 ★ and 674+). DO NOT render \"0\" with countUp JavaScript that fails in screenshots.\n- Output format: Output ONLY the complete valid HTML file starting immediately with <!DOCTYPE html>. No markdown fences, no explanations.\n\n## MANDATORY DESIGN RULES\n1. FULL-VIEWPORT HERO: The hero section MUST be 100dvh. Use the HERO STOCK PHOTO URL (https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=85) as the CSS background-image with a rich gradient overlay from the design system.\n2. STRICT CONTRAST RULES:\n   - On light cream/white backgrounds (#F8FAFC / #FFFFFF), ALL text MUST be dark (#0F172A). NEVER use text-white on cream!\n   - Sections with white text (Hero with dark overlay, Trust Bar, Location container, Footer) MUST have explicit dark backgrounds (#0F172A).\n3. STATIC VERIFIED NUMBERS: Write verified numbers directly into the HTML (\"3.9 ★\" and \"674+\"). DO NOT use \"0\" with countUp JavaScript intervals.\n4. MICRO-INTERACTIONS: Every card, button, and image must have smooth CSS transitions and hover states.\n5. FLOATING WHATSAPP BUTTON: Fixed at bottom-right, pulsing glow animation, always visible (https://wa.me/919007606006?text=Hello%20Ishan's%20Cafe%20%26%20More).\n6. SMOOTH SCROLL: html { scroll-behavior: smooth; }\n7. MOBILE FIRST: Zero mobile horizontal overflow, responsive layout for 375px to 1440px.\n8. ZERO BROKEN ELEMENTS: No hamburger drawer overlays or uncollapsed checkbox menus that obscure hero content.\n\n## DESIGN SYSTEM (PROFESSIONAL CLEAN):\n- Fonts: Import from Google Fonts: \"Playfair Display\" for headings, \"Plus Jakarta Sans\" for body.\n- Colors:\n  * Canvas/Body: #F8FAFC\n  * Surface/Cards: #FFFFFF\n  * Primary Accent: #1E3A8A\n  * Secondary Accent: #2563EB\n  * Dark Accent: #0F172A\n  * Main Text: #0F172A\n- Tailwind Configuration Script (REQUIRED IN <head>):\n  <script>\n    tailwind.config = {\n      theme: {\n        extend: {\n          colors: {\n            primary: '#1E3A8A',\n            secondary: '#2563EB',\n            dark: '#0F172A',\n            surface: '#FFFFFF',\n            cream: '#F8FAFC',\n          }\n        }\n      }\n    };\n  </script>\n- Fallback CSS in <style>:\n  body { background-color: #F8FAFC; color: #0F172A; font-family: 'Plus Jakarta Sans', sans-serif; }\n  h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }\n  .bg-primary { background-color: #1E3A8A !important; }\n  .text-primary { color: #1E3A8A !important; }\n  .bg-dark { background-color: #0F172A !important; }\n  .text-dark { color: #0F172A !important; }\n  .bg-surface { background-color: #FFFFFF !important; }\n\n## REQUIRED SECTIONS TO CODE (IN ORDER):\n### 1. FLOATING GLASS PILL NAVBAR\n- Centered floating glass pill: max-w-4xl mx-auto px-6 py-2.5 rounded-full bg-white/90 backdrop-blur-md border border-[#F0E0D0] flex items-center justify-between shadow-sm sticky top-4 z-50.\n- Brand name as stylized wordmark: \"Ishan's Cafe & More\".\n- Nav links (hidden on mobile, visible md+): Home, About, Offerings, Gallery, Contact.\n- Status badge: \"● Open Now\" (emerald pulsing dot).\n- Action CTA: Pill button <a href=\"https://wa.me/919007606006?text=Hello%20Ishan's%20Cafe%20%26%20More\">Order on WhatsApp</a>.\n- NO mobile hamburger overlays, drawer panels, or checkbox menus!\n\n### 2. HERO SECTION (100dvh)\n- Background: https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=85 (full-bleed, rich multi-stop overlay).\n- Top frosted pill chip: \"★ 3.9 ★ • 674+ Google Reviews\".\n- H1: Bold typography: \"Authentic Bengali Feasts & Signature Polao Mangsho in Barasat\".\n- Subtitle: \"Trusted Biryani restaurant dedicated to authentic quality in Barasat\".\n- Dual CTA Buttons: Order on WhatsApp → (<a href=\"https://wa.me/919007606006?text=Hello%20Ishan's%20Cafe%20%26%20More\">) + Call for Delivery (<a href=\"tel:+919007606006\">).\n- Scroll indicator: \"Scroll to Explore\" with circular down-chevron icon.\n- Bottom organic curved wave divider connecting smoothly to the cream section below.\n\n### 3. FLOATING DARK TRUST BAR\n- Floating dark pill bar overlapping the bottom seam of the hero:\n  bg-[#0F172A] text-white rounded-full py-3.5 px-8 max-w-4xl mx-auto shadow-2xl flex flex-wrap items-center justify-center gap-6.\n- Static values: 3.9 ★ Google Rating | 674+ Real Customer Reviews | Loved by Clients in Barasat 🌿.\n\n### 4. OUR MENU — SIGNATURE PULAO & MEAT COMBOS\n- Header: Tag: \"OUR MENU\", Heading: \"Signature Pulao & Meat Combos\", Subtitle: \"Explore verified specialties curated with exceptional quality at Ishan's Cafe & More.\", Action button: <a href=\"https://wa.me/919007606006?text=Hello%20Ishan's%20Cafe%20%26%20More\">Order on WhatsApp →</a>\n- 2 visual cards (grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4):\n  1. Chicken (\"Worst experience as a loyal customer. Ordered a full portion of chilli...\"): https://lh3.googleusercontent.com/grass-cs/ACvplmMKAXnI7p8RZZzgu6SGVxuemg_39H1DzvGtaEh1VpteUA38RJ3WPcY1weEtQwhYc1_wmG5Bv_HfXq1E11q1O4awv9-19Sy0mbVD5S9muHoLvfskjIMpEEY7nh2Ii5dlMPez7eqybZWyKcwf=w1600-h1000-k-no\n  2. Noodles (\"Ordered via Zomato & Swiggy :\nMixed Noodles🍜 [Gravy🍝] ,\n🥚 🐔 Noodle...\"): https://lh3.googleusercontent.com/grass-cs/ACvplmPDk8SkGr_xPzzhN3A__4Knb-1l8FU2VA-FnLBnOSdo85nFnOPKJgUbzE7xTt7Pa8voZ6iitdE9k9Pv4ocC5txZz-mozSAZ5Yor0ew0Mvsc3jdw-CPFqIvtryWlhBuHLQhZiHE2jA=w1600-h1000-k-no\n\n### 5. ONLINE ORDERING — FAST WHATSAPP DELIVERY ACROSS BARASAT\n- High-conversion banner: bg-[#1E3A8A] text-white rounded-3xl p-8 lg:p-12 text-center max-w-5xl mx-auto shadow-xl my-12.\n- Tag: \"ONLINE ORDERING\"\n- Heading: \"Fast WhatsApp Delivery Across Barasat\"\n- Subtitle: \"Craving Chicken? Order directly on WhatsApp for prompt service.\"\n- Direct Action Button: <a href=\"https://wa.me/919007606006?text=Hello%20Ishan's%20Cafe%20%26%20More\" class=\"bg-white text-[#0F172A] px-8 py-3 rounded-full font-bold shadow-md hover:bg-neutral-100\">Order on WhatsApp →</a>\n\n### 6. ABOUT US (ISHAN'S CAFE & MORE)\n- Background: #F8FAFC, text: #0F172A.\n- Narrative: \"Ishan's Cafe & More is a renowned Biryani restaurant in Barasat. Trusted Biryani restaurant dedicated to authentic quality in Barasat. Specializing in Chicken. Specializing in Noodles.\"\n- Photo: <img src=\"https://lh3.googleusercontent.com/grass-cs/ACvplmMKAXnI7p8RZZzgu6SGVxuemg_39H1DzvGtaEh1VpteUA38RJ3WPcY1weEtQwhYc1_wmG5Bv_HfXq1E11q1O4awv9-19Sy0mbVD5S9muHoLvfskjIMpEEY7nh2Ii5dlMPez7eqybZWyKcwf=w1600-h1000-k-no\" class=\"rounded-2xl shadow-lg object-cover w-full h-[320px]\">\n- Badge: \"🌿 Trusted in Barasat\".\n\n### 7. HIGHLIGHTS — WHAT SETS US APART\n- 4 benefit cards showcasing quality, verified reputation, prime location, and dedicated customer care.\n\n### 8. GALLERY — A GLIMPSE OF ISHAN'S CAFE & MORE\n- 4 wide ambient photos in a row.\n\n### 9. CUSTOMER REVIEWS — WHAT OUR CLIENTS SAY\n- 3 clean review cards with 5 stars, real reviews, and reviewer avatars.\n\n### 10. VISIT US — FIND US IN BARASAT\n- Dark container: bg-[#1D2E24] text-white rounded-3xl p-8 lg:p-10 shadow-xl grid md:grid-cols-2 gap-8 items-center.\n- Address: \"44, KNC Rd, Gupta Colony, Barasat, West Bengal 700124\".\n- Hours: \"Sunday, 12 to 11 pm\".\n- Visual Google Maps preview card: styled vector map graphic with street lines, park patches, and red location pin badge.\n\n### 11. 2026 AGENCY FOOTER & FLOATING WHATSAPP\n- Minimalist dark footer with quick links, copyright © 2026 Ishan's Cafe & More, and floating WhatsApp button.\n\n## VERIFIED BUSINESS DATA (USE ONLY THESE REAL FACTS)\n- Business Name: Ishan's Cafe & More\n- Category: Biryani restaurant\n- City / Area: Barasat\n- Address: 44, KNC Rd, Gupta Colony, Barasat, West Bengal 700124\n- Phone: +91 9007606006\n- WhatsApp: https://wa.me/919007606006?text=Hello%20Ishan's%20Cafe%20%26%20More\n- Google Rating: 3.9 ★ (674+ reviews)\n- Google Maps URL: https://www.google.com/maps/place/Ishan%27s+Cafe+%26+More/data=!4m7!3m6!1s0x39f8a33ef0a4b1cd:0x142eab937e0af1ee!8m2!3d22.7142516!4d88.4792897!16s%2Fg%2F11n_fdkv1t!19sChIJzbGk8D6j-DkR7vEKfpOrLhQ?authuser=0&hl=en&g_ep=EgoyMDI2MDkwMi4wIJJjKgBIAVAD&rclk=1\n- Real Google Photos:\n  Photo 1: https://lh3.googleusercontent.com/grass-cs/ACvplmMKAXnI7p8RZZzgu6SGVxuemg_39H1DzvGtaEh1VpteUA38RJ3WPcY1weEtQwhYc1_wmG5Bv_HfXq1E11q1O4awv9-19Sy0mbVD5S9muHoLvfskjIMpEEY7nh2Ii5dlMPez7eqybZWyKcwf=w1600-h1000-k-no\n  Photo 2: https://lh3.googleusercontent.com/grass-cs/ACvplmPDk8SkGr_xPzzhN3A__4Knb-1l8FU2VA-FnLBnOSdo85nFnOPKJgUbzE7xTt7Pa8voZ6iitdE9k9Pv4ocC5txZz-mozSAZ5Yor0ew0Mvsc3jdw-CPFqIvtryWlhBuHLQhZiHE2jA=w1600-h1000-k-no\n  Photo 3: https://lh3.googleusercontent.com/grass-cs/ACvplmOvogjvdzShYcVL-ELseyyqIdbqWuUWD2bQY9XmrOIIzsnqIaO6p_nzbUl10vg5IhsNNfKTt3G65nBPQmll5SPdCIEVtWhyLBWAccWB5IMIFiM6oytsuIfw7LBrA0eC0OJ0mEGm=w1600-h1000-k-no\n  Photo 4: https://lh3.googleusercontent.com/grass-cs/ACvplmNg08t7XfL_a2DqVcT9bno8KOkiV2KMRBnyVkb08iTiHnt7Rrs7MwykAhpGgOkDL8hH86w3Z_zSZyBhTGyTevexBj7_XypXvVk6FMhQEG_VIJvDy7o3wOfSuEuKuHkTBZ6CYxEQ=w1600-h1000-k-no\n\n## CRITICAL EXECUTION RULES\n1. Output ONLY the complete, single-file HTML5 code starting with <!DOCTYPE html>.\n2. Do NOT output any markdown fences, do NOT output explanations.\n3. Every section must be fully written and closed with valid tags.\n4. Never invent fake prices, fake staff bios, or unverified facts.\n5. ZERO HIDDEN SECTIONS: All sections and elements MUST be immediately 100% visible (opacity: 1, visibility: visible). DO NOT hide sections with opacity: 0, translateY, or scroll-reveal CSS classes like .reveal { opacity: 0 } that require JavaScript scrolling to appear.",
+      "pitchPoints": [
+        "Ishan's Cafe & More has 674 Google reviews but no website — every competitor with a website is taking their customers.",
+        "A professional website turns their 3.9⭐ rating into a 24/7 sales tool that books clients even when the phone is off.",
+        "Local businesses in Barasat are moving online fast — being first in Biryani restaurant here is a real advantage."
+      ],
+      "extraPages": [],
+      "strategy": {
+        "leadId": "maps-020",
+        "subCategory": {
+          "value": "bengali_heritage_restaurant",
+          "evidence": [
+            "name_or_review_keyword:bengali_heritage"
+          ],
+          "confidence": "medium"
+        },
+        "primarySellingPoint": {
+          "value": "Trusted Biryani restaurant dedicated to authentic quality in Barasat",
+          "evidence": [
+            "lead_rating",
+            "review_count"
+          ],
+          "confidence": "high"
+        },
+        "secondarySellingPoints": [
+          "Specializing in Chicken",
+          "Specializing in Noodles"
+        ],
+        "targetAudience": "Patrons, diners, and families living in or visiting Barasat",
+        "primaryConversionGoal": "whatsapp_delivery",
+        "websitePriority": "food_offerings_first",
+        "actualOfferings": [
+          {
+            "name": "Chicken",
+            "category": "Customer Favorite",
+            "source": "review_text",
+            "evidenceQuote": "Worst experience as a loyal customer. Ordered a full portion of chilli chicken (through Zomato), rec",
+            "confidence": "medium"
+          },
+          {
+            "name": "Noodles",
+            "category": "Customer Favorite",
+            "source": "review_text",
+            "evidenceQuote": "Ordered via Zomato & Swiggy :\nMixed Noodles🍜 [Gravy🍝] ,\n🥚 🐔 Noodles🍜 [Gravy🍝] , …",
+            "confidence": "medium"
+          }
+        ],
+        "reviewThemes": [],
+        "recommendedSections": [
+          {
+            "sectionId": "navbar",
+            "priority": 1
+          },
+          {
+            "sectionId": "hero",
+            "priority": 2
+          },
+          {
+            "sectionId": "trust_bar",
+            "priority": 3
+          },
+          {
+            "sectionId": "signature_offerings",
+            "priority": 4
+          },
+          {
+            "sectionId": "delivery_cta",
+            "priority": 5,
+            "headlineOverride": "Quick WhatsApp Delivery Across Barasat"
+          },
+          {
+            "sectionId": "about_story",
+            "priority": 6
+          },
+          {
+            "sectionId": "gallery",
+            "priority": 7
+          },
+          {
+            "sectionId": "reviews",
+            "priority": 8
+          },
+          {
+            "sectionId": "location_hours",
+            "priority": 9
+          },
+          {
+            "sectionId": "footer",
+            "priority": 10
+          }
+        ],
+        "omittedSections": [],
+        "visualDirection": {
+          "vibeId": "warm_earthy",
+          "contentDensity": "comfortable",
+          "layoutPersonality": "editorial",
+          "heroStyle": "full_bleed"
+        },
+        "photoRoleRecommendations": [
+          {
+            "photoIndex": 0,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmMKAXnI7p8RZZzgu6SGVxuemg_39H1DzvGtaEh1VpteUA38RJ3WPcY1weEtQwhYc1_wmG5Bv_HfXq1E11q1O4awv9-19Sy0mbVD5S9muHoLvfskjIMpEEY7nh2Ii5dlMPez7eqybZWyKcwf=w600-h450-p-k-no",
+            "recommendedRole": "hero",
+            "aspectRatioHint": "landscape",
+            "reason": "High-resolution landscape photo suitable for hero background"
+          },
+          {
+            "photoIndex": 1,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmPDk8SkGr_xPzzhN3A__4Knb-1l8FU2VA-FnLBnOSdo85nFnOPKJgUbzE7xTt7Pa8voZ6iitdE9k9Pv4ocC5txZz-mozSAZ5Yor0ew0Mvsc3jdw-CPFqIvtryWlhBuHLQhZiHE2jA=w300-h225-p-k-no",
+            "recommendedRole": "about",
+            "aspectRatioHint": "landscape",
+            "reason": "Featured business photo suitable for split about showcase"
+          },
+          {
+            "photoIndex": 2,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmOvogjvdzShYcVL-ELseyyqIdbqWuUWD2bQY9XmrOIIzsnqIaO6p_nzbUl10vg5IhsNNfKTt3G65nBPQmll5SPdCIEVtWhyLBWAccWB5IMIFiM6oytsuIfw7LBrA0eC0OJ0mEGm=w300-h225-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "landscape",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 3,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmNg08t7XfL_a2DqVcT9bno8KOkiV2KMRBnyVkb08iTiHnt7Rrs7MwykAhpGgOkDL8hH86w3Z_zSZyBhTGyTevexBj7_XypXvVk6FMhQEG_VIJvDy7o3wOfSuEuKuHkTBZ6CYxEQ=w300-h225-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "landscape",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 4,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmP5xMRwKYW2u3s2VNl1k4j5DR8WJWpcLecYaWsrjlS2dwy1l5slBlTMBElcekYVhvC3t2ZHB8W1vWFz0kmHvQlode9eM9BQf4WagzLiLiRfV56PeVlCM3-tOEc7x1IibECBzqDG=w300-h225-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "landscape",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          }
+        ],
+        "generatedAt": "2026-10-02T10:10:07.591Z",
+        "source": "deterministic_fallback"
+      }
+    },
+    "maps-027": {
+      "source": "code",
+      "style": "ai-decides",
+      "prompt": "You are an elite, world-class frontend engineer in 2026. Your objective is to build a complete, single-file, production-ready HTML5 website for \"Club 24 The Celebration House\" (Cafe in Barasat). The output MUST look like an award-winning, agency-built website ahead of its time, exactly matching the 2026 aesthetic standards.\n\n## COMPILATION & ARCHITECTURE TARGET\nOutput ONE complete, self-contained HTML5 file.\n- Framework/Styling: Tailwind CSS via CDN (<script src=\"https://cdn.tailwindcss.com\"></script>).\n- Theme Configuration: You MUST include the exact <script>tailwind.config = { ... }</script> block in <head> immediately after the CDN script as specified in the DESIGN SYSTEM.\n- Fallback CSS: In the <style> block in <head>, include the exact fallback CSS rules provided in the DESIGN SYSTEM so colors NEVER fail even if Tailwind CDN takes time to initialize.\n- STRICT CONTRAST RULES:\n  * On light cream/white backgrounds, ALL text MUST be dark (#0F172A). NEVER use text-white on cream!\n  * Sections with white text (Hero, Trust Bar, Location card, Footer) MUST have explicit dark backgrounds (#0F172A).\n- Navigation: Use a centered Floating Glass Pill Header. NO mobile hamburger overlays or uncollapsed checkbox menus.\n- Static Numbers: Write the exact verified numbers directly in the HTML (e.g. 4.3 ★ and 224+). DO NOT render \"0\" with countUp JavaScript that fails in screenshots.\n- Output format: Output ONLY the complete valid HTML file starting immediately with <!DOCTYPE html>. No markdown fences, no explanations.\n\n## MANDATORY DESIGN RULES\n1. FULL-VIEWPORT HERO: The hero section MUST be 100dvh. Use the HERO STOCK PHOTO URL (https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1920&q=85) as the CSS background-image with a rich gradient overlay from the design system.\n2. STRICT CONTRAST RULES:\n   - On light cream/white backgrounds (#F8FAFC / #FFFFFF), ALL text MUST be dark (#0F172A). NEVER use text-white on cream!\n   - Sections with white text (Hero with dark overlay, Trust Bar, Location container, Footer) MUST have explicit dark backgrounds (#0F172A).\n3. STATIC VERIFIED NUMBERS: Write verified numbers directly into the HTML (\"4.3 ★\" and \"224+\"). DO NOT use \"0\" with countUp JavaScript intervals.\n4. MICRO-INTERACTIONS: Every card, button, and image must have smooth CSS transitions and hover states.\n5. FLOATING WHATSAPP BUTTON: Fixed at bottom-right, pulsing glow animation, always visible (https://wa.me/918274027301?text=Hello%20Club%2024%20The%20Celebration%20House).\n6. SMOOTH SCROLL: html { scroll-behavior: smooth; }\n7. MOBILE FIRST: Zero mobile horizontal overflow, responsive layout for 375px to 1440px.\n8. ZERO BROKEN ELEMENTS: No hamburger drawer overlays or uncollapsed checkbox menus that obscure hero content.\n\n## DESIGN SYSTEM (PROFESSIONAL CLEAN):\n- Fonts: Import from Google Fonts: \"Playfair Display\" for headings, \"Plus Jakarta Sans\" for body.\n- Colors:\n  * Canvas/Body: #F8FAFC\n  * Surface/Cards: #FFFFFF\n  * Primary Accent: #1E3A8A\n  * Secondary Accent: #2563EB\n  * Dark Accent: #0F172A\n  * Main Text: #0F172A\n- Tailwind Configuration Script (REQUIRED IN <head>):\n  <script>\n    tailwind.config = {\n      theme: {\n        extend: {\n          colors: {\n            primary: '#1E3A8A',\n            secondary: '#2563EB',\n            dark: '#0F172A',\n            surface: '#FFFFFF',\n            cream: '#F8FAFC',\n          }\n        }\n      }\n    };\n  </script>\n- Fallback CSS in <style>:\n  body { background-color: #F8FAFC; color: #0F172A; font-family: 'Plus Jakarta Sans', sans-serif; }\n  h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }\n  .bg-primary { background-color: #1E3A8A !important; }\n  .text-primary { color: #1E3A8A !important; }\n  .bg-dark { background-color: #0F172A !important; }\n  .text-dark { color: #0F172A !important; }\n  .bg-surface { background-color: #FFFFFF !important; }\n\n## REQUIRED SECTIONS TO CODE (IN ORDER):\n### 1. FLOATING GLASS PILL NAVBAR\n- Centered floating glass pill: max-w-4xl mx-auto px-6 py-2.5 rounded-full bg-white/90 backdrop-blur-md border border-[#F0E0D0] flex items-center justify-between shadow-sm sticky top-4 z-50.\n- Brand name as stylized wordmark: \"Club 24 The Celebration House\".\n- Nav links (hidden on mobile, visible md+): Home, About, Offerings, Gallery, Contact.\n- Status badge: \"● Open Now\" (emerald pulsing dot).\n- Action CTA: Pill button <a href=\"https://wa.me/918274027301?text=Hello%20Club%2024%20The%20Celebration%20House\">Get Directions</a>.\n- NO mobile hamburger overlays, drawer panels, or checkbox menus!\n\n### 2. HERO SECTION (100dvh)\n- Background: https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1920&q=85 (full-bleed, rich multi-stop overlay).\n- Top frosted pill chip: \"★ 4.3 ★ • 224+ Google Reviews\".\n- H1: Bold typography: \"Artisanal Coffee & Cozy Atmosphere in Barasat\".\n- Subtitle: \"Top-rated Cafe in Barasat with 224+ verified Google reviews\".\n- Dual CTA Buttons: Get Directions → (<a href=\"https://wa.me/918274027301?text=Hello%20Club%2024%20The%20Celebration%20House\">) + WhatsApp Us (<a href=\"tel:+918274027301\">).\n- Scroll indicator: \"Scroll to Explore\" with circular down-chevron icon.\n- Bottom organic curved wave divider connecting smoothly to the cream section below.\n\n### 3. FLOATING DARK TRUST BAR\n- Floating dark pill bar overlapping the bottom seam of the hero:\n  bg-[#0F172A] text-white rounded-full py-3.5 px-8 max-w-4xl mx-auto shadow-2xl flex flex-wrap items-center justify-center gap-6.\n- Static values: 4.3 ★ Google Rating | 224+ Real Customer Reviews | Loved by Clients in Barasat 🌿.\n\n### 4. OUR MENU — ARTISANAL COFFEE & FRESH BAKES\n- Header: Tag: \"OUR MENU\", Heading: \"Artisanal Coffee & Fresh Bakes\", Subtitle: \"Explore verified specialties curated with exceptional quality at Club 24 The Celebration House.\", Action button: <a href=\"https://wa.me/918274027301?text=Hello%20Club%2024%20The%20Celebration%20House\">Get Directions →</a>\n- 3 visual cards (grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4):\n  1. Artisanal Brews & Coffee: https://lh3.googleusercontent.com/grass-cs/ACvplmOGNThjlhykC8C0kKLQNO-ZXcAA5QpnJSN6s3ubMYccBnJneuhs-FRcLe9UD7Hqq01fiZiAzkp1en4xTZ39Vg01QBS1O-V0R2Ub0tU2YHeUgo1wgyKMG9xDiIlEHUw38AnTuxK4zQBqLtRe=w1600-h1000-k-no\n  2. Cafe Bites & Snacks: https://lh3.googleusercontent.com/grass-cs/ACvplmOBkr3XIq6VNdJLNQSz11Oa9odM5Q9HCFc6MPGhK1m57liMVL24ckJpzae2h38hdcFvDwq45IkXGzI7oZzTYFdeXQOlkDS3M8P8d4kRrYYmLwnn7gbjDyASrUaG8OpMzaSSBQn2nnZKiu8=w1600-h1000-k-no\n  3. Refreshing Beverages: https://lh3.googleusercontent.com/grass-cs/ACvplmMsB7P0v2FgJvJK-cT3Ngrk2qJuRgqXPnKUM1vryCkkDhZFQHdFc-T845LKoRacZH6txe58fzwcuiE3P3CqTItrI3t6UVHs2AiaADeNbash0OI-dqsRlLYLIhgxSGy1vXFpROg_yo4lNBu6=w1600-h1000-k-no\n\n### 5. ABOUT US (CLUB 24 THE CELEBRATION HOUSE)\n- Background: #F8FAFC, text: #0F172A.\n- Narrative: \"Club 24 The Celebration House is a renowned Cafe in Barasat. Top-rated Cafe in Barasat with 224+ verified Google reviews. Specializing in Artisanal Brews & Coffee. Specializing in Cafe Bites & Snacks.\"\n- Photo: <img src=\"https://lh3.googleusercontent.com/grass-cs/ACvplmOGNThjlhykC8C0kKLQNO-ZXcAA5QpnJSN6s3ubMYccBnJneuhs-FRcLe9UD7Hqq01fiZiAzkp1en4xTZ39Vg01QBS1O-V0R2Ub0tU2YHeUgo1wgyKMG9xDiIlEHUw38AnTuxK4zQBqLtRe=w1600-h1000-k-no\" class=\"rounded-2xl shadow-lg object-cover w-full h-[320px]\">\n- Badge: \"🌿 Trusted in Barasat\".\n\n### 6. HIGHLIGHTS — WHAT SETS US APART\n- 4 benefit cards showcasing quality, verified reputation, prime location, and dedicated customer care.\n\n### 7. GALLERY — A GLIMPSE OF CLUB 24 THE CELEBRATION HOUSE\n- 4 wide ambient photos in a row.\n\n### 8. CUSTOMER REVIEWS — WHAT OUR CLIENTS SAY\n- 3 clean review cards with 5 stars, real reviews, and reviewer avatars.\n\n### 9. VISIT US — FIND US IN BARASAT\n- Dark container: bg-[#1D2E24] text-white rounded-3xl p-8 lg:p-10 shadow-xl grid md:grid-cols-2 gap-8 items-center.\n- Address: \"Sangam Market rooftop, on top of) Canara Bank, opposite Hanuman Mandir, Colony More, Barasat, West Bengal 700126\".\n- Hours: \"Open · Closes 10:30 pm ·\".\n- Visual Google Maps preview card: styled vector map graphic with street lines, park patches, and red location pin badge.\n\n### 10. 2026 AGENCY FOOTER & FLOATING WHATSAPP\n- Minimalist dark footer with quick links, copyright © 2026 Club 24 The Celebration House, and floating WhatsApp button.\n\n## VERIFIED BUSINESS DATA (USE ONLY THESE REAL FACTS)\n- Business Name: Club 24 The Celebration House\n- Category: Cafe\n- City / Area: Barasat\n- Address: Sangam Market rooftop, on top of) Canara Bank, opposite Hanuman Mandir, Colony More, Barasat, West Bengal 700126\n- Phone: +91 8274027301\n- WhatsApp: https://wa.me/918274027301?text=Hello%20Club%2024%20The%20Celebration%20House\n- Google Rating: 4.3 ★ (224+ reviews)\n- Google Maps URL: https://www.google.com/maps/place/Club+24+The+Celebration+House/data=!4m7!3m6!1s0x39f8a33afaeb4a33:0xaffb847f210e63bf!8m2!3d22.7221057!4d88.4799362!16s%2Fg%2F11ks38spwf!19sChIJM0rr-jqj-DkRv2MOIX-E-68?authuser=0&hl=en&g_ep=EgoyMDI2MDkwMi4wIJJjKgBIAVAD&rclk=1\n- Real Google Photos:\n  Photo 1: https://lh3.googleusercontent.com/grass-cs/ACvplmOGNThjlhykC8C0kKLQNO-ZXcAA5QpnJSN6s3ubMYccBnJneuhs-FRcLe9UD7Hqq01fiZiAzkp1en4xTZ39Vg01QBS1O-V0R2Ub0tU2YHeUgo1wgyKMG9xDiIlEHUw38AnTuxK4zQBqLtRe=w1600-h1000-k-no\n  Photo 2: https://lh3.googleusercontent.com/grass-cs/ACvplmOBkr3XIq6VNdJLNQSz11Oa9odM5Q9HCFc6MPGhK1m57liMVL24ckJpzae2h38hdcFvDwq45IkXGzI7oZzTYFdeXQOlkDS3M8P8d4kRrYYmLwnn7gbjDyASrUaG8OpMzaSSBQn2nnZKiu8=w1600-h1000-k-no\n  Photo 3: https://lh3.googleusercontent.com/grass-cs/ACvplmMsB7P0v2FgJvJK-cT3Ngrk2qJuRgqXPnKUM1vryCkkDhZFQHdFc-T845LKoRacZH6txe58fzwcuiE3P3CqTItrI3t6UVHs2AiaADeNbash0OI-dqsRlLYLIhgxSGy1vXFpROg_yo4lNBu6=w1600-h1000-k-no\n  Photo 4: https://lh3.googleusercontent.com/grass-cs/ACvplmO0p9KI9wRKcDEdO00UYnbHXPBm4_RXmC5g4b2tCUNGbVWRUXOUhFXgbARCWNdHantnI6xBrKT0ys7ABEg0eZk3ZyXxcjyY2sFp1izqvNgbYAeKFj7Z9NcCshGjTfz3TN1HiUJfXGtO6Q9g=w1600-h1000-k-no\n\n## CRITICAL EXECUTION RULES\n1. Output ONLY the complete, single-file HTML5 code starting with <!DOCTYPE html>.\n2. Do NOT output any markdown fences, do NOT output explanations.\n3. Every section must be fully written and closed with valid tags.\n4. Never invent fake prices, fake staff bios, or unverified facts.\n5. ZERO HIDDEN SECTIONS: All sections and elements MUST be immediately 100% visible (opacity: 1, visibility: visible). DO NOT hide sections with opacity: 0, translateY, or scroll-reveal CSS classes like .reveal { opacity: 0 } that require JavaScript scrolling to appear.",
+      "pitchPoints": [
+        "With a solid 4.3-star rating across 224 reviews, Club 24 The Celebration House is already a popular spot in Barasat, but lacking a dedicated website leaves your strong reputation invisible to event organizers searching online.",
+        "A custom website showcasing your celebration packages and cafe menu will allow you to capture high-margin birthday parties, anniversaries, and private group bookings directly instead of relying solely on walk-ins.",
+        "As modern cafes and celebration venues rapidly expand across Barasat, having a professional digital booking hub ensures you secure party inquiries before competitors do."
+      ],
+      "extraPages": [
+        {
+          "id": "party_packages",
+          "icon": "🎉",
+          "label": "Celebration Packages",
+          "desc": "Showcases tailored event bundles for birthdays, anniversaries, and private parties with transparent pricing to convert event inquiries faster."
+        },
+        {
+          "id": "cafe_menu",
+          "icon": "☕",
+          "label": "Cafe & Dining Menu",
+          "desc": "Displays food, beverage, and dessert options with mouth-watering photos to drive both daily cafe visits and event catering orders."
+        },
+        {
+          "id": "venue_tour",
+          "icon": "📸",
+          "label": "Venue & Decor Gallery",
+          "desc": "Provides a visual walkthrough of seating zones and celebration setups so guests can envision their special moments at your venue."
+        },
+        {
+          "id": "event_booking",
+          "icon": "📅",
+          "label": "Book Your Event",
+          "desc": "Allows customers to check date availability and instantly submit table reservations or private party requests directly to your phone."
+        }
+      ],
+      "strategy": {
+        "leadId": "maps-027",
+        "subCategory": {
+          "value": "specialty_cafe",
+          "evidence": [
+            "name_or_cat_keyword:cafe"
+          ],
+          "confidence": "medium"
+        },
+        "primarySellingPoint": {
+          "value": "Top-rated Cafe in Barasat with 224+ verified Google reviews",
+          "evidence": [
+            "lead_rating",
+            "review_count"
+          ],
+          "confidence": "high"
+        },
+        "secondarySellingPoints": [
+          "Specializing in Artisanal Brews & Coffee",
+          "Specializing in Cafe Bites & Snacks",
+          "Specializing in Refreshing Beverages"
+        ],
+        "targetAudience": "Patrons, diners, and families living in or visiting Barasat",
+        "primaryConversionGoal": "in_store_visit",
+        "websitePriority": "food_offerings_first",
+        "actualOfferings": [
+          {
+            "name": "Artisanal Brews & Coffee",
+            "category": "Coffee",
+            "source": "category_blueprint",
+            "confidence": "medium"
+          },
+          {
+            "name": "Cafe Bites & Snacks",
+            "category": "Food",
+            "source": "category_blueprint",
+            "confidence": "medium"
+          },
+          {
+            "name": "Refreshing Beverages",
+            "category": "Beverages",
+            "source": "category_blueprint",
+            "confidence": "medium"
+          }
+        ],
+        "reviewThemes": [],
+        "recommendedSections": [
+          {
+            "sectionId": "navbar",
+            "priority": 1
+          },
+          {
+            "sectionId": "hero",
+            "priority": 2
+          },
+          {
+            "sectionId": "trust_bar",
+            "priority": 3
+          },
+          {
+            "sectionId": "signature_offerings",
+            "priority": 4
+          },
+          {
+            "sectionId": "about_story",
+            "priority": 6
+          },
+          {
+            "sectionId": "gallery",
+            "priority": 7
+          },
+          {
+            "sectionId": "reviews",
+            "priority": 8
+          },
+          {
+            "sectionId": "location_hours",
+            "priority": 9
+          },
+          {
+            "sectionId": "footer",
+            "priority": 10
+          }
+        ],
+        "omittedSections": [],
+        "visualDirection": {
+          "vibeId": "warm_earthy",
+          "contentDensity": "comfortable",
+          "layoutPersonality": "editorial",
+          "heroStyle": "full_bleed"
+        },
+        "photoRoleRecommendations": [
+          {
+            "photoIndex": 0,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmOGNThjlhykC8C0kKLQNO-ZXcAA5QpnJSN6s3ubMYccBnJneuhs-FRcLe9UD7Hqq01fiZiAzkp1en4xTZ39Vg01QBS1O-V0R2Ub0tU2YHeUgo1wgyKMG9xDiIlEHUw38AnTuxK4zQBqLtRe=w300-h225-p-k-no",
+            "recommendedRole": "hero",
+            "aspectRatioHint": "landscape",
+            "reason": "High-resolution landscape photo suitable for hero background"
+          },
+          {
+            "photoIndex": 1,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmOBkr3XIq6VNdJLNQSz11Oa9odM5Q9HCFc6MPGhK1m57liMVL24ckJpzae2h38hdcFvDwq45IkXGzI7oZzTYFdeXQOlkDS3M8P8d4kRrYYmLwnn7gbjDyASrUaG8OpMzaSSBQn2nnZKiu8=w300-h225-p-k-no",
+            "recommendedRole": "about",
+            "aspectRatioHint": "landscape",
+            "reason": "Featured business photo suitable for split about showcase"
+          },
+          {
+            "photoIndex": 2,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmMsB7P0v2FgJvJK-cT3Ngrk2qJuRgqXPnKUM1vryCkkDhZFQHdFc-T845LKoRacZH6txe58fzwcuiE3P3CqTItrI3t6UVHs2AiaADeNbash0OI-dqsRlLYLIhgxSGy1vXFpROg_yo4lNBu6=w300-h225-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "landscape",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 3,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmO0p9KI9wRKcDEdO00UYnbHXPBm4_RXmC5g4b2tCUNGbVWRUXOUhFXgbARCWNdHantnI6xBrKT0ys7ABEg0eZk3ZyXxcjyY2sFp1izqvNgbYAeKFj7Z9NcCshGjTfz3TN1HiUJfXGtO6Q9g=w300-h225-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "landscape",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 4,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmNv8wE_gYkTg4jGmdOHxJevzQRI-zEJv9etTdSSaxqBXrk0QTl-MgvCqmND7n3rkE4CovVtcv-iVbAYDqoz6NZT-3Eh6F12C1SnFapDBJLLSwFqGfwWiQThi5r1e5Eh8SIC8piw=w300-h225-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "landscape",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          },
+          {
+            "photoIndex": 5,
+            "url": "https://lh3.googleusercontent.com/grass-cs/ACvplmNKCc0X_lZ009U_irub1AEfkiYVAe9Cgzzthyn3_sc5NSNpBN55FzlKFXLW1v4H-MvqBSCDiHtImGpBcnRv8DiEj8lPvlce-3LMoOhCCJvxujYepjImDGOtNXVgUYY4N4aVAQlwxw=w300-h225-p-k-no",
+            "recommendedRole": "gallery",
+            "aspectRatioHint": "landscape",
+            "reason": "Secondary authentic photo suitable for lookbook gallery"
+          }
+        ],
+        "generatedAt": "2026-10-02T10:13:38.367Z",
+        "source": "deterministic_fallback"
+      }
     }
-  }
+  },
+  "outreachResults": {
+    "maps-027": {
+      "source": "gemini",
+      "first": "👋 Hi Sir, I’ve been checking out Club 24 The Celebration House on Google—224 glowing reviews and a solid 4.3 rating! 🌟 Customers keep praising your cozy vibe and the tasty treats. One thing I noticed: many mention they wish they could find you online more easily. Since you don’t have a website yet, you could be missing out on ~₹90,000 of traffic each month. I’ve put together a visual demo layout for your site and would love to share it via WhatsApp. Would you like me to send it over? 👍",
+      "followUp": "Hi Sir, just wanted to follow up—without a website, Club 24 could be losing around ₹90,000 every month. A quick 5‑minute call can show how a simple site captures that traffic. Are you free for a brief chat? 😊",
+      "bestSendTime": "Best to send on Tuesday or Thursday mornings around 10 AM IST.",
+      "callScript": {
+        "openingLine": "Hi, this is [Your Name] from [Your Company]; I’ve been hearing great things about Club 24 The Celebration House—especially how customers rave about your rooftop ambience and the delicious coffee you serve.",
+        "painPoints": [
+          "Customers have mentioned the lack of air‑conditioning, making the rooftop uncomfortable during hot days.",
+          "Many reviewers wish they could place orders or book a table online, but currently there’s no online booking or ordering system.",
+          "Despite 224 positive reviews, you have no website, so you’re missing out on capturing that online traffic and converting it into reservations.",
+          "Potential new customers searching for cafes in Barasat can’t find you easily online, leading to an estimated loss of around ₹90,000 per month."
+        ],
+        "objectionHandlers": [
+          {
+            "objection": "I don't need a website",
+            "response": "I understand you have a steady footfall, but with 224 glowing reviews, a website would turn that word‑of‑mouth into searchable online traffic, helping you capture the estimated ₹90,000 you’re currently missing each month."
+          },
+          {
+            "objection": "It's too expensive",
+            "response": "A professional website is an investment that pays for itself quickly; even a modest increase of just 5% in new customers from online searches would cover the cost within a few months."
+          },
+          {
+            "objection": "I'll think about it",
+            "response": "Absolutely, take your time. To help you decide, I can prepare a quick mock‑up showing how your rooftop vibe and menu will look online, so you can see the potential impact right away."
+          },
+          {
+            "objection": "I already have customers",
+            "response": "That’s fantastic! A website will not only retain those loyal patrons by offering online reservations and updates, but also attract new customers who are searching for a great cafe in Barasat right now."
+          }
+        ],
+        "closingLine": "Let’s schedule a brief 15‑minute call this week so I can show you a tailored website mock‑up and lock in a launch date—this way we can start capturing that lost ₹90,000 revenue as soon as possible.",
+        "pricingSuggestion": "₹40,000 - ₹70,000"
+      }
+    }
+  },
+  "visualPreviews": {}
 }

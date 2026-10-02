@@ -42,6 +42,7 @@ export async function PATCH(
       leadStatuses?:   Record<string, LeadStatus>;
       leadNotes?:      Record<string, string>;
       clientDetails?:  Record<string, ClientDetail>;
+      visualPreviews?: Record<string, import("@/lib/types").LeadVisualPreviewSet>;
     };
 
     if (body.leads           !== undefined) session.leads           = body.leads;
@@ -54,6 +55,7 @@ export async function PATCH(
     if (body.leadStatuses    !== undefined) session.leadStatuses    = body.leadStatuses;
     if (body.leadNotes       !== undefined) session.leadNotes       = body.leadNotes;
     if (body.clientDetails   !== undefined) session.clientDetails   = body.clientDetails;
+    if (body.visualPreviews  !== undefined) session.visualPreviews  = body.visualPreviews;
 
     await fs.writeFile(filePath, JSON.stringify(session, null, 2));
     return NextResponse.json({ success: true });

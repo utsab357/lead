@@ -1,503 +1,720 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Camera,
   Loader2,
-  CheckCircle2,
   RefreshCw,
-  Smartphone,
-  Monitor,
   ExternalLink,
-  Play,
-  Pause,
-  Clock,
-  Zap,
-  AlertCircle,
   ChevronDown,
   ChevronUp,
   X,
+  Sparkles,
+  AlertCircle,
+  Maximize2,
+  Trash2,
+  Code2,
+  Monitor,
+  Smartphone,
+  Tablet,
+  Globe,
+  Clock,
+  CheckCircle2,
+  Camera,
+  Download,
+  ImageIcon,
 } from "lucide-react";
-import type { RankedLead } from "@/lib/types";
+import type { RankedLead, BuildPromptResult, PreviewGenerationMethod } from "@/lib/types";
 import { toast } from "sonner";
 
-type PreviewStatus =
-  | { state: "idle" }
-  | { state: "queued"; position: number }
-  | { state: "generating" }
-  | { state: "done"; desktopUrl: string; mobileUrl?: string; htmlUrl?: string; cached?: boolean }
-  | { state: "error"; message: string };
+// ── Types ────────────────────────────────────────────────────────────────────────
 
-interface LeadPreviewState {
-  [leadId: string]: PreviewStatus;
+export interface PreviewStatus {
+  state: "idle" | "generating" | "done" | "error";
+  desktopUrl?: string;
+  mobileUrl?: string;
+  htmlUrl?: string;
+  generationMethod?: PreviewGenerationMethod;
+  provider?: string;
+  model?: string;
+  message?: string;
+  error?: string;
+  cached?: boolean;
+  compilationTimeMs?: number;
+  htmlLength?: number;
 }
+
+type DeviceFrame = "desktop" | "tablet" | "mobile";
 
 interface PreviewPanelProps {
   /** All ranked leads in session */
   ranked: RankedLead[];
-  /** The currently active lead in Phase 6 */
+  /** The currently active lead */
   activeLead: RankedLead | null;
+  /** Generated prompts from Phase 4/5 (if available) */
+  buildPrompts?: Record<string, BuildPromptResult>;
+  /** Callback when preview state changes */
+  onPreviewUpdated?: (leadId: string, status: PreviewStatus) => void;
+  /** Session ID if active */
+  sessionId?: string | null;
+  // Legacy props kept for compatibility
+  visualPreviews?: Record<string, unknown>;
+  onVisualPreviewUpdated?: (leadId: string, set: unknown) => void;
 }
 
-const BATCH_SIZE = 3; // generate N at a time
-const BETWEEN_DELAY_MS = 8000; // 8s between batches to respect rate limits
+const DEVICE_WIDTHS: Record<DeviceFrame, number> = {
+  desktop: 1280,
+  tablet: 768,
+  mobile: 375,
+};
 
-export function PreviewPanel({ ranked, activeLead }: PreviewPanelProps) {
-  const [previews, setPreviews] = useState<LeadPreviewState>({});
-  const [queue, setQueue] = useState<string[]>([]);
-  const [running, setRunning] = useState(false);
-  const [viewMode, setViewMode] = useState<"desktop" | "mobile">("desktop");
+// ── Component ────────────────────────────────────────────────────────────────────
+
+export function PreviewPanel({
+  ranked,
+  activeLead,
+  buildPrompts,
+  onPreviewUpdated,
+}: PreviewPanelProps) {
+  // ── State ─────────────────────────────────────────────────────────────────────
+  const [deviceFrame, setDeviceFrame] = useState<DeviceFrame>("desktop");
+  const [viewMode, setViewMode] = useState<"iframe" | "screenshot">("screenshot");
+
+  // HTML previews state per lead
+  const [htmlPreviews, setHtmlPreviews] = useState<Record<string, PreviewStatus>>({});
+  // Screenshot PNGs per lead
+  const [screenshots, setScreenshots] = useState<Record<string, string>>({});
+  const [screenshotting, setScreenshotting] = useState<Record<string, boolean>>({});
+
+  const [activeGenerating, setActiveGenerating] = useState(false);
+  const [lightboxHtml, setLightboxHtml] = useState<string | null>(null);
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(true);
-  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
-  // On mount: check which leads already have cached previews
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // ── Auto-screenshot after HTML compile ───────────────────────────────────────
+  const takeScreenshot = useCallback(async (lead: RankedLead, htmlUrl: string, force = false) => {
+    if (screenshotting[lead.id]) return;
+    setScreenshotting((prev) => ({ ...prev, [lead.id]: true }));
+    try {
+      const res = await fetch("/api/screenshot-preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ htmlUrl, leadId: lead.id, businessName: lead.name, force }),
+      });
+      const data = await res.json();
+      if (data.ok && data.previewUrl) {
+        setScreenshots((prev) => ({ ...prev, [lead.id]: data.previewUrl }));
+        toast.success(`Screenshot ready for ${lead.name}`);
+      } else {
+        toast.error(`Screenshot failed: ${data.error?.slice(0, 100)}`);
+      }
+    } catch (err) {
+      toast.error(`Screenshot error: ${(err as Error).message}`);
+    } finally {
+      setScreenshotting((prev) => ({ ...prev, [lead.id]: false }));
+    }
+  }, [screenshotting]);
+
+  // ── Batch cache check for HTML previews ───────────────────────────────────────
   useEffect(() => {
-    const checkAll = async () => {
-      const checks = ranked.map((lead) =>
-        fetch(`/api/generate-preview?leadId=${lead.id}`)
-          .then((r) => r.json())
-          .then((d) => {
-            if (d.exists && d.desktopUrl) {
-              setPreviews((prev) => ({
-                ...prev,
-                [lead.id]: {
-                  state: "done",
-                  desktopUrl: d.desktopUrl,
-                  mobileUrl: d.mobileUrl ?? undefined,
-                  htmlUrl: d.htmlUrl ?? undefined,
-                  cached: true,
-                },
-              }));
+    if (ranked.length === 0) return;
+    fetch("/api/compile-html?list=true")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.files && Array.isArray(d.files)) {
+          const next: Record<string, PreviewStatus> = {};
+          ranked.forEach((lead) => {
+            const hash = lead.id.slice(-8);
+            const match = d.files.find((f: string) => f.includes(hash));
+            if (match) {
+              const url = `/html-previews/${match}`;
+              const status: PreviewStatus = {
+                state: "done",
+                htmlUrl: url,
+                generationMethod: "html-screenshot",
+                cached: true,
+              };
+              next[lead.id] = status;
+              onPreviewUpdated?.(lead.id, status);
             }
-          })
-          .catch(() => {})
-      );
-      await Promise.allSettled(checks);
-    };
-    if (ranked.length > 0) checkAll();
+          });
+          setHtmlPreviews((prev) => ({ ...prev, ...next }));
+        }
+      })
+      .catch(() => {});
+  }, [ranked, onPreviewUpdated]);
+
+  // ── Batch cache check for existing screenshots ─────────────────────────────
+  useEffect(() => {
+    if (ranked.length === 0) return;
+    fetch("/api/screenshot-preview?list=true")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.files && Array.isArray(d.files)) {
+          const next: Record<string, string> = {};
+          ranked.forEach((lead) => {
+            const hash = lead.id.slice(-8);
+            const match = d.files.find((f: string) => f.includes(hash));
+            if (match) next[lead.id] = `/previews/${match}`;
+          });
+          setScreenshots((prev) => ({ ...prev, ...next }));
+        }
+      })
+      .catch(() => {});
   }, [ranked]);
 
-  const generateOne = useCallback(
-    async (lead: RankedLead): Promise<boolean> => {
-      setPreviews((prev) => ({ ...prev, [lead.id]: { state: "generating" } }));
+  // ── Generate HTML Preview ─────────────────────────────────────────────────────
+  const generateHtmlPreview = useCallback(
+    async (lead: RankedLead, force = false): Promise<boolean> => {
+      setHtmlPreviews((prev) => ({
+        ...prev,
+        [lead.id]: { state: "generating" },
+      }));
+
       try {
-        const res = await fetch("/api/generate-preview", {
+        const strategy = buildPrompts?.[lead.id]?.strategy;
+        const res = await fetch("/api/compile-html", {
           method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ lead }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lead,
+            style: "ai-decides",
+            strategy,
+            force,
+          }),
         });
+
         const data = await res.json();
+
         if (!res.ok || !data.ok) {
-          setPreviews((prev) => ({
-            ...prev,
-            [lead.id]: { state: "error", message: data.error ?? "Generation failed" },
-          }));
+          const errorMsg = data.error || "Failed to compile HTML";
+          const status: PreviewStatus = { state: "error", error: errorMsg };
+          setHtmlPreviews((prev) => ({ ...prev, [lead.id]: status }));
+          onPreviewUpdated?.(lead.id, status);
+          toast.error(errorMsg);
           return false;
         }
-        setPreviews((prev) => ({
-          ...prev,
-          [lead.id]: {
-            state: "done",
-            desktopUrl: data.desktopUrl,
-            mobileUrl: data.mobileUrl ?? undefined,
-            htmlUrl: data.htmlUrl ?? undefined,
-            cached: data.cached ?? false,
-          },
-        }));
+
+        const status: PreviewStatus = {
+          state: "done",
+          htmlUrl: data.htmlUrl,
+          generationMethod: "html-screenshot",
+          provider: data.provider,
+          model: data.model,
+          message: data.message,
+          cached: data.cached,
+          compilationTimeMs: data.compilationTimeMs,
+          htmlLength: data.htmlLength,
+        };
+
+        setHtmlPreviews((prev) => ({ ...prev, [lead.id]: status }));
+        onPreviewUpdated?.(lead.id, status);
+
+        const timeStr = data.compilationTimeMs
+          ? ` in ${(data.compilationTimeMs / 1000).toFixed(1)}s`
+          : "";
+        toast.success(`HTML compiled for ${lead.name} via ${data.provider}${timeStr} — taking screenshot…`);
+
+        // Auto-take screenshot after compile
+        if (data.htmlUrl) {
+          takeScreenshot(lead, data.htmlUrl, data.force || false);
+        }
         return true;
-      } catch (e) {
-        setPreviews((prev) => ({
-          ...prev,
-          [lead.id]: { state: "error", message: (e as Error).message },
-        }));
+      } catch (err) {
+        const msg = (err as Error).message || "Network error";
+        const status: PreviewStatus = { state: "error", error: msg };
+        setHtmlPreviews((prev) => ({ ...prev, [lead.id]: status }));
+        onPreviewUpdated?.(lead.id, status);
+        toast.error(`Error: ${msg}`);
         return false;
       }
     },
-    []
+    [buildPrompts, onPreviewUpdated]
   );
 
-  const runQueue = useCallback(
-    async (ids: string[]) => {
-      if (running || ids.length === 0) return;
-      setRunning(true);
-      const toGenerate = ids.filter((id) => {
-        const s = previews[id];
-        return !s || s.state === "idle" || s.state === "error";
-      });
+  // ── Active lead status ────────────────────────────────────────────────────────
+  const activeHtmlStatus = activeLead ? htmlPreviews[activeLead.id] : undefined;
+  const activeStatus = activeHtmlStatus;
 
-      // Mark all as queued first
-      setPreviews((prev) => {
-        const next = { ...prev };
-        toGenerate.forEach((id, i) => {
-          next[id] = { state: "queued", position: i + 1 };
-        });
-        return next;
-      });
+  // ── Handlers ──────────────────────────────────────────────────────────────────
+  const handleGenerateActive = async (force = false) => {
+    if (!activeLead || activeGenerating) return;
+    setActiveGenerating(true);
+    await generateHtmlPreview(activeLead, force);
+    setActiveGenerating(false);
+  };
 
-      for (let i = 0; i < toGenerate.length; i += BATCH_SIZE) {
-        const batch = toGenerate.slice(i, i + BATCH_SIZE);
-        const leads = ranked.filter((l) => batch.includes(l.id));
-
-        // Update queue positions
-        const remaining = toGenerate.slice(i + BATCH_SIZE);
-        setPreviews((prev) => {
-          const next = { ...prev };
-          remaining.forEach((id, j) => {
-            next[id] = { state: "queued", position: j + 1 };
-          });
-          return next;
-        });
-
-        // Generate batch in parallel
-        await Promise.allSettled(leads.map((l) => generateOne(l)));
-
-        if (i + BATCH_SIZE < toGenerate.length) {
-          toast.info(`Batch ${Math.floor(i / BATCH_SIZE) + 1} done — waiting ${BETWEEN_DELAY_MS / 1000}s before next batch...`);
-          await new Promise((r) => setTimeout(r, BETWEEN_DELAY_MS));
-        }
-      }
-
-      setRunning(false);
-      setQueue([]);
-      toast.success("All previews generated!");
-    },
-    [running, ranked, generateOne, previews]
-  );
-
-  function generateAll() {
-    const ids = ranked.map((l) => l.id);
-    setQueue(ids);
-    runQueue(ids);
-  }
-
-  function generateActive() {
+  const handleClearActivePreview = () => {
     if (!activeLead) return;
-    runQueue([activeLead.id]);
-  }
+    setHtmlPreviews((prev) => {
+      const next = { ...prev };
+      delete next[activeLead.id];
+      return next;
+    });
+    toast.info(`Preview cleared for ${activeLead.name}`);
+  };
 
-  function regenerate(lead: RankedLead) {
-    // Delete existing and regenerate
-    setPreviews((prev) => ({ ...prev, [lead.id]: { state: "idle" } }));
-    setTimeout(() => runQueue([lead.id]), 100);
-  }
+  // Resolve currently active display URL
+  const currentHtmlUrl = activeHtmlStatus?.htmlUrl;
 
-  const activePreview = activeLead ? previews[activeLead.id] : undefined;
-  const doneCount = Object.values(previews).filter((p) => p.state === "done").length;
-  const totalCount = ranked.length;
-
-  const currentUrl =
-    activePreview?.state === "done"
-      ? viewMode === "mobile" && activePreview.mobileUrl
-        ? activePreview.mobileUrl
-        : activePreview.desktopUrl
-      : null;
+  // ── Get counts for tab badges ─────────────────────────────────────────────────
+  const htmlDoneCount = Object.values(htmlPreviews).filter((p) => p.state === "done").length;
 
   return (
-    <div className="border border-border rounded-xl bg-card shadow-xs overflow-hidden">
-      {/* Header */}
-      <div
-        className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-muted/30 transition-colors"
-        onClick={() => setExpanded((v) => !v)}
-      >
-        <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shrink-0">
-            <Camera className="h-4 w-4 text-white" />
+    <div className="mt-8 rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+      {/* ── Top Header ────────────────────────────────────────────────────────── */}
+      <div className="p-4 sm:p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-muted/20">
+        <div>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <h3 className="font-bold text-sm sm:text-base text-foreground">
+              Client Website Preview
+              {activeLead ? ` — ${activeLead.name}` : ""}
+            </h3>
+            {activeStatus?.state === "done" ? (
+              <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] font-semibold">
+                ● Ready
+              </Badge>
+            ) : activeStatus?.state === "generating" || activeGenerating ? (
+              <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-semibold animate-pulse">
+                Compiling…
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                Pending
+              </Badge>
+            )}
+            {htmlDoneCount > 0 && (
+              <Badge variant="outline" className="text-[10px] text-muted-foreground gap-1">
+                <Code2 className="h-3 w-3" />
+                {htmlDoneCount} compiled
+              </Badge>
+            )}
           </div>
-          <div>
-            <div className="text-sm font-semibold text-foreground flex items-center gap-2">
-              Website Preview Generator
-              {running && (
-                <span className="inline-flex items-center gap-1 text-[10px] text-violet-600 font-medium animate-pulse">
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                  Generating...
-                </span>
-              )}
-            </div>
-            <div className="text-[11px] text-muted-foreground">
-              {doneCount}/{totalCount} previews ready · Screenshot from real website code
-            </div>
-          </div>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {activeLead
+              ? `Live interactive HTML website for ${activeLead.name} (${activeLead.category} · ${activeLead.city?.split(",")[0]})`
+              : "Select a lead to generate or inspect its website preview."}
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          {doneCount > 0 && (
-            <Badge className="text-[10px] bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
-              {doneCount} ready
-            </Badge>
-          )}
-          {expanded ? (
-            <ChevronUp className="h-4 w-4 text-muted-foreground" />
-          ) : (
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-          )}
+
+        <div className="flex items-center gap-2 self-start sm:self-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setExpanded((v) => !v)}
+            className="h-8 w-8 rounded-lg"
+            aria-label={expanded ? "Collapse preview panel" : "Expand preview panel"}
+          >
+            {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </Button>
         </div>
       </div>
 
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="px-4 pb-4 space-y-4 border-t border-border/60 pt-4">
-              {/* Action bar */}
-              <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  size="sm"
-                  onClick={generateActive}
-                  disabled={running || !activeLead}
-                  className="h-8 text-xs gap-1.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0"
-                >
-                  {activePreview?.state === "generating" ? (
-                    <><Loader2 className="h-3.5 w-3.5 animate-spin" />Generating...</>
-                  ) : activePreview?.state === "done" ? (
-                    <><RefreshCw className="h-3.5 w-3.5" />Regenerate This</>
-                  ) : (
-                    <><Camera className="h-3.5 w-3.5" />Generate This Lead</>
-                  )}
-                </Button>
-
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={generateAll}
-                  disabled={running}
-                  className="h-8 text-xs gap-1.5"
-                >
-                  {running ? (
-                    <><Pause className="h-3.5 w-3.5" />Running...</>
-                  ) : (
-                    <><Play className="h-3.5 w-3.5" />Generate All ({totalCount})</>
-                  )}
-                </Button>
-
-                {doneCount > 0 && (
-                  <div className="ml-auto flex items-center gap-1 text-[11px] text-muted-foreground">
-                    <Clock className="h-3.5 w-3.5" />
-                    <span>~{Math.round((totalCount - doneCount) * 0.5)} min remaining</span>
-                  </div>
-                )}
+      {expanded && (
+        <div className="p-4 sm:p-6 space-y-5">
+          {/* ── Controls Bar ──────────────────────────────────────────────────── */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-border/80">
+            {/* Left: View Mode + Device Frame */}
+            <div className="flex items-center gap-4 flex-wrap">
+              {/* View mode toggle */}
+              <div className="space-y-1.5">
+                <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                  <Camera className="h-3.5 w-3.5 text-primary" />
+                  <span>View</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button type="button" onClick={() => setViewMode("screenshot")} className={`h-8 px-3 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${viewMode === "screenshot" ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted text-muted-foreground hover:text-foreground"}`}>
+                    <ImageIcon className="h-3.5 w-3.5" /><span>Screenshot</span>
+                  </button>
+                  <button type="button" onClick={() => setViewMode("iframe")} className={`h-8 px-3 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${viewMode === "iframe" ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted text-muted-foreground hover:text-foreground"}`}>
+                    <Globe className="h-3.5 w-3.5" /><span>Live Site</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Info note */}
-              {doneCount === 0 && !running && (
-                <div className="flex items-start gap-2.5 px-3 py-2.5 rounded-lg bg-violet-500/5 border border-violet-500/20 text-xs text-muted-foreground">
-                  <Zap className="h-3.5 w-3.5 text-violet-500 mt-0.5 shrink-0" />
-                  <span>
-                    Each preview: Groq generates real website HTML → Playwright screenshots it at 1280×800 →
-                    saved as PNG. Takes ~30–60s per business.
-                    Batches of {BATCH_SIZE} with {BETWEEN_DELAY_MS / 1000}s gaps to respect free API limits.
-                  </span>
+              {/* Device Frame (only for iframe mode) */}
+              {viewMode === "iframe" && (
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                    <Monitor className="h-3.5 w-3.5 text-primary" />
+                    <span>Device</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {([
+                      { key: "desktop", icon: Monitor, label: "Desktop", w: "1280px" },
+                      { key: "tablet", icon: Tablet, label: "Tablet", w: "768px" },
+                      { key: "mobile", icon: Smartphone, label: "Mobile", w: "375px" },
+                    ] as const).map(({ key, icon: Icon, label, w }) => (
+                      <button key={key} type="button" onClick={() => setDeviceFrame(key)}
+                        className={`h-8 px-3 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${deviceFrame === key ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+                        title={`${label} (${w})`}>
+                        <Icon className="h-3.5 w-3.5" />
+                        <span className="hidden sm:inline">{label}</span>
+                        <span className="text-[9px] opacity-70">{w}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            {activeLead && (
+              <div className="flex items-center gap-2 self-start lg:self-end pt-1">
+                {/* Re-screenshot button */}
+                {activeStatus?.state === "done" && currentHtmlUrl && (
+                  <Button variant="outline" size="sm"
+                    onClick={() => takeScreenshot(activeLead, currentHtmlUrl, true)}
+                    disabled={!!screenshotting[activeLead.id]}
+                    className="h-9 px-3 text-xs gap-1.5">
+                    {screenshotting[activeLead.id] ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Camera className="h-3.5 w-3.5" />}
+                    {screenshotting[activeLead.id] ? "Capturing…" : "Re-screenshot"}
+                  </Button>
+                )}
+
+                <Button
+                  onClick={() => handleGenerateActive(activeStatus?.state === "done")}
+                  disabled={activeGenerating || activeStatus?.state === "generating"}
+                  className="h-9 px-4 font-semibold text-xs rounded-lg transition-transform active:scale-[0.98] bg-primary text-primary-foreground"
+                >
+                  {activeGenerating || activeStatus?.state === "generating" ? (
+                    <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />Compiling…</>
+                  ) : activeStatus?.state === "done" ? (
+                    <><RefreshCw className="h-3.5 w-3.5 mr-1.5" />Regenerate</>
+                  ) : (
+                    <><Code2 className="h-3.5 w-3.5 mr-1.5" />Compile Preview</>
+                  )}
+                </Button>
+
+                {activeStatus?.state === "done" && (
+                  <Button variant="outline" size="sm" onClick={handleClearActivePreview}
+                    className="h-9 px-2.5 text-xs text-muted-foreground hover:text-destructive" title="Clear preview">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ── Preview Display ─────────────────────────────────────────────────── */}
+          {activeLead ? (
+            <div className="space-y-3">
+              {/* Status badges for ready previews */}
+              {activeStatus?.state === "done" && (
+                <div className="flex items-center justify-between gap-3 text-xs flex-wrap">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] gap-1 py-0.5">
+                      <CheckCircle2 className="h-3 w-3" />
+                      {activeHtmlStatus?.provider || "AI"} ({activeHtmlStatus?.model || "compiled"})
+                    </Badge>
+                    {activeHtmlStatus?.compilationTimeMs && (
+                      <Badge variant="outline" className="text-[10px] gap-1 py-0.5 text-muted-foreground">
+                        <Clock className="h-3 w-3" />
+                        {(activeHtmlStatus.compilationTimeMs / 1000).toFixed(1)}s
+                      </Badge>
+                    )}
+                    {activeHtmlStatus?.htmlLength && (
+                      <Badge variant="outline" className="text-[10px] gap-1 py-0.5 text-muted-foreground">
+                        <Code2 className="h-3 w-3" />
+                        {(activeHtmlStatus.htmlLength / 1024).toFixed(0)}KB HTML
+                      </Badge>
+                    )}
+                    {activeStatus.cached && (
+                      <span className="text-[10px] text-muted-foreground">● Cached</span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {currentHtmlUrl && (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setLightboxHtml(currentHtmlUrl)}
+                          className="h-7 text-xs gap-1.5"
+                        >
+                          <Maximize2 className="h-3 w-3" />
+                          <span>Fullscreen</span>
+                        </Button>
+                        <a
+                          href={currentHtmlUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium border border-border bg-card hover:bg-muted text-foreground transition-colors h-7"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          <span>Open Tab</span>
+                        </a>
+                      </>
+                    )}
+                  </div>
                 </div>
               )}
 
-              {/* Active lead preview */}
-              {activeLead && activePreview?.state === "done" && (
+              {/* ── Viewport Box ─────────────────────────────────────────────────── */}
+              {activeStatus?.state === "generating" || activeGenerating ? (
+                <div className="p-12 sm:p-16 rounded-xl border border-primary/30 bg-primary/5 flex flex-col items-center justify-center gap-3 text-center">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center animate-pulse">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                  <div className="font-semibold text-sm text-foreground">
+                    Compiling live HTML website for {activeLead.name}…
+                  </div>
+                  <p className="text-xs text-muted-foreground max-w-md">
+                    AI is generating a complete HTML5 website. Trying Gemini → Groq → OpenRouter → Cloudflare. This may take 15–60 seconds.
+                  </p>
+                </div>
+              ) : currentHtmlUrl && viewMode === "screenshot" ? (
+                /* ── Screenshot / shareable image view ──────────────────────────── */
                 <div className="space-y-3">
-                  {/* View toggle */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-foreground truncate max-w-[60%]">
-                      {activeLead.name}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <div className="inline-flex items-center gap-0.5 p-0.5 rounded-lg bg-muted/60 border border-border">
-                        <button
-                          onClick={() => setViewMode("desktop")}
-                          className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] transition-all font-medium ${
-                            viewMode === "desktop"
-                              ? "bg-background text-foreground shadow-2xs"
-                              : "text-muted-foreground hover:text-foreground"
-                          }`}
-                        >
-                          <Monitor className="h-3 w-3" />
-                          Desktop
-                        </button>
-                        <button
-                          onClick={() => setViewMode("mobile")}
-                          disabled={!activePreview.mobileUrl}
-                          className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] transition-all font-medium disabled:opacity-40 ${
-                            viewMode === "mobile"
-                              ? "bg-background text-foreground shadow-2xs"
-                              : "text-muted-foreground hover:text-foreground"
-                          }`}
-                        >
-                          <Smartphone className="h-3 w-3" />
-                          Mobile
-                        </button>
-                      </div>
-                      {activePreview.htmlUrl && (
-                        <a
-                          href={activePreview.htmlUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-border text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                          HTML
-                        </a>
+                  {/* Screenshot status bar */}
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex items-center gap-2">
+                      {activeLead && screenshotting[activeLead.id] ? (
+                        <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[10px] gap-1 animate-pulse">
+                          <Camera className="h-3 w-3" /> Capturing screenshot…
+                        </Badge>
+                      ) : activeLead && screenshots[activeLead.id] ? (
+                        <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] gap-1">
+                          <CheckCircle2 className="h-3 w-3" /> Screenshot ready — share this image!
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-[10px] gap-1 text-muted-foreground">
+                          <Camera className="h-3 w-3" /> Screenshot pending…
+                        </Badge>
                       )}
-                      <button
-                        onClick={() => activeLead && regenerate(activeLead)}
-                        disabled={running}
-                        className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-border text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors disabled:opacity-40"
-                      >
-                        <RefreshCw className="h-3 w-3" />
-                        Redo
-                      </button>
                     </div>
+                    {activeLead && screenshots[activeLead.id] && (
+                      <a
+                        href={screenshots[activeLead.id]}
+                        download={`${activeLead.name.replace(/[^a-z0-9]/gi, "_")}_website_preview.png`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        Download PNG to Share
+                      </a>
+                    )}
                   </div>
 
-                  {/* Screenshot */}
-                  {currentUrl && (
+                  {/* Screenshot image or loading state */}
+                  {activeLead && screenshots[activeLead.id] ? (
                     <div
-                      className="relative rounded-xl overflow-hidden border border-border shadow-md cursor-zoom-in group"
-                      onClick={() => setLightboxUrl(currentUrl)}
+                      className="group relative rounded-xl overflow-hidden border border-border bg-neutral-950 cursor-zoom-in shadow-lg"
+                      onClick={() => setLightboxImg(screenshots[activeLead!.id])}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={`${currentUrl}?v=${Date.now()}`}
-                        alt={`${activeLead.name} website preview`}
-                        className="w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
-                        style={{ maxHeight: "380px", objectFit: "cover", objectPosition: "top" }}
+                        src={`${screenshots[activeLead.id]}?t=${Date.now()}`}
+                        alt={`${activeLead.name} full-page website screenshot`}
+                        className="w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.01]"
+                        style={{ maxHeight: "700px" }}
                       />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                        <span className="opacity-0 group-hover:opacity-100 bg-black/70 text-white text-xs px-3 py-1.5 rounded-full transition-opacity">
-                          Click to expand
-                        </span>
+                      <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-white text-xs flex items-center gap-1.5 shadow-lg">
+                        <Maximize2 className="h-3.5 w-3.5" />
+                        <span>Click to view full size</span>
                       </div>
-                      {activePreview.cached && (
-                        <div className="absolute top-2 left-2">
-                          <Badge className="text-[9px] bg-black/60 text-white border-0 backdrop-blur-sm">
-                            Cached
-                          </Badge>
-                        </div>
+                    </div>
+                  ) : activeLead && screenshotting[activeLead.id] ? (
+                    <div className="p-16 rounded-xl border border-amber-500/30 bg-amber-500/5 flex flex-col items-center justify-center gap-3 text-center">
+                      <div className="h-12 w-12 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center animate-pulse">
+                        <Camera className="h-6 w-6" />
+                      </div>
+                      <div className="font-semibold text-sm text-foreground">Taking full-page screenshot…</div>
+                      <p className="text-xs text-muted-foreground">Rendering {activeLead.name}&apos;s website in headless browser. This takes ~5–10 seconds.</p>
+                    </div>
+                  ) : (
+                    <div className="p-10 rounded-xl border border-dashed border-border bg-muted/10 flex flex-col items-center gap-2 text-center">
+                      <Camera className="h-8 w-8 text-muted-foreground/40" />
+                      <p className="text-xs text-muted-foreground">Screenshot will be captured automatically after compilation.</p>
+                      {currentHtmlUrl && activeLead && (
+                        <Button size="sm" variant="outline" onClick={() => takeScreenshot(activeLead, currentHtmlUrl)} className="mt-1 text-xs gap-1.5">
+                          <Camera className="h-3.5 w-3.5" /> Capture Now
+                        </Button>
                       )}
                     </div>
                   )}
                 </div>
-              )}
-
-              {/* Active lead - generating state */}
-              {activeLead && activePreview?.state === "generating" && (
-                <div className="flex flex-col items-center justify-center py-10 rounded-xl border border-dashed border-violet-500/40 bg-violet-500/5 gap-3">
-                  <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
-                  <div className="text-center">
-                    <div className="text-sm font-semibold text-foreground">Generating preview...</div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      Groq is writing the website HTML, then Playwright is screenshotting it
+              ) : currentHtmlUrl && viewMode === "iframe" ? (
+                /* ── Live HTML iframe ────────────────────────────────────────────── */
+                <div className="rounded-xl border border-border bg-neutral-100 dark:bg-neutral-900 overflow-hidden shadow-md">
+                  <div className="flex items-center gap-2 px-4 py-2.5 bg-neutral-200/80 dark:bg-neutral-800/80 border-b border-border">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-400" />
+                      <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                      <div className="w-3 h-3 rounded-full bg-green-400" />
                     </div>
+                    <div className="flex-1 flex items-center justify-center">
+                      <div className="bg-white dark:bg-neutral-700 rounded-md px-4 py-1 text-[11px] text-muted-foreground font-mono flex items-center gap-1.5 max-w-md w-full">
+                        <Globe className="h-3 w-3 text-muted-foreground/60 shrink-0" />
+                        <span className="truncate">{activeLead.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.webeta.app</span>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="text-[9px] py-0 px-1.5 text-muted-foreground">
+                      {deviceFrame === "desktop" ? "1280px" : deviceFrame === "tablet" ? "768px" : "375px"}
+                    </Badge>
+                  </div>
+                  <div className="mx-auto bg-white transition-all duration-500 ease-out" style={{ maxWidth: `${DEVICE_WIDTHS[deviceFrame]}px`, width: "100%" }}>
+                    <iframe ref={iframeRef} src={currentHtmlUrl} title={`${activeLead.name} website preview`}
+                      className="w-full border-0"
+                      style={{ height: deviceFrame === "mobile" ? "667px" : "700px" }}
+                      sandbox="allow-scripts allow-same-origin" />
                   </div>
                 </div>
-              )}
-
-              {/* Active lead - queued state */}
-              {activeLead && activePreview?.state === "queued" && (
-                <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-border bg-muted/30">
-                  <Clock className="h-5 w-5 text-muted-foreground shrink-0" />
-                  <div>
-                    <div className="text-sm font-medium text-foreground">
-                      Queued — position {(activePreview as Extract<PreviewStatus, { state: "queued" }>).position}
-                    </div>
-                    <div className="text-xs text-muted-foreground">Will generate automatically in this batch</div>
-                  </div>
-                </div>
-              )}
-
-              {/* Active lead - error state */}
-              {activeLead && activePreview?.state === "error" && (
-                <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-destructive/30 bg-destructive/5">
-                  <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-destructive">Generation failed</div>
-                    <div className="text-xs text-muted-foreground mt-0.5 truncate">
-                      {(activePreview as Extract<PreviewStatus, { state: "error" }>).message}
-                    </div>
-                  </div>
+              ) : activeStatus?.state === "error" ? (
+                <div className="p-8 rounded-xl border border-destructive/30 bg-destructive/5 flex flex-col items-center justify-center gap-2 text-center text-xs text-destructive">
+                  <AlertCircle className="h-5 w-5" />
+                  <span className="font-semibold">HTML Compilation Failed</span>
+                  <p className="text-[11px] text-muted-foreground max-w-md">{activeStatus.error}</p>
                   <Button
-                    size="sm"
                     variant="outline"
-                    onClick={() => activeLead && regenerate(activeLead)}
-                    className="h-7 text-xs shrink-0"
+                    size="sm"
+                    onClick={() => handleGenerateActive(true)}
+                    className="mt-2 text-xs"
                   >
                     Retry
                   </Button>
                 </div>
-              )}
-
-              {/* Batch progress mini-list */}
-              {running && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                  {ranked.map((lead) => {
-                    const s = previews[lead.id];
-                    return (
-                      <div
-                        key={lead.id}
-                        className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border text-[10px] truncate ${
-                          s?.state === "done"
-                            ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-700 dark:text-emerald-400"
-                            : s?.state === "generating"
-                              ? "border-violet-500/40 bg-violet-500/10 text-violet-600 dark:text-violet-400"
-                              : s?.state === "queued"
-                                ? "border-border bg-muted/30 text-muted-foreground"
-                                : s?.state === "error"
-                                  ? "border-destructive/30 bg-destructive/5 text-destructive"
-                                  : "border-border bg-muted/20 text-muted-foreground"
-                        }`}
-                      >
-                        {s?.state === "done" ? (
-                          <CheckCircle2 className="h-3 w-3 shrink-0" />
-                        ) : s?.state === "generating" ? (
-                          <Loader2 className="h-3 w-3 animate-spin shrink-0" />
-                        ) : s?.state === "error" ? (
-                          <AlertCircle className="h-3 w-3 shrink-0" />
-                        ) : (
-                          <Clock className="h-3 w-3 shrink-0 opacity-40" />
-                        )}
-                        <span className="truncate">{lead.name}</span>
-                      </div>
-                    );
-                  })}
+              ) : (
+                /* ── Empty State ──────────────────────────────────────────────── */
+                <div className="p-10 rounded-xl border border-dashed border-border bg-muted/10 flex flex-col items-center justify-center gap-2 text-center">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-1">
+                    <Code2 className="h-5 w-5" />
+                  </div>
+                  <div className="text-xs font-semibold text-foreground">
+                    No live HTML preview yet
+                  </div>
+                  <p className="text-[11px] text-muted-foreground max-w-sm">
+                    Click &quot;Compile Live Preview&quot; to generate a complete, interactive HTML website for {activeLead.name} using AI. The site will use real business data from Google Maps.
+                  </p>
+                  <Button
+                    size="sm"
+                    onClick={() => handleGenerateActive(false)}
+                    className="mt-2 text-xs font-semibold gap-1.5"
+                  >
+                    <Code2 className="h-3.5 w-3.5" /> Compile Live Preview
+                  </Button>
                 </div>
               )}
+            </div>
+          ) : (
+            <div className="p-8 text-center text-xs text-muted-foreground">
+              Please select a business from the sidebar to view or generate its website preview.
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Lightbox Modal for Screenshot Image ──────────────────────────────────── */}
+      <AnimatePresence>
+        {lightboxImg && activeLead && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm"
+            onClick={() => setLightboxImg(null)}
+          >
+            <div className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-white font-semibold text-sm">{activeLead.name} — Full Page Website Preview</span>
+                <div className="flex items-center gap-2">
+                  <a href={lightboxImg}
+                    download={`${activeLead.name.replace(/[^a-z0-9]/gi, "_")}_website_preview.png`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-white hover:opacity-90 transition-opacity"
+                    onClick={(e) => e.stopPropagation()}>
+                    <Download className="h-3.5 w-3.5" /> Download PNG
+                  </a>
+                  <button onClick={() => setLightboxImg(null)}
+                    className="h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={lightboxImg} alt={`${activeLead.name} full-page website screenshot`}
+                className="w-full rounded-xl shadow-2xl max-h-[85vh] object-contain" />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Lightbox */}
+      {/* ── Lightbox Modal for Fullscreen HTML ──────────────────────────────────── */}
       <AnimatePresence>
-        {lightboxUrl && (
+        {lightboxHtml && activeLead && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
-            onClick={() => setLightboxUrl(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-2 sm:p-4 backdrop-blur-sm"
+            onClick={() => setLightboxHtml(null)}
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative max-w-5xl w-full max-h-[90vh] overflow-auto rounded-xl shadow-2xl"
+            <div
+              className="relative w-full h-full max-w-7xl bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              <button
-                onClick={() => setLightboxUrl(null)}
-                className="absolute top-3 right-3 z-10 h-8 w-8 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/80 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={lightboxUrl}
-                alt="Website preview fullscreen"
-                className="w-full rounded-xl"
-              />
-            </motion.div>
+              <div className="flex items-center justify-between p-3 border-b border-neutral-200 bg-neutral-100">
+                <div className="flex items-center gap-2">
+                  <Code2 className="h-4 w-4 text-primary" />
+                  <span className="font-semibold text-sm text-neutral-900">
+                    {activeLead.name} — Live HTML Preview (Fullscreen)
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* Device switcher inside fullscreen */}
+                  {(["desktop", "tablet", "mobile"] as const).map((d) => (
+                    <button
+                      key={d}
+                      onClick={() => setDeviceFrame(d)}
+                      className={`h-8 px-2.5 rounded-lg text-[11px] font-semibold transition-all ${
+                        deviceFrame === d
+                          ? "bg-primary text-white"
+                          : "bg-neutral-200 text-neutral-600 hover:bg-neutral-300"
+                      }`}
+                    >
+                      {d === "desktop" ? "Desktop" : d === "tablet" ? "Tablet" : "Mobile"}
+                    </button>
+                  ))}
+                  <a
+                    href={lightboxHtml}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="h-8 px-3 rounded-lg text-xs font-medium bg-neutral-200 hover:bg-neutral-300 text-neutral-700 flex items-center gap-1.5 transition-colors"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    <span>Open Tab</span>
+                  </a>
+                  <button
+                    onClick={() => setLightboxHtml(null)}
+                    className="h-8 w-8 rounded-lg bg-neutral-200 hover:bg-neutral-300 text-neutral-500 hover:text-neutral-900 flex items-center justify-center transition-colors"
+                    aria-label="Close modal"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex-1 overflow-hidden bg-neutral-200 flex items-start justify-center p-4">
+                <div
+                  className="bg-white shadow-2xl rounded-lg overflow-hidden transition-all duration-500"
+                  style={{
+                    width: `${DEVICE_WIDTHS[deviceFrame]}px`,
+                    maxWidth: "100%",
+                    height: "100%",
+                  }}
+                >
+                  <iframe
+                    src={lightboxHtml}
+                    title={`${activeLead.name} fullscreen preview`}
+                    className="w-full h-full border-0"
+                    sandbox="allow-scripts allow-same-origin"
+                  />
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

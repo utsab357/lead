@@ -39,10 +39,12 @@ function extractJSON<T>(text: string): T | null {
   try { return JSON.parse(s.slice(start, end + 1)) as T; } catch { return null; }
 }
 
-// Models tried in order
+// Models tried in order — must match what's available on the key
+// Run: curl "https://generativelanguage.googleapis.com/v1beta/models?key=YOUR_KEY" to verify
 const GEMINI_JSON_MODELS = [
-  "gemini-3.6-flash",
-  "gemini-2.0-flash-exp",
+  "gemini-2.5-flash",
+  "gemini-2.5-pro",
+  "gemini-flash-latest",
 ];
 
 /**

@@ -12,7 +12,7 @@ import { Phase4Build } from "@/components/Phase4Build";
 import { Phase7Export } from "@/components/Phase7Export";
 import { SessionsPage } from "@/components/SessionsPage";
 import { AIEngineDropdown } from "@/components/AIEngineDropdown";
-import type { Lead, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus, ScrapeSession, ClientDetail } from "@/lib/types";
+import type { Lead, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus, ScrapeSession, ClientDetail, LeadVisualPreviewSet } from "@/lib/types";
 import { Sparkles, History, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -26,6 +26,7 @@ export default function Page() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [outreachResults, setOutreachResults] = useState<Record<string, OutreachResult>>({});
   const [buildPrompts, setBuildPrompts] = useState<Record<string, BuildPromptResult>>({});
+  const [visualPreviews, setVisualPreviews] = useState<Record<string, LeadVisualPreviewSet>>({});
   const [leadStatuses, setLeadStatuses] = useState<Record<string, LeadStatus>>({});
   const [leadNotes, setLeadNotes] = useState<Record<string, string>>({});
   const [clientDetails, setClientDetails] = useState<Record<string, ClientDetail>>({});
@@ -129,6 +130,7 @@ export default function Page() {
     );
     setLeadNotes(session.leadNotes ?? {});
     setClientDetails(session.clientDetails ?? {});
+    setVisualPreviews(session.visualPreviews ?? {});
 
     const savedRanked      = session.ranked ?? [];
     const savedAudits      = session.audits ?? {};
@@ -141,8 +143,8 @@ export default function Page() {
     if (cachedPhase && !isNaN(Number(cachedPhase)) && Number(cachedPhase) >= 1 && Number(cachedPhase) <= 7) {
       setPhase(Number(cachedPhase));
     } else {
-      if (Object.keys(savedBuildPs).length > 0)        setPhase(7);
-      else if (Object.keys(savedOutreach).length > 0)  setPhase(6);
+      if (Object.keys(savedOutreach).length > 0)       setPhase(6);
+      else if (Object.keys(savedBuildPs).length > 0)    setPhase(5);
       else if (session.selectedId && savedRanked.length > 0) setPhase(5);
       else if (Object.keys(savedConversions).length > 0) setPhase(4);
       else if (savedRanked.length > 0)                 setPhase(3);
@@ -160,6 +162,7 @@ export default function Page() {
     setSelectedId(null);
     setOutreachResults({});
     setBuildPrompts({});
+    setVisualPreviews({});
     setLeadStatuses({});
     setLeadNotes({});
     setClientDetails({});
@@ -243,6 +246,18 @@ export default function Page() {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ buildPrompts: newPrompts }),
+      });
+    } catch { /* non-critical, ignore */ }
+  }
+
+  /** Persist visual previews back to the session file silently */
+  async function saveVisualPreviewsToSession(newPreviews: Record<string, LeadVisualPreviewSet>) {
+    if (!activeSessionId) return;
+    try {
+      await fetch(`/api/sessions/${activeSessionId}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ visualPreviews: newPreviews }),
       });
     } catch { /* non-critical, ignore */ }
   }
@@ -441,15 +456,22 @@ export default function Page() {
               onPrev={() => setPhase(3)}
             />
           )}
+          {/* Phase 5: Build / Website Preview */}
           {phase === 5 && (
-            <Phase5Outreach
+            <Phase4Build
               key={`p5-${goToLeadId || selectedId || "all"}`}
               ranked={ranked}
-              outreachResults={outreachResults}
-              setOutreachResults={(r) => {
-                setOutreachResults(r);
-                saveOutreachToSession(r);
+              buildPrompts={buildPrompts}
+              setBuildPrompts={(b) => {
+                setBuildPrompts(b);
+                saveBuildPromptsToSession(b);
               }}
+              visualPreviews={visualPreviews}
+              setVisualPreviews={(vp) => {
+                setVisualPreviews(vp);
+                saveVisualPreviewsToSession(vp);
+              }}
+              sessionId={activeSessionId}
               initialLeadId={goToLeadId || selectedId}
               onSelectLead={(id) => {
                 setSelectedId(id);
@@ -459,14 +481,15 @@ export default function Page() {
               onPrev={() => setPhase(4)}
             />
           )}
+          {/* Phase 6: Outreach */}
           {phase === 6 && (
-            <Phase4Build
+            <Phase5Outreach
               key={`p6-${goToLeadId || selectedId || "all"}`}
               ranked={ranked}
-              buildPrompts={buildPrompts}
-              setBuildPrompts={(b) => {
-                setBuildPrompts(b);
-                saveBuildPromptsToSession(b);
+              outreachResults={outreachResults}
+              setOutreachResults={(r) => {
+                setOutreachResults(r);
+                saveOutreachToSession(r);
               }}
               initialLeadId={goToLeadId || selectedId}
               onSelectLead={(id) => {

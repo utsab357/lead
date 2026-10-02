@@ -6,12 +6,11 @@
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-// Models tried in order — verified against actual API key (2026-08-22)
-// gpt-oss-120b MUST be first — only model that handles large prompts (13k+ chars)
+// Models tried in order — real Groq model IDs
 const GROQ_MODELS = [
-  "openai/gpt-oss-120b", // 120B — handles large prompts, high context window
-  "openai/gpt-oss-20b",  // 20B — smaller context, fallback for lighter tasks
-  "qwen/qwen3.6-27b",   // 27B thinking model — limited output, last resort
+  "llama-3.3-70b-versatile",  // 70B — handles large prompts, 128K context, 32K output
+  "llama-3.1-8b-instant",     // 8B — fast, 128K context, 8K output
+  "mixtral-8x7b-32768",       // MoE — good fallback, 32K context
 ];
 
 export type GroqResult<T> =
@@ -85,7 +84,7 @@ function formatGroqReset(headers: Headers): string {
  */
 export async function runGroqJSON<T>(
   prompt: string,
-  opts: { temperature?: number } = {},
+  opts: { temperature?: number; maxTokens?: number } = {},
 ): Promise<GroqResult<T>> {
   const key = process.env.GROQ_API_KEY;
   if (!key) {
@@ -101,11 +100,10 @@ export async function runGroqJSON<T>(
 
   for (const model of GROQ_MODELS) {
     try {
-      const modelMaxTokens = model.includes("qwen") ? 2048 : 4096;
       const body: Record<string, unknown> = {
         model,
         temperature: opts.temperature ?? 0.3,
-        max_tokens: modelMaxTokens,
+        max_tokens: opts.maxTokens ?? 4096,
         messages: [
           {
             role:    "system",
@@ -114,9 +112,7 @@ export async function runGroqJSON<T>(
           { role: "user", content: prompt },
         ],
       };
-      if (model.includes("qwen")) {
-        body.max_tokens = 2048; // qwen has lower output limits
-      }
+
 
       const res = await fetch(GROQ_API_URL, {
         method:  "POST",

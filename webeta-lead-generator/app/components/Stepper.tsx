@@ -5,13 +5,13 @@ import { Check, Search, FileSearch, Trophy, Target, Send, Sparkles, Download, La
 import { cn } from "@/lib/utils";
 
 const STEPS = [
-  { id: 1, label: "Discovery", sub: "Radar", icon: Search },
-  { id: 2, label: "Audit", sub: "Analysis", icon: FileSearch },
-  { id: 3, label: "Matrix", sub: "Scoring", icon: Trophy },
-  { id: 4, label: "Hooks", sub: "Sales Pitch", icon: Target },
-  { id: 5, label: "Studio", sub: "Outreach", icon: Send },
-  { id: 6, label: "Architect", sub: "Build Prompt", icon: Sparkles },
-  { id: 7, label: "Pipeline", sub: "Client CRM", icon: Download },
+  { id: 1, label: "Discovery", sub: "Radar",       icon: Search },
+  { id: 2, label: "Audit",     sub: "Analysis",    icon: FileSearch },
+  { id: 3, label: "Matrix",    sub: "Scoring",     icon: Trophy },
+  { id: 4, label: "Hooks",     sub: "Sales Pitch", icon: Target },
+  { id: 5, label: "Architect", sub: "Build & Preview", icon: Sparkles },
+  { id: 6, label: "Studio",    sub: "Outreach",    icon: Send },
+  { id: 7, label: "Pipeline",  sub: "Client CRM",  icon: Download },
 ];
 
 export function Stepper({

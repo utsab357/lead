@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { PhaseShell } from "./PhaseShell";
 import { IncompleteState } from "./IncompleteState";
@@ -16,7 +15,6 @@ import {
   Sparkles,
   Search,
   ExternalLink,
-  Globe2,
   Palette,
   Check,
   ListFilter,
@@ -28,13 +26,6 @@ import type { RankedLead, BuildPromptResult, ExtraPage } from "@/lib/types";
 import { toast } from "sonner";
 import { PreviewPanel } from "./PreviewPanel";
 
-const PLATFORMS = [
-  { id: "stitch",      label: "Google Stitch",  url: "https://stitch.withgoogle.com" },
-  { id: "lovable",     label: "Lovable",         url: "https://lovable.dev" },
-  { id: "bolt",        label: "Bolt.new",        url: "https://bolt.new" },
-  { id: "claude-code", label: "Claude Code",     url: "https://claude.com/claude-code" },
-  { id: "codex",       label: "Codex",           url: "https://chat.openai.com" },
-];
 
 const STYLE_PRESETS = [
   { id: "professional", label: "Professional",    desc: "Clean, trustworthy, corporate" },
@@ -49,6 +40,9 @@ export function Phase4Build({
   ranked,
   buildPrompts,
   setBuildPrompts,
+  visualPreviews,
+  setVisualPreviews,
+  sessionId,
   onNext,
   onPrev,
   initialLeadId,
@@ -57,6 +51,9 @@ export function Phase4Build({
   ranked: RankedLead[];
   buildPrompts: Record<string, BuildPromptResult>;
   setBuildPrompts: (b: Record<string, BuildPromptResult>) => void;
+  visualPreviews?: Record<string, import("@/lib/types").LeadVisualPreviewSet>;
+  setVisualPreviews?: (p: Record<string, import("@/lib/types").LeadVisualPreviewSet>) => void;
+  sessionId?: string | null;
   onNext: () => void;
   onPrev: () => void;
   initialLeadId?: string | null;
@@ -79,21 +76,50 @@ export function Phase4Build({
       if (match) setActiveLead(match);
     }
   }, [initialLeadId, ranked]);
-  const [platform, setPlatform] = useState("stitch");
   const [styles, setStyles] = useState<string[]>(["ai-decides"]);
-  const [showCustomStyles, setShowCustomStyles] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [batchRunning, setBatchRunning] = useState(false);
   const [batchProgress, setBatchProgress] = useState<{ done: number; total: number } | null>(null);
   const batchCancelRef = { current: false };
   const [error, setError] = useState<string | null>(null);
+
+
   const [typed, setTyped] = useState<Record<string, string>>({});
   const [sidebarSearch, setSidebarSearch] = useState("");
   const [mobilePickerOpen, setMobilePickerOpen] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [extraPagePrompts, setExtraPagePrompts] = useState<Record<string, { prompt: string; generating: boolean }>>({});
-  const [heroPhotoIndex, setHeroPhotoIndex] = useState<Record<string, number>>({});
   const [brokenPhotos, setBrokenPhotos] = useState<Set<string>>(new Set());
+  const [subPageCompiling, setSubPageCompiling] = useState<Record<string, boolean>>({});
+  const [subPageUrls, setSubPageUrls] = useState<Record<string, string>>({});
+
+  // Track which leads have generated AI website preview images
+  const [imagePreviews, setImagePreviews] = useState<Record<string, { exists: boolean }>>({});
+
+  // Check preview images once in batch (single fast request instead of 100+ separate GETs)
+  useEffect(() => {
+    fetch("/api/generate-preview?list=true")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.files && Array.isArray(d.files)) {
+          const map: Record<string, { exists: boolean }> = {};
+          ranked.forEach((l) => {
+            const cleanName = l.name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 15);
+            const hasMatch = d.files.some((f: string) => f.includes(l.id) || (cleanName && f.toLowerCase().includes(cleanName)));
+            if (hasMatch) map[l.id] = { exists: true };
+          });
+          setImagePreviews(map);
+        }
+      })
+      .catch(() => {});
+  }, [ranked]);
+
+  function clearAllPromptsAndPreviews() {
+    setBuildPrompts({});
+    setVisualPreviews?.({});
+    setImagePreviews({});
+    toast.success("Cleared all generated prompts and image preview data.");
+  }
 
   const result = activeLead ? buildPrompts[activeLead.id] : null;
   const prompt = result?.prompt ?? "";
@@ -105,17 +131,17 @@ export function Phase4Build({
   if (ranked.length === 0) {
     return (
       <PhaseShell
-        title="Phase 6 — Build Site"
-        subtitle="Generate a complete, platform-ready website prompt for each ranked lead."
+        title="Phase 5 — Architect & Preview"
+        subtitle="Synthesize 2027 visual mockups & complete website prompts for each ranked lead."
         onPrev={onPrev}
         onNext={onNext}
         nextDisabled
-        nextLabel="Export"
+        nextLabel="Studio"
       >
         <IncompleteState
           title="No ranked leads yet"
-          description="Run Phases 1–3 first to get ranked leads, then generate website prompts here."
-          prevPhaseLabel="Outreach"
+          description="Run Phases 1–3 first to get ranked leads, then generate website mockups here."
+          prevPhaseLabel="Hooks"
           onPrev={onPrev}
         />
       </PhaseShell>
@@ -133,23 +159,17 @@ export function Phase4Build({
     setGenerating(true);
     setError(null);
     const styleParam = styles.length > 0 ? styles.join("+") : "ai-decides";
-    const selectedIdx = heroPhotoIndex[activeLead.id] ?? 0;
-    const reorderedLead =
-      activeLead.photoUrls && activeLead.photoUrls.length > 1 && selectedIdx > 0
-        ? {
-            ...activeLead,
-            photoUrls: [
-              activeLead.photoUrls[selectedIdx],
-              ...activeLead.photoUrls.filter((_, i) => i !== selectedIdx),
-            ],
-          }
-        : activeLead;
+    const validPhotos = (activeLead.photoUrls ?? []).filter((u) => !brokenPhotos.has(u));
+    const cleanLead = {
+      ...activeLead,
+      photoUrls: validPhotos,
+    };
 
     try {
       const res = await fetch("/api/build-prompt", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ lead: reorderedLead, platform, style: styleParam }),
+        body: JSON.stringify({ lead: cleanLead, style: styleParam }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -196,7 +216,7 @@ export function Phase4Build({
         const res = await fetch("/api/build-prompt", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ lead, platform, style: styleParam }),
+          body: JSON.stringify({ lead, style: styleParam }),
         });
         if (res.ok) {
           const data = (await res.json()) as BuildPromptResult;
@@ -221,14 +241,8 @@ export function Phase4Build({
     if (!prompt) return;
     navigator.clipboard.writeText(prompt);
     setCopiedPrompt(true);
-    const platformLabel = PLATFORMS.find((p) => p.id === platform)?.label ?? "builder";
-    toast.success(`Prompt copied — ready to paste into ${platformLabel}`);
+    toast.success("Website prompt copied — ready for Groq/Gemini compiler");
     setTimeout(() => setCopiedPrompt(false), 2000);
-  }
-
-  function openPlatform() {
-    const url = PLATFORMS.find((p) => p.id === platform)?.url;
-    if (url) window.open(url, "_blank");
   }
 
   const isAIDecides = styles.includes("ai-decides");
@@ -245,11 +259,11 @@ export function Phase4Build({
 
   return (
     <PhaseShell
-      title="Phase 6 — Build Site"
-      subtitle={`Generate a ready-to-paste website-builder prompt for each lead. ${doneCount}/${ranked.length} done.`}
+      title="Phase 5 — Architect & Preview"
+      subtitle={`Synthesize 2027 visual mockups & complete website prompts for each lead. ${doneCount}/${ranked.length} prompts built.`}
       onPrev={onPrev}
       onNext={onNext}
-      nextLabel="Export"
+      nextLabel="Studio"
       nextDisabled={doneCount === 0}
     >
       {/* ── MOBILE LEAD SELECTOR STRIP (< lg) ── */}
@@ -301,7 +315,15 @@ export function Phase4Build({
                   {activeLead.category} · {activeLead.city}
                 </div>
               </div>
-              <div className="shrink-0">
+              <div className="shrink-0 flex items-center gap-1.5">
+                {imagePreviews[activeLead.id]?.exists && (
+                  <span
+                    title="AI Website Preview Image Ready"
+                    className="h-4 w-4 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-600 flex items-center justify-center font-bold text-[9px] shadow-xs"
+                  >
+                    I
+                  </span>
+                )}
                 {result ? (
                   <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] gap-1">
                     <CheckCircle2 className="h-3 w-3" /> Ready
@@ -377,7 +399,15 @@ export function Phase4Build({
                         {lead.category} · {lead.city}
                       </div>
                     </div>
-                    <div className="shrink-0">
+                    <div className="shrink-0 flex items-center gap-1.5">
+                      {imagePreviews[lead.id]?.exists && (
+                        <span
+                          title="AI Website Preview Image Ready"
+                          className="h-4 w-4 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-600 flex items-center justify-center font-bold text-[9px] shadow-xs"
+                        >
+                          I
+                        </span>
+                      )}
                       {isDone ? (
                         <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                       ) : (
@@ -430,7 +460,19 @@ export function Phase4Build({
               disabled={generating}
               className="w-full text-xs h-8 font-medium border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
             >
-              Generate remaining ({ranked.filter((l) => !buildPrompts[l.id]).length})
+              Generate remaining prompts ({ranked.filter((l) => !buildPrompts[l.id]).length})
+            </Button>
+          )}
+
+          {doneCount > 0 && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={clearAllPromptsAndPreviews}
+              className="w-full text-xs h-7 text-muted-foreground hover:text-destructive"
+              title="Reset all generated prompts and image preview data for this session"
+            >
+              Clear Prompts & Previews
             </Button>
           )}
 
@@ -488,7 +530,17 @@ export function Phase4Build({
                     <div className="text-xs font-semibold text-foreground truncate">{lead.name}</div>
                     <div className="text-[10px] text-muted-foreground truncate">{lead.category}</div>
                   </div>
-                  <div className="shrink-0">
+                  <div className="shrink-0 flex items-center gap-1.5">
+                    {/* Circle with 'I' for AI Image (Point 7) */}
+                    {imagePreviews[lead.id]?.exists && (
+                      <span
+                        title="AI Website Preview Image Ready"
+                        className="h-4 w-4 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-600 flex items-center justify-center font-bold text-[9px] shadow-xs"
+                      >
+                        I
+                      </span>
+                    )}
+                    {/* Green check for Prompt */}
                     {done ? (
                       <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                     ) : (
@@ -537,39 +589,25 @@ export function Phase4Build({
                     </div>
                   </div>
 
-                  {/* Style Presets Selector (Clean, Modern) */}
+                  {/* Design Direction (Single Mode: AI Smart Design) */}
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                        <Palette className="h-3.5 w-3.5 text-primary" />
-                        <span>Design Direction</span>
-                      </div>
-                      <button
-                        onClick={() => setShowCustomStyles((v) => !v)}
-                        className="text-[11px] text-primary hover:underline font-medium flex items-center gap-1"
-                      >
-                        <SlidersHorizontal className="h-3 w-3" />
-                        <span>{showCustomStyles ? "Hide styles" : "Custom styles"}</span>
-                      </button>
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground mb-2">
+                      <Sparkles className="h-3.5 w-3.5 text-primary" />
+                      <span>Design Direction</span>
                     </div>
 
-                    {/* AI Decides Featured Card */}
-                    <div
-                      onClick={() => setStyles(["ai-decides"])}
-                      className={`cursor-pointer rounded-xl border p-3 transition-all flex items-start justify-between gap-3 ${
-                        isAIDecides
-                          ? "border-primary bg-primary/5 ring-1 ring-primary/40 shadow-xs"
-                          : "border-border hover:border-primary/40 bg-card"
-                      }`}
-                    >
+                    <div className="rounded-xl border border-primary/40 bg-primary/5 p-3 flex items-start justify-between gap-3 shadow-xs">
                       <div className="flex items-start gap-2.5">
                         <div className="h-7 w-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
                           <Sparkles className="h-4 w-4" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold text-foreground">✨ AI Smart Design (Recommended)</span>
-                            <Badge className="bg-primary/10 text-primary border-primary/20 text-[9px] py-0 px-1.5">
+                            <span className="text-xs font-bold text-foreground">✨ AI Smart Design</span>
+                            <Badge className="bg-primary/20 text-primary border-primary/30 text-[9px] py-0 px-1.5 font-semibold">
+                              Recommended
+                            </Badge>
+                            <Badge variant="outline" className="text-[9px] py-0 px-1.5 font-mono text-muted-foreground">
                               Auto
                             </Badge>
                           </div>
@@ -578,105 +616,64 @@ export function Phase4Build({
                           </p>
                         </div>
                       </div>
-                      <div className="shrink-0 mt-0.5">
-                        <div
-                          className={`h-4 w-4 rounded-full border flex items-center justify-center ${
-                            isAIDecides ? "border-primary bg-primary text-primary-foreground" : "border-border"
-                          }`}
-                        >
-                          {isAIDecides && <Check className="h-2.5 w-2.5 stroke-[3]" />}
-                        </div>
+                      <div className="h-4 w-4 rounded-full border border-primary bg-primary text-primary-foreground flex items-center justify-center shrink-0 mt-1">
+                        <Check className="h-2.5 w-2.5 stroke-[3]" />
                       </div>
                     </div>
-
-                    {/* Expandable Custom Styles */}
-                    {showCustomStyles && (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2 pt-2 border-t border-border/60">
-                        {STYLE_PRESETS.map((s) => {
-                          const selected = styles.includes(s.id);
-                          return (
-                            <button
-                              key={s.id}
-                              onClick={() => {
-                                const base = styles.filter((x) => x !== "ai-decides" && x !== s.id);
-                                if (selected) {
-                                  setStyles(base.length > 0 ? base : ["ai-decides"]);
-                                } else if (base.length < 3) {
-                                  setStyles([...base, s.id]);
-                                }
-                              }}
-                              className={`rounded-lg border p-2.5 text-left transition-all relative ${
-                                selected
-                                  ? "border-primary bg-primary/8 ring-1 ring-primary/30"
-                                  : "border-border hover:bg-muted/40"
-                              }`}
-                            >
-                              <div className="text-xs font-semibold text-foreground">{s.label}</div>
-                              <div className="text-[10px] text-muted-foreground leading-snug mt-0.5">{s.desc}</div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
                   </div>
 
-                  {/* About photo picker (if photos exist) */}
+                  {/* Verified business photos showcase (auto-mapped to menu/offerings, not hero) */}
                   {(() => {
                     const allUrls = activeLead.photoUrls ?? [];
                     const loadableUrls = allUrls.slice(0, 6).filter((url) => !brokenPhotos.has(url));
-                    if (loadableUrls.length < 2) return null;
+                    if (loadableUrls.length === 0) return null;
                     return (
-                      <div className="pt-2 border-t border-border/60">
-                        <div className="text-[11px] font-semibold text-muted-foreground mb-1.5">
-                          Select About Section Photo:
+                      <div className="pt-2.5 pb-1 border-t border-border/60">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            Verified Business Offerings ({loadableUrls.length} items detected)
+                          </div>
+                          <span className="text-[10px] text-muted-foreground">
+                            Auto-mapped to Menu &amp; Offerings
+                          </span>
                         </div>
                         <div className="flex gap-2 overflow-x-auto pb-1">
-                          {loadableUrls.map((url, idx) => {
-                            const selected = (heroPhotoIndex[activeLead.id] ?? 0) === idx;
-                            return (
-                              <button
-                                key={url}
-                                onClick={() => setHeroPhotoIndex((prev) => ({ ...prev, [activeLead.id]: idx }))}
-                                className={`relative rounded-lg overflow-hidden border-2 shrink-0 transition-all ${
-                                  selected ? "border-primary ring-2 ring-primary/30" : "border-border opacity-70 hover:opacity-100"
-                                }`}
-                              >
-                                <img
-                                  src={url}
-                                  alt={`Photo ${idx + 1}`}
-                                  className="w-14 h-11 object-cover"
-                                  loading="lazy"
-                                  onError={() => setBrokenPhotos((prev) => new Set([...prev, url]))}
-                                />
-                                {selected && (
-                                  <span className="absolute bottom-0 inset-x-0 bg-primary text-primary-foreground text-[8px] text-center font-bold">
-                                    HERO
-                                  </span>
-                                )}
-                              </button>
-                            );
-                          })}
+                          {loadableUrls.map((url, idx) => (
+                            <div
+                              key={url}
+                              className="relative rounded-lg overflow-hidden border border-border shrink-0 group"
+                              title={`Item #${idx + 1} — Curated for offerings & gallery showcase`}
+                            >
+                              <img
+                                src={url}
+                                alt={`Offering item ${idx + 1}`}
+                                className="w-14 h-11 object-cover transition-transform group-hover:scale-105"
+                                loading="lazy"
+                                onError={() => setBrokenPhotos((prev) => new Set([...prev, url]))}
+                              />
+                              <span className="absolute bottom-0 inset-x-0 bg-background/90 text-muted-foreground text-[8px] text-center font-medium py-0.5 border-t border-border/40">
+                                ITEM {idx + 1}
+                              </span>
+                            </div>
+                          ))}
                         </div>
+                        <p className="text-[10px] text-muted-foreground mt-1">
+                          Hero section uses high-res atmospheric visuals &amp; 2027 AI generated mockups. Food &amp; product photos are dedicated to Menu &amp; Showcase sections.
+                        </p>
                       </div>
                     );
                   })()}
 
-                  {/* Platform & Generate Bar */}
+                  {/* Generation Target & Action Bar */}
                   <div className="pt-3 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">Platform:</span>
-                      <Select value={platform} onValueChange={(v) => v && setPlatform(v)}>
-                        <SelectTrigger className="h-9 w-40 text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {PLATFORMS.map((p) => (
-                            <SelectItem key={p.id} value={p.id} className="text-xs">
-                              {p.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Badge variant="outline" className="text-xs py-1 px-2.5 bg-muted/40 font-mono text-muted-foreground border-border">
+                        HTML5 + Tailwind CSS 2026
+                      </Badge>
+                      <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                        Strict Blueprint for Groq Compiler & Live Preview
+                      </span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -693,7 +690,7 @@ export function Phase4Build({
                         ) : result ? (
                           <>
                             <Sparkles className="h-3.5 w-3.5 mr-1.5" />
-                            Regenerate
+                            Regenerate prompt
                           </>
                         ) : (
                           <>
@@ -733,22 +730,13 @@ export function Phase4Build({
                   <Card className="border-border shadow-xs">
                     <CardHeader className="p-4 pb-2 border-b border-border/60 flex flex-row items-center justify-between gap-2 flex-wrap">
                       <div className="flex items-center gap-2">
-                        <CardTitle className="text-sm font-semibold">Website Builder Prompt</CardTitle>
-                        <Badge variant="outline" className="text-[10px]">
-                          {PLATFORMS.find((p) => p.id === platform)?.label}
+                        <CardTitle className="text-sm font-semibold">Website Blueprint & Specification</CardTitle>
+                        <Badge variant="outline" className="text-[10px] text-emerald-600 bg-emerald-500/10 border-emerald-500/20">
+                          Ready for Compiler
                         </Badge>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={openPlatform}
-                          className="h-8 text-xs px-2.5"
-                        >
-                          <Globe2 className="h-3.5 w-3.5 mr-1 text-primary" />
-                          Open {PLATFORMS.find((p) => p.id === platform)?.label}
-                        </Button>
                         <Button
                           size="sm"
                           onClick={copyPrompt}
@@ -775,7 +763,7 @@ export function Phase4Build({
                       </pre>
                       <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground">
                         <span>{prompt.length} characters</span>
-                        <span>Ready to paste into {PLATFORMS.find((p) => p.id === platform)?.label}</span>
+                        <span>Compiled directly into live preview below</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -836,10 +824,11 @@ export function Phase4Build({
                                       <Loader2 className="h-3 w-3 animate-spin" /> Generating…
                                     </div>
                                   ) : ep?.prompt ? (
+                                  <div className="flex items-center gap-1.5 shrink-0">
                                     <Button
                                       size="sm"
                                       variant="outline"
-                                      className="h-7 text-xs px-2.5"
+                                      className="h-7 text-xs px-2"
                                       onClick={() => {
                                         navigator.clipboard.writeText(ep.prompt);
                                         toast.success(`${page.label} prompt copied!`);
@@ -848,6 +837,63 @@ export function Phase4Build({
                                       <Copy className="h-3 w-3 mr-1" />
                                       Copy
                                     </Button>
+                                    <Button
+                                      size="sm"
+                                      variant={subPageUrls[key] ? "default" : "secondary"}
+                                      className="h-7 text-xs px-2.5 font-medium"
+                                      disabled={subPageCompiling[key]}
+                                      onClick={async () => {
+                                        if (subPageUrls[key]) {
+                                          window.open(subPageUrls[key], "_blank");
+                                          return;
+                                        }
+                                        setSubPageCompiling((prev) => ({ ...prev, [key]: true }));
+                                        try {
+                                          const res = await fetch("/api/generate-preview", {
+                                            method: "POST",
+                                            headers: { "content-type": "application/json" },
+                                            body: JSON.stringify({
+                                              lead: activeLead,
+                                              buildPrompt: ep.prompt,
+                                              pageType: page.id,
+                                              mode: "desktop",
+                                              force: true,
+                                            }),
+                                          });
+                                          const data = await res.json();
+                                          const previewLink = data.previewUrl || data.desktopUrl || data.htmlUrl;
+                                          if (data.ok && previewLink) {
+                                            setSubPageUrls((prev) => ({ ...prev, [key]: previewLink }));
+                                            toast.success(`${page.label} mockup generated! Opening now...`);
+                                            window.open(previewLink, "_blank");
+                                          } else {
+                                            toast.error(data.error ?? "Failed to generate sub-page mockup");
+                                          }
+                                        } catch {
+                                          toast.error("Generation error");
+                                        } finally {
+                                          setSubPageCompiling((prev) => ({ ...prev, [key]: false }));
+                                        }
+                                      }}
+                                    >
+                                      {subPageCompiling[key] ? (
+                                        <>
+                                          <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                          Generating…
+                                        </>
+                                      ) : subPageUrls[key] ? (
+                                        <>
+                                          <ExternalLink className="h-3 w-3 mr-1 text-emerald-400" />
+                                          View Mockup
+                                        </>
+                                      ) : (
+                                        <>
+                                          <ExternalLink className="h-3 w-3 mr-1" />
+                                          Generate Mockup
+                                        </>
+                                      )}
+                                    </Button>
+                                  </div>
                                   ) : (
                                     <Button
                                       size="sm"
@@ -863,7 +909,6 @@ export function Phase4Build({
                                             headers: { "content-type": "application/json" },
                                             body: JSON.stringify({
                                               lead: activeLead,
-                                              platform,
                                               style: styles.join("+"),
                                               pageType: page.id,
                                               pageLabel: page.label,
@@ -919,9 +964,6 @@ export function Phase4Build({
                       </Button>
                     )}
                   </div>
-
-                  {/* Website Preview Generator */}
-                  <PreviewPanel ranked={ranked} activeLead={activeLead} />
                 </div>
               )}
 
@@ -935,7 +977,7 @@ export function Phase4Build({
                     <h3 className="text-base font-bold text-foreground">Ready to generate website prompt</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-md mx-auto">
                       AI will analyze <strong>{activeLead.name}</strong>, their category ({activeLead.category}),
-                      and customer reviews to generate a complete prompt ready for {PLATFORMS.find((p) => p.id === platform)?.label}.
+                      and customer reviews to generate a complete 2026 website prompt.
                     </p>
                     <Button onClick={generate} className="mt-4 h-9 px-5 text-xs font-semibold">
                       <Sparkles className="h-3.5 w-3.5 mr-1.5" /> Generate prompt now
@@ -943,6 +985,19 @@ export function Phase4Build({
                   </CardContent>
                 </Card>
               )}
+
+              {/* Website Preview Generator */}
+              <PreviewPanel
+                ranked={ranked}
+                activeLead={activeLead}
+                buildPrompts={buildPrompts}
+                sessionId={sessionId}
+                onPreviewUpdated={(leadId, status) => {
+                  if (status.state === "done") {
+                    setImagePreviews((prev) => ({ ...prev, [leadId]: { exists: true } }));
+                  }
+                }}
+              />
             </>
           )}
         </main>
