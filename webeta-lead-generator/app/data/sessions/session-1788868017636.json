@@ -16295,7 +16295,7 @@
       }
     }
   },
-  "selectedId": "maps-029",
+  "selectedId": "maps-005",
   "buildPrompts": {
     "maps-005": {
       "source": "code",
@@ -17012,6 +17012,76 @@
         ],
         "closingLine": "Let’s schedule a brief 15‑minute call this week so I can show you a tailored website mock‑up and lock in a launch date—this way we can start capturing that lost ₹90,000 revenue as soon as possible.",
         "pricingSuggestion": "₹40,000 - ₹70,000"
+      }
+    },
+    "maps-029": {
+      "source": "gemini",
+      "first": "Hey 👋, I came across Desilicious cafe and restro on Google Maps and loved your 4.3 rating! I noticed you have a great spot in Barasat, West Bengal. We at Webeta created a FREE sample website design for you to see what your online presence could look like ✨. It's not the final design, just an initial idea. Don't judge us by this! You can view the design images we'll share, and if you like the direction, we'd love to chat. No pressure at all — if interested, just reply here or WhatsApp us on 9749883224 or visit webeta.site.",
+      "followUp": "Hi again! Did you get a chance to see the design images we shared? Not having a good online presence can cost you ₹58,000+ in lost customers. We'd love to help you make the most of it. No rush, just let us know 😊",
+      "bestSendTime": "Wednesday, 10:30 AM IST",
+      "callScript": {
+        "closingLine": "Based on our discussion, I believe we can create a website that will help you reach even more customers and increase your sales. I'd like to schedule a meeting to discuss the details and provide a customized quote. Would you be available to meet next week?",
+        "objectionHandlers": [
+          {
+            "objection": "I don't need a website",
+            "response": "I understand that you might not think you need a website, but with 144 reviews and a 4.3 rating, you're already attracting a loyal customer base. A website can help you engage with them more effectively, share updates, and showcase your offerings in a more visually appealing way."
+          },
+          {
+            "objection": "It's too expensive",
+            "response": "I understand that budget is a concern, but our pricing is competitive for a restaurant of your size. We can work together to create a website that fits your needs and budget, and I'd be happy to provide a customized quote."
+          },
+          {
+            "objection": "I'll think about it",
+            "response": "I completely understand that you want to think about it, but I'd like to offer a special promotion for new clients. If you sign up within the next week, we can offer a discounted rate of ₹50,000 for a basic website package."
+          },
+          {
+            "objection": "I already have customers",
+            "response": "That's great to hear! However, with a website, you can attract even more customers and increase your sales. According to our estimates, you're potentially losing ₹58,000 per month due to your current online absence. I'd love to discuss how we can help you turn that around."
+          }
+        ],
+        "openingLine": "Hello, my name is [Your Name] and I'm reaching out from [Your Company]. I came across Desilicious cafe and restro and loved the feedback from customers like 'Good food quality and in best price. Ambience is is very well for having dinner :)' - it's clear you're doing something right! I'd love to discuss how we can help you reach even more customers.",
+        "painPoints": [
+          "Your current website absence is limiting your online visibility, making it difficult for potential customers to find you.",
+          "The limited Sunday hours listed on online directories are restricting customer access and potentially leading to missed opportunities.",
+          "Without an online presence, you're missing out on the opportunity to showcase your unique offerings and build trust with potential customers.",
+          "The absence of online booking and reservation capabilities is making it harder for customers to plan their visits, potentially leading to lost sales."
+        ],
+        "pricingSuggestion": "₹50,000 - ₹1,00,000"
+      }
+    },
+    "maps-005": {
+      "source": "gemini",
+      "first": "Hi! I saw THE FOREST BREW CAFE AND RESTRO on Google Maps in Barasat, West Bengal. Congrats on your 4.7★ rating from 152 reviews! I'm from Webeta (https://webeta.site) — we build modern websites for local businesses. We made a clean 1‑page sample site for you to show how you could look online. Sharing the preview image below 👇 No pressure — if you like it, reply or explore our work at https://webeta.site. — Team Webeta",
+      "followUp": "Hi again! Just checking if you had a chance to view the mockup we shared for THE FOREST BREW CAFE AND RESTRO. No worries if you're busy—whenever you consider a modern website, we’re here. See our work at https://webeta.site. — Team Webeta",
+      "bestSendTime": "Best time to send: Tuesday mornings around 10 AM IST",
+      "callScript": {
+        "openingLine": "Hello, this is [Your Name] from XYZ Web Solutions. I’m calling The Forest Brew Cafe and Restro – I loved reading the reviews praising your affordable, delicious food and the cozy ambiance that guests love.",
+        "painPoints": [
+          "No website means you miss out on showcasing your affordable, delicious menu to the 152 happy reviewers online",
+          "Potential customers can’t discover your cafe through Google search or maps without a site, limiting foot traffic",
+          "Without digital ordering or an online menu, you’re losing an estimated ₹60,000 per month",
+          "Lack of online presence makes it hard to capture repeat business and collect new reviews"
+        ],
+        "objectionHandlers": [
+          {
+            "objection": "I don't need a website",
+            "response": "Even with great word‑of‑mouth, a simple website lets the 152 reviewers you already have find you online, see your menu, and book a table, turning compliments into bookings."
+          },
+          {
+            "objection": "It's too expensive",
+            "response": "A professional site for a cafe like yours typically costs between ₹30,000‑₹50,000, which is less than 5% of the ₹60,000 you’re currently losing each month."
+          },
+          {
+            "objection": "I'll think about it",
+            "response": "I understand; can we schedule a 15‑minute demo this week so you can see exactly how a site can turn your warm reviews into online orders?"
+          },
+          {
+            "objection": "I already have customers",
+            "response": "Your loyal customers love your food and ambiance – a website amplifies that love, attracting new diners who search online, increasing your daily footfall."
+          }
+        ],
+        "closingLine": "Let’s get your cafe online this week so you can start capturing that ₹60,000 monthly loss – can we lock in a quick meeting on Thursday at 10 am?",
+        "pricingSuggestion": "₹30,000‑₹50,000 for a responsive, SEO‑optimized website with online menu and ordering integration"
       }
     }
   },

@@ -59,6 +59,24 @@ export function getCategoryHeroPhoto(category: string): string {
   if (/tech|software|it company|digital|computer|development|startup|agency/.test(c))
     return "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920&q=85";
 
+  if (/travel|tour|tourism|holiday|trip|adventure|trekking|safari/.test(c))
+    return "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1920&q=85";
+
+  if (/event|catering|caterer|wedding|banquet|party|decorator|function|celebration/.test(c))
+    return "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1920&q=85";
+
+  if (/law|lawyer|advocate|legal|solicitor|attorney|ca |chartered accountant|accountant|tax|audit/.test(c))
+    return "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1920&q=85";
+
+  if (/architect|interior design|interior decorator|design studio|renovation/.test(c))
+    return "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1920&q=85";
+
+  if (/hardware|building material|plumbing|electrician|construction supply|paint|cement/.test(c))
+    return "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1920&q=85";
+
+  if (/retail|shop|store|supermarket|grocery|departmental|kirana|general store/.test(c))
+    return "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1920&q=85";
+
   return "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=85";
 }
 
@@ -169,7 +187,67 @@ export function getCategoryGalleryPhotos(category: string): string[] {
     ];
   }
 
-  // 11. Default / Professional Services
+  // 11. Travel / Tour
+  if (/travel|tour|tourism|holiday|trip|adventure|trekking|safari/.test(c)) {
+    return [
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1500835556837-99ac94a94552?auto=format&fit=crop&w=800&q=80",
+    ];
+  }
+
+  // 12. Event / Catering / Wedding
+  if (/event|catering|caterer|wedding|banquet|party|decorator|function|celebration/.test(c)) {
+    return [
+      "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=800&q=80",
+    ];
+  }
+
+  // 13. Law / Accountant / Professional
+  if (/law|lawyer|advocate|legal|ca |chartered|accountant|tax|audit/.test(c)) {
+    return [
+      "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
+    ];
+  }
+
+  // 14. Architect / Interior Design
+  if (/architect|interior design|interior decorator|design studio|renovation/.test(c)) {
+    return [
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=800&q=80",
+    ];
+  }
+
+  // 15. Hardware / Building Supply
+  if (/hardware|building material|plumbing|electrician|construction supply|paint|cement/.test(c)) {
+    return [
+      "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80",
+    ];
+  }
+
+  // 16. Retail / General Store / Supermarket
+  if (/retail|shop|store|supermarket|grocery|departmental|kirana|general store/.test(c)) {
+    return [
+      "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1608686207856-001b95cf60ca?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1523381294911-8d3cead13475?auto=format&fit=crop&w=800&q=80",
+    ];
+  }
+
+  // 17. Default / Professional Services
   return [
     "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80",
@@ -248,6 +326,12 @@ const CATEGORY_HUE_RANGES: Record<string, [number, number]> = {
   clothing:     [290, 340], // rose to magenta
   real_estate:  [210, 240], // professional blues
   auto:         [15, 35],   // orange-red energy
+  travel:       [185, 220], // ocean blues to teals
+  event:        [290, 330], // vibrant rose to magenta
+  legal:        [210, 240], // trust blues
+  architect:    [35, 65],   // warm earthy tones
+  hardware:     [20, 45],   // industrial orange-amber
+  retail:       [160, 200], // fresh greens to teal
   default:      [200, 250], // cool blue range
 };
 
@@ -327,6 +411,18 @@ export function resolveVisualDesignTokens(
     hueRange = CATEGORY_HUE_RANGES.real_estate; baseVibe = "professional_clean"; isDark = h4 < 0.3;
   } else if (/car|auto|vehicle|motor|garage|bike/.test(c)) {
     hueRange = CATEGORY_HUE_RANGES.auto; baseVibe = "bold_energy"; isDark = h4 < 0.5;
+  } else if (/travel|tour|tourism|holiday|trip|adventure|trekking/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.travel; baseVibe = "sleek_modern"; isDark = h4 < 0.4;
+  } else if (/event|catering|caterer|wedding|banquet|party|decorator|celebration/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.event; baseVibe = "dark_luxury"; isDark = h4 < 0.5;
+  } else if (/law|lawyer|advocate|legal|solicitor|ca |chartered|accountant|tax|audit/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.legal; baseVibe = "professional_clean"; isDark = false;
+  } else if (/architect|interior design|interior decorator|design studio|renovation/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.architect; baseVibe = "warm_earthy"; isDark = h4 < 0.35;
+  } else if (/hardware|building material|plumbing|electrician|construction supply|paint|cement/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.hardware; baseVibe = "bold_energy"; isDark = false;
+  } else if (/retail|shop|store|supermarket|grocery|departmental|kirana|general store/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.retail; baseVibe = "professional_clean"; isDark = false;
   }
 
   // 2. Generate unique primary hue within range

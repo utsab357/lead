@@ -79,6 +79,43 @@ export function Phase5Outreach({
   const [mobilePickerOpen, setMobilePickerOpen] = useState(false);
   const [mobileTab, setMobileTab] = useState<"first" | "followup">("first");
   const [copiedType, setCopiedType] = useState<"first" | "followup" | null>(null);
+  const [copiedImage, setCopiedImage] = useState(false);
+
+  // Copy image binary blob to clipboard so user can press Ctrl+V directly in WhatsApp Web
+  async function copyImageToClipboard(imageUrl: string) {
+    try {
+      setCopiedImage(true);
+      const res = await fetch(imageUrl);
+      const blob = await res.blob();
+      let pngBlob = blob;
+      if (blob.type !== "image/png") {
+        const img = new Image();
+        const url = URL.createObjectURL(blob);
+        img.src = url;
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0);
+        pngBlob = await new Promise<Blob>((resolve) =>
+          canvas.toBlob((b) => resolve(b || blob), "image/png")
+        );
+        URL.revokeObjectURL(url);
+      }
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": pngBlob }),
+      ]);
+      toast.success("Preview image copied! Press Ctrl+V directly in WhatsApp chat.");
+      setTimeout(() => setCopiedImage(false), 2000);
+    } catch {
+      setCopiedImage(false);
+      toast.error("Could not copy image directly. Click 'Download PNG' to attach manually!");
+    }
+  }
 
   // Local edits to message and followup (keyed by leadId)
   const [localEdits, setLocalEdits] = useState<Record<string, { message: string; followUp: string }>>({});
@@ -830,20 +867,28 @@ export function Phase5Outreach({
                         </div>
                         {previews[activeLead.id]?.exists && previews[activeLead.id]?.previewUrl && (
                           <div className="flex items-center gap-2">
-                            <a
-                              href={previews[activeLead.id].previewUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => copyImageToClipboard(previews[activeLead.id].previewUrl!)}
+                              className="h-7 text-xs px-2.5 font-medium gap-1 text-primary border-primary/30 hover:bg-primary/5"
                             >
-                              <ExternalLink className="h-3 w-3" /> Full View
-                            </a>
+                              {copiedImage ? (
+                                <>
+                                  <Check className="h-3 w-3 text-emerald-500" /> Copied!
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="h-3 w-3" /> Copy Image (Ctrl+V)
+                                </>
+                              )}
+                            </Button>
                             <a
                               href={previews[activeLead.id].previewUrl}
                               download={`${activeLead.name.toLowerCase().replace(/\s+/g, "-")}-preview.png`}
-                              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground font-medium"
+                              className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground font-medium transition-colors"
                             >
-                              <Download className="h-3 w-3" /> Download
+                              <Download className="h-3 w-3" /> Download PNG
                             </a>
                           </div>
                         )}
@@ -868,25 +913,48 @@ export function Phase5Outreach({
                                 rel="noreferrer"
                                 className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold gap-1 transition-opacity"
                               >
-                                <ExternalLink className="h-4 w-4" /> View Large
+                                <ExternalLink className="h-4 w-4" /> Full View
                               </a>
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                                <span>High-Converting Preview Attached</span>
+                                <span>Design Preview Image Ready (PNG)</span>
                               </div>
                               <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
-                                Attach this high-impact visual mockup when sending your WhatsApp message. Showing business owners their own custom website preview increases reply rates by 4.2x.
+                                <strong>Best Practice:</strong> Send this actual PNG image as an attachment (or click <em>Copy Image</em> and press <code>Ctrl+V</code> into WhatsApp Web). Do not send an image link — clients rarely click strange links, but an image preview in the chat grabs attention immediately!
                               </p>
-                              <div className="mt-2.5 flex items-center gap-2">
+                              <div className="mt-2.5 flex items-center gap-2 flex-wrap">
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={generateActivePreview}
-                                  className="h-7 text-xs px-2.5 font-medium"
+                                  onClick={() => copyImageToClipboard(previews[activeLead.id].previewUrl!)}
+                                  className="h-7 text-xs px-2.5 font-medium gap-1"
                                 >
-                                  <RefreshCw className="h-3 w-3 mr-1" /> Regenerate Preview
+                                  {copiedImage ? (
+                                    <>
+                                      <Check className="h-3 w-3 text-emerald-500" /> Copied Image
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy className="h-3 w-3" /> Copy Image (Ctrl+V)
+                                    </>
+                                  )}
+                                </Button>
+                                <a
+                                  href={previews[activeLead.id].previewUrl}
+                                  download={`${activeLead.name.toLowerCase().replace(/\s+/g, "-")}-preview.png`}
+                                  className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground font-medium transition-colors"
+                                >
+                                  <Download className="h-3 w-3" /> Download PNG
+                                </a>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={generateActivePreview}
+                                  className="h-7 text-xs px-2 text-muted-foreground hover:text-foreground"
+                                >
+                                  <RefreshCw className="h-3 w-3 mr-1" /> Regenerate
                                 </Button>
                               </div>
                             </div>

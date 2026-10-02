@@ -147,6 +147,48 @@ export function verifyHTML(html: string, lead: RankedLead): VerificationIssue[] 
     }
   }
 
+  // 1h. Image quality checks
+  const imgTags = (html.match(/<img[^>]+>/gi) || []);
+  const imgCount = imgTags.length;
+  if (imgCount === 0) {
+    issues.push({ code: "NO_IMAGES", message: "No images found on the page — will look empty", severity: "warning" });
+  } else if (imgCount < 3) {
+    issues.push({ code: "FEW_IMAGES", message: `Only ${imgCount} image(s) — page may look sparse`, severity: "warning" });
+  }
+  // Check for broken image references (src="" or src="undefined")
+  const brokenImgs = imgTags.filter((t: string) => /src\s*=\s*["']\s*["']|src\s*=\s*["']undefined["']|src\s*=\s*["']null["']/i.test(t));
+  if (brokenImgs.length > 0) {
+    issues.push({ code: "BROKEN_IMAGES", message: `${brokenImgs.length} image(s) have empty/broken src — will show as broken`, severity: "critical" });
+  }
+
+  // 1i. Text quality checks
+  // Strip HTML tags to get raw text content
+  const textOnly = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+                       .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+                       .replace(/<[^>]+>/g, " ")
+                       .replace(/\s+/g, " ").trim();
+  
+  // Check for very short text content (page is mostly empty)
+  if (textOnly.length < 500) {
+    issues.push({ code: "TEXT_TOO_SHORT", message: `Page has very little text content (${textOnly.length} chars) — may appear empty`, severity: "critical" });
+  }
+
+  // Check for repeating sentences (AI hallucination pattern)
+  const sentences = textOnly.split(/[.!?]+/).map(s => s.trim().toLowerCase()).filter(s => s.length > 20);
+  const sentenceSet = new Set(sentences);
+  if (sentences.length > 5 && sentenceSet.size < sentences.length * 0.6) {
+    issues.push({ code: "REPEATING_TEXT", message: "Multiple repeated sentences detected — possible AI hallucination", severity: "critical" });
+  }
+
+  // Check for suspicious gibberish patterns (random character sequences)
+  const gibberishPattern = /[bcdfghjklmnpqrstvwxyz]{5,}/gi;
+  const gibberishMatches = textOnly.match(gibberishPattern) || [];
+  // Filter out common words like "strengths", "months" etc
+  const realGibberish = gibberishMatches.filter(m => m.length > 6 && !/^(strength|through|rhythm|months|eighth|weight|ght|ness)$/i.test(m));
+  if (realGibberish.length > 2) {
+    issues.push({ code: "GIBBERISH_TEXT", message: `Suspicious gibberish text patterns found: "${realGibberish[0]}..."`, severity: "critical" });
+  }
+
   return issues;
 }
 
@@ -196,6 +238,9 @@ Check for ALL of these issues and respond ONLY with valid JSON:
 3. Is there any gibberish, garbled, random characters, or AI hallucination text visible?
 4. Are there obvious layout problems (text overlapping images, broken sections, white gaps)?
 5. Is the WhatsApp or phone contact info visible?
+6. Are the images loading properly? Are there broken image placeholders, grey boxes, or missing photos?
+7. Is the text readable and properly formatted? No overlapping text, cut-off text, or text that runs outside its container?
+8. Does the overall design look professional and presentable to a real business owner?
 
 Respond ONLY with this JSON (no extra text):
 {
@@ -204,6 +249,9 @@ Respond ONLY with this JSON (no extra text):
   "hasGibberish": true/false,
   "hasLayoutIssues": true/false,
   "hasContactInfo": true/false,
+  "imagesProper": true/false,
+  "textReadable": true/false,
+  "looksProfessional": true/false,
   "score": <number 1-10>,
   "issues": ["describe any specific problem you see"]
 }`;
@@ -249,6 +297,15 @@ Respond ONLY with this JSON (no extra text):
     }
     if (!aiResult.hasContactInfo) {
       issues.push({ code: "AI_NO_CONTACT", message: "AI: No phone/WhatsApp contact visible", severity: "warning" });
+    }
+    if (aiResult.imagesProper === false) {
+      issues.push({ code: "AI_BROKEN_IMAGES", message: "AI: Some images appear broken, missing, or placeholder", severity: "critical" });
+    }
+    if (aiResult.textReadable === false) {
+      issues.push({ code: "AI_TEXT_UNREADABLE", message: "AI: Text is overlapping, cut-off, or hard to read", severity: "critical" });
+    }
+    if (aiResult.looksProfessional === false) {
+      issues.push({ code: "AI_NOT_PROFESSIONAL", message: "AI: Design doesn't look professional enough to send to client", severity: "warning" });
     }
     if (aiResult.issues?.length) {
       for (const issue of aiResult.issues.slice(0, 3)) {

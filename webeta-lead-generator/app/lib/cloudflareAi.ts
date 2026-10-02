@@ -374,11 +374,11 @@ export async function runCloudflareJSON<T>(
     return { ok: false, error: "No Cloudflare accounts configured" };
   }
 
-  // Text models available on Cloudflare Workers AI (free tier)
+  // Text models available on Cloudflare Workers AI (free tier, Oct 2026)
   const textModels = [
     "@cf/meta/llama-3.1-8b-instruct",
-    "@cf/meta/llama-3-8b-instruct",
-    "@cf/mistral/mistral-7b-instruct-v0.2",
+    "@cf/meta/llama-3.2-3b-instruct",
+    "@cf/qwen/qwen1.5-7b-chat-awq",
   ];
 
   // Truncate prompt for Cloudflare's context limits
@@ -421,7 +421,7 @@ export async function runCloudflareJSON<T>(
           break; // skip remaining models on this account, try next account
         }
 
-        if (res.status === 404) continue; // model not found, try next model
+        if (res.status === 404 || res.status === 410) continue; // model gone, try next
 
         if (!res.ok) {
           errors.push(`${account.label} HTTP ${res.status}`);
@@ -429,7 +429,13 @@ export async function runCloudflareJSON<T>(
         }
 
         const json = await res.json();
-        const rawText: string = json?.result?.response ?? "";
+        // Safely extract text — could be string, object, or null
+        const rawResponse = json?.result?.response;
+        const rawText: string = typeof rawResponse === "string"
+          ? rawResponse
+          : rawResponse != null
+            ? JSON.stringify(rawResponse)
+            : "";
 
         if (!rawText.trim()) {
           errors.push(`${account.label} ${model}: empty response`);

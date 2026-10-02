@@ -165,6 +165,11 @@ export function PreviewPanel({
     }
   }, [screenshotting]);
 
+  // Reset page selector to ["home"] whenever the active lead changes
+  useEffect(() => {
+    setSelectedPages(["home"]);
+  }, [activeLead?.id]);
+
   // Ref to ensure cache checks only run ONCE (not on every re-render)
   const cacheChecked = useRef(false);
 
@@ -452,10 +457,14 @@ export function PreviewPanel({
                     variant="destructive"
                     size="sm"
                     onClick={async () => {
-                      // Force full regenerate: new HTML + new screenshot
-                      const ok = await generateHtmlPreview(activeLead, true);
+                      // Clear old verification so badge resets while regenerating
+                      setVerifications(prev => { const n = { ...prev }; delete n[activeLead.id]; return n; });
+                      // Force regenerate ALL currently selected pages, not just home
+                      const pagesToFix = selectedPages.length > 0 ? selectedPages : ["home"];
+                      const dev = deviceFrame === "mobile" ? "mobile" : "desktop";
+                      const ok = await generateHtmlPreview(activeLead, true, pagesToFix, dev);
                       if (ok && currentHtmlUrl) {
-                        await takeScreenshot(activeLead, currentHtmlUrl, true);
+                        await takeScreenshot(activeLead, currentHtmlUrl, true, "home", dev);
                       }
                     }}
                     disabled={activeGenerating || !!screenshotting[activeLead.id]}

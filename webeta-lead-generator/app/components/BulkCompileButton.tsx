@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Camera, Square, ChevronDown } from "lucide-react";
+import { Loader2, Camera, Square, ChevronDown, PackageOpen } from "lucide-react";
 import { toast } from "sonner";
 import type { RankedLead } from "@/lib/types";
 
@@ -12,7 +12,6 @@ interface Props {
   buildPrompts: Record<string, any>;
 }
 
-// Auto-detect pages for a business category (3-4 pages per type)
 function getPagesForLead(lead: RankedLead): string[] {
   const cat = (lead.category || "").toLowerCase();
   if (/cafe|coffee|restaurant|dining|food|pizza|bar|bakery|dhaba|biryani|sweets/.test(cat))
@@ -25,8 +24,40 @@ function getPagesForLead(lead: RankedLead): string[] {
     return ["home", "rooms", "gallery"];
   if (/salon|spa|beauty|parlour|grooming/.test(cat))
     return ["home", "services", "gallery"];
-  // Tech, agency, retail, general — 3 pages
+  if (/travel|tour|tourism|holiday|trip|adventure/.test(cat))
+    return ["home", "services", "gallery"];
+  if (/event|catering|caterer|wedding|banquet|party|decorator/.test(cat))
+    return ["home", "services", "gallery"];
+  if (/law|lawyer|advocate|legal|ca |chartered|accountant|tax|audit/.test(cat))
+    return ["home", "services"];
+  if (/architect|interior design|interior decorator|design studio|renovation/.test(cat))
+    return ["home", "services", "portfolio"];
+  if (/hardware|building material|plumbing|electrician|construction supply/.test(cat))
+    return ["home", "products"];
+  if (/retail|shop|store|supermarket|grocery|departmental|kirana/.test(cat))
+    return ["home", "products"];
+  // Tech, agency, school, general
   return ["home", "services", "portfolio"];
+}
+
+const COUNT_OPTIONS = [5, 10, 25, 50, "All"] as const;
+
+// Retry a fetch with 1 retry on failure
+async function fetchWithRetry(url: string, opts: RequestInit, retries = 1): Promise<Response> {
+  try {
+    const res = await fetch(url, opts);
+    if (!res.ok && retries > 0) {
+      await new Promise(r => setTimeout(r, 2000));
+      return fetchWithRetry(url, opts, retries - 1);
+    }
+    return res;
+  } catch (err) {
+    if (retries > 0) {
+      await new Promise(r => setTimeout(r, 2000));
+      return fetchWithRetry(url, opts, retries - 1);
+    }
+    throw err;
+  }
 }
 
 export function BulkCompileButton({ ranked, buildPrompts }: Props) {
@@ -35,22 +66,18 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
   const [progress, setProgress] = useState<{ done: number; total: number; current: string } | null>(null);
   const stopRef = useRef(false);
 
-  // Modal options
-  const [fromIdx, setFromIdx] = useState(1);       // 1-based "from" lead index
-  const [toIdx, setToIdx]     = useState(10);      // 1-based "to" lead index
+  const [fromIdx, setFromIdx] = useState(1);
+  const [toIdx, setToIdx] = useState(10);
   const [skipMode, setSkipMode] = useState<"skip-done" | "all">("skip-done");
   const [pageMode, setPageMode] = useState<"home" | "all">("home");
-  const [device, setDevice]   = useState<"desktop" | "mobile" | "both">("desktop");
+  const [device, setDevice] = useState<"desktop" | "mobile" | "both">("desktop");
 
-  // Leads that will actually be processed given current settings
   const rangeLeads = ranked.slice(Math.max(0, fromIdx - 1), toIdx);
 
   if (running) {
     return (
       <div className="flex items-center gap-2 w-full">
-        <Button
-          size="sm"
-          variant="outline"
+        <Button size="sm" variant="outline"
           className="w-full h-8 text-xs gap-1.5 border-amber-500 text-amber-600"
           onClick={() => { stopRef.current = true; }}
         >
@@ -72,7 +99,6 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
     stopRef.current = false;
     setRunning(true);
 
-    // Get existing screenshot files to skip
     let existingFiles: string[] = [];
     try {
       const r = await fetch("/api/screenshot-preview?list=true");
@@ -85,13 +111,8 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
       return existingFiles.some((f: string) => f.endsWith(".png") && f.includes(hash));
     };
 
-    // Apply range (1-based)
     let todo = ranked.slice(Math.max(0, fromIdx - 1), toIdx);
-
-    // Apply skip mode
-    if (skipMode === "skip-done") {
-      todo = todo.filter(l => !hasScreenshot(l));
-    }
+    if (skipMode === "skip-done") todo = todo.filter(l => !hasScreenshot(l));
 
     const devices: Array<"desktop" | "mobile"> = device === "both" ? ["desktop", "mobile"] : [device];
 
@@ -104,7 +125,7 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
       return;
     }
 
-    let failed = 0;
+    const failedLeads: string[] = [];
 
     for (let i = 0; i < todo.length; i++) {
       if (stopRef.current) break;
@@ -113,52 +134,62 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
 
       const strategy = buildPrompts?.[lead.id]?.strategy;
       const pages = pageMode === "all" ? getPagesForLead(lead) : ["home"];
+      let leadFailed = false;
 
       for (const page of pages) {
         if (stopRef.current) break;
         try {
-          const compileRes = await fetch("/api/compile-html", {
+          // Compile with 1 retry
+          const compileRes = await fetchWithRetry("/api/compile-html", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ lead, style: "ai-decides", strategy, page }),
           });
           const compileData = await compileRes.json();
-          if (!compileData.ok || !compileData.htmlUrl) { failed++; continue; }
+          if (!compileData.ok || !compileData.htmlUrl) { leadFailed = true; continue; }
 
           for (const dev of devices) {
             if (stopRef.current) break;
-            await fetch("/api/screenshot-preview", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                htmlUrl: compileData.htmlUrl,
-                leadId: lead.id,
-                businessName: lead.name,
-                page, device: dev, lead,
-                category: lead.category, city: lead.city, phone: lead.phone,
-              }),
-            });
-            await new Promise(r => setTimeout(r, 250));
+            try {
+              await fetchWithRetry("/api/screenshot-preview", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  htmlUrl: compileData.htmlUrl,
+                  leadId: lead.id,
+                  businessName: lead.name,
+                  page, device: dev, lead,
+                  category: lead.category, city: lead.city, phone: lead.phone,
+                }),
+              }, 1);
+            } catch { leadFailed = true; }
+            await new Promise(r => setTimeout(r, 300));
           }
-        } catch { failed++; }
+        } catch { leadFailed = true; }
       }
+
+      if (leadFailed) failedLeads.push(lead.name);
     }
 
-    const done = todo.length - failed;
+    const skipped = ranked.length - todo.length;
+    const done = todo.length - failedLeads.length;
     setRunning(false);
     setProgress(null);
     stopRef.current = false;
 
-    toast[failed === 0 ? "success" : "warning"](
-      `Bulk done! ${done} leads compiled${failed ? `, ${failed} failed` : ""}.`
-    );
+    if (failedLeads.length === 0) {
+      toast.success(`✅ Bulk done! ${done} compiled${skipped > 0 ? `, ${skipped} already existed` : ""}.`);
+    } else {
+      toast.warning(
+        `Bulk done: ${done} ok, ${failedLeads.length} failed${skipped > 0 ? `, ${skipped} skipped` : ""}.\nFailed: ${failedLeads.slice(0, 3).join(", ")}${failedLeads.length > 3 ? ` +${failedLeads.length - 3} more` : ""}`,
+        { duration: 8000 }
+      );
+    }
   };
 
   return (
     <div className="relative w-full">
-      <Button
-        size="sm"
-        variant="outline"
+      <Button size="sm" variant="outline"
         onClick={() => setShowModal(v => !v)}
         className="w-full h-8 text-xs gap-1.5 font-medium border-primary/40 text-primary hover:bg-primary/5"
       >
@@ -169,49 +200,37 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
 
       {showModal && (
         <div className="absolute top-full left-0 right-0 z-50 mt-1.5 bg-card border border-border rounded-xl shadow-xl p-3 space-y-3">
-
-          {/* Range selector */}
+          {/* Range */}
           <div>
-            <p className="text-[10px] font-semibold text-muted-foreground mb-2">WHICH LEADS? (ranked #1 = top lead)</p>
+            <p className="text-[10px] font-semibold text-muted-foreground mb-2">WHICH LEADS? (ranked #1 = top)</p>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5">
                 <span className="text-[11px] text-muted-foreground">From</span>
-                <input
-                  type="number"
-                  min={1}
-                  max={ranked.length}
-                  value={fromIdx}
+                <input type="number" min={1} max={ranked.length} value={fromIdx}
                   onChange={e => setFromIdx(Math.max(1, Math.min(ranked.length, Number(e.target.value))))}
                   className="w-14 px-2 py-1 text-xs rounded-md border border-border bg-background text-center focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-[11px] text-muted-foreground">to</span>
-                <input
-                  type="number"
-                  min={fromIdx}
-                  max={ranked.length}
-                  value={toIdx}
+                <input type="number" min={fromIdx} max={ranked.length} value={toIdx}
                   onChange={e => setToIdx(Math.max(fromIdx, Math.min(ranked.length, Number(e.target.value))))}
                   className="w-14 px-2 py-1 text-xs rounded-md border border-border bg-background text-center focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
               <span className="text-[10px] text-muted-foreground ml-auto">= {rangeLeads.length} leads</span>
             </div>
-            {/* Quick range presets */}
             <div className="flex gap-1 mt-1.5">
               {[[1,5],[1,10],[1,25],[1,ranked.length]].map(([f,t]) => (
-                <button key={`${f}-${t}`}
-                  onClick={() => { setFromIdx(f); setToIdx(t); }}
-                  className="px-2 py-0.5 rounded text-[10px] border border-border bg-muted text-muted-foreground hover:border-primary/40 transition-all"
-                >
+                <button key={`${f}-${t}`} onClick={() => { setFromIdx(f); setToIdx(t); }}
+                  className="px-2 py-0.5 rounded text-[10px] border border-border bg-muted text-muted-foreground hover:border-primary/40 transition-all">
                   {t === ranked.length ? "All" : `1–${t}`}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Skip already done? */}
+          {/* Skip mode */}
           <div>
             <p className="text-[10px] font-semibold text-muted-foreground mb-1.5">IF ALREADY DONE?</p>
             <div className="flex gap-1">
@@ -219,30 +238,27 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
                 <button key={v} onClick={() => setSkipMode(v)}
                   className={`px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all ${
                     skipMode === v ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-muted-foreground border-border hover:border-primary/40"
-                  }`}
-                >{label}</button>
+                  }`}>{label}</button>
               ))}
             </div>
           </div>
 
           {/* Pages */}
           <div>
-            <p className="text-[10px] font-semibold text-muted-foreground mb-1.5">PAGES TO GENERATE</p>
+            <p className="text-[10px] font-semibold text-muted-foreground mb-1.5">PAGES</p>
             <div className="flex gap-1">
               <button onClick={() => setPageMode("home")}
                 className={`px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all ${
                   pageMode === "home" ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-muted-foreground border-border hover:border-primary/40"
-                }`}
-              >🏠 Home only</button>
+                }`}>🏠 Home only</button>
               <button onClick={() => setPageMode("all")}
                 className={`px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all ${
                   pageMode === "all" ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-muted-foreground border-border hover:border-primary/40"
-                }`}
-              >📄 All pages (3–4 per business)</button>
+                }`}>📄 All pages (3–4 per type)</button>
             </div>
             {pageMode === "all" && (
               <p className="text-[10px] text-muted-foreground mt-1">
-                Auto-detected per type: Cafe → Home+Menu+Gallery · Gym → Home+Programs+Gallery · Hotel → Home+Rooms+Gallery · Clinic → Home+Services · Others → Home+Services+Portfolio
+                Auto: Cafe→Menu+Gallery · Gym→Programs+Gallery · Hotel→Rooms+Gallery · Clinic→Services · Others→Services+Portfolio
               </p>
             )}
           </div>
@@ -255,8 +271,7 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
                 <button key={d} onClick={() => setDevice(d)}
                   className={`px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all ${
                     device === d ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-muted-foreground border-border hover:border-primary/40"
-                  }`}
-                >{label}</button>
+                  }`}>{label}</button>
               ))}
             </div>
           </div>
@@ -266,9 +281,7 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
               <Camera className="h-3.5 w-3.5 mr-1.5" />
               Start Bulk ({skipMode === "skip-done" ? "skips done" : "redo all"})
             </Button>
-            <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setShowModal(false)}>
-              Cancel
-            </Button>
+            <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setShowModal(false)}>Cancel</Button>
           </div>
         </div>
       )}

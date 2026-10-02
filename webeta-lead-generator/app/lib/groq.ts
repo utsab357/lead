@@ -6,12 +6,13 @@
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-// Models tried in order — real Groq model IDs
+// Models tried in order — current active Groq model IDs (verified live Oct 2026)
 const GROQ_MODELS = [
-  "llama-3.3-70b-versatile",  // 70B — handles large prompts, 128K context, 32K output
-  "llama-3.1-8b-instant",     // 8B — fast, 128K context, 8K output
-  "mixtral-8x7b-32768",       // MoE — good fallback, 32K context
+  "openai/gpt-oss-120b",      // 120B — highest quality, 131K context, supports json_mode
+  "openai/gpt-oss-20b",       // 20B — ultra-fast, 131K context, supports json_mode
+  "qwen/qwen3.8-27b",         // 27B — high capability, 131K context
 ];
+
 
 export type GroqResult<T> =
   | { ok: true;  data: T }
@@ -111,6 +112,7 @@ export async function runGroqJSON<T>(
           },
           { role: "user", content: prompt },
         ],
+        response_format: { type: "json_object" },
       };
 
 

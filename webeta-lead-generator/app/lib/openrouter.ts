@@ -8,13 +8,14 @@
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 // Free models tried in order (":free" suffix = no credits needed)
-// Ordered by context window size — large prompts need larger context
+// Updated & verified live Oct 2026
 const OPENROUTER_MODELS = [
-  "meta-llama/llama-3.1-8b-instruct:free",   // 128k context, reliable
-  "google/gemma-2-9b-it:free",                // 8k context, fast
-  "microsoft/phi-3-mini-128k-instruct:free",  // 128k context, good JSON
-  "qwen/qwen-2-7b-instruct:free",             // 32k context, last resort
+  "nvidia/nemotron-3.5-lightning:free",       // 1M context, high speed
+  "apodex/apodex-1.1-mini:free",              // 262k context, great JSON
+  "inclusionai/ling-3.0-flash-sante:free",    // 262k context, fast
+  "qwen/qwen3.8-27b:free",                    // 262k context
 ];
+
 
 export type OpenRouterResult<T> =
   | { ok: true;  data: T }

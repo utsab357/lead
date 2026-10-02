@@ -11,43 +11,54 @@ const CHANNEL_RULES: Record<OutreachChannel, string> = {
 };
 
 function buildOutreachPrompt(lead: RankedLead, channel: OutreachChannel, language: OutreachLanguage): string {
-  const langRule = "Write in clear, warm English.";
+  const langRule = language === "hinglish"
+    ? "Write in clean, conversational Hinglish (Hindi words written in English/Latin letters, e.g. 'Hi ji! Humne Google Maps par aapka business dekha...'). Natural, polite, respectful. Keep technical terms in English (website, design, Google Maps, online)."
+    : "Write in clear, warm, conversational English. Polite, friendly, and professional without corporate jargon or pushy sales talk.";
 
   const conversionPointsText = lead.conversionPoints
     ? `\n- Unique conversion points: ${lead.conversionPoints.points.join("; ")}\n- Competitor insight: ${lead.conversionPoints.competitorInsight}`
     : "";
 
-  // Include real review data if available
   const reviewInsights = lead.reviews?.length
-    ? `\n- Customer complaints: ${lead.reviews.filter(r => r.rating <= 2).slice(0, 3).map(r => `"${r.text.slice(0, 80)}..."`).join("; ") || "none found"}
-- Customer praise: ${lead.reviews.filter(r => r.rating >= 4).slice(0, 2).map(r => `"${r.text.slice(0, 80)}..."`).join("; ") || "none found"}
-- Owner replies to reviews: ${lead.ownerReplies ? "Yes" : "No (not engaged online)"}`
+    ? `\n- Customer praise: ${lead.reviews.filter(r => r.rating >= 4).slice(0, 2).map(r => `"${r.text.slice(0, 80)}..."`).join("; ") || "none found"}`
     : "";
 
   const businessDetails = [
     lead.services?.length ? `- Services: ${lead.services.join(", ")}` : "",
     lead.hours?.length ? `- Hours: ${lead.hours.slice(0, 3).join("; ")}` : "",
-    lead.socialLinks?.length ? `- Social media: ${lead.socialLinks.map(s => s.platform).join(", ")}` : "",
-    lead.photosCount !== undefined
-      ? lead.photosCount < 5
-        ? `- Photos on Maps: ${lead.photosCount} (very few — gap to exploit)`
-        : `- Photos on Maps: ${lead.photosCount} (includes customer review photos)`
-      : "- Photos on Maps: 0 (no photos uploaded — major gap)",
   ].filter(Boolean).join("\n");
 
-  return `You are a top cold-outreach copywriter helping a freelancer pitch a free website demo to a local business owner. Proven structure: personal hook → specific compliment grounded in their data → one-line pain (their biggest gap) → the free demo link → a low-friction yes/no ask. The day-3 follow-up restates the cost of inaction in ₹ and asks for a 5-min call.
+  return `You are writing a cold outreach message and a Day-3 follow-up for Webeta (https://webeta.site), a web design studio that creates clean sample website designs for local businesses.
 
-IMPORTANT: Use the REAL customer review data to make the pitch personal. If customers complained about something, mention how a website solves it. If customers praise something, compliment the owner on it.
+IMPORTANT CONTEXT:
+- The sender will ATTACH the preview screenshot image (PNG/JPG) as an image attachment in WhatsApp/DM right AFTER this message.
+- Do NOT include any image URL or link in the message text. Say "Sharing the preview below 👇" or similar.
 
-Business:
-- Name: ${lead.name}
-- Owner: use "${lead.name.includes("Dr.") ? lead.name.split(",")[0] : "Sir / Ma'am"}" if no clear owner name
-- Category: ${lead.category}
-- Rating: ${lead.rating ?? "n/a"} (${lead.reviewsCount ?? 0} reviews), ${lead.city}
-- Biggest gap: ${lead.audit.biggestGap}
-- Estimated ₹ lost/month: ${lead.audit.estLostRevenuePerMonth}
-- Demo status: The freelancer has already prepared a visual demo layout of the business website (not a live URL — it's a screenshot they will share on WhatsApp/email). So the message should reference "I've prepared a demo layout/design for your business" and offer to share it — NOT include any URL link.${conversionPointsText}${reviewInsights}
+BUSINESS DATA:
+- Business: ${lead.name}, ${lead.category}, ${lead.city}
+- Rating: ${lead.rating ?? "n/a"} (${lead.reviewsCount ?? 0} reviews)
+${conversionPointsText}${reviewInsights}
 ${businessDetails}
+
+FIRST MESSAGE STRUCTURE:
+1. Warm, polite greeting mentioning ${lead.name} on Google Maps in ${lead.city}.
+2. One genuine compliment (e.g., strong ${lead.rating}★ rating or customer reviews).
+3. Introduce: "I'm from Webeta (https://webeta.site) — we build modern websites for local businesses."
+4. Value: "We created a clean 1-page sample website design for ${lead.name} just to show how your business could look online."
+5. Point to attached image: "Sharing the preview image below 👇"
+6. Zero pressure / Soft CTA: "No pressure or obligation at all — if you like the concept, feel free to reply or explore our work at https://webeta.site."
+7. Sign off: "— Team Webeta"
+8. Keep under 75-80 words.
+
+DAY-3 FOLLOW-UP RULES (CRITICAL — ZERO FAKE PROMISES):
+1. Polite, brief check-in: "Hi again! Just following up briefly to see if you got a moment to check the website mockup we shared above for ${lead.name}?"
+2. ABSOLUTELY NO FAKE PROMISES:
+   - Do NOT say "you are losing customers" or "we guarantee 10x sales/calls"
+   - Do NOT create fake urgency ("offer expiring", "limited slots")
+3. Respectful & Low-pressure: "No worries at all if you're busy! Whenever you're considering a modern website for your business, we're here to help."
+4. Trust anchor: "You can explore our past work anytime at https://webeta.site or reach us right here."
+5. Sign off: "— Team Webeta"
+6. Keep under 40-45 words.
 
 Channel: ${channel} — ${CHANNEL_RULES[channel]}
 Language: ${langRule}
