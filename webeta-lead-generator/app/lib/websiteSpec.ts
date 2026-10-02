@@ -200,125 +200,198 @@ export function normalizeGooglePhotoUrl(url: string): string {
     .replace(/=s\d+[^"]*/, "=s1600");
 }
 
+
 /**
- * Deterministically resolves the design tokens for a lead.
- * These tokens are generated ONCE per lead/style and reused across every subpage.
+ * Deterministic hash from a string → number in [0,1)
+ * Used to generate unique-per-business design tokens without randomness.
  */
-export function resolveVisualDesignTokens(category: string, requestedStyle: string = "ai-decides"): VisualDesignTokens {
-  let styleKey = requestedStyle;
-  if (!styleKey || styleKey === "ai-decides") {
-    const c = category.toLowerCase();
-    if (/salon|beauty|hair|barber|grooming|makeup|cosmetic|spa|massage|wellness|ayurveda|jewel|gold|diamond|hotel|resort|boutique/.test(c)) {
-      styleKey = "luxury";
-    } else if (/cafe|coffee|tea|chai|bakery|pastry|dessert|sweet|snack|brew|restro|restaurant|dining|food|eatery|dhaba|bistro|pizzeria|burger/.test(c)) {
-      styleKey = "warm";
-    } else if (/gym|fitness|crossfit|workout|martial|mma|boxing|sport/.test(c)) {
-      styleKey = "bold";
-    } else if (/tech|software|it|digital|startup|agency|co-working|media/.test(c)) {
-      styleKey = "modern";
-    } else {
-      styleKey = "professional";
-    }
+function deterministicHash(input: string): number {
+  let hash = 2166136261; // FNV-1a 32-bit offset basis
+  for (let i = 0; i < input.length; i++) {
+    hash ^= input.charCodeAt(i);
+    hash = (hash * 16777619) >>> 0; // FNV prime, keep unsigned 32-bit
   }
-
-  switch (styleKey) {
-    case "warm":
-      return {
-        vibe: "warm_earthy",
-        primaryColor: "#C4622D",
-        secondaryColor: "#E8A87C",
-        darkColor: "#241812",
-        surfaceColor: "#FFFBF7",
-        canvasColor: "#FDF8F3",
-        displayFont: "Playfair Display",
-        bodyFont: "Plus Jakarta Sans",
-        borderRadius: "24px",
-        navStyle: "floating_pill",
-        buttonStyle: "rounded_pill",
-        cardStyle: "soft_bordered",
-        spacingDensity: "comfortable",
-        imageTreatment: "warm_rounded",
-        decorativeStyle: "botanical",
-      };
-
-    case "luxury":
-      return {
-        vibe: "dark_luxury",
-        primaryColor: "#C9A84C",
-        secondaryColor: "#E8C870",
-        darkColor: "#080808",
-        surfaceColor: "#121214",
-        canvasColor: "#080808",
-        displayFont: "Cormorant Garamond",
-        bodyFont: "Plus Jakarta Sans",
-        borderRadius: "16px",
-        navStyle: "floating_pill",
-        buttonStyle: "rounded_pill",
-        cardStyle: "glassmorphism",
-        spacingDensity: "spacious",
-        imageTreatment: "dark_overlay",
-        decorativeStyle: "minimal",
-      };
-
-    case "bold":
-      return {
-        vibe: "bold_energy",
-        primaryColor: "#FF3300",
-        secondaryColor: "#FFB800",
-        darkColor: "#0D0D0D",
-        surfaceColor: "#F5F5F7",
-        canvasColor: "#FFFFFF",
-        displayFont: "Bebas Neue",
-        bodyFont: "Manrope",
-        borderRadius: "12px",
-        navStyle: "floating_pill",
-        buttonStyle: "rounded_md",
-        cardStyle: "solid_shadow",
-        spacingDensity: "compact",
-        imageTreatment: "vibrant_sharp",
-        decorativeStyle: "kinetic",
-      };
-
-    case "modern":
-      return {
-        vibe: "sleek_modern",
-        primaryColor: "#6C63FF",
-        secondaryColor: "#00D4AA",
-        darkColor: "#0A0A0F",
-        surfaceColor: "#14141E",
-        canvasColor: "#0A0A0F",
-        displayFont: "Syne",
-        bodyFont: "Inter",
-        borderRadius: "20px",
-        navStyle: "floating_pill",
-        buttonStyle: "rounded_pill",
-        cardStyle: "glassmorphism",
-        spacingDensity: "comfortable",
-        imageTreatment: "dark_overlay",
-        decorativeStyle: "geometric",
-      };
-
-    case "professional":
-    default:
-      return {
-        vibe: "professional_clean",
-        primaryColor: "#1E3A8A",
-        secondaryColor: "#2563EB",
-        darkColor: "#0F172A",
-        surfaceColor: "#FFFFFF",
-        canvasColor: "#F8FAFC",
-        displayFont: "Playfair Display",
-        bodyFont: "Plus Jakarta Sans",
-        borderRadius: "16px",
-        navStyle: "floating_pill",
-        buttonStyle: "rounded_pill",
-        cardStyle: "soft_bordered",
-        spacingDensity: "comfortable",
-        imageTreatment: "warm_rounded",
-        decorativeStyle: "minimal",
-      };
-  }
+  return hash / 4294967295; // normalize to [0,1)
 }
+
+/** Convert HSL to hex color string */
+function hslToHex(h: number, s: number, l: number): string {
+  s /= 100; l /= 100;
+  const k = (n: number) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  const toHex = (x: number) => Math.round(x * 255).toString(16).padStart(2, "0");
+  return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
+}
+
+/**
+ * Category hue ranges — each category gets a specific range of the color wheel.
+ * This ensures cafes are always warm, gyms always energetic, salons always luxurious,
+ * but EACH INDIVIDUAL business gets a unique hue within that range.
+ */
+const CATEGORY_HUE_RANGES: Record<string, [number, number]> = {
+  cafe:         [18, 42],   // warm oranges to ambers
+  restaurant:   [0, 25],    // reds to warm oranges
+  pizzeria:     [10, 30],   // tomato red to orange
+  bengali:      [28, 50],   // warm amber to golden
+  gym:          [0, 20],    // hot reds to orange-red (energy)
+  salon:        [270, 310], // purples to magentas (luxury)
+  luxury:       [35, 55],   // gold to champagne
+  hotel:        [195, 230], // teals to blues (trust)
+  clinic:       [170, 210], // green-teals (health)
+  dental:       [190, 220], // clean blues
+  tech:         [240, 280], // blue-violet to purple
+  modern:       [220, 260], // indigo to violet
+  education:    [200, 240], // blue range
+  pharmacy:     [155, 185], // fresh greens
+  jewellery:    [40, 55],   // golden ambers
+  clothing:     [290, 340], // rose to magenta
+  real_estate:  [210, 240], // professional blues
+  auto:         [15, 35],   // orange-red energy
+  default:      [200, 250], // cool blue range
+};
+
+/**
+ * Font pairing pool — 8 distinct personalities.
+ * Chosen by deterministic hash so each business gets a consistent, unique pair.
+ */
+const FONT_PAIRINGS = [
+  { display: "Playfair Display", body: "Plus Jakarta Sans" },   // editorial warm
+  { display: "Cormorant Garamond", body: "Inter" },             // luxury serif
+  { display: "Bebas Neue", body: "Manrope" },                   // bold condensed
+  { display: "Syne", body: "DM Sans" },                         // modern geometric
+  { display: "Fraunces", body: "Nunito" },                      // organic editorial
+  { display: "Outfit", body: "Source Sans 3" },                 // clean professional
+  { display: "Lora", body: "Work Sans" },                       // classic warm
+  { display: "Space Grotesk", body: "Barlow" },                 // tech-forward
+];
+
+/**
+ * Uniqueness layers per business:
+ * 1. Unique primary hue (within category range) derived from business name hash
+ * 2. Unique saturation/lightness variation
+ * 3. Unique font pairing (8 options)
+ * 4. Unique layout variant (A/B/C/D) used by htmlTemplate.ts
+ * 5. Dark vs light canvas (some are light cream, some dark, some white)
+ */
+export function resolveVisualDesignTokens(
+  category: string,
+  requestedStyle: string = "ai-decides",
+  businessId: string = "",
+  businessName: string = ""
+): VisualDesignTokens {
+  const c = category.toLowerCase();
+  const seed = businessName + businessId + category;
+
+  // Different hash seeds for different design dimensions
+  const h1 = deterministicHash(seed);                  // primary hue
+  const h2 = deterministicHash(seed + "_sat");          // saturation shift
+  const h3 = deterministicHash(seed + "_font");         // font pair
+  const h4 = deterministicHash(seed + "_dark");         // dark vs light canvas
+  const h5 = deterministicHash(seed + "_layout");       // layout variant
+
+  // 1. Determine category hue range
+  let hueRange: [number, number] = CATEGORY_HUE_RANGES.default;
+  let baseVibe = "professional_clean";
+  let isDark = h4 < 0.35; // ~35% of businesses get dark canvas
+
+  if (/cafe|coffee|tea|chai|bakery|pastry|dessert|sweet|snack|brew|restro/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.cafe; baseVibe = "warm_earthy"; isDark = false;
+  } else if (/restaurant|dining|food|eatery|dhaba|bistro|canteen|kitchen/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.restaurant; baseVibe = "warm_earthy"; isDark = h4 < 0.3;
+  } else if (/pizza|pizzeria/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.pizzeria; baseVibe = "bold_energy"; isDark = false;
+  } else if (/biryani|bengali|polao|mangsho|mughlai|thali/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.bengali; baseVibe = "warm_earthy"; isDark = h4 < 0.4;
+  } else if (/gym|fitness|crossfit|workout|martial|mma|boxing|sport/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.gym; baseVibe = "bold_energy"; isDark = h4 < 0.6;
+  } else if (/salon|beauty|hair|barber|grooming|makeup|cosmetic|nail|threading|spa|massage|wellness/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.salon; baseVibe = "dark_luxury"; isDark = h4 < 0.5;
+  } else if (/hotel|resort|lodge|guest house/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.hotel; baseVibe = "dark_luxury"; isDark = h4 < 0.4;
+  } else if (/jewel|jewellery|gold|diamond|silver|ornament/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.jewellery; baseVibe = "dark_luxury"; isDark = h4 < 0.5;
+  } else if (/clinic|doctor|physician|medical|hospital|health/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.clinic; baseVibe = "professional_clean"; isDark = false;
+  } else if (/dental|dentist|teeth|orthodontic/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.dental; baseVibe = "professional_clean"; isDark = false;
+  } else if (/tech|software|it|digital|startup|agency|media/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.tech; baseVibe = "sleek_modern"; isDark = h4 < 0.65;
+  } else if (/school|college|coaching|tuition|academy|education/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.education; baseVibe = "professional_clean"; isDark = false;
+  } else if (/pharmacy|chemist|medical store/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.pharmacy; baseVibe = "professional_clean"; isDark = false;
+  } else if (/clothing|fashion|boutique|garment|saree|apparel/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.clothing; baseVibe = "dark_luxury"; isDark = h4 < 0.45;
+  } else if (/real estate|property|builder|apartment/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.real_estate; baseVibe = "professional_clean"; isDark = h4 < 0.3;
+  } else if (/car|auto|vehicle|motor|garage|bike/.test(c)) {
+    hueRange = CATEGORY_HUE_RANGES.auto; baseVibe = "bold_energy"; isDark = h4 < 0.5;
+  }
+
+  // 2. Generate unique primary hue within range
+  const [hMin, hMax] = hueRange;
+  const hueSpan = hMax > hMin ? hMax - hMin : (360 - hMin + hMax);
+  let primaryHue = hMin + h1 * hueSpan;
+  if (primaryHue >= 360) primaryHue -= 360;
+
+  // 3. Unique saturation — vary between 55% and 85%
+  const primarySat = Math.round(55 + h2 * 30);
+
+  // 4. Primary color lightness
+  const primaryL = isDark ? Math.round(52 + h2 * 14) : Math.round(42 + h2 * 16);
+  const primaryColor = hslToHex(primaryHue, primarySat, primaryL);
+
+  // 5. Secondary color — complementary/analogous (30-50° away)
+  const secondaryHue = (primaryHue + 28 + h2 * 22) % 360;
+  const secondaryColor = hslToHex(secondaryHue, Math.round(primarySat - 10), primaryL + 12);
+
+  // 6. Dark color — very dark version of the primary hue
+  const darkColor = isDark
+    ? hslToHex(primaryHue, Math.round(primarySat * 0.4), 6)   // near black with hue tint
+    : hslToHex(primaryHue, Math.round(primarySat * 0.6), 12); // dark with hue tint
+
+  // 7. Canvas (page background)
+  const canvasColor = isDark
+    ? hslToHex(primaryHue, Math.round(primarySat * 0.35), 8)
+    : hslToHex(primaryHue, Math.round(primarySat * 0.12), 97); // very light tint of primary
+
+  // 8. Surface (cards)
+  const surfaceColor = isDark
+    ? hslToHex(primaryHue, Math.round(primarySat * 0.3), 13)
+    : hslToHex(primaryHue, Math.round(primarySat * 0.08), 99);
+
+  // 9. Pick unique font pair
+  const fontIndex = Math.floor(h3 * FONT_PAIRINGS.length);
+  const fonts = FONT_PAIRINGS[fontIndex];
+
+  // 10. Layout variant A/B/C/D (used by htmlTemplate.ts)
+  const layoutVariants = ["A", "B", "C", "D"] as const;
+  const layoutVariant = layoutVariants[Math.floor(h5 * 4)];
+
+  return {
+    vibe: baseVibe as any,
+    primaryColor,
+    secondaryColor,
+    darkColor,
+    surfaceColor,
+    canvasColor,
+    displayFont: fonts.display,
+    bodyFont: fonts.body,
+    borderRadius: isDark ? "12px" : "20px",
+    navStyle: "floating_pill",
+    buttonStyle: "rounded_pill",
+    cardStyle: isDark ? "glassmorphism" : "soft_bordered",
+    spacingDensity: "comfortable",
+    imageTreatment: isDark ? "dark_overlay" : "warm_rounded",
+    decorativeStyle: "minimal",
+    // Extra fields for layout variation (not in type but passed through)
+    ...(({ layoutVariant, isDark } as any)),
+  };
+}
+
+
+
 
 /**
  * Constructs the WebsiteSpec representation.
@@ -332,7 +405,7 @@ export function buildWebsiteSpec(
 ): WebsiteSpec {
   const strategy = businessStrategy || buildDeterministicBusinessStrategy(lead);
   const chosenStyle = requestedStyle !== "ai-decides" ? requestedStyle : strategy.visualDirection.vibeId;
-  const tokens = resolveVisualDesignTokens(lead.category, chosenStyle);
+  const tokens = resolveVisualDesignTokens(lead.category, chosenStyle, lead.id, lead.name);
   const city = lead.city?.split(",")[0] || "Your City";
   const phone = cleanPhone(lead.phone);
   const waNumber = cleanWaNumber(lead.whatsapp ?? lead.phone);

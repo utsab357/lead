@@ -73,8 +73,11 @@ export async function POST(req: Request) {
       ],
     });
 
-    const page = await browser.newPage();
-    await page.setViewportSize({ width: 1280, height: 900 });
+    const context = await browser.newContext({
+      viewport: { width: 1280, height: 900 },
+      deviceScaleFactor: 2,   // 2x retina — 2560px effective width, crisp text & images
+    });
+    const page = await context.newPage();
 
     // Try URL first, fallback to injecting HTML content directly
     let loaded = false;
@@ -98,13 +101,14 @@ export async function POST(req: Request) {
     // Wait 3s for fonts and images to settle
     await page.waitForTimeout(3000);
 
-    // Take full-page screenshot
+    // Take full-page screenshot — 2x retina = crisp, professional quality
     const buffer = await page.screenshot({
       fullPage: true,
       type: "png",
       animations: "disabled",
     });
 
+    await context.close();
     await browser.close();
 
     // Save the PNG

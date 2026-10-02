@@ -49,8 +49,8 @@ function starRating(n: number): string {
 
 // ── Section Builders ──────────────────────────────────────────────────────────
 
-function buildNav(businessName: string, waUrl: string, tokens: any): string {
-  const { primaryColor, darkColor, surfaceColor } = tokens;
+function buildNav(businessName: string, waUrl: string, tokens: any, ctaText: string = "Reserve a Table"): string {
+  const { primaryColor, darkColor } = tokens;
   return `
   <!-- NAV -->
   <nav style="position:sticky;top:16px;z-index:999;max-width:1200px;margin:0 auto 0;padding:0 24px;">
@@ -64,39 +64,99 @@ function buildNav(businessName: string, waUrl: string, tokens: any): string {
       </ul>
       <div style="display:flex;align-items:center;gap:12px;">
         <span style="font-size:13px;font-weight:600;color:#16a34a;">● Open Now</span>
-        <a href="${waUrl}" target="_blank" style="background:${primaryColor};color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;transition:opacity .2s;white-space:nowrap;" onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">Reserve a Table</a>
+        <a href="${waUrl}" target="_blank" style="background:${primaryColor};color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">${esc(ctaText)}</a>
       </div>
     </div>
   </nav>`;
 }
 
-function buildHero(spec: any, waUrl: string, telLink: string): string {
+function buildHero(spec: any, waUrl: string, telLink: string, variant: string): string {
   const { tokens, curatedStockPhotos, rating, reviewsCount, businessName, category, city } = spec;
   const ratingVal = rating ? rating.toFixed(1) : "4.8";
   const reviewVal = reviewsCount ? `${reviewsCount}+` : "150+";
-  const headline = spec.strategy?.heroHeadline || `Premium ${category} Experience in ${city}`;
-  const subtitle = spec.strategy?.heroSubtitle || `Trusted by thousands of happy customers in ${city}`;
+  const headline = spec.aiCopy?.headline || spec.strategy?.heroHeadline ||
+    (spec.strategy?.subCategory?.value === "bengali_heritage_restaurant" ? `Authentic Bengali Feasts & Polao in ${city}` :
+     spec.strategy?.subCategory?.value === "specialty_cafe" ? `Artisan Flavours & Cozy Vibes in ${city}` :
+     spec.strategy?.subCategory?.value === "strength_hardcore_gym" ? `Train Hard. Get Results. ${city}'s Best Gym` :
+     spec.strategy?.subCategory?.value === "dental_clinic" ? `Gentle, Advanced Dental Care in ${city}` :
+     spec.strategy?.subCategory?.value === "luxury_salon_spa" ? `Elevate Your Look at ${businessName}` :
+     `Welcome to ${businessName}`);
+  const subtitle = spec.aiCopy?.subtitle || `${spec.strategy?.primarySellingPoint?.value?.slice(0, 90) || `Top-rated ${category} in ${city} — trusted by ${reviewVal} happy customers.`}`;
+  const primaryCtaText = spec.primaryCtaText || "Chat on WhatsApp →";
+  const img = curatedStockPhotos.hero;
 
-  return `
-  <!-- HERO -->
-  <section style="height:100dvh;min-height:600px;background-image:linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.7) 100%), url('${curatedStockPhotos.hero}');background-size:cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;position:relative;margin-top:-72px;padding-top:112px;">
-    <!-- Rating chip -->
-    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:8px 18px;margin-bottom:24px;">
-      <span style="color:#fbbf24;font-size:15px;">${starRating(parseFloat(ratingVal))}</span>
-      <span style="color:#fff;font-size:13px;font-weight:600;">${ratingVal} • ${reviewVal} Google Reviews</span>
+  // Layout A — Classic centered fullscreen hero
+  if (variant === "A") return `
+  <!-- HERO A: Centered Fullscreen -->
+  <section style="height:100dvh;min-height:620px;background-image:linear-gradient(160deg,rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.25) 55%,rgba(0,0,0,0.65) 100%),url('${img}');background-size:cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;position:relative;margin-top:-72px;padding-top:112px;">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:8px 20px;margin-bottom:28px;">
+      <span style="color:#fbbf24;">★</span>
+      <span style="color:#fff;font-size:13px;font-weight:600;">${ratingVal} · ${reviewVal} Google Reviews</span>
     </div>
-    <!-- Headline -->
-    <h1 style="font-family:var(--font-display);font-size:clamp(36px,6vw,72px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-0.02em;max-width:820px;margin:0 0 20px;">${esc(headline)}</h1>
-    <p style="font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,0.85);max-width:560px;margin:0 0 36px;line-height:1.6;">${esc(subtitle)}</p>
-    <!-- CTAs -->
-    <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
-      <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:16px 36px;border-radius:999px;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 8px 32px rgba(0,0,0,0.3);transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Reserve a Table →</a>
-      <a href="${telLink}" style="background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:#fff;border:2px solid rgba(255,255,255,0.4);padding:16px 32px;border-radius:999px;font-size:16px;font-weight:600;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">Call Now</a>
+    <h1 style="font-family:var(--font-display);font-size:clamp(38px,6vw,76px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-0.03em;max-width:860px;margin:0 0 20px;">${esc(headline)}</h1>
+    <p style="font-size:clamp(15px,2vw,19px);color:rgba(255,255,255,0.82);max-width:540px;margin:0 0 36px;line-height:1.65;">${esc(subtitle)}</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+      <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:16px 38px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 8px 32px rgba(0,0,0,0.35);letter-spacing:0.01em;">${esc(primaryCtaText)}</a>
+      <a href="${telLink}" style="background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);color:#fff;border:2px solid rgba(255,255,255,0.35);padding:16px 32px;border-radius:999px;font-size:15px;font-weight:600;text-decoration:none;">Call Now</a>
     </div>
-    <!-- Scroll indicator -->
-    <div style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;">
+    <div style="position:absolute;bottom:28px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.5);font-size:11px;letter-spacing:.12em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:6px;">
       <span>Scroll to Explore</span>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:bounce 2s infinite"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:bounce 2s infinite"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </section>`;
+
+  // Layout B — Split: left text panel + right full-bleed image
+  if (variant === "B") return `
+  <!-- HERO B: Split Layout -->
+  <section style="min-height:100dvh;display:grid;grid-template-columns:1fr 1fr;margin-top:-72px;">
+    <div style="background:${tokens.canvasColor};display:flex;flex-direction:column;justify-content:center;padding:120px 60px 60px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:${tokens.primaryColor}18;border-radius:999px;padding:7px 16px;margin-bottom:24px;width:fit-content;">
+        <span style="color:#fbbf24;">★</span>
+        <span style="color:${tokens.primaryColor};font-size:12px;font-weight:700;">${ratingVal} · ${reviewVal} Reviews</span>
+      </div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(32px,4vw,58px);font-weight:900;color:${tokens.darkColor};line-height:1.1;letter-spacing:-0.025em;margin:0 0 20px;">${esc(headline)}</h1>
+      <p style="font-size:16px;color:${tokens.darkColor};opacity:0.65;line-height:1.7;margin:0 0 36px;max-width:420px;">${esc(subtitle)}</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:15px 32px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;">${esc(primaryCtaText)}</a>
+        <a href="${telLink}" style="background:transparent;color:${tokens.darkColor};border:2px solid ${tokens.primaryColor}40;padding:15px 28px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">Call Direct</a>
+      </div>
+    </div>
+    <div style="background-image:url('${img}');background-size:cover;background-position:center;min-height:560px;"></div>
+  </section>`;
+
+  // Layout C — Dark editorial: massive type on dark overlay
+  if (variant === "C") return `
+  <!-- HERO C: Dark Editorial -->
+  <section style="height:100dvh;min-height:640px;position:relative;overflow:hidden;margin-top:-72px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 60px 80px;">
+    <div style="position:absolute;inset:0;background-image:url('${img}');background-size:cover;background-position:center;"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.15) 100%);"></div>
+    <div style="position:relative;z-index:1;max-width:1200px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:6px 16px;margin-bottom:20px;">
+        <span style="color:#fbbf24;">★</span>
+        <span style="color:rgba(255,255,255,0.8);font-size:12px;font-weight:600;">${ratingVal} · ${reviewVal} Google Reviews</span>
+      </div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(42px,7vw,90px);font-weight:900;color:#fff;line-height:0.95;letter-spacing:-0.04em;margin:0 0 24px;max-width:900px;">${esc(headline)}</h1>
+      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+        <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:15px 36px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;">${esc(primaryCtaText)}</a>
+        <span style="color:rgba(255,255,255,0.6);font-size:14px;">${esc(subtitle.slice(0, 70))}</span>
+      </div>
+    </div>
+  </section>`;
+
+  // Layout D — Bold with accent stripe + stacked text
+  return `
+  <!-- HERO D: Bold Accent -->
+  <section style="min-height:100dvh;background-image:url('${img}');background-size:cover;background-position:center;position:relative;display:flex;align-items:center;margin-top:-72px;">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,${tokens.primaryColor}EE 0%,${tokens.darkColor}CC 100%);"></div>
+    <div style="position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:120px 60px 80px;">
+      <div style="font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-bottom:16px;">${esc(category)} · ${esc(city)}</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(40px,7vw,84px);font-weight:900;color:#fff;line-height:1;letter-spacing:-0.035em;margin:0 0 16px;max-width:760px;">${esc(headline)}</h1>
+      <div style="width:80px;height:4px;background:#fff;border-radius:2px;margin:0 0 24px;"></div>
+      <p style="font-size:17px;color:rgba(255,255,255,0.8);max-width:480px;line-height:1.65;margin:0 0 36px;">${esc(subtitle)}</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <a href="${waUrl}" target="_blank" style="background:#fff;color:${tokens.primaryColor};padding:16px 36px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;">${esc(primaryCtaText)}</a>
+        <a href="${telLink}" style="background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.4);color:#fff;padding:16px 28px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">★ ${ratingVal} · ${reviewVal} reviews</a>
+      </div>
     </div>
   </section>`;
 }
@@ -442,28 +502,75 @@ function buildFooter(spec: any, waUrl: string, telLink: string): string {
   </a>`;
 }
 
+// ── AI Copy Generator (fast, non-blocking) ────────────────────────────────────
+
+async function generateAICopy(lead: RankedLead, spec: any): Promise<{ headline: string; subtitle: string } | null> {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) return null;
+
+  const about = (lead.about || "").slice(0, 200);
+  const reviews = (lead.reviews || []).slice(0, 2).map((r: any) => r.text?.slice(0, 80)).filter(Boolean).join("; ");
+  const prompt = `Business: ${lead.name} | Type: ${lead.category} | City: ${lead.city?.split(",")[0]} | About: ${about} | Reviews: ${reviews}
+
+Write ONE punchy hero headline (max 8 words, no quotes) and ONE subtitle sentence (max 18 words) for this business website. Be specific to THIS business — use its name, specialty, and city. No generic phrases like "Welcome to" or "Best in town".
+
+Reply in this exact JSON: {"headline": "...", "subtitle": "..."}`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 120, responseMimeType: "application/json" },
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const raw = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const parsed = JSON.parse(raw);
+    if (parsed?.headline && parsed?.subtitle) return parsed;
+  } catch { /* timeout or error — use fallback */ }
+  return null;
+}
+
 // ── Master HTML Builder ────────────────────────────────────────────────────────
 
 /**
- * Builds a complete, production-ready HTML website from a WebsiteSpec.
- * All layout/CSS is code-controlled. No AI needed for structure.
+ * Builds a complete, production-ready HTML website from a RankedLead.
+ * Structure/CSS = TypeScript code (guaranteed correct).
+ * Copy (headline/subtitle) = AI-enhanced via Gemini Flash (fast, optional).
+ * Layout variant = deterministic hash of business name (A/B/C/D).
  */
-export function buildTemplateHTML(lead: RankedLead, strategy?: BusinessStrategy): TemplateResult {
+export async function buildTemplateHTML(lead: RankedLead, strategy?: BusinessStrategy): Promise<TemplateResult> {
   try {
     const bizStrategy = strategy || buildDeterministicBusinessStrategy(lead);
-
-    // Inject lead reference into strategy for the template functions
-    (bizStrategy as any).heroHeadline = (bizStrategy as any).heroHeadline || null;
-
     const spec = buildWebsiteSpec(lead, "ai-decides", bizStrategy);
-    // Attach lead + strategy for template access
     (spec as any).lead = lead;
     (spec as any).strategy = bizStrategy;
 
     const { tokens, businessName, phone } = spec;
     const waUrl = spec.whatsapp || waLink(phone || "", businessName);
     const telLink = phone ? `tel:${phone.replace(/\s/g, "")}` : "#";
-    const googleFontsUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(tokens.displayFont)}:wght@400;600;700;800;900&family=${encodeURIComponent(tokens.bodyFont)}:wght@400;500;600;700&display=swap`;
+    const googleFontsUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(tokens.displayFont)}:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=${encodeURIComponent(tokens.bodyFont)}:wght@400;500;600;700&display=swap`;
+
+    // Layout variant from hash (A/B/C/D)
+    const layoutVariant = (tokens as any).layoutVariant || "A";
+
+    // CTA text by business type
+    const isFood = /cafe|coffee|restaurant|dining|food|pizza|burger|bistro|dhaba|eatery/i.test(spec.category);
+    const isMedical = /clinic|doctor|dental|hospital|health|pharmacy/i.test(spec.category);
+    const isService = /salon|spa|beauty|gym|fitness|coaching/i.test(spec.category);
+    let primaryCtaText = "Chat on WhatsApp →";
+    if (isFood) primaryCtaText = "Reserve a Table →";
+    else if (isMedical) primaryCtaText = "Book Appointment →";
+    else if (isService) primaryCtaText = "Book Now →";
+    (spec as any).primaryCtaText = primaryCtaText;
+
+    // Try AI copy (fast, 8s timeout — fallback is fine)
+    const aiCopy = await generateAICopy(lead, spec);
+    (spec as any).aiCopy = aiCopy;
 
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -471,7 +578,7 @@ export function buildTemplateHTML(lead: RankedLead, strategy?: BusinessStrategy)
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${esc(businessName)} — ${esc(spec.category)} in ${esc(spec.city)}</title>
-  <meta name="description" content="${esc(businessName)} — Top-rated ${esc(spec.category)} in ${esc(spec.city)}. ${spec.rating?.toFixed(1) || "4.8"} ★ with ${spec.reviewsCount || "150+"}+ Google reviews.">
+  <meta name="description" content="${esc(businessName)} — Top-rated ${esc(spec.category)} in ${esc(spec.city)}. ${spec.rating?.toFixed(1) || "4.8"} ★ with ${spec.reviewsCount || 150}+ verified Google reviews.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="${googleFontsUrl}" rel="stylesheet">
@@ -487,25 +594,28 @@ export function buildTemplateHTML(lead: RankedLead, strategy?: BusinessStrategy)
     }
     *, *::before, *::after { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { margin: 0; padding: 0; font-family: var(--font-body); background: ${tokens.canvasColor}; color: ${tokens.darkColor}; line-height: 1.6; }
-    img { max-width: 100%; }
+    body { margin: 0; padding: 0; font-family: var(--font-body); background: ${tokens.canvasColor}; color: ${tokens.darkColor}; line-height: 1.6; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
     a { color: inherit; }
-    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
-    @keyframes waPulse { 0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)} 50%{box-shadow:0 4px 36px rgba(37,211,102,.9)} }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)} }
+    @keyframes waPulse { 0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)} 50%{box-shadow:0 4px 40px rgba(37,211,102,.95)} }
     @media (max-width: 768px) {
       .nav-links { display: none !important; }
-      [style*="grid-template-columns:1fr 1fr"], [style*="grid-template-columns:2fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+      section > div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
+      [style*="grid-template-columns:2fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
       [style*="grid-template-columns:repeat(3,1fr)"] { grid-template-columns: repeat(2,1fr) !important; }
       [style*="grid-column:span 2"] { grid-column: span 1 !important; }
+      [style*="min-height:100dvh"][style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
     }
     @media (max-width: 480px) {
       [style*="grid-template-columns:repeat(2,1fr)"] { grid-template-columns: 1fr !important; }
+      [style*="padding:120px 60px"] { padding: 80px 24px 60px !important; }
     }
   </style>
 </head>
 <body>
-${buildNav(businessName, waUrl, tokens)}
-${buildHero(spec, waUrl, telLink)}
+${buildNav(businessName, waUrl, tokens, primaryCtaText)}
+${buildHero(spec, waUrl, telLink, layoutVariant)}
 ${buildTrustBar(spec)}
 ${buildOfferings(spec, waUrl)}
 ${buildAbout(spec, waUrl)}

@@ -89,8 +89,8 @@ export async function POST(req: Request) {
       fs.unlinkSync(diskPath);
     }
 
-    // ── PRIMARY: TypeScript Template Engine (instant, guaranteed correct) ──
-    const result = buildTemplateHTML(lead, strategy);
+    // ── PRIMARY: TypeScript Template Engine + AI copy (fast, guaranteed correct) ──
+    const result = await buildTemplateHTML(lead, strategy);
 
     if (!result.ok || !result.html) {
       return NextResponse.json({
