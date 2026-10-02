@@ -49,22 +49,70 @@ function starRating(n: number): string {
 
 // ── Section Builders ──────────────────────────────────────────────────────────
 
-function buildNav(businessName: string, waUrl: string, tokens: any, ctaText: string = "Reserve a Table"): string {
-  const { primaryColor, darkColor } = tokens;
+function buildNav(businessName: string, waUrl: string, tokens: any, ctaText: string = "Reserve a Table", layoutVariant: string = "A"): string {
+  const { primaryColor, darkColor, canvasColor, surfaceColor } = tokens;
+
+  // Variant A — white floating pill (clean/minimal)
+  if (layoutVariant === "A") return `
+  <!-- NAV -->
+  <nav style="position:sticky;top:16px;z-index:999;max-width:1200px;margin:0 auto;padding:0 24px;">
+    <div style="background:rgba(255,255,255,0.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(0,0,0,0.07);border-radius:999px;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+      <a href="#" style="font-family:var(--font-display);font-size:18px;font-weight:800;color:${darkColor};text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
+      <ul style="display:flex;gap:24px;list-style:none;margin:0;padding:0;">
+        <li><a href="#menu" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.65;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.65">Menu</a></li>
+        <li><a href="#about" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.65;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.65">About</a></li>
+        <li><a href="#gallery" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.65;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.65">Gallery</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:12px;font-weight:600;color:#16a34a;">● Open</span>
+        <a href="${waUrl}" target="_blank" style="background:${primaryColor};color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;">${esc(ctaText)}</a>
+      </div>
+    </div>
+  </nav>`;
+
+  // Variant B — dark full-width bar with accent underline
+  if (layoutVariant === "B") return `
+  <!-- NAV -->
+  <nav style="position:sticky;top:0;z-index:999;width:100%;background:${darkColor};border-bottom:3px solid ${primaryColor};">
+    <div style="max-width:1200px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px;">
+      <a href="#" style="font-family:var(--font-display);font-size:20px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.03em;">${esc(businessName)}</a>
+      <ul style="display:flex;gap:28px;list-style:none;margin:0;padding:0;">
+        <li><a href="#menu" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;" onmouseover="this.style.color='${primaryColor}'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">Menu</a></li>
+        <li><a href="#about" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;" onmouseover="this.style.color='${primaryColor}'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">About</a></li>
+        <li><a href="#gallery" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;" onmouseover="this.style.color='${primaryColor}'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">Gallery</a></li>
+      </ul>
+      <a href="${waUrl}" target="_blank" style="background:${primaryColor};color:#fff;padding:9px 22px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;letter-spacing:0.02em;">${esc(ctaText)} →</a>
+    </div>
+  </nav>`;
+
+  // Variant C — transparent overlay (sits on top of hero image)
+  if (layoutVariant === "C") return `
+  <!-- NAV -->
+  <nav style="position:absolute;top:0;left:0;right:0;z-index:999;padding:24px 40px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <a href="#" style="font-family:var(--font-display);font-size:22px;font-weight:900;color:#fff;text-decoration:none;text-shadow:0 2px 8px rgba(0,0,0,0.4);">${esc(businessName)}</a>
+      <div style="display:flex;align-items:center;gap:28px;">
+        <a href="#menu" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">Menu</a>
+        <a href="#about" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">About</a>
+        <a href="#gallery" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">Gallery</a>
+        <a href="${waUrl}" target="_blank" style="background:#fff;color:${darkColor};padding:10px 22px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;">${esc(ctaText)}</a>
+      </div>
+    </div>
+  </nav>`;
+
+  // Variant D — bold colored bar, business name centered
   return `
   <!-- NAV -->
-  <nav style="position:sticky;top:16px;z-index:999;max-width:1200px;margin:0 auto 0;padding:0 24px;">
-    <div style="background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(0,0,0,0.08);border-radius:999px;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-      <a href="#" style="font-family:var(--font-display);font-size:18px;font-weight:800;color:${darkColor};text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
-      <ul style="display:flex;gap:24px;list-style:none;margin:0;padding:0;" class="nav-links">
-        <li><a href="#menu" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.7;transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">Menu</a></li>
-        <li><a href="#about" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.7;transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">About</a></li>
-        <li><a href="#gallery" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.7;transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">Gallery</a></li>
-        <li><a href="#contact" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.7;transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">Contact</a></li>
+  <nav style="position:sticky;top:0;z-index:999;background:${primaryColor};width:100%;">
+    <div style="max-width:1200px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;">
+      <ul style="display:flex;gap:20px;list-style:none;margin:0;padding:0;flex:1;">
+        <li><a href="#menu" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">Menu</a></li>
+        <li><a href="#about" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">About</a></li>
       </ul>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span style="font-size:13px;font-weight:600;color:#16a34a;">● Open Now</span>
-        <a href="${waUrl}" target="_blank" style="background:${primaryColor};color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">${esc(ctaText)}</a>
+      <a href="#" style="font-family:var(--font-display);font-size:18px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.02em;text-align:center;flex:1;">${esc(businessName)}</a>
+      <div style="display:flex;gap:20px;align-items:center;flex:1;justify-content:flex-end;">
+        <a href="#gallery" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">Gallery</a>
+        <a href="${waUrl}" target="_blank" style="background:#fff;color:${primaryColor};padding:8px 18px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;">${esc(ctaText)}</a>
       </div>
     </div>
   </nav>`;
@@ -310,7 +358,19 @@ function buildHighlights(spec: any): string {
     <div style="max-width:1200px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:56px;">
         <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">WHY CHOOSE US</span>
-        <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:${tokens.darkColor};margin:0;">What Sets Us Apart</h2>
+        <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:${tokens.darkColor};margin:0;">${(()=>{
+          const n=spec.businessName||"";
+          const h=n.split("").reduce((a:number,c:string)=>a+c.charCodeAt(0),0);
+          const isFood=/cafe|coffee|restaurant|dining|food|pizza|bar|bakery|dhaba/i.test(spec.category||'');
+          const isGym=/gym|fitness|yoga|crossfit/i.test(spec.category||'');
+          const isMed=/clinic|doctor|dental|hospital|pharmacy/i.test(spec.category||'');
+          const foodOpts=["What Makes Us Special","Our Promise to You","The Difference You'll Taste","Why Guests Keep Coming Back"];
+          const gymOpts=["Built Different. Train Here.","What Separates Champions","Why Members Stay","The Edge You Need"];
+          const medOpts=["Why Patients Trust Us","Our Care Philosophy","What Sets Our Care Apart","Our Commitment to You"];
+          const genOpts=["What Sets Us Apart","Our Unique Advantage","Why Choose Us","The Difference We Make"];
+          const opts=isFood?foodOpts:isGym?gymOpts:isMed?medOpts:genOpts;
+          return opts[h%opts.length];
+        })()}</h2>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;">
         ${cards.map(c => `
@@ -342,7 +402,15 @@ function buildGallery(spec: any): string {
     <div style="max-width:1200px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:48px;">
         <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">GALLERY</span>
-        <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:${tokens.darkColor};margin:0;">A Glimpse of ${esc(businessName)}</h2>
+        <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:${tokens.darkColor};margin:0;">${(()=>{
+          const n=spec.businessName||"";
+          const h=n.split("").reduce((a:number,c:string)=>a+c.charCodeAt(0),0);
+          const isFood=/cafe|coffee|restaurant|dining|food|pizza|bar|bakery|dhaba/i.test(spec.category||'');
+          const foodOpts=[`A Glimpse of ${esc(spec.businessName)}`,"Step Inside Our World","Taste It Before You Arrive",`Inside ${esc(spec.businessName)}`];
+          const genOpts=[`A Glimpse of ${esc(spec.businessName)}`,"See What We Do","Our Work, Our Pride","Explore Our Space"];
+          const opts=isFood?foodOpts:genOpts;
+          return opts[h%opts.length];
+        })()}</h2>
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
         ${photoHTML}
@@ -370,7 +438,12 @@ function buildReviews(spec: any): string {
     <div style="max-width:1200px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:56px;">
         <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">CUSTOMER REVIEWS</span>
-        <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:#fff;margin:0 0 12px;">What Our Customers Say</h2>
+        <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:#fff;margin:0 0 12px;">${(()=>{
+          const n=businessName||"";
+          const h=n.split("").reduce((a:number,c:string)=>a+c.charCodeAt(0),0);
+          const opts=["What Our Guests Say","Voices We Cherish","Straight From Our Customers","What People Love About Us","Real Words, Real People"];
+          return opts[h%opts.length];
+        })()}</h2>
         <p style="color:rgba(255,255,255,0.6);font-size:16px;margin:0;">${ratingVal} ★ average across ${spec.reviewsCount || 150}+ real Google reviews</p>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;">
@@ -441,8 +514,45 @@ function buildLocation(spec: any, waUrl: string, telLink: string): string {
 function buildCTABanner(spec: any, waUrl: string): string {
   const { tokens, businessName, city, category } = spec;
   const isFood = /cafe|coffee|restaurant|dining|food|pizza|burger|bistro|dhaba|eatery/i.test(category);
-  const title = isFood ? `Order Fresh from ${businessName} Today` : `Book Your Appointment at ${businessName}`;
-  const sub = isFood ? `Get your favourite dishes delivered straight to your door via WhatsApp. Fast, fresh, and personal.` : `Schedule your visit today and experience the difference firsthand. Quick response guaranteed.`;
+  const isGym  = /gym|fitness|yoga|crossfit/i.test(category);
+  const isMed  = /clinic|doctor|dental|hospital|pharmacy/i.test(category);
+  const h = businessName.split("").reduce((a: number, c: string) => a + c.charCodeAt(0), 0);
+
+  const foodTitles = [
+    `Order Fresh from ${businessName} Today`,
+    `Craving ${businessName}? We Deliver.`,
+    `Get ${businessName} Delivered to Your Door`,
+    `Skip the Wait — Order on WhatsApp`,
+  ];
+  const foodSubs = [
+    `Get your favourite dishes delivered straight to your door via WhatsApp. Fast, fresh, and personal.`,
+    `Order directly on WhatsApp — no app needed. Hot food, real fast.`,
+    `WhatsApp us your order and we'll handle the rest. Fresh food, every time.`,
+    `The fastest way to enjoy ${businessName} — just message us on WhatsApp.`,
+  ];
+  const gymTitles = [
+    `Start Your Fitness Journey at ${businessName}`,
+    `Join ${businessName} Today`,
+    `Your Strongest Self Starts Here`,
+    `Ready to Train? We're Ready for You.`,
+  ];
+  const medTitles = [
+    `Book Your Appointment at ${businessName}`,
+    `Your Health, Our Priority — Book Now`,
+    `Expert Care, One Message Away`,
+    `Schedule a Visit with ${businessName} Today`,
+  ];
+  const genTitles = [
+    `Get in Touch with ${businessName} Today`,
+    `Ready to Work Together?`,
+    `Connect with ${businessName} on WhatsApp`,
+    `Your Next Step Starts Here`,
+  ];
+
+  const titles = isFood ? foodTitles : isGym ? gymTitles : isMed ? medTitles : genTitles;
+  const subs = isFood ? foodSubs : [`Schedule your visit today and experience the difference firsthand. Quick response guaranteed.`];
+  const title = titles[h % titles.length];
+  const sub = subs[h % subs.length];
 
   return `
   <!-- CTA BANNER -->
@@ -614,7 +724,7 @@ export async function buildTemplateHTML(lead: RankedLead, strategy?: BusinessStr
   </style>
 </head>
 <body>
-${buildNav(businessName, waUrl, tokens, primaryCtaText)}
+${buildNav(businessName, waUrl, tokens, primaryCtaText, layoutVariant)}
 ${buildHero(spec, waUrl, telLink, layoutVariant)}
 ${buildTrustBar(spec)}
 ${buildOfferings(spec, waUrl)}

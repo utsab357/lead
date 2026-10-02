@@ -87,28 +87,74 @@ export function PreviewPanel({
   // Screenshot PNGs per lead
   const [screenshots, setScreenshots] = useState<Record<string, string>>({});
   const [screenshotting, setScreenshotting] = useState<Record<string, boolean>>({});
+  // Verification results per lead
+  const [verifications, setVerifications] = useState<Record<string, { pass: boolean; score: number; issues: Array<{ code: string; message: string; severity: string }> }>>({});
 
   const [activeGenerating, setActiveGenerating] = useState(false);
   const [lightboxHtml, setLightboxHtml] = useState<string | null>(null);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(true);
+  // Which pages to generate (shown in page selector above Compile button)
+  const [selectedPages, setSelectedPages] = useState<string[]>(["home"]);
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  // Multi-page screenshots: { leadId: { menu: url, gallery: url, ... } }
+  const [multiPageShots, setMultiPageShots] = useState<Record<string, Record<string, string>>>({});
+  const [activePageTab, setActivePageTab] = useState<Record<string, string>>({}); // leadId -> active page tab
+
   // ── Auto-screenshot after HTML compile ───────────────────────────────────────
-  const takeScreenshot = useCallback(async (lead: RankedLead, htmlUrl: string, force = false) => {
+  const takeScreenshot = useCallback(async (
+    lead: RankedLead,
+    htmlUrl: string,
+    force = false,
+    page = "home",
+    device: "desktop" | "mobile" = "desktop"
+  ) => {
     if (screenshotting[lead.id]) return;
     setScreenshotting((prev) => ({ ...prev, [lead.id]: true }));
     try {
       const res = await fetch("/api/screenshot-preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ htmlUrl, leadId: lead.id, businessName: lead.name, force }),
+        body: JSON.stringify({
+          htmlUrl,
+          leadId: lead.id,
+          businessName: lead.name,
+          force,
+          page,
+          device,
+          // Pass full lead data for verification checks
+          lead,
+          category: lead.category,
+          city: lead.city,
+          phone: lead.phone,
+        }),
       });
       const data = await res.json();
       if (data.ok && data.previewUrl) {
-        setScreenshots((prev) => ({ ...prev, [lead.id]: data.previewUrl }));
-        toast.success(`Screenshot ready for ${lead.name}`);
+        if (page === "home") {
+          setScreenshots((prev) => ({ ...prev, [lead.id]: data.previewUrl }));
+        } else {
+          setMultiPageShots((prev) => ({
+            ...prev,
+            [lead.id]: { ...(prev[lead.id] || {}), [`${page}_${device}`]: data.previewUrl },
+          }));
+        }
+        // Store verification result (only for home page)
+        if (data.verification && page === "home") {
+          setVerifications((prev) => ({ ...prev, [lead.id]: data.verification }));
+          // Bubble up to parent (Phase4Build sidebar badge)
+          onPreviewUpdated?.(lead.id, { state: "done", verification: data.verification } as any);
+          if (!data.verification.pass) {
+            const criticals = data.verification.issues.filter((i: any) => i.severity === "critical").length;
+            toast.warning(`⚠️ ${lead.name}: ${criticals} issue(s) — check before sending`, { duration: 6000 });
+          } else {
+            toast.success(`✅ ${lead.name} — Verified (score: ${data.verification.score}/100)`);
+          }
+        } else {
+          toast.success(`${page === "home" ? "Screenshot" : `${page} page`} ready for ${lead.name}`);
+        }
       } else {
         toast.error(`Screenshot failed: ${data.error?.slice(0, 100)}`);
       }
@@ -119,57 +165,61 @@ export function PreviewPanel({
     }
   }, [screenshotting]);
 
-  // ── Batch cache check for HTML previews ───────────────────────────────────────
+  // Ref to ensure cache checks only run ONCE (not on every re-render)
+  const cacheChecked = useRef(false);
+
+  // One-time cache check: HTML previews + Screenshots + Verifications
   useEffect(() => {
-    if (ranked.length === 0) return;
+    if (ranked.length === 0 || cacheChecked.current) return;
+    cacheChecked.current = true;
+
+    // Check existing HTML files (once)
     fetch("/api/compile-html?list=true")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.files && Array.isArray(d.files)) {
-          const next: Record<string, PreviewStatus> = {};
-          ranked.forEach((lead) => {
-            const hash = lead.id.slice(-8);
-            const match = d.files.find((f: string) => f.includes(hash));
-            if (match) {
-              const url = `/html-previews/${match}`;
-              const status: PreviewStatus = {
-                state: "done",
-                htmlUrl: url,
-                generationMethod: "html-screenshot",
-                cached: true,
-              };
-              next[lead.id] = status;
-              onPreviewUpdated?.(lead.id, status);
-            }
-          });
-          setHtmlPreviews((prev) => ({ ...prev, ...next }));
-        }
+      .then(r => r.json())
+      .then(d => {
+        if (!d.files || !Array.isArray(d.files)) return;
+        const next: Record<string, PreviewStatus> = {};
+        ranked.forEach(lead => {
+          const hash = lead.id.slice(-8);
+          const match = d.files.find((f: string) => f.includes(hash));
+          if (match) {
+            const status: PreviewStatus = { state: "done", htmlUrl: `/html-previews/${match}`, generationMethod: "html-screenshot", cached: true };
+            next[lead.id] = status;
+            onPreviewUpdated?.(lead.id, status);
+          }
+        });
+        setHtmlPreviews(prev => ({ ...prev, ...next }));
       })
       .catch(() => {});
-  }, [ranked, onPreviewUpdated]);
 
-  // ── Batch cache check for existing screenshots ─────────────────────────────
-  useEffect(() => {
-    if (ranked.length === 0) return;
+    // Check existing screenshots + load verifications (once)
     fetch("/api/screenshot-preview?list=true")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.files && Array.isArray(d.files)) {
-          const next: Record<string, string> = {};
-          ranked.forEach((lead) => {
-            const hash = lead.id.slice(-8);
-            const match = d.files.find((f: string) => f.includes(hash));
-            if (match) next[lead.id] = `/previews/${match}`;
-          });
-          setScreenshots((prev) => ({ ...prev, ...next }));
-        }
+      .then(r => r.json())
+      .then(d => {
+        if (!d.files || !Array.isArray(d.files)) return;
+        const next: Record<string, string> = {};
+        ranked.forEach(lead => {
+          const hash = lead.id.slice(-8);
+          const match = d.files.find((f: string) => f.endsWith(".png") && f.includes(hash));
+          if (match) next[lead.id] = `/previews/${match}`;
+        });
+        setScreenshots(prev => ({ ...prev, ...next }));
+        // Load verifications for all found screenshots in parallel
+        ranked.filter(l => next[l.id]).forEach(lead => {
+          fetch(`/api/screenshot-preview?leadId=${lead.id}&name=${encodeURIComponent(lead.name)}`)
+            .then(r => r.json())
+            .then(data => { if (data.verification) setVerifications(prev => ({ ...prev, [lead.id]: data.verification })); })
+            .catch(() => {});
+        });
       })
       .catch(() => {});
-  }, [ranked]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ranked.length]); // only re-run if lead count changes
 
-  // ── Generate HTML Preview ─────────────────────────────────────────────────────
+
+  // ── Generate HTML Preview (with multi-page + device support) ─────────────────
   const generateHtmlPreview = useCallback(
-    async (lead: RankedLead, force = false): Promise<boolean> => {
+    async (lead: RankedLead, force = false, pages: string[] = ["home"], device: "desktop" | "mobile" = "desktop"): Promise<boolean> => {
       setHtmlPreviews((prev) => ({
         ...prev,
         [lead.id]: { state: "generating" },
@@ -177,53 +227,57 @@ export function PreviewPanel({
 
       try {
         const strategy = buildPrompts?.[lead.id]?.strategy;
-        const res = await fetch("/api/compile-html", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            lead,
-            style: "ai-decides",
-            strategy,
-            force,
-          }),
-        });
 
-        const data = await res.json();
+        // Compile + screenshot each selected page sequentially
+        let anyOk = false;
+        for (const page of pages) {
+          const res = await fetch("/api/compile-html", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lead, style: "ai-decides", strategy, force, page }),
+          });
 
-        if (!res.ok || !data.ok) {
-          const errorMsg = data.error || "Failed to compile HTML";
-          const status: PreviewStatus = { state: "error", error: errorMsg };
-          setHtmlPreviews((prev) => ({ ...prev, [lead.id]: status }));
-          onPreviewUpdated?.(lead.id, status);
-          toast.error(errorMsg);
-          return false;
+          const data = await res.json();
+
+          if (!res.ok || !data.ok) {
+            if (page === "home") {
+              const errorMsg = data.error || "Failed to compile HTML";
+              const status: PreviewStatus = { state: "error", error: errorMsg };
+              setHtmlPreviews((prev) => ({ ...prev, [lead.id]: status }));
+              onPreviewUpdated?.(lead.id, status);
+              toast.error(errorMsg);
+              return false;
+            }
+            // Non-home page failure is non-fatal
+            toast.warning(`${page} page compile failed for ${lead.name}`);
+            continue;
+          }
+
+          if (page === "home") {
+            const status: PreviewStatus = {
+              state: "done",
+              htmlUrl: data.htmlUrl,
+              generationMethod: "html-screenshot",
+              provider: data.provider,
+              model: data.model,
+              message: data.message,
+              cached: data.cached,
+              compilationTimeMs: data.compilationTimeMs,
+              htmlLength: data.htmlLength,
+            };
+            setHtmlPreviews((prev) => ({ ...prev, [lead.id]: status }));
+            onPreviewUpdated?.(lead.id, status);
+            const timeStr = data.compilationTimeMs ? ` in ${(data.compilationTimeMs / 1000).toFixed(1)}s` : "";
+            toast.success(`HTML compiled for ${lead.name}${timeStr} — taking screenshot…`);
+          }
+
+          // Screenshot this page
+          if (data.htmlUrl) {
+            await takeScreenshot(lead, data.htmlUrl, force, page, device);
+          }
+          anyOk = true;
         }
-
-        const status: PreviewStatus = {
-          state: "done",
-          htmlUrl: data.htmlUrl,
-          generationMethod: "html-screenshot",
-          provider: data.provider,
-          model: data.model,
-          message: data.message,
-          cached: data.cached,
-          compilationTimeMs: data.compilationTimeMs,
-          htmlLength: data.htmlLength,
-        };
-
-        setHtmlPreviews((prev) => ({ ...prev, [lead.id]: status }));
-        onPreviewUpdated?.(lead.id, status);
-
-        const timeStr = data.compilationTimeMs
-          ? ` in ${(data.compilationTimeMs / 1000).toFixed(1)}s`
-          : "";
-        toast.success(`HTML compiled for ${lead.name} via ${data.provider}${timeStr} — taking screenshot…`);
-
-        // Auto-take screenshot after compile
-        if (data.htmlUrl) {
-          takeScreenshot(lead, data.htmlUrl, data.force || false);
-        }
-        return true;
+        return anyOk;
       } catch (err) {
         const msg = (err as Error).message || "Network error";
         const status: PreviewStatus = { state: "error", error: msg };
@@ -244,7 +298,9 @@ export function PreviewPanel({
   const handleGenerateActive = async (force = false) => {
     if (!activeLead || activeGenerating) return;
     setActiveGenerating(true);
-    await generateHtmlPreview(activeLead, force);
+    const pagesToGen = selectedPages.length > 0 ? selectedPages : ["home"];
+    const screenshotDevice = deviceFrame === "mobile" ? "mobile" : "desktop";
+    await generateHtmlPreview(activeLead, force, pagesToGen, screenshotDevice);
     setActiveGenerating(false);
   };
 
@@ -288,6 +344,30 @@ export function PreviewPanel({
                 Pending
               </Badge>
             )}
+            {/* ── Verification badge ── */}
+            {activeLead && verifications[activeLead.id] && (() => {
+              const v = verifications[activeLead.id];
+              const criticals = v.issues.filter(i => i.severity === "critical").length;
+              const warnings  = v.issues.filter(i => i.severity === "warning").length;
+              if (v.pass) return (
+                <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] font-semibold gap-1">
+                  <CheckCircle2 className="h-3 w-3" />
+                  Verified {v.score}/100
+                </Badge>
+              );
+              if (criticals > 0) return (
+                <Badge className="bg-red-500/10 text-red-600 border-red-500/20 text-[10px] font-semibold gap-1" title={v.issues.map(i => i.message).join(" | ")}>
+                  <AlertCircle className="h-3 w-3" />
+                  {criticals} Critical Issue{criticals > 1 ? "s" : ""}
+                </Badge>
+              );
+              return (
+                <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[10px] font-semibold gap-1" title={v.issues.map(i => i.message).join(" | ")}>
+                  <AlertCircle className="h-3 w-3" />
+                  {warnings} Warning{warnings > 1 ? "s" : ""}
+                </Badge>
+              );
+            })()}
             {htmlDoneCount > 0 && (
               <Badge variant="outline" className="text-[10px] text-muted-foreground gap-1">
                 <Code2 className="h-3 w-3" />
@@ -366,6 +446,27 @@ export function PreviewPanel({
             {/* Action Buttons */}
             {activeLead && (
               <div className="flex items-center gap-2 self-start lg:self-end pt-1">
+                {/* Fix & Regenerate button — shown only when verification fails */}
+                {activeLead && verifications[activeLead.id] && !verifications[activeLead.id].pass && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={async () => {
+                      // Force full regenerate: new HTML + new screenshot
+                      const ok = await generateHtmlPreview(activeLead, true);
+                      if (ok && currentHtmlUrl) {
+                        await takeScreenshot(activeLead, currentHtmlUrl, true);
+                      }
+                    }}
+                    disabled={activeGenerating || !!screenshotting[activeLead.id]}
+                    className="h-9 px-3 text-xs gap-1.5"
+                    title={verifications[activeLead.id].issues.map(i => i.message).join(" | ")}
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    Fix &amp; Regenerate
+                  </Button>
+                )}
+
                 {/* Re-screenshot button */}
                 {activeStatus?.state === "done" && currentHtmlUrl && (
                   <Button variant="outline" size="sm"
@@ -401,9 +502,76 @@ export function PreviewPanel({
             )}
           </div>
 
+          {/* ── Page Selector Row ─────────────────────────────────────────────── */}
+          {activeLead && (
+            <div className="flex flex-wrap items-center gap-2 px-1 pb-1">
+              <span className="text-[11px] font-semibold text-muted-foreground">Pages:</span>
+              {((): Array<{ id: string; label: string }> => {
+                const cat = (activeLead.category || "").toLowerCase();
+                const isFood = /cafe|coffee|restaurant|dining|food|pizza|bar|bakery|dhaba/.test(cat);
+                const isGym  = /gym|fitness|yoga|crossfit/.test(cat);
+                const isMed  = /clinic|doctor|dental|hospital|pharmacy|eye/.test(cat);
+                const isHotel = /hotel|resort|lodge/.test(cat);
+                if (isFood)  return [{ id: "home", label: "🏠 Home" }, { id: "menu", label: "🍽️ Menu" }, { id: "gallery", label: "📸 Gallery" }];
+                if (isGym)   return [{ id: "home", label: "🏠 Home" }, { id: "programs", label: "💪 Programs" }, { id: "gallery", label: "📸 Gallery" }];
+                if (isMed)   return [{ id: "home", label: "🏠 Home" }, { id: "services", label: "🩺 Services" }];
+                if (isHotel) return [{ id: "home", label: "🏠 Home" }, { id: "rooms", label: "🛏️ Rooms" }, { id: "gallery", label: "📸 Gallery" }];
+                return [{ id: "home", label: "🏠 Home" }, { id: "services", label: "⚙️ Services" }, { id: "gallery", label: "📸 Gallery" }];
+              })().map(p => {
+                const checked = selectedPages.includes(p.id);
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setSelectedPages(prev =>
+                      p.id === "home" ? prev : checked ? prev.filter(x => x !== p.id) : [...prev, p.id]
+                    )}
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all ${
+                      checked
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted text-muted-foreground border-border hover:border-primary/40"
+                    } ${p.id === "home" ? "opacity-60 cursor-default" : ""}`}
+                    title={p.id === "home" ? "Home page always included" : `Toggle ${p.label}`}
+                  >
+                    {p.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           {/* ── Preview Display ─────────────────────────────────────────────────── */}
           {activeLead ? (
             <div className="space-y-3">
+              {/* Multi-page tabs — shown when extra pages have been generated */}
+              {activeLead && multiPageShots[activeLead.id] && Object.keys(multiPageShots[activeLead.id]).length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <button
+                    onClick={() => setActivePageTab(prev => ({ ...prev, [activeLead.id]: "home" }))}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                      !activePageTab[activeLead.id] || activePageTab[activeLead.id] === "home"
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted text-muted-foreground border-border"
+                    }`}
+                  >🏠 Home</button>
+                  {Object.entries(multiPageShots[activeLead.id]).map(([pageKey]) => {
+                    const [pg] = pageKey.split("_");
+                    const label = pg === "menu" ? "🍽️ Menu" : pg === "gallery" ? "📸 Gallery" : pg === "services" ? "⚙️ Services" : pg === "rooms" ? "🛏️ Rooms" : pg === "programs" ? "💪 Programs" : pg;
+                    return (
+                      <button
+                        key={pageKey}
+                        onClick={() => setActivePageTab(prev => ({ ...prev, [activeLead.id]: pageKey }))}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                          activePageTab[activeLead.id] === pageKey
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "bg-muted text-muted-foreground border-border"
+                        }`}
+                      >{label}</button>
+                    );
+                  })}
+                </div>
+              )}
+
               {/* Status badges for ready previews */}
               {activeStatus?.state === "done" && (
                 <div className="flex items-center justify-between gap-3 text-xs flex-wrap">
@@ -502,45 +670,39 @@ export function PreviewPanel({
                   </div>
 
                   {/* Screenshot image or loading state */}
-                  {activeLead && screenshots[activeLead.id] ? (
-                    <div
-                      className="group relative rounded-xl overflow-hidden border border-border bg-neutral-950 cursor-zoom-in shadow-lg"
-                      onClick={() => setLightboxImg(screenshots[activeLead!.id])}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={`${screenshots[activeLead.id]}?t=${Date.now()}`}
-                        alt={`${activeLead.name} full-page website screenshot`}
-                        className="w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.01]"
-                        style={{ maxHeight: "700px" }}
-                      />
-                      <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-white text-xs flex items-center gap-1.5 shadow-lg">
-                        <Maximize2 className="h-3.5 w-3.5" />
-                        <span>Click to view full size</span>
+                  {activeLead && (() => {
+                    const _tab = activePageTab[activeLead.id] || "home";
+                    const _shotUrl = _tab !== "home" && multiPageShots[activeLead.id]?.[_tab]
+                      ? multiPageShots[activeLead.id][_tab]
+                      : screenshots[activeLead.id];
+                    const _pg = _tab.split("_")[0];
+                    const _lbl = _pg === "menu" ? "Menu" : _pg === "gallery" ? "Gallery" : _pg === "services" ? "Services" : _pg === "rooms" ? "Rooms" : _pg === "programs" ? "Programs" : "Home";
+                    if (_shotUrl) return (
+                      <div className="group relative rounded-xl overflow-hidden border border-border bg-neutral-950 cursor-zoom-in shadow-lg" onClick={() => setLightboxImg(_shotUrl)}>
+                        {_tab !== "home" && <div className="absolute top-3 left-3 z-10 bg-primary/90 text-white text-xs font-bold px-2.5 py-1 rounded-full">{_lbl} Page</div>}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={`${_shotUrl}?t=${Date.now()}`} alt={`${activeLead.name} ${_lbl}`} className="w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.01]" style={{ maxHeight: "700px" }} />
+                        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-white text-xs flex items-center gap-1.5"><Maximize2 className="h-3.5 w-3.5" /><span>Click to view full size</span></div>
                       </div>
-                    </div>
-                  ) : activeLead && screenshotting[activeLead.id] ? (
-                    <div className="p-16 rounded-xl border border-amber-500/30 bg-amber-500/5 flex flex-col items-center justify-center gap-3 text-center">
-                      <div className="h-12 w-12 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center animate-pulse">
-                        <Camera className="h-6 w-6" />
+                    );
+                    if (screenshotting[activeLead.id]) return (
+                      <div className="p-16 rounded-xl border border-amber-500/30 bg-amber-500/5 flex flex-col items-center justify-center gap-3 text-center">
+                        <div className="h-12 w-12 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center animate-pulse"><Camera className="h-6 w-6" /></div>
+                        <div className="font-semibold text-sm text-foreground">Taking full-page screenshot...</div>
+                        <p className="text-xs text-muted-foreground">Rendering {activeLead.name}&apos;s website. This takes ~5-10 seconds.</p>
                       </div>
-                      <div className="font-semibold text-sm text-foreground">Taking full-page screenshot…</div>
-                      <p className="text-xs text-muted-foreground">Rendering {activeLead.name}&apos;s website in headless browser. This takes ~5–10 seconds.</p>
-                    </div>
-                  ) : (
-                    <div className="p-10 rounded-xl border border-dashed border-border bg-muted/10 flex flex-col items-center gap-2 text-center">
-                      <Camera className="h-8 w-8 text-muted-foreground/40" />
-                      <p className="text-xs text-muted-foreground">Screenshot will be captured automatically after compilation.</p>
-                      {currentHtmlUrl && activeLead && (
-                        <Button size="sm" variant="outline" onClick={() => takeScreenshot(activeLead, currentHtmlUrl)} className="mt-1 text-xs gap-1.5">
-                          <Camera className="h-3.5 w-3.5" /> Capture Now
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
+                    );
+                    return (
+                      <div className="p-10 rounded-xl border border-dashed border-border bg-muted/10 flex flex-col items-center gap-2 text-center">
+                        <Camera className="h-8 w-8 text-muted-foreground/40" />
+                        <p className="text-xs text-muted-foreground">Screenshot will appear here after compilation.</p>
+                        {currentHtmlUrl && <Button size="sm" variant="outline" onClick={() => takeScreenshot(activeLead!, currentHtmlUrl)} className="mt-1 text-xs gap-1.5"><Camera className="h-3.5 w-3.5" /> Capture Now</Button>}
+                      </div>
+                    );
+                  })()}
+                 </div>
               ) : currentHtmlUrl && viewMode === "iframe" ? (
-                /* ── Live HTML iframe ────────────────────────────────────────────── */
+                /* Live HTML iframe */
                 <div className="rounded-xl border border-border bg-neutral-100 dark:bg-neutral-900 overflow-hidden shadow-md">
                   <div className="flex items-center gap-2 px-4 py-2.5 bg-neutral-200/80 dark:bg-neutral-800/80 border-b border-border">
                     <div className="flex items-center gap-1.5">

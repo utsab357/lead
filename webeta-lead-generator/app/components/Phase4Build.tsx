@@ -25,6 +25,7 @@ import {
 import type { RankedLead, BuildPromptResult, ExtraPage } from "@/lib/types";
 import { toast } from "sonner";
 import { PreviewPanel } from "./PreviewPanel";
+import { BulkCompileButton } from "./BulkCompileButton";
 
 
 const STYLE_PRESETS = [
@@ -92,6 +93,16 @@ export function Phase4Build({
   const [brokenPhotos, setBrokenPhotos] = useState<Set<string>>(new Set());
   const [subPageCompiling, setSubPageCompiling] = useState<Record<string, boolean>>({});
   const [subPageUrls, setSubPageUrls] = useState<Record<string, string>>({});
+
+  // Page selection state — which pages to generate
+  const [selectedPages, setSelectedPages] = useState<string[]>(["home"]);
+
+  // Bulk generation state
+  const [bulkRunning, setBulkRunning] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number; current: string } | null>(null);
+
+  // Verification results bubbled up from PreviewPanel
+  const [leadVerifications, setLeadVerifications] = useState<Record<string, { pass: boolean; score: number; issues: Array<{ code: string; message: string; severity: string }> }>>({});
 
   // Track which leads have generated AI website preview images
   const [imagePreviews, setImagePreviews] = useState<Record<string, { exists: boolean }>>({});
@@ -464,13 +475,16 @@ export function Phase4Build({
             </Button>
           )}
 
+          {/* Bulk Compile and Screenshot - right at the top of leads */}
+          <BulkCompileButton ranked={ranked} buildPrompts={buildPrompts} />
+
           {doneCount > 0 && (
             <Button
               size="sm"
               variant="ghost"
               onClick={clearAllPromptsAndPreviews}
               className="w-full text-xs h-7 text-muted-foreground hover:text-destructive"
-              title="Reset all generated prompts and image preview data for this session"
+              title="Clears all AI-generated prompts and visual preview links. Does NOT delete screenshots from disk."
             >
               Clear Prompts & Previews
             </Button>
@@ -531,7 +545,7 @@ export function Phase4Build({
                     <div className="text-[10px] text-muted-foreground truncate">{lead.category}</div>
                   </div>
                   <div className="shrink-0 flex items-center gap-1.5">
-                    {/* Circle with 'I' for AI Image (Point 7) */}
+                    {/* Circle with 'I' for AI Image */}
                     {imagePreviews[lead.id]?.exists && (
                       <span
                         title="AI Website Preview Image Ready"
@@ -539,6 +553,12 @@ export function Phase4Build({
                       >
                         I
                       </span>
+                    )}
+                    {/* Verification status — green tick or red bang */}
+                    {leadVerifications[lead.id] && (
+                      leadVerifications[lead.id].pass
+                        ? <span title={`Verified ✓ Score: ${leadVerifications[lead.id].score}/100`} className="h-3.5 w-3.5 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[8px] font-bold">✓</span>
+                        : <span title={`${leadVerifications[lead.id].issues?.length || 0} issue(s) — click to review`} className="h-3.5 w-3.5 rounded-full bg-red-500 flex items-center justify-center text-white text-[8px] font-bold">!</span>
                     )}
                     {/* Green check for Prompt */}
                     {done ? (
@@ -665,38 +685,122 @@ export function Phase4Build({
                     );
                   })()}
 
-                  {/* Generation Target & Action Bar */}
+                  {/* Page Selector — which pages to generate */}
+                  {(() => {
+                    const cat = (activeLead.category || "").toLowerCase();
+                    const isFood = /cafe|coffee|restaurant|dining|food|pizza|bar|bakery|dhaba/.test(cat);
+                    const isGym  = /gym|fitness|yoga|crossfit/.test(cat);
+                    const isMed  = /clinic|doctor|dental|hospital|pharmacy|eye/.test(cat);
+                    const isHotel = /hotel|resort|lodge/.test(cat);
+                    const pages = isFood
+                      ? [{ id: "home", label: "🏠 Home" }, { id: "menu", label: "🍽️ Menu" }, { id: "gallery", label: "📸 Gallery" }]
+                      : isGym
+                      ? [{ id: "home", label: "🏠 Home" }, { id: "programs", label: "💪 Programs" }, { id: "gallery", label: "📸 Gallery" }]
+                      : isMed
+                      ? [{ id: "home", label: "🏠 Home" }, { id: "services", label: "🩺 Services" }]
+                      : isHotel
+                      ? [{ id: "home", label: "🏠 Home" }, { id: "rooms", label: "🛏️ Rooms" }, { id: "gallery", label: "📸 Gallery" }]
+                      : [{ id: "home", label: "🏠 Home" }, { id: "services", label: "⚙️ Services" }, { id: "gallery", label: "📸 Gallery" }];
+                    return (
+                      <div className="pt-3 border-t border-border/60">
+                        <div className="text-[11px] font-semibold text-foreground mb-2 flex items-center gap-1.5">
+                          <span>Pages to Generate</span>
+                          <Badge variant="outline" className="text-[9px] py-0 px-1.5 font-mono">
+                            {selectedPages.length} selected
+                          </Badge>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {pages.map(p => {
+                            const checked = selectedPages.includes(p.id);
+                            return (
+                              <button
+                                key={p.id}
+                                type="button"
+                                onClick={() => setSelectedPages(prev =>
+                                  checked ? prev.filter(x => x !== p.id) : [...prev, p.id]
+                                )}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                                  checked
+                                    ? "bg-primary text-primary-foreground border-primary"
+                                    : "bg-muted text-muted-foreground border-border hover:border-primary/50"
+                                }`}
+                              >
+                                {p.label}
+                                {p.id === "home" && <span className="ml-1 text-[9px] opacity-70">required</span>}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-1.5">
+                          Home page always generated. Other pages create additional preview images.
+                        </p>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Generation Action Bar */}
                   <div className="pt-3 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <Badge variant="outline" className="text-xs py-1 px-2.5 bg-muted/40 font-mono text-muted-foreground border-border">
-                        HTML5 + Tailwind CSS 2026
+                        HTML5 + TypeScript Template
                       </Badge>
-                      <span className="text-[11px] text-muted-foreground hidden sm:inline">
-                        Strict Blueprint for Groq Compiler & Live Preview
-                      </span>
+                      {bulkProgress && (
+                        <Badge className="bg-primary/10 text-primary border-primary/20 text-xs animate-pulse">
+                          Bulk: {bulkProgress.done}/{bulkProgress.total} — {bulkProgress.current}
+                        </Badge>
+                      )}
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {/* Bulk Generate All (prompts) button */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={bulkRunning || generating}
+                        onClick={async () => {
+                          setBulkRunning(true);
+                          setBulkProgress({ done: 0, total: ranked.length, current: "" });
+                          for (let i = 0; i < ranked.length; i++) {
+                            const lead = ranked[i];
+                            setBulkProgress({ done: i, total: ranked.length, current: lead.name.slice(0, 20) });
+                            try {
+                              const res = await fetch("/api/build-prompt", {
+                                method: "POST",
+                                headers: { "content-type": "application/json" },
+                                body: JSON.stringify({ lead, style: "ai-decides" }),
+                              });
+                              if (res.ok) {
+                                const data = await res.json();
+                                setBuildPrompts({ ...buildPrompts, [lead.id]: data });
+                              }
+                            } catch {}
+                            await new Promise(r => setTimeout(r, 500));
+                          }
+                          setBulkProgress(null);
+                          setBulkRunning(false);
+                          toast.success(`Bulk prompt generation complete for ${ranked.length} businesses!`);
+                        }}
+                        className="h-9 px-3 text-xs gap-1.5"
+                      >
+                        {bulkRunning ? (
+                          <><Loader2 className="h-3.5 w-3.5 animate-spin" />Generating {bulkProgress?.done}/{bulkProgress?.total}…</>
+                        ) : (
+                          <><ListFilter className="h-3.5 w-3.5" />Bulk Generate All ({ranked.length})</>
+                        )}
+                      </Button>
+
+                      {/* Single Generate button */}
                       <Button
                         onClick={generate}
-                        disabled={generating}
+                        disabled={generating || bulkRunning}
                         className="h-9 px-4 font-semibold text-xs rounded-lg transition-transform active:scale-[0.98] w-full sm:w-auto"
                       >
                         {generating ? (
-                          <>
-                            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-                            Building prompt…
-                          </>
+                          <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />Building prompt…</>
                         ) : result ? (
-                          <>
-                            <Sparkles className="h-3.5 w-3.5 mr-1.5" />
-                            Regenerate prompt
-                          </>
+                          <><Sparkles className="h-3.5 w-3.5 mr-1.5" />Regenerate prompt</>
                         ) : (
-                          <>
-                            <Sparkles className="h-3.5 w-3.5 mr-1.5" />
-                            Generate website prompt
-                          </>
+                          <><Sparkles className="h-3.5 w-3.5 mr-1.5" />Generate website prompt</>
                         )}
                       </Button>
                     </div>
@@ -995,6 +1099,10 @@ export function Phase4Build({
                 onPreviewUpdated={(leadId, status) => {
                   if (status.state === "done") {
                     setImagePreviews((prev) => ({ ...prev, [leadId]: { exists: true } }));
+                  }
+                  // Bubble verification up to sidebar badges
+                  if ((status as any).verification) {
+                    setLeadVerifications(prev => ({ ...prev, [leadId]: (status as any).verification }));
                   }
                 }}
               />

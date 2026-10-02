@@ -15,6 +15,7 @@ import { NextResponse } from "next/server";
 import path from "node:path";
 import fs from "node:fs";
 import { buildTemplateHTML } from "@/lib/htmlTemplate";
+import { buildMultiPageHTML, type PageType } from "@/lib/multiPageTemplates";
 import type { RankedLead, BusinessStrategy } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -44,6 +45,7 @@ interface CompileHtmlRequest {
   style?: string;
   strategy?: BusinessStrategy;
   force?: boolean;
+  page?: PageType; // "home" (default) | "menu" | "gallery" | "services" | "rooms" | "programs" | "portfolio" | "products"
 }
 
 // ── POST: Compile HTML for a lead ──────────────────────────────────────────────
@@ -52,7 +54,7 @@ export async function POST(req: Request) {
 
   try {
     const body = (await req.json()) as CompileHtmlRequest;
-    const { lead, strategy, force = false } = body;
+    const { lead, strategy, force = false, page = "home" } = body;
 
     if (!lead?.id || !lead?.name) {
       return NextResponse.json({ ok: false, error: "No valid lead provided" }, { status: 400 });
@@ -64,7 +66,9 @@ export async function POST(req: Request) {
     }
 
     const { fileSlug, relativePath } = generateHtmlSlug(lead);
-    const diskPath = path.join(previewsDir, `${fileSlug}.html`);
+    const pageSuffix = page !== "home" ? `_${page}` : "";
+    const diskPath = path.join(previewsDir, `${fileSlug}${pageSuffix}.html`);
+    const relPath = `/html-previews/${fileSlug}${pageSuffix}.html`;
 
     // Cache check — but reject old tiny files (< 20KB = broken skeleton)
     if (!force && fs.existsSync(diskPath)) {
@@ -73,7 +77,7 @@ export async function POST(req: Request) {
         return NextResponse.json({
           ok: true,
           cached: true,
-          htmlUrl: relativePath,
+          htmlUrl: relPath,
           fileSlug,
           leadId: lead.id,
           htmlLength: existing.length,
@@ -89,34 +93,44 @@ export async function POST(req: Request) {
       fs.unlinkSync(diskPath);
     }
 
-    // ── PRIMARY: TypeScript Template Engine + AI copy (fast, guaranteed correct) ──
-    const result = await buildTemplateHTML(lead, strategy);
+    // ── Compile HTML — home page or multi-page ────────────────────────────────
+    let html = "";
+    let provider = "template-engine";
 
-    if (!result.ok || !result.html) {
-      return NextResponse.json({
-        ok: false,
-        error: result.error || "Template engine failed",
-        leadId: lead.id,
-        provider: result.provider,
-      }, { status: 500 });
+    if (page === "home") {
+      const result = await buildTemplateHTML(lead, strategy);
+      if (!result.ok || !result.html) {
+        return NextResponse.json({
+          ok: false, error: result.error || "Template engine failed",
+          leadId: lead.id, provider: result.provider,
+        }, { status: 500 });
+      }
+      html = result.html;
+      provider = result.provider;
+    } else {
+      const result = await buildMultiPageHTML(lead, page as PageType, strategy);
+      if (!result.ok || !result.html) {
+        return NextResponse.json({
+          ok: false, error: result.error || `Multi-page template failed for ${page}`,
+          leadId: lead.id, provider: "multi-page-template",
+        }, { status: 500 });
+      }
+      html = result.html;
+      provider = "multi-page-template";
     }
 
     // Save HTML to disk
-    fs.writeFileSync(diskPath, result.html, "utf-8");
+    fs.writeFileSync(diskPath, html, "utf-8");
 
     const compilationTimeMs = Date.now() - startTime;
 
     return NextResponse.json({
-      ok: true,
-      cached: false,
-      htmlUrl: relativePath,
-      fileSlug,
-      leadId: lead.id,
-      provider: result.provider,
-      model: "typescript-template-v1",
-      htmlLength: result.html.length,
-      compilationTimeMs,
-      message: `Website generated via ${result.provider} in ${(compilationTimeMs / 1000).toFixed(2)}s`,
+      ok: true, cached: false,
+      htmlUrl: relPath,
+      fileSlug, leadId: lead.id,
+      provider, model: `typescript-${page}-template-v1`,
+      htmlLength: html.length, compilationTimeMs, page,
+      message: `${page} page generated via ${provider} in ${(compilationTimeMs / 1000).toFixed(2)}s`,
     });
 
   } catch (e) {

@@ -1,0 +1,19 @@
+{
+  "pass": false,
+  "score": 75,
+  "issues": [
+    {
+      "code": "PLACEHOLDER_TEXT",
+      "message": "NaN value rendered in HTML",
+      "severity": "critical"
+    }
+  ],
+  "layers": {
+    "html": false,
+    "png": true,
+    "ai": null
+  },
+  "generatedAt": "2026-10-02T16:25:25.726Z",
+  "pngSize": 11235708,
+  "htmlSize": 39493
+}

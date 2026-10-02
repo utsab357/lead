@@ -1,0 +1,22 @@
+{
+  "pass": false,
+  "score": 75,
+  "issues": [
+    {
+      "code": "HTML_TOO_SHORT",
+      "message": "HTML is only 12KB — likely a skeleton or failed generation",
+      "severity": "critical"
+    }
+  ],
+  "layers": {
+    "html": false,
+    "png": true,
+    "ai": true
+  },
+  "aiDetail": "AI check skipped (API error)",
+  "generatedAt": "2026-10-02T17:41:51.982Z",
+  "pngSize": 7247975,
+  "htmlSize": 12400,
+  "businessName": "THE FOREST BREW CAFE AND RESTRO",
+  "leadId": "maps-005"
+}

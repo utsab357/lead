@@ -1,0 +1,16 @@
+{
+  "pass": true,
+  "score": 100,
+  "issues": [],
+  "layers": {
+    "html": true,
+    "png": true,
+    "ai": true
+  },
+  "aiDetail": "AI check skipped (API error)",
+  "generatedAt": "2026-10-02T17:41:42.616Z",
+  "pngSize": 3141891,
+  "htmlSize": 37755,
+  "businessName": "THE FOREST BREW CAFE AND RESTRO",
+  "leadId": "maps-005"
+}

@@ -369,7 +369,7 @@ export function resolveVisualDesignTokens(
   const layoutVariants = ["A", "B", "C", "D"] as const;
   const layoutVariant = layoutVariants[Math.floor(h5 * 4)];
 
-  return {
+  const result = {
     vibe: baseVibe as any,
     primaryColor,
     secondaryColor,
@@ -385,9 +385,12 @@ export function resolveVisualDesignTokens(
     spacingDensity: "comfortable",
     imageTreatment: isDark ? "dark_overlay" : "warm_rounded",
     decorativeStyle: "minimal",
-    // Extra fields for layout variation (not in type but passed through)
-    ...(({ layoutVariant, isDark } as any)),
-  };
+  } as VisualDesignTokens;
+
+  // Attach layout variant metadata (used by htmlTemplate.ts)
+  (result as any).layoutVariant = layoutVariant;
+  (result as any).isDark = isDark;
+  return result;
 }
 
 
