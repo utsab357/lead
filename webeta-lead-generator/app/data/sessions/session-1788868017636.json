@@ -17051,37 +17051,37 @@
     },
     "maps-005": {
       "source": "gemini",
-      "first": "Hi! I saw THE FOREST BREW CAFE AND RESTRO on Google Maps in Barasat, West Bengal. Congrats on your 4.7★ rating from 152 reviews! I'm from Webeta (https://webeta.site) — we build modern websites for local businesses. We made a clean 1‑page sample site for you to show how you could look online. Sharing the preview image below 👇 No pressure — if you like it, reply or explore our work at https://webeta.site. — Team Webeta",
-      "followUp": "Hi again! Just checking if you had a chance to view the mockup we shared for THE FOREST BREW CAFE AND RESTRO. No worries if you're busy—whenever you consider a modern website, we’re here. See our work at https://webeta.site. — Team Webeta",
-      "bestSendTime": "Best time to send: Tuesday mornings around 10 AM IST",
+      "first": "Hi! I noticed THE FOREST BREW CAFE AND RESTRO on Google Maps in Barasat, West Bengal. Congrats on your impressive 4.7★ rating and glowing reviews! I'm from Webeta, a web design studio – we build modern websites for local businesses. We created a clean 1‑page sample website design for your cafe to show how you could look online. Sharing the preview image below: — Team Webeta https://webeta.site",
+      "followUp": "Hi again! Just following up briefly to see if you got a moment to check the website mockup we shared above for THE FOREST BREW CAFE AND RESTRO? No worries if you're busy – whenever you consider a modern site, we're here. — Team Webeta https://webeta.site",
+      "bestSendTime": "Best to send on Tuesday mornings around 10 AM IST",
       "callScript": {
-        "openingLine": "Hello, this is [Your Name] from XYZ Web Solutions. I’m calling The Forest Brew Cafe and Restro – I loved reading the reviews praising your affordable, delicious food and the cozy ambiance that guests love.",
+        "openingLine": "Hello, I'm [Your Name] from XYZ Web Solutions. I was impressed by the very affordable and delicious food, the simple cozy ambiance, and your warm hospitality that customers rave about at THE FOREST BREW CAFE AND RESTRO.",
         "painPoints": [
-          "No website means you miss out on showcasing your affordable, delicious menu to the 152 happy reviewers online",
-          "Potential customers can’t discover your cafe through Google search or maps without a site, limiting foot traffic",
-          "Without digital ordering or an online menu, you’re losing an estimated ₹60,000 per month",
-          "Lack of online presence makes it hard to capture repeat business and collect new reviews"
+          "No website limits your ability to showcase the 4.7 rating and attract the 152 happy reviewers online",
+          "Without digital ordering you may be losing an estimated ₹60,000 per month in potential sales",
+          "Customers looking to book a table for 2‑4 people can’t do it online, reducing convenience and footfall",
+          "Competitors with an online presence can capture the customers who search for cafes in Barasat before they find you"
         ],
         "objectionHandlers": [
           {
             "objection": "I don't need a website",
-            "response": "Even with great word‑of‑mouth, a simple website lets the 152 reviewers you already have find you online, see your menu, and book a table, turning compliments into bookings."
+            "response": "Even without a website, 152 reviewers are already talking about you online. A simple site lets you turn that buzz into direct bookings and orders, capturing the ₹60,000 you’re currently missing each month."
           },
           {
             "objection": "It's too expensive",
-            "response": "A professional site for a cafe like yours typically costs between ₹30,000‑₹50,000, which is less than 5% of the ₹60,000 you’re currently losing each month."
+            "response": "A professional website for a cafe of your size typically costs between ₹30,000‑₹50,000, and the extra online orders can quickly cover that investment within a few weeks."
           },
           {
             "objection": "I'll think about it",
-            "response": "I understand; can we schedule a 15‑minute demo this week so you can see exactly how a site can turn your warm reviews into online orders?"
+            "response": "I understand you need time. How about a free 15‑minute demo this week so you can see exactly how a website will boost your daily footfall and revenue?"
           },
           {
             "objection": "I already have customers",
-            "response": "Your loyal customers love your food and ambiance – a website amplifies that love, attracting new diners who search online, increasing your daily footfall."
+            "response": "Your loyal customers love your food and ambiance; a website will help you reach new diners who search online, turning occasional visitors into regulars and increasing overall sales."
           }
         ],
-        "closingLine": "Let’s get your cafe online this week so you can start capturing that ₹60,000 monthly loss – can we lock in a quick meeting on Thursday at 10 am?",
-        "pricingSuggestion": "₹30,000‑₹50,000 for a responsive, SEO‑optimized website with online menu and ordering integration"
+        "closingLine": "Let’s schedule a quick 15‑minute call this week to walk you through a custom website that can start driving those extra orders—does Thursday at 10 am work for you?",
+        "pricingSuggestion": "₹30,000‑₹50,000"
       }
     }
   },

@@ -43,12 +43,16 @@ ${businessDetails}
 FIRST MESSAGE STRUCTURE:
 1. Warm, polite greeting mentioning ${lead.name} on Google Maps in ${lead.city}.
 2. One genuine compliment (e.g., strong ${lead.rating}★ rating or customer reviews).
-3. Introduce: "I'm from Webeta (https://webeta.site) — we build modern websites for local businesses."
+3. Introduce: "I'm from Webeta, a web design studio — we build modern websites for local businesses." (IMPORTANT: Do NOT put any website link here!)
 4. Value: "We created a clean 1-page sample website design for ${lead.name} just to show how your business could look online."
-5. Point to attached image: "Sharing the preview image below 👇"
-6. Zero pressure / Soft CTA: "No pressure or obligation at all — if you like the concept, feel free to reply or explore our work at https://webeta.site."
+5. Point to attached image: "Sharing the preview image below:" (Use a clean colon, DO NOT use 👇 emoji as it breaks in WhatsApp links).
+6. Zero pressure / Soft CTA: "No pressure or obligation at all — if you like the concept, feel free to reply here and I can share more details!"
 7. Sign off: "— Team Webeta"
-8. Keep under 75-80 words.
+8. Keep under 75 words.
+
+STRICT FORMATTING RULES:
+- FIRST MESSAGE URL RULE: Do NOT include ANY website links (no https://...) in the first message! When a link is included, WhatsApp automatically attaches a large preview card for that website which hides the client's own website design. Keep the first message 100% link-free so the focus is purely on the client's business!
+- EMOJI SAFETY: Do NOT use 4-byte hand emojis like 👇 or 👉 because WhatsApp Web URLs corrupt them into a question mark diamond (). Use standard punctuation like ":" or safe text.
 
 DAY-3 FOLLOW-UP RULES (CRITICAL — ZERO FAKE PROMISES):
 1. Polite, brief check-in: "Hi again! Just following up briefly to see if you got a moment to check the website mockup we shared above for ${lead.name}?"
@@ -59,6 +63,7 @@ DAY-3 FOLLOW-UP RULES (CRITICAL — ZERO FAKE PROMISES):
 4. Trust anchor: "You can explore our past work anytime at https://webeta.site or reach us right here."
 5. Sign off: "— Team Webeta"
 6. Keep under 40-45 words.
+7. URL RULE: "https://webeta.site" must appear only once at the end.
 
 Channel: ${channel} — ${CHANNEL_RULES[channel]}
 Language: ${langRule}

@@ -171,10 +171,43 @@ export function Phase5Outreach({
     }
   }
 
+  // Clean message text: eliminate duplicate webeta.site URLs and corrupt emoji characters
+  function prepareOutreachText(raw: string, type: "first" | "followup" = "first"): string {
+    if (!raw) return "";
+    let clean = raw;
+    // 1. Remove/replace emojis and characters that get corrupted into  in WhatsApp URLs
+    clean = clean.replace(/[\uFFFD\uD83D\uDC47\uD83D\uDC48]/g, ""); // strip , 👇, 👉
+    clean = clean.replace(/👇|👉/g, ":");
+
+    if (type === "first") {
+      // In first message, remove website links so WhatsApp does not show the agency logo card
+      // instead of the client's own website preview image!
+      clean = clean.replace(/\(?\s*https?:\/\/[^\s)]+\s*\)?/gi, "");
+      clean = clean.replace(/or explore our work at\s*/gi, "");
+      clean = clean.replace(/visit us at\s*/gi, "");
+    } else {
+      // In follow-up message, keep https://webeta.site once at the end
+      const matches = [...clean.matchAll(/https:\/\/webeta\.site/gi)];
+      if (matches.length > 1) {
+        let count = 0;
+        clean = clean.replace(/\(?\s*https:\/\/webeta\.site\s*\)?/gi, () => {
+          count++;
+          if (count < matches.length) return "";
+          return " https://webeta.site";
+        });
+      }
+    }
+
+    clean = clean.replace(/\(\s*\)/g, "").replace(/\s{2,}/g, " ").replace(/\s+([.,!?:])/g, "$1").trim();
+    return clean;
+  }
+
   const result = activeLead ? outreachResults[activeLead.id] : null;
   const localEdit = activeLead ? localEdits[activeLead.id] : null;
-  const message = localEdit?.message ?? result?.first ?? "";
-  const followUp = localEdit?.followUp ?? result?.followUp ?? "";
+  const rawMessage = localEdit?.message ?? result?.first ?? "";
+  const rawFollowUp = localEdit?.followUp ?? result?.followUp ?? "";
+  const message = prepareOutreachText(rawMessage, "first");
+  const followUp = prepareOutreachText(rawFollowUp, "followup");
   const bestSendTime = result?.bestSendTime ?? "";
 
   const activeIndex = activeLead ? ranked.findIndex((l) => l.id === activeLead.id) : -1;
@@ -304,25 +337,57 @@ export function Phase5Outreach({
     setTimeout(() => setCopiedType(null), 2000);
   }
 
-  function openChannel() {
+  async function openChannel(type: "first" | "followup" = "first") {
     if (!activeLead) return;
+    const rawText = type === "first" ? message : followUp;
+    const textToSend = prepareOutreachText(rawText, type);
+
     if (channel === "whatsapp" && activeLead.whatsapp) {
       const num = activeLead.whatsapp.replace(/\D/g, "");
-      window.open(`https://wa.me/${num}?text=${encodeURIComponent(message)}`, "_blank");
+
+      // For first message only: copy client mockup to clipboard AND auto-download
+      if (type === "first" && previews[activeLead.id]?.exists && previews[activeLead.id]?.previewUrl) {
+        // 1. Copy client preview image to clipboard (for instant Ctrl+V)
+        copyImageToClipboard(previews[activeLead.id].previewUrl!);
+
+        // 2. Auto-download PNG so it's in the browser download bar ready to drag-and-drop
+        try {
+          const dl = document.createElement("a");
+          dl.href = previews[activeLead.id].previewUrl!;
+          dl.download = `${activeLead.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}-preview.png`;
+          document.body.appendChild(dl);
+          dl.click();
+          document.body.removeChild(dl);
+        } catch {
+          // ignore
+        }
+      }
+
+      window.open(`https://wa.me/${num}?text=${encodeURIComponent(textToSend)}`, "_blank");
+
+      if (type === "first") {
+        if (previews[activeLead.id]?.exists) {
+          toast.info("WhatsApp opened! Client website preview copied (press Ctrl+V) & downloaded.", { duration: 7000 });
+        } else {
+          toast.info("WhatsApp opened! (Tip: Generate a preview image above to attach with your message)", { duration: 5000 });
+        }
+      } else {
+        toast.success("WhatsApp opened with Day-3 follow-up!");
+      }
     } else if (channel === "email" && activeLead.email) {
       const subject =
         lang === "hinglish"
           ? `Aapke business (${activeLead.name}) ke liye ek website demo`
           : `Custom website demo for ${activeLead.name}`;
       window.open(
-        `mailto:${activeLead.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`,
+        `mailto:${activeLead.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(textToSend)}`,
         "_blank"
       );
     } else if (channel === "instagram") {
       window.open(`https://instagram.com/`, "_blank");
     } else {
       toast.error("No direct contact for this channel. Copied message instead!");
-      navigator.clipboard.writeText(message);
+      navigator.clipboard.writeText(textToSend);
     }
   }
 
@@ -1010,7 +1075,7 @@ export function Phase5Outreach({
                               </>
                             )}
                           </Button>
-                          <Button size="sm" onClick={openChannel} className="h-8 text-xs px-2.5">
+                          <Button size="sm" onClick={() => openChannel("first")} className="h-8 text-xs px-2.5">
                             <Send className="h-3.5 w-3.5 mr-1" />
                             Send
                           </Button>
@@ -1039,24 +1104,30 @@ export function Phase5Outreach({
                             Day 3
                           </Badge>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => copy(followUp, "followup")}
-                          className="h-8 text-xs px-2.5"
-                        >
-                          {copiedType === "followup" ? (
-                            <>
-                              <Check className="h-3.5 w-3.5 mr-1 text-emerald-500" />
-                              Copied
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="h-3.5 w-3.5 mr-1" />
-                              Copy
-                            </>
-                          )}
-                        </Button>
+                        <div className="flex items-center gap-1.5">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copy(followUp, "followup")}
+                            className="h-8 text-xs px-2.5"
+                          >
+                            {copiedType === "followup" ? (
+                              <>
+                                <Check className="h-3.5 w-3.5 mr-1 text-emerald-500" />
+                                Copied
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-3.5 w-3.5 mr-1" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
+                          <Button size="sm" onClick={() => openChannel("followup")} className="h-8 text-xs px-2.5">
+                            <Send className="h-3.5 w-3.5 mr-1" />
+                            Send
+                          </Button>
+                        </div>
                       </CardHeader>
                       <CardContent className="p-4 flex-1 flex flex-col">
                         <textarea
