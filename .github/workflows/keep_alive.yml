@@ -1,0 +1,25 @@
+name: Render Services Keep-Alive
+
+on:
+  schedule:
+    # Runs every 14 minutes (Render free tier spins down after 15 minutes of inactivity)
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub dashboard
+
+jobs:
+  keep-alive:
+    name: Ping Services
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Ping WhatsApp Evolution API
+        run: |
+          echo "Sending keep-alive ping to WhatsApp Evolution API on Render..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 45 https://evolution-api-webeta.onrender.com || echo "failed")
+          echo "Evolution API response code: $STATUS"
+          if [ "$STATUS" = "200" ]; then
+            echo "WhatsApp Evolution API is awake and healthy."
+          else
+            echo "Evolution API returned code $STATUS. Inactivity timer reset."
+          fi

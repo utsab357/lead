@@ -131,6 +131,30 @@ async function sendEvolutionImage(
   }
 }
 
+async function sendEvolutionPresence(
+  apiUrl: string,
+  apiKey: string,
+  instance: string,
+  phone: string
+): Promise<void> {
+  try {
+    await fetch(`${apiUrl}/chat/sendPresence/${instance}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": apiKey,
+      },
+      body: JSON.stringify({
+        number: phone,
+        delay: 2500,
+        presence: "composing",
+      }),
+    });
+  } catch {
+    /* ignore presence errors */
+  }
+}
+
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
@@ -204,7 +228,11 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
         await sleep(3000);
       }
 
-      // Step 2: Send text message
+      // Step 2: Simulate human "typing..." presence for 2.5 seconds
+      await sendEvolutionPresence(evolutionApiUrl, evolutionApiKey, instanceName, lead.phone);
+      await sleep(2500);
+
+      // Step 3: Send text message
       const textResult = await sendEvolutionText(
         evolutionApiUrl,
         evolutionApiKey,

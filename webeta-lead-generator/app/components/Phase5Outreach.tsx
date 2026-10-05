@@ -30,6 +30,8 @@ import {
   Download,
   RefreshCw,
   Image as ImageIcon,
+  Zap,
+  Users,
 } from "lucide-react";
 import type { RankedLead, OutreachChannel, OutreachLanguage, OutreachResult } from "@/lib/types";
 import { toast } from "sonner";
@@ -52,6 +54,7 @@ export function Phase5Outreach({
   initialLeadId?: string | null;
   onSelectLead?: (leadId: string) => void;
 }) {
+  const [viewMode, setViewMode] = useState<"single" | "bulk">("bulk");
   const [activeLead, setActiveLead] = useState<RankedLead | null>(
     (initialLeadId ? ranked.find((l) => l.id === initialLeadId) : null) ?? ranked[0] ?? null
   );
@@ -429,6 +432,10 @@ export function Phase5Outreach({
     );
   });
 
+  const readyCount = ranked.filter(
+    (l) => outreachResults[l.id] && l.whatsapp && l.whatsapp.replace(/\D/g, "").length >= 10
+  ).length;
+
   return (
     <PhaseShell
       title="Phase 5 — Outreach"
@@ -438,8 +445,56 @@ export function Phase5Outreach({
       nextLabel="Build site"
       nextDisabled={doneCount === 0}
     >
-      {/* ── MOBILE LEAD SELECTOR STRIP (< lg) ── */}
-      <div className="lg:hidden mb-4">
+      {/* ── TOP MODE SWITCHER TABS ── */}
+      <div className="flex items-center justify-between pb-4 mb-5 border-b border-border">
+        <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl border border-border">
+          <button
+            type="button"
+            onClick={() => setViewMode("single")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+              viewMode === "single"
+                ? "bg-card text-foreground shadow-xs border border-border"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Users className="h-4 w-4" />
+            <span>Single Lead Review ({ranked.length})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("bulk")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+              viewMode === "bulk"
+                ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Zap className="h-4 w-4" />
+            <span>WhatsApp Bulk Auto-Sender</span>
+            <span
+              className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
+                viewMode === "bulk"
+                  ? "bg-primary-foreground/20 text-primary-foreground"
+                  : "bg-primary/10 text-primary"
+              }`}
+            >
+              {readyCount} ready
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {viewMode === "bulk" ? (
+        <WhatsAppBlast
+          ranked={ranked}
+          outreachResults={outreachResults}
+          previews={previews}
+          onBackToSingle={() => setViewMode("single")}
+        />
+      ) : (
+        <>
+          {/* ── MOBILE LEAD SELECTOR STRIP (< lg) ── */}
+          <div className="lg:hidden mb-4">
         <div className="bg-card border border-border rounded-xl p-3 shadow-xs">
           <div className="flex items-center justify-between gap-2 mb-2.5">
             <div className="flex items-center gap-1.5">
@@ -1175,15 +1230,8 @@ export function Phase5Outreach({
           )}
         </main>
       </div>
-
-      {/* ── WhatsApp Auto-Blast Panel ── */}
-      <div className="mt-6">
-        <WhatsAppBlast
-          ranked={ranked}
-          outreachResults={outreachResults}
-          previews={previews}
-        />
-      </div>
+        </>
+      )}
     </PhaseShell>
   );
 }
