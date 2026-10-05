@@ -102,9 +102,17 @@ export async function GET() {
   try {
     const files = (await fs.readdir(SESSIONS_DIR)).filter((f) => f.endsWith(".json"));
 
-    // Automatically remove any old legacy session files on server
+    const LEGACY_OLD_FILES = new Set([
+      "session-1787916767589.json",
+      "session-1788775790274.json",
+      "session-1788868017636.json",
+      "session-1790905938840.json",
+      "session-1790905938843.json",
+    ]);
+
+    // Automatically remove known legacy files or empty/corrupt files
     for (const file of files) {
-      if (file !== "session-cafe-utsab-test.json") {
+      if (LEGACY_OLD_FILES.has(file)) {
         try {
           await fs.unlink(path.join(SESSIONS_DIR, file));
         } catch {
@@ -113,7 +121,7 @@ export async function GET() {
       }
     }
 
-    // Ensure Cafe Utsab test session always exists
+    // Ensure Cafe Utsab test session exists as seed if no sessions exist
     const utsabPath = path.join(SESSIONS_DIR, "session-cafe-utsab-test.json");
     try {
       await fs.access(utsabPath);
