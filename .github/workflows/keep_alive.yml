@@ -8,18 +8,29 @@ on:
 
 jobs:
   keep-alive:
-    name: Ping Services
+    name: Ping Render Services
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
       - name: Ping WhatsApp Evolution API
         run: |
-          echo "Sending keep-alive ping to WhatsApp Evolution API on Render..."
+          echo "Sending keep-alive ping to WhatsApp Evolution API..."
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 45 https://evolution-api-webeta.onrender.com || echo "failed")
-          echo "Evolution API response code: $STATUS"
+          echo "WhatsApp Evolution API response code: $STATUS"
           if [ "$STATUS" = "200" ]; then
-            echo "WhatsApp Evolution API is awake and healthy."
+            echo "WhatsApp Evolution API is awake."
           else
-            echo "Evolution API returned code $STATUS. Inactivity timer reset."
+            echo "Evolution API returned code $STATUS. Timer reset."
+          fi
+
+      - name: Ping Webeta Lead Generator
+        run: |
+          echo "Sending keep-alive ping to Webeta Lead Generator..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 45 https://webeta-lead-generator.onrender.com/api/health || echo "failed")
+          echo "Lead Generator response code: $STATUS"
+          if [ "$STATUS" = "200" ]; then
+            echo "Webeta Lead Generator is awake."
+          else
+            echo "Lead Generator returned code $STATUS. Timer reset."
           fi

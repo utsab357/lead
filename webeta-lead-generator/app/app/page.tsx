@@ -13,7 +13,7 @@ import { Phase7Export } from "@/components/Phase7Export";
 import { SessionsPage } from "@/components/SessionsPage";
 import { AIEngineDropdown } from "@/components/AIEngineDropdown";
 import type { Lead, AuditResult, RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, LeadStatus, ScrapeSession, ClientDetail, LeadVisualPreviewSet } from "@/lib/types";
-import { Sparkles, History, Plus } from "lucide-react";
+import { Sparkles, History, Plus, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -355,6 +355,19 @@ export default function Page() {
               <span>History</span>
             </Button>
             <AIEngineDropdown />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={async () => {
+                await fetch("/api/auth/logout", { method: "POST" });
+                window.location.href = "/login";
+              }}
+              className="h-8 px-2 text-xs text-muted-foreground hover:text-destructive gap-1"
+              title="Sign Out"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span className="hidden xl:inline">Sign Out</span>
+            </Button>
           </div>
         </div>
         <Stepper current={phase} completed={completed} onJump={(n) => setPhase(n)} />
