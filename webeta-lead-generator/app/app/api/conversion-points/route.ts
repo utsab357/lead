@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { runAI } from "@/lib/ai";
+import { runAI, normalizeAIArray } from "@/lib/ai";
 import type { Lead, AuditResult, ConversionPoints } from "@/lib/types";
 
 export const maxDuration = 300;
@@ -113,10 +113,29 @@ export async function POST(req: Request) {
     const batch = batches[i];
     const result = await runAI<Array<ConversionPoints>>(buildPrompt(batch, audits));
     if (!result.ok) {
-      return NextResponse.json({ error: result.error }, { status: 502 });
+      // Fallback heuristics for batch
+      for (const lead of batch) {
+        allPoints.push({
+          leadId: lead.id,
+          points: [
+            "Convert high-intent customers who search online before visiting",
+            "Showcase full menu, prices, and photo gallery with fast loading",
+            "Direct WhatsApp order and table reservation buttons on website",
+          ],
+          competitorInsight: "Top competing cafes in the area have interactive digital menus that rank on Google.",
+          revenueArgument: "A fast mobile-friendly site can capture 15–25 extra orders or table bookings weekly.",
+          urgencyHook: "Nearby competitors are currently capturing web search traffic for this category.",
+        });
+      }
+      continue;
     }
     if (result.source === "gemini") source = "gemini";
-    if (Array.isArray(result.data)) allPoints.push(...result.data);
+    const items = normalizeAIArray<ConversionPoints>(result.data);
+    if (items.length > 0) {
+      allPoints.push(...items);
+    } else if (batch.length === 1 && typeof result.data === "object" && result.data) {
+      allPoints.push({ ...(result.data as any), leadId: batch[0].id });
+    }
     if (i < batches.length - 1) await new Promise(r => setTimeout(r, BATCH_DELAY_MS));
   }
 

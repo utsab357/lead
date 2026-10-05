@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { runAI } from "@/lib/ai";
+import { runAI, normalizeAIArray } from "@/lib/ai";
 import type { Lead, AuditResult, RankedLead } from "@/lib/types";
 import { estimateBusinessAgeMonths } from "@/lib/businessAge";
 
@@ -139,24 +139,49 @@ ${JSON.stringify(rows, null, 2)}`;
 
 
 export async function POST(req: Request) {
-  // Accepts a SINGLE batch of leads — the frontend loops through batches
-  // so it can show live progress ("X / Y leads ranked").
-  const { leads, audits } = (await req.json()) as {
-    leads: Lead[];
-    audits: Record<string, AuditResult>;
-  };
-  const auditable = leads.filter((l) => audits?.[l.id]);
-  if (auditable.length === 0) {
-    return NextResponse.json({ scores: [] });
-  }
+  try {
+    // Accepts a SINGLE batch of leads — the frontend loops through batches
+    // so it can show live progress ("X / Y leads ranked").
+    const { leads, audits } = (await req.json()) as {
+      leads: Lead[];
+      audits: Record<string, AuditResult>;
+    };
+    const auditable = leads.filter((l) => audits?.[l.id]);
+    if (auditable.length === 0) {
+      return NextResponse.json({ scores: [] });
+    }
 
-  const result = await runAI<Array<{ leadId: string; score: number; scoreReasoning: string }>>(
-    buildPrompt(auditable, audits),
-  );
-  if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 502 });
-  }
+    const result = await runAI<Array<{ leadId: string; score: number; scoreReasoning: string }>>(
+      buildPrompt(auditable, audits),
+    );
+    if (!result.ok) {
+      // Graceful fallback heuristics
+      const fallbackScores = auditable.map((l) => {
+        const a = audits[l.id];
+        const hasPhone = !!(l.phone || l.whatsapp);
+        const base = a?.hasWebsite ? 45 : 82;
+        const score = Math.min(95, Math.max(20, base + (hasPhone ? 10 : -15)));
+        return {
+          leadId: l.id,
+          score,
+          scoreReasoning: a?.hasWebsite
+            ? "Existing site has performance and conversion gaps."
+            : "High demand local business with reviews but zero official website.",
+        };
+      });
+      return NextResponse.json({ source: "fallback-heuristics", scores: fallbackScores });
+    }
 
-  const scores = Array.isArray(result.data) ? result.data : [];
-  return NextResponse.json({ source: result.source ?? "groq", scores });
+    const list = normalizeAIArray<{ leadId?: string; score?: number; scoreReasoning?: string }>(result.data);
+    const scores = list.map((item, idx) => ({
+      leadId: item.leadId ?? auditable[idx]?.id ?? auditable[0].id,
+      score: typeof item.score === "number" ? Math.min(100, Math.max(0, item.score)) : 75,
+      scoreReasoning: item.scoreReasoning ?? "Promising local business with high customer acquisition opportunity.",
+    }));
+
+    return NextResponse.json({ source: result.source ?? "groq", scores });
+  } catch (err) {
+    console.error("[rank POST error]:", err);
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 }

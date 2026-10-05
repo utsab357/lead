@@ -134,10 +134,14 @@ export async function POST(req: Request) {
     buildOutreachPrompt(lead, channel || "whatsapp", language || "english"),
   );
   if (!outreachResult.ok) {
-    return NextResponse.json(
-      { error: outreachResult.error },
-      { status: 502 },
-    );
+    const bizName = lead.name || "there";
+    return NextResponse.json({
+      source: "template-fallback",
+      first: `Hey ${bizName}! Loved your customer reviews in ${lead.city || "town"}. Noticed you don't have an official website for online menu or direct table bookings yet. We built a fast modern preview for ${bizName} — would love to share it with you!`,
+      followUp: `Hi ${bizName}, just following up on the website mockup we created for you. Would you like to see how it looks on mobile?`,
+      bestSendTime: "Tue–Thu, 11am–1pm IST",
+      callScript: null,
+    });
   }
 
   // Optionally generate call script

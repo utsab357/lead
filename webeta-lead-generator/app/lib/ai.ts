@@ -55,3 +55,40 @@ export async function runAI<T>(
   ];
   return { ok: false, error: lines.join("\n") };
 }
+
+/**
+ * Normalizes AI output into an array of typed objects.
+ * Handles cases where LLMs wrap the array inside a container object (e.g. { audits: [...] })
+ * or return a single object instead of an array when only 1 item was analyzed.
+ */
+export function normalizeAIArray<T>(data: unknown): T[] {
+  if (!data) return [];
+  if (Array.isArray(data)) return data as T[];
+  if (typeof data !== "object") return [];
+
+  const obj = data as Record<string, unknown>;
+
+  // Check known container keys
+  const containerKeys = [
+    "audits", "leads", "businesses", "results", "scores", "data", "items", "conversions", "points", "leadsAudited"
+  ];
+  for (const key of containerKeys) {
+    if (Array.isArray(obj[key])) {
+      return obj[key] as T[];
+    }
+  }
+
+  // Check if any property value is an array of objects
+  for (const val of Object.values(obj)) {
+    if (Array.isArray(val) && val.length > 0 && typeof val[0] === "object") {
+      return val as T[];
+    }
+  }
+
+  // If it's a single item (e.g. has leadId, id, score, name, etc.)
+  if (obj.leadId || obj.id || obj.name || obj.score !== undefined || obj.hasWebsite !== undefined) {
+    return [obj as unknown as T];
+  }
+
+  return [];
+}
