@@ -136,8 +136,8 @@ export async function POST(req: Request) {
         const viewportW = device === "mobile" ? 390 : 1280;
         const viewportH = device === "mobile" ? 844 : 900;
 
-        console.log(`[screenshot-preview] Capturing real HTML screenshot via Microlink Chrome renderer: ${fullPublicUrl}`);
-        const microlinkUrl = `https://api.microlink.io/?url=${encodeURIComponent(fullPublicUrl)}&screenshot=true&embed=screenshot.url&viewport.width=${viewportW}&viewport.height=${viewportH}&waitForTimeout=1500`;
+        console.log(`[screenshot-preview] Capturing full-page HTML screenshot via Microlink Chrome renderer: ${fullPublicUrl}`);
+        const microlinkUrl = `https://api.microlink.io/?url=${encodeURIComponent(fullPublicUrl)}&screenshot=true&screenshot.fullPage=true&screenshot.type=jpeg&screenshot.quality=85&embed=screenshot.url&viewport.width=${viewportW}&viewport.height=${viewportH}&waitForTimeout=2500`;
 
         const microRes = await fetch(microlinkUrl, { signal: AbortSignal.timeout(30000) });
         if (microRes.ok) {

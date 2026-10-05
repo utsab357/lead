@@ -341,13 +341,13 @@ const CATEGORY_HUE_RANGES: Record<string, [number, number]> = {
  */
 const FONT_PAIRINGS = [
   { display: "Playfair Display", body: "Plus Jakarta Sans" },   // editorial warm
-  { display: "Cormorant Garamond", body: "Inter" },             // luxury serif
-  { display: "Bebas Neue", body: "Manrope" },                   // bold condensed
-  { display: "Syne", body: "DM Sans" },                         // modern geometric
+  { display: "Outfit", body: "Inter" },                         // modern clean luxury
+  { display: "Montserrat", body: "Manrope" },                   // contemporary clean
+  { display: "Plus Jakarta Sans", body: "DM Sans" },            // ultra modern geometric
   { display: "Fraunces", body: "Nunito" },                      // organic editorial
-  { display: "Outfit", body: "Source Sans 3" },                 // clean professional
+  { display: "Urbanist", body: "Plus Jakarta Sans" },           // sleek cafe & lifestyle
   { display: "Lora", body: "Work Sans" },                       // classic warm
-  { display: "Space Grotesk", body: "Barlow" },                 // tech-forward
+  { display: "Space Grotesk", body: "Barlow" },                 // creative modern
 ];
 
 /**

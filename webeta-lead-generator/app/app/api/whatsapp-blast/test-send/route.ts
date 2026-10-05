@@ -36,6 +36,28 @@ export async function POST(req: Request) {
       ? imageUrls
       : (imageUrl ? [imageUrl] : []);
 
+    // Helper with warmup retry for Render cold starts
+    async function fetchWithWarmup(url: string, opts: RequestInit, retries = 4): Promise<Response> {
+      for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+          const res = await fetch(url, opts);
+          if ((res.status === 502 || res.status === 503) && attempt < retries) {
+            console.warn(`[WhatsApp Test] Render 502 cold-start. Waking up server... (attempt ${attempt}/${retries}, waiting 9s)`);
+            await new Promise((r) => setTimeout(r, 9000));
+            continue;
+          }
+          return res;
+        } catch (e) {
+          if (attempt < retries) {
+            await new Promise((r) => setTimeout(r, 5000));
+            continue;
+          }
+          throw e;
+        }
+      }
+      return new Response("Render server is warming up. Please retry in 15 seconds.", { status: 502 });
+    }
+
     for (let imgIdx = 0; imgIdx < imagesToSend.length; imgIdx++) {
       const imgUrl = imagesToSend[imgIdx];
       if (!imgUrl) continue;
@@ -44,7 +66,7 @@ export async function POST(req: Request) {
         : `${appBaseUrl || ""}${imgUrl.startsWith("/") ? "" : "/"}${imgUrl}`;
 
       try {
-        const imgRes = await fetch(`${evolutionApiUrl}/message/sendMedia/${instanceName}`, {
+        const imgRes = await fetchWithWarmup(`${evolutionApiUrl}/message/sendMedia/${instanceName}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -72,7 +94,7 @@ export async function POST(req: Request) {
     }
 
     // 2. Send Text
-    const textRes = await fetch(`${evolutionApiUrl}/message/sendText/${instanceName}`, {
+    const textRes = await fetchWithWarmup(`${evolutionApiUrl}/message/sendText/${instanceName}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -87,7 +109,7 @@ export async function POST(req: Request) {
     if (!textRes.ok) {
       const body = await textRes.text();
       return NextResponse.json(
-        { ok: false, error: `WhatsApp API error (${textRes.status}): ${body.slice(0, 250)}` },
+        { ok: false, error: `WhatsApp API (${textRes.status}): ${body.slice(0, 250)}` },
         { status: 400 }
       );
     }

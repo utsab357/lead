@@ -68,7 +68,32 @@ export function writeBlastState(state: BlastState) {
   fs.writeFileSync(STATE_PATH, JSON.stringify(state, null, 2), "utf-8");
 }
 
-// -- Evolution API helpers -----------------------------------------------------
+// -- Evolution API helpers with Render 502 Cold-Start Warmup -----------------
+async function fetchWithRenderWarmup(url: string, options: RequestInit, maxRetries = 4): Promise<Response> {
+  let lastError: Error | null = null;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const res = await fetch(url, options);
+      if (res.status === 502 || res.status === 503 || res.status === 504) {
+        if (attempt < maxRetries) {
+          console.warn(`[WhatsApp API] Render 502 cold-start detected on ${url}. Waking up server... (attempt ${attempt}/${maxRetries}, waiting 9s)`);
+          await sleep(9000);
+          continue;
+        }
+      }
+      return res;
+    } catch (e) {
+      lastError = e as Error;
+      if (attempt < maxRetries) {
+        await sleep(5000);
+        continue;
+      }
+    }
+  }
+  if (lastError) throw lastError;
+  return new Response("Render cold-start timeout", { status: 502 });
+}
+
 async function sendEvolutionText(
   apiUrl: string,
   apiKey: string,
@@ -77,7 +102,7 @@ async function sendEvolutionText(
   text: string
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    const res = await fetch(`${apiUrl}/message/sendText/${instance}`, {
+    const res = await fetchWithRenderWarmup(`${apiUrl}/message/sendText/${instance}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -107,7 +132,7 @@ async function sendEvolutionImage(
   caption: string
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    const res = await fetch(`${apiUrl}/message/sendMedia/${instance}`, {
+    const res = await fetchWithRenderWarmup(`${apiUrl}/message/sendMedia/${instance}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -178,6 +203,17 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
   state.startedAt = Date.now();
   state.updatedAt = Date.now();
   writeBlastState(state);
+
+  // Warmup check: make sure Evolution API is awake on Render before starting blast
+  try {
+    const warmRes = await fetch(`${evolutionApiUrl}`, { signal: AbortSignal.timeout(45000) });
+    if (warmRes.status === 502 || warmRes.status === 503) {
+      console.log("[WhatsApp Blast] Waking up Evolution API on Render before blast...");
+      await sleep(10000);
+    }
+  } catch {
+    /* ignore */
+  }
 
   for (let i = 0; i < leads.length; i++) {
     // Check if paused/stopped mid-blast

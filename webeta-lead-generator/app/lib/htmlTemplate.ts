@@ -90,7 +90,7 @@ function buildNav(businessName: string, waUrl: string, tokens: any, ctaText: str
   <!-- NAV -->
   <nav style="position:absolute;top:0;left:0;right:0;z-index:999;padding:24px 40px;">
     <div style="display:flex;align-items:center;justify-content:space-between;">
-      <a href="#" style="font-family:var(--font-display);font-size:22px;font-weight:900;color:#fff;text-decoration:none;text-shadow:0 2px 8px rgba(0,0,0,0.4);">${esc(businessName)}</a>
+      <a href="#" style="font-family:var(--font-display);font-size:20px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.01em;text-shadow:0 2px 8px rgba(0,0,0,0.4);">${esc(businessName)}</a>
       <div style="display:flex;align-items:center;gap:28px;">
         <a href="#menu" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">Menu</a>
         <a href="#about" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">About</a>
@@ -109,7 +109,7 @@ function buildNav(businessName: string, waUrl: string, tokens: any, ctaText: str
         <li><a href="#menu" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">Menu</a></li>
         <li><a href="#about" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">About</a></li>
       </ul>
-      <a href="#" style="font-family:var(--font-display);font-size:18px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.02em;text-align:center;flex:1;">${esc(businessName)}</a>
+      <a href="#" style="font-family:var(--font-display);font-size:18px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.02em;text-align:center;flex:1;">${esc(businessName)}</a>
       <div style="display:flex;gap:20px;align-items:center;flex:1;justify-content:flex-end;">
         <a href="#gallery" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">Gallery</a>
         <a href="${waUrl}" target="_blank" style="background:#fff;color:${primaryColor};padding:8px 18px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;">${esc(ctaText)}</a>
@@ -129,7 +129,7 @@ function buildHero(spec: any, waUrl: string, telLink: string, variant: string): 
      spec.strategy?.subCategory?.value === "dental_clinic" ? `Gentle, Advanced Dental Care in ${city}` :
      spec.strategy?.subCategory?.value === "luxury_salon_spa" ? `Elevate Your Look at ${businessName}` :
      `Welcome to ${businessName}`);
-  const subtitle = spec.aiCopy?.subtitle || `${spec.strategy?.primarySellingPoint?.value?.slice(0, 90) || `Top-rated ${category} in ${city} — trusted by ${reviewVal} happy customers.`}`;
+  const subtitle = spec.aiCopy?.subtitle || `${spec.strategy?.primarySellingPoint?.value || `Top-rated ${category} in ${city} — trusted by ${reviewVal} happy customers.`}`;
   const primaryCtaText = spec.primaryCtaText || "Chat on WhatsApp →";
   const img = curatedStockPhotos.hero;
 
@@ -137,15 +137,15 @@ function buildHero(spec: any, waUrl: string, telLink: string, variant: string): 
   if (variant === "A") return `
   <!-- HERO A: Centered Fullscreen -->
   <section style="height:100dvh;min-height:620px;background-image:linear-gradient(160deg,rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.25) 55%,rgba(0,0,0,0.65) 100%),url('${img}');background-size:cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;position:relative;margin-top:-72px;padding-top:112px;">
-    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:8px 20px;margin-bottom:28px;">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:8px 20px;margin-bottom:24px;">
       <span style="color:#fbbf24;">★</span>
       <span style="color:#fff;font-size:13px;font-weight:600;">${ratingVal} · ${reviewVal} Google Reviews</span>
     </div>
-    <h1 style="font-family:var(--font-display);font-size:clamp(38px,6vw,76px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-0.03em;max-width:860px;margin:0 0 20px;">${esc(headline)}</h1>
-    <p style="font-size:clamp(15px,2vw,19px);color:rgba(255,255,255,0.82);max-width:540px;margin:0 0 36px;line-height:1.65;">${esc(subtitle)}</p>
+    <h1 style="font-family:var(--font-display);font-size:clamp(30px,4.5vw,54px);font-weight:800;color:#fff;line-height:1.15;letter-spacing:-0.02em;max-width:820px;margin:0 0 18px;">${esc(headline)}</h1>
+    <p style="font-size:clamp(14px,1.6vw,17px);color:rgba(255,255,255,0.85);max-width:560px;margin:0 0 32px;line-height:1.6;">${esc(subtitle)}</p>
     <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
-      <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:16px 38px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 8px 32px rgba(0,0,0,0.35);letter-spacing:0.01em;">${esc(primaryCtaText)}</a>
-      <a href="${telLink}" style="background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);color:#fff;border:2px solid rgba(255,255,255,0.35);padding:16px 32px;border-radius:999px;font-size:15px;font-weight:600;text-decoration:none;">Call Now</a>
+      <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:15px 36px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 8px 32px rgba(0,0,0,0.35);letter-spacing:0.01em;">${esc(primaryCtaText)}</a>
+      <a href="${telLink}" style="background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);color:#fff;border:2px solid rgba(255,255,255,0.35);padding:15px 30px;border-radius:999px;font-size:15px;font-weight:600;text-decoration:none;">Call Now</a>
     </div>
     <div style="position:absolute;bottom:28px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.5);font-size:11px;letter-spacing:.12em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:6px;">
       <span>Scroll to Explore</span>
@@ -162,8 +162,8 @@ function buildHero(spec: any, waUrl: string, telLink: string, variant: string): 
         <span style="color:#fbbf24;">★</span>
         <span style="color:${tokens.primaryColor};font-size:12px;font-weight:700;">${ratingVal} · ${reviewVal} Reviews</span>
       </div>
-      <h1 style="font-family:var(--font-display);font-size:clamp(32px,4vw,58px);font-weight:900;color:${tokens.darkColor};line-height:1.1;letter-spacing:-0.025em;margin:0 0 20px;">${esc(headline)}</h1>
-      <p style="font-size:16px;color:${tokens.darkColor};opacity:0.65;line-height:1.7;margin:0 0 36px;max-width:420px;">${esc(subtitle)}</p>
+      <h1 style="font-family:var(--font-display);font-size:clamp(28px,3.8vw,48px);font-weight:800;color:${tokens.darkColor};line-height:1.2;letter-spacing:-0.02em;margin:0 0 16px;">${esc(headline)}</h1>
+      <p style="font-size:15px;color:${tokens.darkColor};opacity:0.75;line-height:1.65;margin:0 0 32px;max-width:440px;">${esc(subtitle)}</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;">
         <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:15px 32px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;">${esc(primaryCtaText)}</a>
         <a href="${telLink}" style="background:transparent;color:${tokens.darkColor};border:2px solid ${tokens.primaryColor}40;padding:15px 28px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">Call Direct</a>
@@ -172,21 +172,22 @@ function buildHero(spec: any, waUrl: string, telLink: string, variant: string): 
     <div style="background-image:url('${img}');background-size:cover;background-position:center;min-height:560px;"></div>
   </section>`;
 
-  // Layout C — Dark editorial: massive type on dark overlay
+  // Layout C — Dark editorial: balanced, elegant type on dark overlay
   if (variant === "C") return `
   <!-- HERO C: Dark Editorial -->
   <section style="height:100dvh;min-height:640px;position:relative;overflow:hidden;margin-top:-72px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 60px 80px;">
     <div style="position:absolute;inset:0;background-image:url('${img}');background-size:cover;background-position:center;"></div>
-    <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.15) 100%);"></div>
-    <div style="position:relative;z-index:1;max-width:1200px;">
-      <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:6px 16px;margin-bottom:20px;">
+    <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.2) 100%);"></div>
+    <div style="position:relative;z-index:1;max-width:1100px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:6px 16px;margin-bottom:18px;background:rgba(0,0,0,0.3);backdrop-filter:blur(8px);">
         <span style="color:#fbbf24;">★</span>
-        <span style="color:rgba(255,255,255,0.8);font-size:12px;font-weight:600;">${ratingVal} · ${reviewVal} Google Reviews</span>
+        <span style="color:rgba(255,255,255,0.9);font-size:12px;font-weight:600;">${ratingVal} · ${reviewVal} Google Reviews</span>
       </div>
-      <h1 style="font-family:var(--font-display);font-size:clamp(42px,7vw,90px);font-weight:900;color:#fff;line-height:0.95;letter-spacing:-0.04em;margin:0 0 24px;max-width:900px;">${esc(headline)}</h1>
-      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
-        <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:15px 36px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;">${esc(primaryCtaText)}</a>
-        <span style="color:rgba(255,255,255,0.6);font-size:14px;">${esc(subtitle.slice(0, 70))}</span>
+      <h1 style="font-family:var(--font-display);font-size:clamp(30px,4.5vw,54px);font-weight:800;color:#fff;line-height:1.15;letter-spacing:-0.02em;margin:0 0 16px;max-width:820px;">${esc(headline)}</h1>
+      <p style="font-size:clamp(14px,1.6vw,17px);color:rgba(255,255,255,0.85);max-width:580px;line-height:1.6;margin:0 0 24px;">${esc(subtitle)}</p>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:14px 34px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,0.3);">${esc(primaryCtaText)}</a>
+        <a href="${telLink}" style="background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:14px 28px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">Call Directly</a>
       </div>
     </div>
   </section>`;
@@ -198,12 +199,12 @@ function buildHero(spec: any, waUrl: string, telLink: string, variant: string): 
     <div style="position:absolute;inset:0;background:linear-gradient(135deg,${tokens.primaryColor}EE 0%,${tokens.darkColor}CC 100%);"></div>
     <div style="position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:120px 60px 80px;">
       <div style="font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-bottom:16px;">${esc(category)} · ${esc(city)}</div>
-      <h1 style="font-family:var(--font-display);font-size:clamp(40px,7vw,84px);font-weight:900;color:#fff;line-height:1;letter-spacing:-0.035em;margin:0 0 16px;max-width:760px;">${esc(headline)}</h1>
-      <div style="width:80px;height:4px;background:#fff;border-radius:2px;margin:0 0 24px;"></div>
-      <p style="font-size:17px;color:rgba(255,255,255,0.8);max-width:480px;line-height:1.65;margin:0 0 36px;">${esc(subtitle)}</p>
+      <h1 style="font-family:var(--font-display);font-size:clamp(30px,4.5vw,52px);font-weight:800;color:#fff;line-height:1.15;letter-spacing:-0.02em;margin:0 0 16px;max-width:760px;">${esc(headline)}</h1>
+      <div style="width:60px;height:4px;background:#fff;border-radius:2px;margin:0 0 20px;"></div>
+      <p style="font-size:16px;color:rgba(255,255,255,0.85);max-width:520px;line-height:1.6;margin:0 0 32px;">${esc(subtitle)}</p>
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
-        <a href="${waUrl}" target="_blank" style="background:#fff;color:${tokens.primaryColor};padding:16px 36px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;">${esc(primaryCtaText)}</a>
-        <a href="${telLink}" style="background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.4);color:#fff;padding:16px 28px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">★ ${ratingVal} · ${reviewVal} reviews</a>
+        <a href="${waUrl}" target="_blank" style="background:#fff;color:${tokens.primaryColor};padding:15px 34px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;">${esc(primaryCtaText)}</a>
+        <a href="${telLink}" style="background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.4);color:#fff;padding:15px 28px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">★ ${ratingVal} · ${reviewVal} reviews</a>
       </div>
     </div>
   </section>`;
