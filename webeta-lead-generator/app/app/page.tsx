@@ -57,7 +57,7 @@ export default function Page() {
       if (cached) {
         try {
           const parsed = JSON.parse(cached) as ScrapeSession;
-          if (parsed && (!savedId || parsed.id === savedId)) {
+          if (parsed && parsed.leads && parsed.leads.length > 0 && (!savedId || parsed.id === savedId)) {
             handleLoadSession(parsed);
           }
         } catch { /* parse error, ignore */ }
@@ -71,15 +71,31 @@ export default function Page() {
             return r.json();
           })
           .then((d) => {
-            if (d?.session) {
+            if (d?.session && d.session.leads && d.session.leads.length > 0) {
               handleLoadSession(d.session);
+            } else {
+              throw new Error("Empty session");
             }
           })
           .catch(() => {
-            // Clean up stale pointer if file was removed
+            // Clean up stale pointer if file was removed or empty
             localStorage.removeItem("webeta_active_session_id");
             sessionStorage.removeItem("webeta_cached_session");
+            fetch("/api/sessions/session-cafe-utsab-test")
+              .then((r) => r.json())
+              .then((d) => {
+                if (d?.session) handleLoadSession(d.session);
+              })
+              .catch(() => {});
           });
+      } else if (!cached) {
+        // Auto-load Cafe Utsab test session if no session is active
+        fetch("/api/sessions/session-cafe-utsab-test")
+          .then((r) => r.json())
+          .then((d) => {
+            if (d?.session) handleLoadSession(d.session);
+          })
+          .catch(() => {});
       }
     } catch {
       // storage disabled / private browsing

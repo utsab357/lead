@@ -12,9 +12,20 @@ export async function GET(
 ) {
   const { id } = await params;
   try {
-    const raw = await fs.readFile(path.join(SESSIONS_DIR, `${id}.json`), "utf-8");
-    const session: ScrapeSession = JSON.parse(raw);
-    return NextResponse.json({ session });
+    const filePath = path.join(SESSIONS_DIR, `${id}.json`);
+    try {
+      const raw = await fs.readFile(filePath, "utf-8");
+      const session: ScrapeSession = JSON.parse(raw);
+      return NextResponse.json({ session });
+    } catch {
+      if (id === "session-cafe-utsab-test") {
+        const { DEFAULT_CAFE_UTSAB_SESSION } = await import("../route");
+        await fs.mkdir(SESSIONS_DIR, { recursive: true });
+        await fs.writeFile(filePath, JSON.stringify(DEFAULT_CAFE_UTSAB_SESSION, null, 2), "utf-8");
+        return NextResponse.json({ session: DEFAULT_CAFE_UTSAB_SESSION });
+      }
+      return NextResponse.json({ error: "Session not found" }, { status: 404 });
+    }
   } catch {
     return NextResponse.json({ error: "Session not found" }, { status: 404 });
   }

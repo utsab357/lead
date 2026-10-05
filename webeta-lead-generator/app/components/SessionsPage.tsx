@@ -140,6 +140,26 @@ export function SessionsPage({
   const totalSessions = sessions.length;
   const totalLeads = sessions.reduce((sum, s) => sum + (s.leadsCount ?? 0), 0);
 
+  async function wipeAllOldSessions() {
+    if (!confirm("Are you sure you want to delete all old history? This will permanently wipe all old sessions and reset to the Cafe Utsab test session.")) return;
+    setLoading(true);
+    try {
+      await fetch("/api/sessions", {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id: "all" }),
+      });
+      localStorage.removeItem("webeta_active_session_id");
+      sessionStorage.removeItem("webeta_cached_session");
+      toast.success("All old history wiped clean! Cafe Utsab test session is ready.");
+      await fetchSessions();
+    } catch {
+      toast.error("Failed to wipe old sessions");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-start justify-center overflow-y-auto py-8 px-4">
       <motion.div
@@ -158,9 +178,20 @@ export function SessionsPage({
                 {totalSessions} sessions · {totalLeads.toLocaleString()} total leads scraped
               </p>
             </div>
-            <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close">
-              <X className="h-5 w-5" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={wipeAllOldSessions}
+                className="text-xs text-destructive border-destructive/30 hover:bg-destructive/10"
+              >
+                <Trash2 className="h-3.5 w-3.5 mr-1" />
+                Wipe Old History
+              </Button>
+              <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close">
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
           </CardHeader>
 
           <CardContent>
