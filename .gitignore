@@ -1,0 +1,15 @@
+# Password & secrets files
+whatsapp_passwords.md
+*password*.md
+*credential*.md
+.whatsapp-config.json
+.whatsapp-blast-state.json
+.env
+.env*.local
+
+# Node
+node_modules/
+.next/
+out/
+build/
+.DS_Store

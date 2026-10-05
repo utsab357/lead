@@ -31,8 +31,9 @@ const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 emit({ type: "status", message: `Searching "${niche}" in "${city}"...` });
 
 async function scrapeGoogleMaps() {
+  const isHeadless = !!process.env.RENDER || process.env.NODE_ENV === "production" || process.env.HEADLESS === "true";
   const browser = await chromium.launch({
-    headless: false,
+    headless: isHeadless,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 

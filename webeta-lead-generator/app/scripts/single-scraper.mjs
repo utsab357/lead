@@ -328,8 +328,9 @@ Rules:
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
+  const isHeadless = !!process.env.RENDER || process.env.NODE_ENV === "production" || process.env.HEADLESS === "true";
   const browser = await chromium.launch({
-    headless: false,
+    headless: isHeadless,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
