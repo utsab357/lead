@@ -20,6 +20,7 @@ export async function GET() {
       try {
         const raw = await fs.readFile(path.join(SESSIONS_DIR, file), "utf-8");
         const s: ScrapeSession = JSON.parse(raw);
+        if (!s.id || !s.niche || !s.leadsCount) continue;
         // Return metadata only (no leads array) to keep response small
         sessions.push({
           id: s.id,

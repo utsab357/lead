@@ -1,0 +1,82 @@
+{
+  "id": "session-cafe-utsab-test",
+  "niche": "Cafe & Restaurant",
+  "city": "Barasat, West Bengal",
+  "timestamp": "2026-10-05T15:30:00.000Z",
+  "leadsCount": 1,
+  "noWebsiteCount": 1,
+  "withPhoneCount": 1,
+  "expandedTerms": ["cafe", "coffee shop", "bistro", "bakery"],
+  "leads": [
+    {
+      "id": "lead-cafe-utsab",
+      "name": "Cafe Utsab",
+      "category": "Cafe & Restaurant",
+      "address": "Station Road, Champadali More, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat",
+      "phone": "9064970761",
+      "whatsapp": "9064970761",
+      "email": "cafeutsab@gmail.com",
+      "website": "",
+      "mapUrl": "https://maps.google.com/?q=Cafe+Utsab+Barasat",
+      "rating": 4.7,
+      "reviewsCount": 182,
+      "lat": 22.723,
+      "lng": 88.481,
+      "priceLevel": "₹₹",
+      "about": "Barasat's favorite spot for artisanal coffee, handcrafted burgers, woodfired pizzas, and gourmet bakery items. Cozy ambiance with free Wi-Fi.",
+      "hours": [
+        "Monday: 10:00 AM – 10:30 PM",
+        "Tuesday: 10:00 AM – 10:30 PM",
+        "Wednesday: 10:00 AM – 10:30 PM",
+        "Thursday: 10:00 AM – 10:30 PM",
+        "Friday: 10:00 AM – 11:00 PM",
+        "Saturday: 10:00 AM – 11:00 PM",
+        "Sunday: 10:00 AM – 11:00 PM"
+      ],
+      "services": [
+        "Artisanal Espresso & Cold Brew",
+        "Gourmet Burgers & Sandwiches",
+        "Thin Crust Woodfired Pizza",
+        "Fresh Pastries & Desserts",
+        "Dine-in & Takeaway",
+        "Private Birthday Parties"
+      ],
+      "photoUrls": [
+        "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80",
+        "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80",
+        "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&q=80"
+      ],
+      "reviews": [
+        {
+          "author": "Anirban Mukherjee",
+          "rating": 5,
+          "timeAgo": "2 weeks ago",
+          "text": "The hazelnut cappuccino and peri-peri burger are top notch! Cozy ambiance, great music. Only complaint is they don't have an online menu or website to reserve tables."
+        },
+        {
+          "author": "Priyanka Roy",
+          "rating": 4,
+          "timeAgo": "1 month ago",
+          "text": "Best cafe in Barasat for evening hangouts with friends. Would love if they had an online website so we could check their weekly dessert specials and order directly."
+        },
+        {
+          "author": "Subhajit Das",
+          "rating": 5,
+          "timeAgo": "3 weeks ago",
+          "text": "Superb coffee taste. Staff is very polite. If you are near Station road or Champadali, definitely visit!"
+        }
+      ],
+      "source": "Google Maps"
+    }
+  ],
+  "audits": {},
+  "ranked": [],
+  "conversions": {},
+  "outreachResults": {},
+  "buildPrompts": {},
+  "visualPreviews": {},
+  "leadStatuses": {},
+  "leadNotes": {},
+  "clientDetails": {}
+}
