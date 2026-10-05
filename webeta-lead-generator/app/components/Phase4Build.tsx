@@ -26,6 +26,7 @@ import type { RankedLead, BuildPromptResult, ExtraPage } from "@/lib/types";
 import { toast } from "sonner";
 import { PreviewPanel } from "./PreviewPanel";
 import { BulkCompileButton } from "./BulkCompileButton";
+import { getIntelligentPagesForLead } from "@/lib/pageRecommendation";
 
 
 const STYLE_PRESETS = [
@@ -96,6 +97,14 @@ export function Phase4Build({
 
   // Page selection state — which pages to generate
   const [selectedPages, setSelectedPages] = useState<string[]>(["home"]);
+
+  // Set intelligent recommended pages whenever the active lead or buildPrompts changes
+  useEffect(() => {
+    if (!activeLead) return;
+    const strat = buildPrompts[activeLead.id]?.strategy;
+    const recPages = getIntelligentPagesForLead(activeLead, strat);
+    setSelectedPages(recPages.map(p => p.id));
+  }, [activeLead?.id, buildPrompts]);
 
   // Bulk generation state
   const [bulkRunning, setBulkRunning] = useState(false);
@@ -687,27 +696,20 @@ export function Phase4Build({
 
                   {/* Page Selector — which pages to generate */}
                   {(() => {
-                    const cat = (activeLead.category || "").toLowerCase();
-                    const isFood = /cafe|coffee|restaurant|dining|food|pizza|bar|bakery|dhaba/.test(cat);
-                    const isGym  = /gym|fitness|yoga|crossfit/.test(cat);
-                    const isMed  = /clinic|doctor|dental|hospital|pharmacy|eye/.test(cat);
-                    const isHotel = /hotel|resort|lodge/.test(cat);
-                    const pages = isFood
-                      ? [{ id: "home", label: "🏠 Home" }, { id: "menu", label: "🍽️ Menu" }, { id: "gallery", label: "📸 Gallery" }]
-                      : isGym
-                      ? [{ id: "home", label: "🏠 Home" }, { id: "programs", label: "💪 Programs" }, { id: "gallery", label: "📸 Gallery" }]
-                      : isMed
-                      ? [{ id: "home", label: "🏠 Home" }, { id: "services", label: "🩺 Services" }]
-                      : isHotel
-                      ? [{ id: "home", label: "🏠 Home" }, { id: "rooms", label: "🛏️ Rooms" }, { id: "gallery", label: "📸 Gallery" }]
-                      : [{ id: "home", label: "🏠 Home" }, { id: "services", label: "⚙️ Services" }, { id: "gallery", label: "📸 Gallery" }];
+                    const strat = buildPrompts[activeLead.id]?.strategy;
+                    const pages = getIntelligentPagesForLead(activeLead, strat);
                     return (
                       <div className="pt-3 border-t border-border/60">
-                        <div className="text-[11px] font-semibold text-foreground mb-2 flex items-center gap-1.5">
-                          <span>Pages to Generate</span>
-                          <Badge variant="outline" className="text-[9px] py-0 px-1.5 font-mono">
-                            {selectedPages.length} selected
-                          </Badge>
+                        <div className="text-[11px] font-semibold text-foreground mb-2 flex items-center justify-between gap-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <span>Pages to Generate</span>
+                            <Badge variant="outline" className="text-[9px] py-0 px-1.5 font-mono">
+                              {selectedPages.length} selected
+                            </Badge>
+                          </div>
+                          <span className="text-[10px] text-muted-foreground italic">
+                            AI recommended for {activeLead.category || "business"}
+                          </span>
                         </div>
                         <div className="flex flex-wrap gap-2">
                           {pages.map(p => {
@@ -717,13 +719,14 @@ export function Phase4Build({
                                 key={p.id}
                                 type="button"
                                 onClick={() => setSelectedPages(prev =>
-                                  checked ? prev.filter(x => x !== p.id) : [...prev, p.id]
+                                  p.id === "home" ? prev : checked ? prev.filter(x => x !== p.id) : [...prev, p.id]
                                 )}
                                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                                   checked
                                     ? "bg-primary text-primary-foreground border-primary"
                                     : "bg-muted text-muted-foreground border-border hover:border-primary/50"
-                                }`}
+                                } ${p.id === "home" ? "opacity-75 cursor-default" : ""}`}
+                                title={p.id === "home" ? "Home page always required" : (p.reason || p.description || p.label)}
                               >
                                 {p.label}
                                 {p.id === "home" && <span className="ml-1 text-[9px] opacity-70">required</span>}
@@ -732,7 +735,7 @@ export function Phase4Build({
                           })}
                         </div>
                         <p className="text-[10px] text-muted-foreground mt-1.5">
-                          Home page always generated. Other pages create additional preview images.
+                          Home page is always generated. Selected pages create tailored HTML &amp; screenshots for WhatsApp delivery.
                         </p>
                       </div>
                     );

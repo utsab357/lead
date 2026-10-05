@@ -124,10 +124,11 @@ export function Phase5Outreach({
   // Local edits to message and followup (keyed by leadId)
   const [localEdits, setLocalEdits] = useState<Record<string, { message: string; followUp: string }>>({});
 
-  // Previews map for leads: tracks whether preview image exists
+  // Previews map for leads: tracks whether preview images exist (supports all pages: Home, Menu, Gallery)
   const [previews, setPreviews] = useState<
-    Record<string, { exists: boolean; previewUrl?: string; generating?: boolean }>
+    Record<string, { exists: boolean; previewUrl?: string; allUrls?: string[]; generating?: boolean }>
   >({});
+  const [selectedPreviewTab, setSelectedPreviewTab] = useState<Record<string, string>>({});
 
   // Check cached previews once in batch (single fast request instead of 100+ separate GETs)
   useEffect(() => {
@@ -136,12 +137,23 @@ export function Phase5Outreach({
       .then((r) => r.json())
       .then((d) => {
         if (d.files && Array.isArray(d.files)) {
-          const next: Record<string, { exists: boolean; previewUrl?: string }> = {};
+          const next: Record<string, { exists: boolean; previewUrl?: string; allUrls?: string[] }> = {};
           ranked.forEach((l) => {
+            const hash = l.id.slice(-8);
             const cleanName = l.name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 15);
-            const match = d.files.find((f: string) => f.includes(l.id) || (cleanName && f.toLowerCase().includes(cleanName)));
-            if (match) {
-              next[l.id] = { exists: true, previewUrl: `/previews/${match}` };
+            const matches = d.files.filter((f: string) =>
+              f.endsWith(".png") && (f.includes(hash) || f.includes(l.id) || (cleanName && f.toLowerCase().includes(cleanName)))
+            );
+            if (matches.length > 0) {
+              matches.sort((a: string, b: string) => {
+                const isHomeA = !a.includes("_menu") && !a.includes("_gallery") && !a.includes("_services") && !a.includes("_rooms") && !a.includes("_programs");
+                const isHomeB = !b.includes("_menu") && !b.includes("_gallery") && !b.includes("_services") && !b.includes("_rooms") && !b.includes("_programs");
+                if (isHomeA && !isHomeB) return -1;
+                if (!isHomeA && isHomeB) return 1;
+                return a.localeCompare(b);
+              });
+              const urls = matches.map((m: string) => `/previews/${m}`);
+              next[l.id] = { exists: true, previewUrl: urls[0], allUrls: urls };
             }
           });
           setPreviews((prev) => ({ ...prev, ...next }));
@@ -1020,67 +1032,145 @@ export function Phase5Outreach({
                             <Loader2 className="h-6 w-6 animate-spin text-primary" />
                             <span className="text-xs text-muted-foreground">Generating 2027 visual mockup for {activeLead.name} via Cloudflare FLUX…</span>
                           </div>
-                        ) : previews[activeLead.id]?.exists && previews[activeLead.id]?.previewUrl ? (
-                          <div className="flex flex-col sm:flex-row items-center gap-4">
-                            <div className="relative group shrink-0 w-full sm:w-48 h-32 rounded-lg overflow-hidden border border-border bg-black/5 shadow-xs">
-                              <img
-                                src={previews[activeLead.id].previewUrl}
-                                alt={activeLead.name}
-                                className="w-full h-full object-cover object-top transition-transform group-hover:scale-105"
-                              />
-                              <a
-                                href={previews[activeLead.id].previewUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold gap-1 transition-opacity"
-                              >
-                                <ExternalLink className="h-4 w-4" /> Full View
-                              </a>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                                <span>Design Preview Image Ready (PNG)</span>
-                              </div>
-                              <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
-                                <strong>Best Practice:</strong> Send this actual PNG image as an attachment (or click <em>Copy Image</em> and press <code>Ctrl+V</code> into WhatsApp Web). Do not send an image link — clients rarely click strange links, but an image preview in the chat grabs attention immediately!
-                              </p>
-                              <div className="mt-2.5 flex items-center gap-2 flex-wrap">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => copyImageToClipboard(previews[activeLead.id].previewUrl!)}
-                                  className="h-7 text-xs px-2.5 font-medium gap-1"
-                                >
-                                  {copiedImage ? (
-                                    <>
-                                      <Check className="h-3 w-3 text-emerald-500" /> Copied Image
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Copy className="h-3 w-3" /> Copy Image (Ctrl+V)
-                                    </>
+                        ) : previews[activeLead.id]?.exists && previews[activeLead.id]?.previewUrl ? (() => {
+                          const currentLeadPreviews = previews[activeLead.id];
+                          const allImageUrls = currentLeadPreviews.allUrls && currentLeadPreviews.allUrls.length > 0
+                            ? currentLeadPreviews.allUrls
+                            : [currentLeadPreviews.previewUrl!];
+                          const activeTabKey = selectedPreviewTab[activeLead.id] || allImageUrls[0];
+
+                          const getLabel = (url: string) => {
+                            if (url.includes("_menu")) return "🍽️ Menu";
+                            if (url.includes("_gallery")) return "📸 Gallery";
+                            if (url.includes("_services")) return "⚙️ Services";
+                            if (url.includes("_rooms")) return "🛏️ Rooms";
+                            if (url.includes("_programs")) return "💪 Programs";
+                            return "🏠 Home";
+                          };
+
+                          return (
+                            <div className="space-y-3">
+                              {/* If multi-page previews exist, show tab switcher */}
+                              {allImageUrls.length > 1 && (
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="text-[11px] font-semibold text-muted-foreground mr-1">Preview Pages:</span>
+                                  {allImageUrls.map((url) => {
+                                    const isCurrent = activeTabKey === url;
+                                    return (
+                                      <button
+                                        key={url}
+                                        type="button"
+                                        onClick={() => setSelectedPreviewTab((prev) => ({ ...prev, [activeLead.id]: url }))}
+                                        className={`px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${
+                                          isCurrent
+                                            ? "bg-primary text-primary-foreground border-primary"
+                                            : "bg-muted text-muted-foreground border-border hover:border-primary/50"
+                                        }`}
+                                      >
+                                        {getLabel(url)}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              )}
+
+                              <div className="flex flex-col sm:flex-row items-start gap-4">
+                                <div className="relative group shrink-0 w-full sm:w-64 h-40 rounded-lg overflow-hidden border border-border bg-black/5 shadow-xs">
+                                  <img
+                                    src={activeTabKey}
+                                    alt={`${activeLead.name} ${getLabel(activeTabKey)}`}
+                                    className="w-full h-full object-cover object-top transition-transform group-hover:scale-105"
+                                  />
+                                  <a
+                                    href={activeTabKey}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold gap-1 transition-opacity"
+                                  >
+                                    <ExternalLink className="h-4 w-4" /> Full View ({getLabel(activeTabKey)})
+                                  </a>
+                                </div>
+
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                                    <span>
+                                      {allImageUrls.length > 1
+                                        ? `${allImageUrls.length} Website Preview Pages Ready`
+                                        : "Design Preview Image Ready (PNG)"}
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
+                                    <strong>Best Practice:</strong> When outreach runs via WhatsApp Auto-Sender, all {allImageUrls.length} preview pages are automatically sent directly to the client before the personalized message.
+                                  </p>
+
+                                  <div className="mt-2.5 flex items-center gap-2 flex-wrap">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => copyImageToClipboard(activeTabKey)}
+                                      className="h-7 text-xs px-2.5 font-medium gap-1"
+                                    >
+                                      {copiedImage ? (
+                                        <>
+                                          <Check className="h-3 w-3 text-emerald-500" /> Copied {getLabel(activeTabKey)}
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Copy className="h-3 w-3" /> Copy {getLabel(activeTabKey)} (Ctrl+V)
+                                        </>
+                                      )}
+                                    </Button>
+                                    <a
+                                      href={activeTabKey}
+                                      download={`${activeLead.name.toLowerCase().replace(/\s+/g, "-")}-${getLabel(activeTabKey).replace(/[^a-z0-9]/gi, "").toLowerCase()}-preview.png`}
+                                      className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground font-medium transition-colors"
+                                    >
+                                      <Download className="h-3 w-3" /> Download PNG
+                                    </a>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={generateActivePreview}
+                                      className="h-7 text-xs px-2 text-muted-foreground hover:text-foreground"
+                                    >
+                                      <RefreshCw className="h-3 w-3 mr-1" /> Regenerate
+                                    </Button>
+                                  </div>
+
+                                  {/* Multi-page thumbnail gallery strip */}
+                                  {allImageUrls.length > 1 && (
+                                    <div className="mt-3 pt-3 border-t border-border/60">
+                                      <div className="text-[10px] font-semibold text-muted-foreground mb-1.5">
+                                        All Generated Pages ({allImageUrls.length}):
+                                      </div>
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        {allImageUrls.map((imgUrl) => (
+                                          <button
+                                            key={imgUrl}
+                                            type="button"
+                                            onClick={() => setSelectedPreviewTab((prev) => ({ ...prev, [activeLead.id]: imgUrl }))}
+                                            className={`group relative w-16 h-12 rounded border overflow-hidden transition-all ${
+                                              activeTabKey === imgUrl
+                                                ? "ring-2 ring-primary border-primary"
+                                                : "opacity-70 hover:opacity-100 border-border"
+                                            }`}
+                                            title={`Switch to ${getLabel(imgUrl)}`}
+                                          >
+                                            <img src={imgUrl} alt={getLabel(imgUrl)} className="w-full h-full object-cover object-top" />
+                                            <span className="absolute bottom-0 inset-x-0 bg-black/70 text-[8px] text-white font-mono text-center truncate px-0.5">
+                                              {getLabel(imgUrl).split(" ")[1] || getLabel(imgUrl)}
+                                            </span>
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </div>
                                   )}
-                                </Button>
-                                <a
-                                  href={previews[activeLead.id].previewUrl}
-                                  download={`${activeLead.name.toLowerCase().replace(/\s+/g, "-")}-preview.png`}
-                                  className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground font-medium transition-colors"
-                                >
-                                  <Download className="h-3 w-3" /> Download PNG
-                                </a>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={generateActivePreview}
-                                  className="h-7 text-xs px-2 text-muted-foreground hover:text-foreground"
-                                >
-                                  <RefreshCw className="h-3 w-3 mr-1" /> Regenerate
-                                </Button>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ) : (
+                          );
+                        })() : (
                           <div className="py-4 px-4 rounded-lg bg-muted/20 border border-dashed border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
                             <div>
                               <div className="text-xs font-semibold text-foreground">No visual mockup generated yet</div>

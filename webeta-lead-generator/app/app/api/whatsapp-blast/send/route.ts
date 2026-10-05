@@ -27,7 +27,8 @@ export interface BlastLead {
   name: string;
   phone: string;        // cleaned E.164 number e.g. "919876543210"
   message: string;      // personalized first message
-  imageUrl?: string;    // absolute URL to preview PNG
+  imageUrl?: string;    // absolute URL to preview PNG (backward compatible)
+  imageUrls?: string[]; // multiple preview PNGs (e.g. Home, Menu, Gallery)
 }
 
 export type BlastStatus = "idle" | "running" | "paused" | "done" | "error";
@@ -204,12 +205,17 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
     let errorMsg: string | undefined;
 
     try {
-      // Step 1: Send image (if preview exists)
-      if (lead.imageUrl) {
-        // Make absolute URL for Evolution API to fetch from
-        const absoluteImageUrl = lead.imageUrl.startsWith("http")
-          ? lead.imageUrl
-          : `${appBaseUrl}${lead.imageUrl}`;
+      // Step 1: Send preview images (supports multiple pages: Home, Menu, Gallery)
+      const imagesToSend = (lead.imageUrls && lead.imageUrls.length > 0)
+        ? lead.imageUrls
+        : (lead.imageUrl ? [lead.imageUrl] : []);
+
+      for (let imgIdx = 0; imgIdx < imagesToSend.length; imgIdx++) {
+        const imgUrl = imagesToSend[imgIdx];
+        if (!imgUrl) continue;
+        const absoluteImageUrl = imgUrl.startsWith("http")
+          ? imgUrl
+          : `${appBaseUrl}${imgUrl.startsWith("/") ? "" : "/"}${imgUrl}`;
 
         const imgResult = await sendEvolutionImage(
           evolutionApiUrl,
@@ -217,15 +223,14 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
           instanceName,
           lead.phone,
           absoluteImageUrl,
-          "" // no caption � text message comes separately
+          ""
         );
 
         if (!imgResult.ok) {
-          // Log image failure but still try text
-          console.warn(`[WhatsApp Blast] Image send failed for ${lead.name}: ${imgResult.error}`);
+          console.warn(`[WhatsApp Blast] Image ${imgIdx + 1}/${imagesToSend.length} failed for ${lead.name}: ${imgResult.error}`);
         }
-        // Wait 3 seconds between image and text
-        await sleep(3000);
+        // Wait 2.5 seconds between multiple images
+        await sleep(2500);
       }
 
       // Step 2: Simulate human "typing..." presence for 2.5 seconds

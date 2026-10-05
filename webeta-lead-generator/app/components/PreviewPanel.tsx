@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import type { RankedLead, BuildPromptResult, PreviewGenerationMethod } from "@/lib/types";
 import { toast } from "sonner";
+import { getIntelligentPagesForLead } from "@/lib/pageRecommendation";
 
 // ── Types ────────────────────────────────────────────────────────────────────────
 
@@ -165,10 +166,16 @@ export function PreviewPanel({
     }
   }, [screenshotting]);
 
-  // Reset page selector to ["home"] whenever the active lead changes
+  // Set intelligent recommended pages whenever the active lead changes
   useEffect(() => {
-    setSelectedPages(["home"]);
-  }, [activeLead?.id]);
+    if (!activeLead) {
+      setSelectedPages(["home"]);
+      return;
+    }
+    const strategy = buildPrompts?.[activeLead.id]?.strategy;
+    const intelligentPages = getIntelligentPagesForLead(activeLead, strategy);
+    setSelectedPages(intelligentPages.map(p => p.id));
+  }, [activeLead?.id, buildPrompts]);
 
   // Ref to ensure cache checks only run ONCE (not on every re-render)
   const cacheChecked = useRef(false);
@@ -515,18 +522,7 @@ export function PreviewPanel({
           {activeLead && (
             <div className="flex flex-wrap items-center gap-2 px-1 pb-1">
               <span className="text-[11px] font-semibold text-muted-foreground">Pages:</span>
-              {((): Array<{ id: string; label: string }> => {
-                const cat = (activeLead.category || "").toLowerCase();
-                const isFood = /cafe|coffee|restaurant|dining|food|pizza|bar|bakery|dhaba/.test(cat);
-                const isGym  = /gym|fitness|yoga|crossfit/.test(cat);
-                const isMed  = /clinic|doctor|dental|hospital|pharmacy|eye/.test(cat);
-                const isHotel = /hotel|resort|lodge/.test(cat);
-                if (isFood)  return [{ id: "home", label: "🏠 Home" }, { id: "menu", label: "🍽️ Menu" }, { id: "gallery", label: "📸 Gallery" }];
-                if (isGym)   return [{ id: "home", label: "🏠 Home" }, { id: "programs", label: "💪 Programs" }, { id: "gallery", label: "📸 Gallery" }];
-                if (isMed)   return [{ id: "home", label: "🏠 Home" }, { id: "services", label: "🩺 Services" }];
-                if (isHotel) return [{ id: "home", label: "🏠 Home" }, { id: "rooms", label: "🛏️ Rooms" }, { id: "gallery", label: "📸 Gallery" }];
-                return [{ id: "home", label: "🏠 Home" }, { id: "services", label: "⚙️ Services" }, { id: "gallery", label: "📸 Gallery" }];
-              })().map(p => {
+              {getIntelligentPagesForLead(activeLead, buildPrompts?.[activeLead.id]?.strategy).map(p => {
                 const checked = selectedPages.includes(p.id);
                 return (
                   <button
@@ -540,7 +536,7 @@ export function PreviewPanel({
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-muted text-muted-foreground border-border hover:border-primary/40"
                     } ${p.id === "home" ? "opacity-60 cursor-default" : ""}`}
-                    title={p.id === "home" ? "Home page always included" : `Toggle ${p.label}`}
+                    title={p.id === "home" ? "Home page always included" : (p.reason || p.description || `Toggle ${p.label}`)}
                   >
                     {p.label}
                   </button>
@@ -565,7 +561,7 @@ export function PreviewPanel({
                   >🏠 Home</button>
                   {Object.entries(multiPageShots[activeLead.id]).map(([pageKey]) => {
                     const [pg] = pageKey.split("_");
-                    const label = pg === "menu" ? "🍽️ Menu" : pg === "gallery" ? "📸 Gallery" : pg === "services" ? "⚙️ Services" : pg === "rooms" ? "🛏️ Rooms" : pg === "programs" ? "💪 Programs" : pg;
+                    const label = pg === "menu" ? "🍽️ Menu" : pg === "gallery" ? "📸 Gallery" : pg === "services" ? "⚙️ Services" : pg === "rooms" ? "🛏️ Rooms" : pg === "programs" ? "💪 Programs" : pg === "portfolio" ? "🎨 Portfolio" : pg === "amenities" ? "✨ Amenities" : pg === "doctors" ? "🩺 Specialists" : pg;
                     return (
                       <button
                         key={pageKey}

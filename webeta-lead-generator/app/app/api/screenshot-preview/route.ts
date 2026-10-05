@@ -126,35 +126,31 @@ export async function POST(req: Request) {
       console.warn("[screenshot-preview] Playwright unavailable, using Method A (Cloudflare/Pollinations AI generator):", (pwErr as Error).message);
     }
 
-    // If Playwright could not run (e.g. Render Linux has no Chrome), use Method A: Direct AI Mockup Generator
+    // If Playwright could not run locally (e.g. on Render Linux without local Chrome binary),
+    // use Cloud Headless Browser renderer (Microlink) to capture an authentic, pixel-perfect screenshot of the REAL compiled HTML!
     if (!tookScreenshot || !buffer) {
-      const { executeGeneratePreview } = await import("../generate-preview/route");
-      const leadObj = (body.lead as any) || {
-        id: leadId,
-        name: businessName,
-        category: (body as any).category || "Cafe & Restaurant",
-        city: (body as any).city || "Barasat",
-        phone: (body as any).phone || "",
-      };
+      try {
+        const renderHost = process.env.RENDER_EXTERNAL_URL || process.env.NEXTAUTH_URL || "https://webeta-lead-generator.onrender.com";
+        const targetHtmlPath = htmlUrl.startsWith("/") ? htmlUrl : `/${htmlUrl}`;
+        const fullPublicUrl = `${renderHost.replace(/\/$/, "")}${targetHtmlPath}`;
+        const viewportW = device === "mobile" ? 390 : 1280;
+        const viewportH = device === "mobile" ? 844 : 900;
 
-      const aiResult = await executeGeneratePreview({
-        lead: leadObj,
-        pageType: page,
-        mode: device,
-        force,
-      });
+        console.log(`[screenshot-preview] Capturing real HTML screenshot via Microlink Chrome renderer: ${fullPublicUrl}`);
+        const microlinkUrl = `https://api.microlink.io/?url=${encodeURIComponent(fullPublicUrl)}&screenshot=true&embed=screenshot.url&viewport.width=${viewportW}&viewport.height=${viewportH}&waitForTimeout=1500`;
 
-      if (aiResult.ok && aiResult.previewUrl) {
-        const srcPath = path.join(process.cwd(), "public", aiResult.previewUrl.replace(/^\//, ""));
-        if (fs.existsSync(srcPath)) {
-          if (srcPath !== pngPath) {
-            try {
-              fs.copyFileSync(srcPath, pngPath);
-            } catch {}
+        const microRes = await fetch(microlinkUrl, { signal: AbortSignal.timeout(30000) });
+        if (microRes.ok) {
+          const ab = await microRes.arrayBuffer();
+          if (ab.byteLength > 5000) {
+            buffer = Buffer.from(ab);
+            fs.writeFileSync(pngPath, buffer);
+            tookScreenshot = true;
+            console.log(`[screenshot-preview] Successfully captured real HTML screenshot (${ab.byteLength} bytes)`);
           }
-          buffer = fs.readFileSync(pngPath);
-          tookScreenshot = true;
         }
+      } catch (microErr) {
+        console.warn("[screenshot-preview] Microlink cloud renderer failed:", (microErr as Error).message);
       }
     }
 

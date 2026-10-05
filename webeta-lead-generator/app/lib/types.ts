@@ -426,6 +426,13 @@ export interface ControlledVisualDirection {
   heroStyle: "full_bleed" | "split_visual" | "editorial_text_first";
 }
 
+export interface RecommendedPage {
+  id: string;
+  label: string;
+  reason?: string;
+  description?: string;
+}
+
 export interface BusinessStrategy {
   leadId: string;
   subCategory: EvidenceItem<BusinessSubCategory>;
@@ -438,6 +445,7 @@ export interface BusinessStrategy {
   reviewThemes: ReviewTheme[];
   recommendedSections: SectionRecommendation[];
   omittedSections: SectionOmission[];
+  recommendedPages?: RecommendedPage[];
   visualDirection: ControlledVisualDirection;
   photoRoleRecommendations: PhotoRoleRecommendation[];
   generatedAt: string;

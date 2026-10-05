@@ -13,10 +13,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const { phone, message, imageUrl, name, appBaseUrl } = (await req.json()) as {
+    const { phone, message, imageUrl, imageUrls, name, appBaseUrl } = (await req.json()) as {
       phone: string;
       message: string;
       imageUrl?: string;
+      imageUrls?: string[];
       name: string;
       appBaseUrl?: string;
     };
@@ -30,11 +31,17 @@ export async function POST(req: Request) {
 
     const { evolutionApiUrl, evolutionApiKey, instanceName } = config;
 
-    // 1. Send Image if provided
-    if (imageUrl) {
-      const absoluteImageUrl = imageUrl.startsWith("http")
-        ? imageUrl
-        : `${appBaseUrl || ""}${imageUrl}`;
+    // 1. Send Preview Images (supports multiple pages: Home, Menu, Gallery)
+    const imagesToSend = (imageUrls && imageUrls.length > 0)
+      ? imageUrls
+      : (imageUrl ? [imageUrl] : []);
+
+    for (let imgIdx = 0; imgIdx < imagesToSend.length; imgIdx++) {
+      const imgUrl = imagesToSend[imgIdx];
+      if (!imgUrl) continue;
+      const absoluteImageUrl = imgUrl.startsWith("http")
+        ? imgUrl
+        : `${appBaseUrl || ""}${imgUrl.startsWith("/") ? "" : "/"}${imgUrl}`;
 
       try {
         const imgRes = await fetch(`${evolutionApiUrl}/message/sendMedia/${instanceName}`, {
@@ -49,7 +56,7 @@ export async function POST(req: Request) {
             mimetype: "image/png",
             caption: "",
             media: absoluteImageUrl,
-            fileName: "website-preview.png",
+            fileName: `website-preview-${imgIdx + 1}.png`,
           }),
         });
 

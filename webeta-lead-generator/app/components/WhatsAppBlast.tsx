@@ -122,7 +122,7 @@ function prepareText(raw: string): string {
 interface WhatsAppBlastProps {
   ranked: RankedLead[];
   outreachResults: Record<string, OutreachResult>;
-  previews: Record<string, { exists: boolean; previewUrl?: string }>;
+  previews: Record<string, { exists: boolean; previewUrl?: string; allUrls?: string[] }>;
   onBackToSingle?: () => void;
 }
 
@@ -376,6 +376,9 @@ export function WhatsAppBlast({
         phone: cleanPhone(l.whatsapp!),
         message: prepareText(outreachResults[l.id].first),
         imageUrl: previews[l.id]?.previewUrl ?? undefined,
+        imageUrls: (previews[l.id]?.allUrls && previews[l.id]!.allUrls!.length > 0)
+          ? previews[l.id]!.allUrls!
+          : (previews[l.id]?.previewUrl ? [previews[l.id]!.previewUrl!] : undefined),
       }));
 
     if (leadsToSend.length === 0) {
@@ -430,6 +433,9 @@ export function WhatsAppBlast({
           phone: cleanPhone(lead.whatsapp),
           message: prepareText(outreachResults[lead.id]?.first || ""),
           imageUrl: previews[lead.id]?.previewUrl,
+          imageUrls: (previews[lead.id]?.allUrls && previews[lead.id]!.allUrls!.length > 0)
+            ? previews[lead.id]!.allUrls!
+            : (previews[lead.id]?.previewUrl ? [previews[lead.id]!.previewUrl!] : undefined),
           appBaseUrl: window.location.origin,
         }),
       });
@@ -976,7 +982,10 @@ export function WhatsAppBlast({
                       <td className="px-3 py-3">
                         {hasPreview ? (
                           <Badge variant="outline" className="text-[10px] gap-1 text-emerald-600 border-emerald-500/20 bg-emerald-500/5">
-                            <ImageIcon className="h-3 w-3" /> Image Ready
+                            <ImageIcon className="h-3 w-3" />
+                            {previews[lead.id]?.allUrls && previews[lead.id]!.allUrls!.length > 1
+                              ? `${previews[lead.id]!.allUrls!.length} Images Ready`
+                              : "Image Ready"}
                           </Badge>
                         ) : (
                           <Badge variant="outline" className="text-[10px] text-muted-foreground">

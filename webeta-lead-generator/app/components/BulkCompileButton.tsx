@@ -12,33 +12,7 @@ interface Props {
   buildPrompts: Record<string, any>;
 }
 
-function getPagesForLead(lead: RankedLead): string[] {
-  const cat = (lead.category || "").toLowerCase();
-  if (/cafe|coffee|restaurant|dining|food|pizza|bar|bakery|dhaba|biryani|sweets/.test(cat))
-    return ["home", "menu", "gallery"];
-  if (/gym|fitness|yoga|crossfit|zumba|pilates/.test(cat))
-    return ["home", "programs", "gallery"];
-  if (/clinic|doctor|dental|hospital|pharmacy|eye|health/.test(cat))
-    return ["home", "services"];
-  if (/hotel|resort|lodge|homestay|inn/.test(cat))
-    return ["home", "rooms", "gallery"];
-  if (/salon|spa|beauty|parlour|grooming/.test(cat))
-    return ["home", "services", "gallery"];
-  if (/travel|tour|tourism|holiday|trip|adventure/.test(cat))
-    return ["home", "services", "gallery"];
-  if (/event|catering|caterer|wedding|banquet|party|decorator/.test(cat))
-    return ["home", "services", "gallery"];
-  if (/law|lawyer|advocate|legal|ca |chartered|accountant|tax|audit/.test(cat))
-    return ["home", "services"];
-  if (/architect|interior design|interior decorator|design studio|renovation/.test(cat))
-    return ["home", "services", "portfolio"];
-  if (/hardware|building material|plumbing|electrician|construction supply/.test(cat))
-    return ["home", "products"];
-  if (/retail|shop|store|supermarket|grocery|departmental|kirana/.test(cat))
-    return ["home", "products"];
-  // Tech, agency, school, general
-  return ["home", "services", "portfolio"];
-}
+import { getIntelligentPagesForLead } from "@/lib/pageRecommendation";
 
 const COUNT_OPTIONS = [5, 10, 25, 50, "All"] as const;
 
@@ -69,7 +43,7 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
   const [fromIdx, setFromIdx] = useState(1);
   const [toIdx, setToIdx] = useState(10);
   const [skipMode, setSkipMode] = useState<"skip-done" | "all">("skip-done");
-  const [pageMode, setPageMode] = useState<"home" | "all">("home");
+  const [pageMode, setPageMode] = useState<"home" | "all">("all");
   const [device, setDevice] = useState<"desktop" | "mobile" | "both">("desktop");
 
   const rangeLeads = ranked.slice(Math.max(0, fromIdx - 1), toIdx);
@@ -133,7 +107,9 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
       setProgress({ done: i, total: todo.length, current: lead.name });
 
       const strategy = buildPrompts?.[lead.id]?.strategy;
-      const pages = pageMode === "all" ? getPagesForLead(lead) : ["home"];
+      const pages = pageMode === "all"
+        ? getIntelligentPagesForLead(lead, strategy).map(p => p.id)
+        : ["home"];
       let leadFailed = false;
 
       for (const page of pages) {
@@ -245,20 +221,20 @@ export function BulkCompileButton({ ranked, buildPrompts }: Props) {
 
           {/* Pages */}
           <div>
-            <p className="text-[10px] font-semibold text-muted-foreground mb-1.5">PAGES</p>
+            <p className="text-[10px] font-semibold text-muted-foreground mb-1.5">PAGES ARCHITECTURE</p>
             <div className="flex gap-1">
               <button onClick={() => setPageMode("home")}
                 className={`px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all ${
                   pageMode === "home" ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-muted-foreground border-border hover:border-primary/40"
-                }`}>🏠 Home only</button>
+                }`}>🏠 Home only (1 page)</button>
               <button onClick={() => setPageMode("all")}
                 className={`px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all ${
                   pageMode === "all" ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-muted-foreground border-border hover:border-primary/40"
-                }`}>📄 All pages (3–4 per type)</button>
+                }`}>🤖 AI decides (1–4 pages based on scale & reviews)</button>
             </div>
             {pageMode === "all" && (
               <p className="text-[10px] text-muted-foreground mt-1">
-                Auto: Cafe→Menu+Gallery · Gym→Programs+Gallery · Hotel→Rooms+Gallery · Clinic→Services · Others→Services+Portfolio
+                AI dynamically scales page count: small stalls & emergency trades get 1 page; clinics/salons get 2; established cafes get 3; luxury resorts & hospitals get 3–4.
               </p>
             )}
           </div>
