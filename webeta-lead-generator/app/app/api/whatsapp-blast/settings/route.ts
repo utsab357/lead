@@ -21,9 +21,9 @@ export interface WhatsAppConfig {
 }
 
 export const DEFAULT_CONFIG: WhatsAppConfig = {
-  evolutionApiUrl: "",
-  evolutionApiKey: "",
-  instanceName: "webeta",
+  evolutionApiUrl: process.env.EVOLUTION_API_URL || "https://evolution-api-webeta.onrender.com",
+  evolutionApiKey: process.env.EVOLUTION_API_KEY || "webeta2025secret",
+  instanceName: process.env.EVOLUTION_INSTANCE_NAME || "webeta",
   delayMinMs: 8 * 60 * 1000,
   delayMaxMs: 20 * 60 * 1000,
 };

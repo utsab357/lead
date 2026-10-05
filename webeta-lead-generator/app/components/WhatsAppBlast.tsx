@@ -484,21 +484,23 @@ export function WhatsAppBlast({
             onClick={checkHealth}
             disabled={health.checking}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-muted/40 hover:bg-muted text-xs font-medium text-muted-foreground transition-all"
-            title="Click to re-ping server"
+            title={health.error ? `Error: ${health.error} (click to re-ping)` : "Click to re-ping server"}
           >
             {health.checking ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
             ) : health.ok ? (
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
             ) : (
               <span className="h-2 w-2 rounded-full bg-destructive" />
             )}
             <span>
-              {health.ok
+              {health.checking
+                ? "Connecting / Waking up..."
+                : health.ok
                 ? `Render API: Live (v${health.version || "2.3"})`
-                : "Render API: Offline"}
+                : "Render API: Offline (click to wake)"}
             </span>
-            <RefreshCw className="h-3 w-3 ml-0.5 opacity-60" />
+            <RefreshCw className={`h-3 w-3 ml-0.5 opacity-60 ${health.checking ? "animate-spin" : ""}`} />
           </button>
 
           <Badge

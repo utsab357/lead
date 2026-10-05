@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { readConfig } from "../settings/route";
 
-export const maxDuration = 15;
+export const maxDuration = 45;
 
 export async function GET() {
   const config = readConfig();
@@ -13,7 +13,7 @@ export async function GET() {
     const res = await fetch(config.evolutionApiUrl, {
       method: "GET",
       headers: config.evolutionApiKey ? { apikey: config.evolutionApiKey } : {},
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(35000),
     });
 
     if (!res.ok) {
