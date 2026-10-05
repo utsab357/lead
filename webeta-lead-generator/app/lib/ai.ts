@@ -68,24 +68,36 @@ export function normalizeAIArray<T>(data: unknown): T[] {
 
   const obj = data as Record<string, unknown>;
 
-  // Check known container keys
+  // 1. If obj is ALREADY a single entity (e.g. has leadId or conversion/audit fields), return it directly.
+  // We check this first to prevent an object with an array field (e.g. points: string[], gaps: string[])
+  // from having that array field mistakenly extracted as the container!
+  if (
+    obj.leadId ||
+    ((obj.id || obj.name) && (obj.callScript !== undefined || obj.urgencyHook !== undefined || obj.score !== undefined || obj.hasWebsite !== undefined || obj.competitorInsight !== undefined))
+  ) {
+    return [obj as unknown as T];
+  }
+
+  // 2. Check known container keys (MUST contain objects, NOT primitive strings)
   const containerKeys = [
-    "audits", "leads", "businesses", "results", "scores", "data", "items", "conversions", "points", "leadsAudited"
+    "audits", "leads", "businesses", "results", "scores", "data", "items",
+    "conversions", "conversionPoints", "conversion_points", "hooks", "leadsAudited"
   ];
   for (const key of containerKeys) {
-    if (Array.isArray(obj[key])) {
-      return obj[key] as T[];
+    const val = obj[key];
+    if (Array.isArray(val) && (val.length === 0 || typeof val[0] === "object")) {
+      return val as T[];
     }
   }
 
-  // Check if any property value is an array of objects
+  // 3. Check if any property value is an array of objects
   for (const val of Object.values(obj)) {
     if (Array.isArray(val) && val.length > 0 && typeof val[0] === "object") {
       return val as T[];
     }
   }
 
-  // If it's a single item (e.g. has leadId, id, score, name, etc.)
+  // 4. Fallback for single item with basic identifiers
   if (obj.leadId || obj.id || obj.name || obj.score !== undefined || obj.hasWebsite !== undefined) {
     return [obj as unknown as T];
   }

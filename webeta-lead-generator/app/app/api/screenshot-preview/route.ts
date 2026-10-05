@@ -67,64 +67,100 @@ export async function POST(req: Request) {
     // Also get the file path directly as fallback
     const htmlFilePath = path.join(process.cwd(), "public", htmlUrl.replace(/^\//, ""));
 
-    // Dynamically import Playwright to avoid SSR issues
-    const { chromium } = await import("playwright");
+    let buffer: Buffer | null = null;
+    let tookScreenshot = false;
 
-    const browser = await chromium.launch({
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--font-render-hinting=none",
-      ],
-    });
-
-    const context = await browser.newContext({
-      viewport: device === "mobile"
-        ? { width: 390, height: 844 }   // iPhone 14 Pro
-        : { width: 1280, height: 900 },
-      deviceScaleFactor: 2,   // 2x retina — crisp text & images
-      isMobile: device === "mobile",
-      hasTouch: device === "mobile",
-    });
-    const pwPage = await context.newPage();
-
-    // Try URL first, fallback to injecting HTML content directly
-    let loaded = false;
+    // Try Playwright first (runs locally with Chrome installed)
     try {
-      await pwPage.goto(fullUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
-      loaded = true;
-    } catch {
-      // If URL fails, load HTML file directly
-      if (fs.existsSync(htmlFilePath)) {
-        const htmlContent = fs.readFileSync(htmlFilePath, "utf-8");
-        await pwPage.setContent(htmlContent, { waitUntil: "domcontentloaded", timeout: 15000 });
+      const { chromium } = await import("playwright");
+
+      const browser = await chromium.launch({
+        headless: true,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+          "--font-render-hinting=none",
+        ],
+      });
+
+      const context = await browser.newContext({
+        viewport: device === "mobile"
+          ? { width: 390, height: 844 }   // iPhone 14 Pro
+          : { width: 1280, height: 900 },
+        deviceScaleFactor: 2,   // 2x retina
+        isMobile: device === "mobile",
+        hasTouch: device === "mobile",
+      });
+      const pwPage = await context.newPage();
+
+      let loaded = false;
+      try {
+        await pwPage.goto(fullUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
         loaded = true;
+      } catch {
+        if (fs.existsSync(htmlFilePath)) {
+          const htmlContent = fs.readFileSync(htmlFilePath, "utf-8");
+          await pwPage.setContent(htmlContent, { waitUntil: "domcontentloaded", timeout: 15000 });
+          loaded = true;
+        }
+      }
+
+      if (loaded) {
+        await pwPage.waitForTimeout(2000);
+        buffer = (await pwPage.screenshot({
+          fullPage: true,
+          type: "png",
+          animations: "disabled",
+        })) as Buffer;
+
+        await context.close();
+        await browser.close();
+        fs.writeFileSync(pngPath, buffer);
+        tookScreenshot = true;
+      } else {
+        await browser.close();
+      }
+    } catch (pwErr) {
+      console.warn("[screenshot-preview] Playwright unavailable, using Method A (Cloudflare/Pollinations AI generator):", (pwErr as Error).message);
+    }
+
+    // If Playwright could not run (e.g. Render Linux has no Chrome), use Method A: Direct AI Mockup Generator
+    if (!tookScreenshot || !buffer) {
+      const { executeGeneratePreview } = await import("../generate-preview/route");
+      const leadObj = (body.lead as any) || {
+        id: leadId,
+        name: businessName,
+        category: (body as any).category || "Cafe & Restaurant",
+        city: (body as any).city || "Barasat",
+        phone: (body as any).phone || "",
+      };
+
+      const aiResult = await executeGeneratePreview({
+        lead: leadObj,
+        pageType: page,
+        mode: device,
+        force,
+      });
+
+      if (aiResult.ok && aiResult.previewUrl) {
+        const srcPath = path.join(process.cwd(), "public", aiResult.previewUrl.replace(/^\//, ""));
+        if (fs.existsSync(srcPath)) {
+          if (srcPath !== pngPath) {
+            try {
+              fs.copyFileSync(srcPath, pngPath);
+            } catch {}
+          }
+          buffer = fs.readFileSync(pngPath);
+          tookScreenshot = true;
+        }
       }
     }
 
-    if (!loaded) {
-      await browser.close();
-      return NextResponse.json({ ok: false, error: "Could not load HTML for screenshot" }, { status: 500 });
+    if (!buffer) {
+      return NextResponse.json({ ok: false, error: "Could not generate screenshot preview" }, { status: 500 });
     }
-
-    // Wait 3s for fonts and images to settle
-    await pwPage.waitForTimeout(3000);
-
-    // Take full-page screenshot — 2x retina = crisp, professional quality
-    const buffer = await pwPage.screenshot({
-      fullPage: true,
-      type: "png",
-      animations: "disabled",
-    });
-
-    await context.close();
-    await browser.close();
-
-    // Save the PNG
-    fs.writeFileSync(pngPath, buffer);
 
     // ── Run 3-layer safety verification ────────────────────────────────────
     const { runFullVerification } = await import("../../../lib/verifyGenerated");
@@ -166,15 +202,7 @@ export async function POST(req: Request) {
       leadId,
     }, null, 2));
 
-    // ── Delete HTML after screenshot to save disk space ──────────────────────
-    // PNG is the final artifact. HTML is only needed for rendering.
-    if (fs.existsSync(htmlFilePath)) {
-      try {
-        fs.unlinkSync(htmlFilePath);
-      } catch {
-        // Non-fatal — HTML deletion failure doesn't block the response
-      }
-    }
+    // ── Keep HTML file intact so user can view live site and open in new tab ──
 
     return NextResponse.json({
       ok: true,

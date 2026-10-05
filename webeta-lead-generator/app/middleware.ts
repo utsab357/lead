@@ -8,14 +8,16 @@ const EXPECTED_TOKEN = Buffer.from(`${VALID_LOGIN_ID}:${AUTH_SECRET}`).toString(
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1. Whitelist static files and public routes
+  // 1. Whitelist static files, previews, and public routes
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/health") ||
     pathname.startsWith("/api/auth/login") ||
     pathname.startsWith("/login") ||
+    pathname.startsWith("/html-previews") ||
+    pathname.startsWith("/previews") ||
     pathname === "/favicon.ico" ||
-    pathname.match(/\.(png|jpg|jpeg|gif|svg|webp|ico|css|js|map)$/i)
+    pathname.match(/\.(png|jpg|jpeg|gif|svg|webp|ico|css|js|map|html)$/i)
   ) {
     return NextResponse.next();
   }
