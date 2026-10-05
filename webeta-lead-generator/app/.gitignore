@@ -41,3 +41,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# WhatsApp Blast — secrets & state (never commit these)
+.whatsapp-config.json
+.whatsapp-blast-state.json

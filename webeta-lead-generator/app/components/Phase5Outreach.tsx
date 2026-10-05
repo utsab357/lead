@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import type { RankedLead, OutreachChannel, OutreachLanguage, OutreachResult } from "@/lib/types";
 import { toast } from "sonner";
+import { WhatsAppBlast } from "./WhatsAppBlast";
 
 export function Phase5Outreach({
   ranked,
@@ -1173,6 +1174,15 @@ export function Phase5Outreach({
             </>
           )}
         </main>
+      </div>
+
+      {/* ── WhatsApp Auto-Blast Panel ── */}
+      <div className="mt-6">
+        <WhatsAppBlast
+          ranked={ranked}
+          outreachResults={outreachResults}
+          previews={previews}
+        />
       </div>
     </PhaseShell>
   );
