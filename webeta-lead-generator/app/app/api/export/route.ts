@@ -53,7 +53,7 @@ export async function POST(req: Request) {
       escapeCsv(lead.city),
       escapeCsv(lead.address),
       escapePhoneCell(lead.phone),
-      escapePhoneCell(lead.whatsapp || lead.phone),
+      escapePhoneCell(lead.whatsapp?.trim() || lead.phone),
       lead.rating ?? "",
       lead.reviewsCount ?? "",
       lead.audit.hasWebsite ? "Yes" : "No",
@@ -95,5 +95,5 @@ function escapeCsv(value: string): string {
 function escapePhoneCell(value: string | null | undefined): string {
   if (!value) return '""';
   const clean = String(value).replace(/["\r\n]/g, "").trim();
-  return clean ? `="${clean}"` : '""';
+  return clean ? escapeCsv(`="${clean}"`) : '""';
 }

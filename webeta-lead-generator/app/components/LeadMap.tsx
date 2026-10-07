@@ -6,7 +6,7 @@ import type { Lead } from "@/lib/types";
 
 export default function LeadMap({ leads }: { leads: Lead[] }) {
   const validLeads = leads.filter(
-    (l) => typeof l.lat === "number" && typeof l.lng === "number" && !isNaN(l.lat) && !isNaN(l.lng) && (l.lat !== 0 || l.lng !== 0)
+    (l) => Number.isFinite(l.lat) && Number.isFinite(l.lng) && (l.lat !== 0 || l.lng !== 0)
   );
 
   if (validLeads.length === 0) {

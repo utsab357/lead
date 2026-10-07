@@ -15,7 +15,7 @@
 import type { RankedLead, BusinessStrategy } from "./types";
 import { buildWebsiteSpec, getCategoryGalleryPhotos } from "./websiteSpec";
 import { buildDeterministicBusinessStrategy } from "./businessStrategy";
-import { createWhatsAppUrl, cleanPhone } from "./phoneUtils";
+import { createWhatsAppUrl, cleanPhone, normalizePhone10, toTelLink } from "./phoneUtils";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -300,7 +300,7 @@ function buildServicesContent(spec: any, waUrl: string): string {
   const isMed      = /clinic|doctor|dental|hospital|pharmacy|eye/i.test(category) || /clinic|dental|medical|ayurvedic/.test(subCat);
   const isCoach    = /coaching|school|tutor/i.test(category) || /coaching/.test(subCat);
   const isPro      = /lawyer|ca|accountant|photographer/i.test(category);
-  const isBanquets = /banquet|catering|party|event|celebration|rooftop|private dining/i.test(category) || /cafe|coffee|restaurant|dining|food|bistro/i.test(category);
+  const isBanquets = /banquet|catering|party|event|celebration|rooftop|private dining/i.test(category);
   const isHotel    = /hotel|resort|lodge|homestay|inn|guest house/i.test(category);
 
   const serviceGroups = isBanquets
@@ -596,8 +596,7 @@ export async function buildMultiPageHTML(
 
     const { businessName, phone } = spec;
     const waUrl = spec.whatsapp || waLink(phone || "", businessName);
-    const tel = cleanPhone(phone);
-    const telLink = tel ? `tel:${tel}` : "#";
+    const telLink = toTelLink(phone);
 
     let content = "";
     let title = "";

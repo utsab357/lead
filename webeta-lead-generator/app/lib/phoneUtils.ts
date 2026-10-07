@@ -23,10 +23,10 @@ export function normalizePhone10(raw: string | null | undefined): string {
   return n.length === 10 ? n : "";
 }
 
-/** Extract 12-digit international WhatsApp number: "91" + 10 digits */
+/** Extract 12-digit international WhatsApp number: "91" + 10 digits (mobile numbers starting with 6-9 only) */
 export function toWhatsAppNumber(raw: string | null | undefined): string {
   const ten = normalizePhone10(raw);
-  if (ten) return `91${ten}`;
+  if (ten && /^[6-9]/.test(ten)) return `91${ten}`;
   return "";
 }
 
@@ -55,4 +55,20 @@ export function createWhatsAppUrl(
   if (!waNum) return "#";
   const text = customText !== undefined ? customText : (businessName ? `Hello ${businessName}` : "Hello");
   return `https://wa.me/${waNum}?text=${encodeURIComponent(text)}`;
+}
+
+/**
+ * Generate a clean RFC 3966 `tel:` URI for any callable phone number (mobile, landline, international).
+ * - Returns `tel:+91${10digits}` for recognized 10-digit national numbers
+ * - Falls back to sanitized `tel:${cleanDigits}` for non-mobile landlines / international numbers (without whitespace)
+ * - Returns "#" if no callable number can be extracted
+ */
+export function toTelLink(raw: string | null | undefined): string {
+  if (!raw) return "#";
+  const ten = normalizePhone10(raw);
+  if (ten) return `tel:+91${ten}`;
+  const cleaned = raw.trim().replace(/[^\d+]/g, "");
+  const digits = cleaned.replace(/\D/g, "");
+  if (digits.length >= 6) return `tel:${cleaned}`;
+  return "#";
 }

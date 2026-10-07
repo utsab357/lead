@@ -7,7 +7,7 @@ import type {
   BusinessStrategy,
 } from "./types";
 import { buildDeterministicBusinessStrategy } from "./businessStrategy";
-import { cleanPhone as centralCleanPhone, toWhatsAppNumber } from "./phoneUtils";
+import { cleanPhone as centralCleanPhone, toWhatsAppNumber, normalizePhone10, toTelLink } from "./phoneUtils";
 
 /**
  * Curated stock photo mappings by business category for hero and showcase.
@@ -852,8 +852,7 @@ export function specToCompilerMarkdown(spec: WebsiteSpec): string {
   const ratingStr = spec.rating ? `${spec.rating.toFixed(1)} ★` : "4.8 ★";
   const reviewCountStr = spec.reviewsCount ? `${spec.reviewsCount}+` : "150+";
   const waLink = spec.whatsapp || "#";
-  const tel = centralCleanPhone(spec.phone);
-  const telLink = tel ? `tel:${tel}` : "#";
+  const telLink = toTelLink(spec.phone);
 
   const heroBlock = spec.sections.find((s) => s.type === "hero") as any;
   const gridBlock = spec.sections.find((s) => s.type === "visual_grid") as any;
@@ -879,12 +878,13 @@ export function specToCompilerMarkdown(spec: WebsiteSpec): string {
 - Action CTA: Pill button <a href="${waLink}">${ctaPrimary.replace(" →", "")}</a>.
 - NO mobile hamburger overlays, drawer panels, or checkbox menus!`);
     } else if (block.type === "hero") {
+      const secondaryHref = ctaSecondary === "View Menu" ? "#menu" : telLink;
       sectionListMarkdown.push(`### ${sectionIndex++}. HERO SECTION (100dvh)
 - Background: ${spec.curatedStockPhotos.hero} (full-bleed, rich multi-stop overlay).
 - Top frosted pill chip: "★ ${ratingStr} • ${reviewCountStr} Google Reviews".
 - H1: Bold typography: "${headline}".
 - Subtitle: "${subtitle}".
-- Dual CTA Buttons: ${ctaPrimary} (<a href="${waLink}">) + ${ctaSecondary} (<a href="${telLink}">).
+- Dual CTA Buttons: ${ctaPrimary} (<a href="${waLink}">) + ${ctaSecondary} (<a href="${secondaryHref}">).
 - Scroll indicator: "Scroll to Explore" with circular down-chevron icon.
 - Bottom organic curved wave divider connecting smoothly to the cream section below.`);
     } else if (block.type === "trust_bar") {

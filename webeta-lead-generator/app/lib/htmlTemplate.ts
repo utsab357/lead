@@ -17,7 +17,7 @@
 import type { RankedLead, BusinessStrategy } from "./types";
 import { buildWebsiteSpec, getCategoryGalleryPhotos } from "./websiteSpec";
 import { buildDeterministicBusinessStrategy } from "./businessStrategy";
-import { createWhatsAppUrl, cleanPhone } from "./phoneUtils";
+import { createWhatsAppUrl, cleanPhone, normalizePhone10, toTelLink } from "./phoneUtils";
 
 export interface TemplateResult {
   ok: boolean;
@@ -670,8 +670,7 @@ export async function buildTemplateHTML(lead: RankedLead, strategy?: BusinessStr
 
     const { tokens, businessName, phone } = spec;
     const waUrl = spec.whatsapp || waLink(phone || "", businessName);
-    const tel = cleanPhone(phone);
-    const telLink = tel ? `tel:${tel}` : "#";
+    const telLink = toTelLink(phone);
     const googleFontsUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(tokens.displayFont)}:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=${encodeURIComponent(tokens.bodyFont)}:wght@400;500;600;700&display=swap`;
 
     // Layout variant from hash (A/B/C/D)

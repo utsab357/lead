@@ -133,6 +133,19 @@ async function sendEvolutionImage(
   caption: string
 ): Promise<{ ok: boolean; error?: string }> {
   try {
+    const getMimeType = (fileOrUrl: string) => {
+      const lower = fileOrUrl.toLowerCase().split("?")[0];
+      if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return { mime: "image/jpeg", ext: "jpg" };
+      if (lower.endsWith(".webp")) return { mime: "image/webp", ext: "webp" };
+      if (lower.endsWith(".svg")) return { mime: "image/svg+xml", ext: "svg" };
+      return { mime: "image/png", ext: "png" };
+    };
+
+    const effectiveMime = imageUrl.startsWith("data:")
+      ? (imageUrl.match(/^data:([^;]+);base64/)?.[1] || "image/png")
+      : getMimeType(imageUrl).mime;
+    const effectiveExt = effectiveMime === "image/jpeg" ? "jpg" : (effectiveMime === "image/webp" ? "webp" : (effectiveMime === "image/svg+xml" ? "svg" : "png"));
+
     const res = await fetchWithRenderWarmup(`${apiUrl}/message/sendMedia/${instance}`, {
       method: "POST",
       headers: {
@@ -142,10 +155,10 @@ async function sendEvolutionImage(
       body: JSON.stringify({
         number: phone,
         mediatype: "image",
-        mimetype: "image/png",
+        mimetype: effectiveMime,
         caption,
         media: imageUrl,
-        fileName: "website-preview.png",
+        fileName: `website-preview.${effectiveExt}`,
       }),
     });
     if (!res.ok) {
@@ -310,10 +323,20 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
             ? publicFilePath
             : (isSafeImage && resolvedData.startsWith(dataDir) && fs.existsSync(dataFilePath) ? dataFilePath : null);
 
+          const getMimeType = (fileOrUrl: string) => {
+            const lower = fileOrUrl.toLowerCase().split("?")[0];
+            if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return { mime: "image/jpeg", ext: "jpg" };
+            if (lower.endsWith(".webp")) return { mime: "image/webp", ext: "webp" };
+            if (lower.endsWith(".svg")) return { mime: "image/svg+xml", ext: "svg" };
+            return { mime: "image/png", ext: "png" };
+          };
+
+          const { mime: localMime } = getMimeType(cleanRel);
+
           if (localFilePath) {
             try {
               const fileBuf = fs.readFileSync(localFilePath);
-              mediaPayload = `data:image/png;base64,${fileBuf.toString("base64")}`;
+              mediaPayload = `data:${localMime};base64,${fileBuf.toString("base64")}`;
             } catch (err) {
               console.warn(`[WhatsApp Blast] Could not read local file ${localFilePath} for Base64:`, err);
             }

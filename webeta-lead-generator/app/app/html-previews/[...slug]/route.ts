@@ -287,7 +287,7 @@ export async function GET(
   try {
     const { slug } = await params;
     const rawFilename = slug.join("/");
-    if (slug.length !== 1 || /[\\/]|^\.\./.test(rawFilename)) {
+    if (slug.length !== 1 || /[\\/]|\.\./.test(rawFilename)) {
       return new Response("Invalid preview path", { status: 400 });
     }
     const filename = rawFilename.endsWith(".html") ? rawFilename : `${rawFilename}.html`;
@@ -301,11 +301,30 @@ export async function GET(
     const subpageType = subpageMatch ? (subpageMatch[1].toLowerCase() as import("@/lib/multiPageTemplates").PageType) : null;
 
     const url = new URL(req.url);
-    const isAdmin =
-      url.searchParams.get("admin") === "true" ||
-      url.searchParams.get("unlock") === "true" ||
-      url.hostname === "localhost" ||
-      url.hostname === "127.0.0.1";
+    const cookieHeader = req.headers.get("cookie") || "";
+    const cookiePart = cookieHeader
+      .split(";")
+      .map((c) => c.trim())
+      .find((c) => c.startsWith("webeta_session="));
+    const sessionCookie = cookiePart ? cookiePart.slice("webeta_session=".length) : null;
+
+    const AUTH_SECRET = process.env.APP_AUTH_SECRET || "webeta_lead_gen_secret_token_2025";
+    const VALID_LOGIN_ID = process.env.APP_LOGIN_ID || "9064970761";
+    const EXPECTED_TOKEN = Buffer.from(`${VALID_LOGIN_ID}:${AUTH_SECRET}`).toString("base64");
+
+    const hasAuthCookie = Boolean(sessionCookie && sessionCookie === EXPECTED_TOKEN);
+
+    // Fail-closed header auth: only accept x-admin-token if explicitly configured in environment variables
+    const configuredSecret = process.env.APP_AUTH_SECRET;
+    const configuredAdminToken = process.env.ADMIN_TOKEN || configuredSecret;
+    const headerToken = req.headers.get("x-admin-token");
+    const hasHeaderAuth = Boolean(
+      configuredAdminToken &&
+      headerToken &&
+      headerToken === configuredAdminToken
+    );
+
+    const isAdmin = hasAuthCookie || hasHeaderAuth;
     const ua = req.headers.get("user-agent") || "";
     const isBot = /bot|crawler|spider|facebookexternalhit|whatsapp|microlink|headlesschrome|puppeteer/i.test(ua);
 

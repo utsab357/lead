@@ -196,6 +196,10 @@ export function Phase7Export({
       "Maps Link","Rating","Reviews","Score","Has Website","Status","Notes",
       "Biggest Gap","Est. Lost ₹/mo","Conv. Points","Outreach Drafted","Site Prompt Ready",
     ];
+    const escapeCsv = (val: unknown) => {
+      if (val === null || val === undefined || val === "") return '""';
+      return `"${String(val).replace(/"/g, '""')}"`;
+    };
     const asText = (v: string) => {
       if (!v) return "";
       const cleaned = String(v).replace(/["\r\n]/g, "").trim();
@@ -212,7 +216,7 @@ export function Phase7Export({
 
       return [
         String(i + 1), lead.name, lead.category, lead.address, lead.city,
-        asText(lead.phone || ""), asText(lead.whatsapp || lead.phone || ""), lead.website || "",
+        asText(lead.phone || ""), asText(lead.whatsapp?.trim() || lead.phone || ""), lead.website || "",
         previewUrl,
         lead.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.name+" "+lead.city)}`,
         String(lead.rating || ""), String(lead.reviewsCount || ""), String(lead.score),
@@ -226,10 +230,7 @@ export function Phase7Export({
       ];
     });
     const csv = [headers, ...rows]
-      .map(row => row.map((c, i) => {
-        if (i === 5 || i === 6) return c; // keep asText ="..." format
-        return `"${String(c).replace(/"/g,'""')}"`;
-      }).join(","))
+      .map(row => row.map(c => escapeCsv(c)).join(","))
       .join("\n");
     trigger(csv, `leads-${today()}.csv`, "text/csv;charset=utf-8;");
     toast.success(`Exported ${exportList.length} leads to CSV`);
@@ -251,6 +252,10 @@ export function Phase7Export({
       "Remarks",
     ];
     // Helper: force Excel to show phone as text (prevents 9.2E+11 scientific notation)
+    const escapeCsv = (val: unknown) => {
+      if (val === null || val === undefined || val === "") return '""';
+      return `"${String(val).replace(/"/g, '""')}"`;
+    };
     const asText = (v: string) => {
       if (!v) return "";
       const cleaned = String(v).replace(/["\r\n]/g, "").trim();
@@ -259,7 +264,7 @@ export function Phase7Export({
     const rows = completed.map(lead => [
       lead.name,
       asText(lead.phone ?? ""),
-      asText(lead.whatsapp ?? lead.phone ?? ""),
+      asText(lead.whatsapp?.trim() || lead.phone || ""),
       lead.mapUrl ?? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.name + " " + lead.city)}`,
       lead.city,
       lead.category,
@@ -277,11 +282,7 @@ export function Phase7Export({
       clientDetails[lead.id]?.remarks ?? "",
     ]);
     const csv = [headers, ...rows]
-      .map(row => row.map((c, i) => {
-        // Phone columns (index 1,2) already formatted; Maps link (index 3) keep raw; rest quote-wrap
-        if (i === 1 || i === 2) return c; // already ="..." or ""
-        return `"${String(c).replace(/"/g, '""')}"`;
-      }).join(","))
+      .map(row => row.map(c => escapeCsv(c)).join(","))
       .join("\n");
     // BOM ensures Excel opens UTF-8 correctly (no garbled Hindi/special chars)
     trigger("\uFEFF" + csv, filename, "text/csv;charset=utf-8;");

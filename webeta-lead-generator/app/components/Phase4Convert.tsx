@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import type { RankedLead, ConversionPoints, AuditResult, LeadStatus, ClientDetail } from "@/lib/types";
 import { estimateBusinessAgeMonths, getAgeBadge } from "@/lib/businessAge";
-import { toWhatsAppNumber, cleanPhone, normalizePhone10 } from "@/lib/phoneUtils";
+import { toWhatsAppNumber, cleanPhone, normalizePhone10, toTelLink } from "@/lib/phoneUtils";
 import { toast } from "sonner";
 
 const BATCH_SIZE = 5;
@@ -563,7 +563,7 @@ export function Phase4Convert({
                       {lead.phone && (
                         <div className="inline-flex items-center shrink-0">
                           <a
-                            href={`tel:${cleanPhone(lead.phone)}`}
+                            href={toTelLink(lead.phone)}
                             className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-l-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors"
                             title="Call business"
                           >

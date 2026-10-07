@@ -198,6 +198,8 @@ ${previewUrl} (Active for 72 hours)
 
 We've also attached your high-resolution design preview photos below.
 
+*(Note: This is an initial sample concept – your final official website will be fully customized to your exact requirements)*
+
 No obligation at all — take a quick look, and if you'd like to launch it on your official domain, just reply here!
 
 Best regards,

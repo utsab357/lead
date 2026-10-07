@@ -74,8 +74,8 @@ export function verifyHTML(html: string, lead: RankedLead): VerificationIssue[] 
     }
   }
 
-  // Check isolated NaN token (e.g. ₹NaN, : NaN;, > NaN <) without flagging words like banana or finance
-  if (/(?:[>:\s₹$]|^)nan(?=[;<,\s%"']|$)/i.test(html)) {
+  // Check isolated NaN token (e.g. ₹NaN, : NaN;, > NaN <, width: NaNpx) without flagging words like banana or finance
+  if (/(?:[>:\s₹$="']|^)nan(?:px|rem|em|vh|vw|%|pt)?(?=[;<,\s%"'`]|$)/i.test(html)) {
     if (!issues.some(i => i.message.includes("NaN"))) {
       issues.push({ code: "PLACEHOLDER_TEXT", message: "NaN value rendered in HTML", severity: "critical" });
     }

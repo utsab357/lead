@@ -94,13 +94,30 @@ export async function POST(req: Request) {
         const cleanRel = imgUrl.startsWith("/") ? imgUrl.slice(1) : imgUrl;
         const isSafeImage = /\.(png|jpe?g|webp|svg)$/i.test(cleanRel) && !cleanRel.includes("..");
         const publicDir = path.resolve(process.cwd(), "public");
-        const localFilePath = path.join(process.cwd(), "public", cleanRel);
-        const resolvedPath = path.resolve(localFilePath);
+        const dataDir = path.resolve(process.cwd(), "data");
+        const publicFilePath = path.join(process.cwd(), "public", cleanRel);
+        const dataFilePath = path.join(process.cwd(), "data", cleanRel);
+        const resolvedPublic = path.resolve(publicFilePath);
+        const resolvedData = path.resolve(dataFilePath);
 
-        if (isSafeImage && resolvedPath.startsWith(publicDir) && fs.existsSync(localFilePath)) {
+        const localFilePath = isSafeImage && resolvedPublic.startsWith(publicDir) && fs.existsSync(publicFilePath)
+          ? publicFilePath
+          : (isSafeImage && resolvedData.startsWith(dataDir) && fs.existsSync(dataFilePath) ? dataFilePath : null);
+
+        const getMimeType = (fileOrUrl: string) => {
+          const lower = fileOrUrl.toLowerCase().split("?")[0];
+          if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return { mime: "image/jpeg", ext: "jpg" };
+          if (lower.endsWith(".webp")) return { mime: "image/webp", ext: "webp" };
+          if (lower.endsWith(".svg")) return { mime: "image/svg+xml", ext: "svg" };
+          return { mime: "image/png", ext: "png" };
+        };
+
+        const { mime: localMime } = getMimeType(cleanRel);
+
+        if (localFilePath) {
           try {
             const fileBuf = fs.readFileSync(localFilePath);
-            mediaPayload = `data:image/png;base64,${fileBuf.toString("base64")}`;
+            mediaPayload = `data:${localMime};base64,${fileBuf.toString("base64")}`;
           } catch (err) {
             console.warn(`[WhatsApp Test] Could not read local file ${localFilePath} for Base64:`, err);
           }
@@ -120,6 +137,11 @@ export async function POST(req: Request) {
           }
         }
 
+        const effectiveMime = mediaPayload.startsWith("data:")
+          ? (mediaPayload.match(/^data:([^;]+);base64/)?.[1] || localMime)
+          : getMimeType(mediaPayload).mime;
+        const effectiveExt = effectiveMime === "image/jpeg" ? "jpg" : (effectiveMime === "image/webp" ? "webp" : (effectiveMime === "image/svg+xml" ? "svg" : "png"));
+
         try {
           const imgRes = await fetchWithWarmup(`${evolutionApiUrl}/message/sendMedia/${instanceName}`, {
             method: "POST",
@@ -130,10 +152,10 @@ export async function POST(req: Request) {
             body: JSON.stringify({
               number: phone,
               mediatype: "image",
-              mimetype: "image/png",
+              mimetype: effectiveMime,
               caption: "",
               media: mediaPayload,
-              fileName: `website-preview-${imgIdx + 1}.png`,
+              fileName: `website-preview-${imgIdx + 1}.${effectiveExt}`,
             }),
           });
 
