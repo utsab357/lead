@@ -5,8 +5,17 @@ import type { RankedLead } from "@/lib/types";
 
 export const maxDuration = 30;
 
-const MAX_PREVIEW_VIEWS = 7;
+// Preview validity: active for 72 hours (3 days) from first view
+const PREVIEW_WINDOW_MS = 72 * 60 * 60 * 1000;
+const SESSION_DEBOUNCE_MS = 20 * 60 * 1000; // 20 min debounce between distinct sessions
 const VIEWS_FILE = path.join(process.cwd(), "data", "preview-views.json");
+
+interface PreviewMeta {
+  firstOpenedAt: number;
+  lastOpenedAt: number;
+  sessionCount: number;
+  lastSessionAt: number;
+}
 
 function esc(s: string | null | undefined): string {
   if (!s) return "";
@@ -17,33 +26,72 @@ function esc(s: string | null | undefined): string {
     .replace(/"/g, "&quot;");
 }
 
-function getPreviewViews(cleanSlug: string): number {
+function getPreviewMeta(cleanSlug: string): PreviewMeta | null {
   try {
     if (fs.existsSync(VIEWS_FILE)) {
       const data = JSON.parse(fs.readFileSync(VIEWS_FILE, "utf-8"));
-      return data[cleanSlug] || 0;
+      const raw = data[cleanSlug];
+      if (!raw) return null;
+      if (typeof raw === "number") {
+        // Migrate legacy number format
+        return {
+          firstOpenedAt: Date.now() - 3600000,
+          lastOpenedAt: Date.now(),
+          sessionCount: raw,
+          lastSessionAt: Date.now(),
+        };
+      }
+      return raw;
     }
   } catch {}
-  return 0;
+  return null;
 }
 
-function incrementPreviewViews(cleanSlug: string): number {
+function recordPreviewVisit(cleanSlug: string): { isExpired: boolean; meta: PreviewMeta } {
   try {
     const dir = path.dirname(VIEWS_FILE);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    let data: Record<string, number> = {};
+    let data: Record<string, any> = {};
     if (fs.existsSync(VIEWS_FILE)) {
       try {
         data = JSON.parse(fs.readFileSync(VIEWS_FILE, "utf-8"));
       } catch {}
     }
-    const nextVal = (data[cleanSlug] || 0) + 1;
-    data[cleanSlug] = nextVal;
+
+    const now = Date.now();
+    let meta: PreviewMeta = data[cleanSlug];
+
+    if (!meta || typeof meta === "number") {
+      // First visit! Initialize 72-hour window
+      meta = {
+        firstOpenedAt: now,
+        lastOpenedAt: now,
+        sessionCount: 1,
+        lastSessionAt: now,
+      };
+    } else {
+      meta.lastOpenedAt = now;
+      // Only count as a new session if at least 20 minutes have passed since last counted session
+      if (now - meta.lastSessionAt > SESSION_DEBOUNCE_MS) {
+        meta.sessionCount = (meta.sessionCount || 1) + 1;
+        meta.lastSessionAt = now;
+      }
+    }
+
+    data[cleanSlug] = meta;
     fs.writeFileSync(VIEWS_FILE, JSON.stringify(data, null, 2), "utf-8");
-    return nextVal;
+
+    // Check expiry: expired ONLY if 72 hours have passed since first open OR more than 15 distinct sessions
+    const elapsed = now - meta.firstOpenedAt;
+    const isExpired = elapsed > PREVIEW_WINDOW_MS || meta.sessionCount > 15;
+
+    return { isExpired, meta };
   } catch (err) {
-    console.error("Failed to increment preview views:", err);
-    return 1;
+    console.error("Failed to record preview visit:", err);
+    return {
+      isExpired: false,
+      meta: { firstOpenedAt: Date.now(), lastOpenedAt: Date.now(), sessionCount: 1, lastSessionAt: Date.now() },
+    };
   }
 }
 
@@ -53,9 +101,9 @@ function extractBusinessName(html: string, fallback: string): string {
   return fallback.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function injectTopBanner(html: string, businessName: string, viewsCount: number): string {
+function injectTopBanner(html: string, businessName: string): string {
   if (html.includes("id=\"webeta-preview-banner\"")) {
-    return html.replace(/Preview Active \(\d+\/7\)/g, `Preview Active (${viewsCount}/7)`);
+    return html;
   }
 
   const banner = `
@@ -65,7 +113,10 @@ function injectTopBanner(html: string, businessName: string, viewsCount: number)
     <span class="webeta-banner-title" style="letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">⚡ Private Concept for <strong style="color: #fff; font-weight: 700;">${esc(businessName)}</strong> — Crafted by <strong style="color: #38bdf8;">Webeta</strong></span>
   </div>
   <div class="webeta-banner-right" style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
-    <span class="webeta-banner-badge" style="font-size: 11px; color: #94a3b8; background: rgba(255,255,255,0.08); padding: 3px 9px; border-radius: 999px; white-space: nowrap;">Preview Active (${viewsCount}/7)</span>
+    <span class="webeta-banner-badge" style="font-size: 11px; color: #4ade80; background: rgba(74, 222, 128, 0.1); padding: 3px 10px; border-radius: 999px; border: 1px solid rgba(74, 222, 128, 0.25); white-space: nowrap; display: flex; align-items: center; gap: 5px;">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: #4ade80; display: inline-block;"></span>
+      Private Preview Active
+    </span>
     <a href="https://webeta.site" target="_blank" rel="noopener noreferrer" class="webeta-banner-link" style="color: #4ade80; text-decoration: none; font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 4px; padding: 4px 11px; background: rgba(74, 222, 128, 0.12); border-radius: 6px; border: 1px solid rgba(74, 222, 128, 0.3); white-space: nowrap;">webeta.site ↗</a>
   </div>
 </div>`;
@@ -250,10 +301,11 @@ export async function GET(
     const ua = req.headers.get("user-agent") || "";
     const isBot = /bot|crawler|spider|facebookexternalhit|whatsapp|microlink|headlesschrome|puppeteer/i.test(ua);
 
-    // Track views for real human visitors
-    let currentViews = getPreviewViews(cleanSlug);
+    // Track views for real human visitors with 72-hour window and session deduplication
+    let isExpired = false;
     if (!isAdmin && !isBot) {
-      currentViews = incrementPreviewViews(cleanSlug);
+      const visit = recordPreviewVisit(cleanSlug);
+      isExpired = visit.isExpired;
     }
 
     // Check existing compiled file (in data/html-previews or public/html-previews)
@@ -261,8 +313,8 @@ export async function GET(
       const rawContent = fs.readFileSync(filePath, "utf-8");
       const businessName = extractBusinessName(rawContent, cleanSlug);
 
-      // If views exceed limit, show locked activation screen
-      if (!isAdmin && !isBot && currentViews > MAX_PREVIEW_VIEWS) {
+      // If 72-hour preview window has expired, show locked activation screen
+      if (!isAdmin && !isBot && isExpired) {
         return new Response(renderLockedScreen(businessName, cleanSlug), {
           status: 200,
           headers: {
@@ -272,8 +324,8 @@ export async function GET(
         });
       }
 
-      // Views 1 to 7: Inject top branding badge with current view count
-      const content = injectTopBanner(rawContent, businessName, currentViews || 1);
+      // Preview is ACTIVE: inject branding banner
+      const content = injectTopBanner(rawContent, businessName);
       return new Response(content, {
         status: 200,
         headers: {
@@ -332,10 +384,9 @@ export async function GET(
       const previewsDir = path.join(process.cwd(), "data", "html-previews");
       if (!fs.existsSync(previewsDir)) fs.mkdirSync(previewsDir, { recursive: true });
       fs.writeFileSync(dataFilePath, rawHtml, "utf-8");
-
       const businessName = targetLead.name || extractBusinessName(rawHtml, cleanSlug);
 
-      if (!isAdmin && !isBot && currentViews > MAX_PREVIEW_VIEWS) {
+      if (!isAdmin && !isBot && isExpired) {
         return new Response(renderLockedScreen(businessName, cleanSlug), {
           status: 200,
           headers: {
@@ -345,7 +396,7 @@ export async function GET(
         });
       }
 
-      const html = injectTopBanner(rawHtml, businessName, currentViews || 1);
+      const html = injectTopBanner(rawHtml, businessName);
       return new Response(html, {
         status: 200,
         headers: {

@@ -36,55 +36,55 @@ function waLink(phone: string, name: string): string {
 function getNavHTML(businessName: string, waUrl: string, tokens: any, layoutVariant: string, ctaText: string): string {
   const { primaryColor, darkColor } = tokens;
   if (layoutVariant === "A") return `
-  <nav style="position:sticky;top:16px;z-index:999;max-width:1200px;margin:0 auto;padding:0 24px;">
-    <div style="background:rgba(255,255,255,0.94);backdrop-filter:blur(14px);border:1px solid rgba(0,0,0,0.07);border-radius:999px;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-      <a href="#" style="font-family:var(--font-display);font-size:18px;font-weight:800;color:${darkColor};text-decoration:none;">${esc(businessName)}</a>
-      <ul style="display:flex;gap:24px;list-style:none;margin:0;padding:0;">
-        <li><a href="#" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.65;">Home</a></li>
+  <nav class="site-nav" style="position:sticky;top:0;z-index:999;width:100%;background:rgba(255,255,255,0.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,0,0,0.06);box-shadow:0 4px 20px rgba(0,0,0,0.04);">
+    <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:20px;font-weight:800;color:${darkColor};text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
+      <ul class="nav-links-desktop" style="display:flex;gap:26px;list-style:none;margin:0;padding:0;">
+        <li><a href="#" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:600;opacity:0.75;">Home</a></li>
         <li><a href="#content" style="color:${primaryColor};text-decoration:none;font-size:14px;font-weight:700;">Menu</a></li>
-        <li><a href="#gallery" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.65;">Gallery</a></li>
+        <li><a href="#gallery" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:600;opacity:0.75;">Gallery</a></li>
       </ul>
-      <a href="${waUrl}" target="_blank" style="background:${primaryColor};color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;">${esc(ctaText)}</a>
+      <a href="${waUrl}" target="_blank" class="nav-cta" style="background:${primaryColor};color:#fff;padding:9px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">${esc(ctaText)}</a>
     </div>
   </nav>`;
 
   if (layoutVariant === "B") return `
-  <nav style="position:sticky;top:0;z-index:999;background:${darkColor};border-bottom:3px solid ${primaryColor};">
-    <div style="max-width:1200px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px;">
-      <a href="#" style="font-family:var(--font-display);font-size:20px;font-weight:900;color:#fff;text-decoration:none;">${esc(businessName)}</a>
-      <ul style="display:flex;gap:28px;list-style:none;margin:0;padding:0;">
-        <li><a href="#" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">HOME</a></li>
+  <nav class="site-nav" style="position:sticky;top:0;z-index:999;width:100%;background:${darkColor};border-bottom:3px solid ${primaryColor};box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+    <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:20px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.03em;">${esc(businessName)}</a>
+      <ul class="nav-links-desktop" style="display:flex;gap:28px;list-style:none;margin:0;padding:0;">
+        <li><a href="#" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">HOME</a></li>
         <li><a href="#content" style="color:${primaryColor};text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">MENU</a></li>
-        <li><a href="#gallery" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">GALLERY</a></li>
+        <li><a href="#gallery" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">GALLERY</a></li>
       </ul>
-      <a href="${waUrl}" target="_blank" style="background:${primaryColor};color:#fff;padding:9px 22px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;">${esc(ctaText)} →</a>
+      <a href="${waUrl}" target="_blank" class="nav-cta" style="background:${primaryColor};color:#fff;padding:9px 22px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">${esc(ctaText)} →</a>
     </div>
   </nav>`;
 
   if (layoutVariant === "C") return `
-  <nav style="background:${darkColor};border-bottom:1px solid rgba(255,255,255,0.1);padding:0 40px;position:sticky;top:0;z-index:999;">
-    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;">
-      <a href="#" style="font-family:var(--font-display);font-size:22px;font-weight:900;color:#fff;text-decoration:none;">${esc(businessName)}</a>
-      <div style="display:flex;align-items:center;gap:28px;">
-        <a href="#" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px;font-weight:600;">Home</a>
-        <a href="#content" style="color:#fff;text-decoration:none;font-size:14px;font-weight:700;border-bottom:2px solid ${primaryColor};padding-bottom:2px;">Menu</a>
-        <a href="#gallery" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px;font-weight:600;">Gallery</a>
-        <a href="${waUrl}" target="_blank" style="background:${primaryColor};color:#fff;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;">${esc(ctaText)}</a>
-      </div>
+  <nav class="site-nav" style="position:sticky;top:0;z-index:999;width:100%;background:rgba(18,18,18,0.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.1);box-shadow:0 4px 20px rgba(0,0,0,0.25);">
+    <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:22px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
+      <ul class="nav-links-desktop" style="display:flex;gap:28px;list-style:none;margin:0;padding:0;">
+        <li><a href="#" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;">Home</a></li>
+        <li><a href="#content" style="color:#fff;text-decoration:none;font-size:14px;font-weight:700;border-bottom:2px solid ${primaryColor};padding-bottom:2px;">Menu</a></li>
+        <li><a href="#gallery" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;">Gallery</a></li>
+      </ul>
+      <a href="${waUrl}" target="_blank" class="nav-cta" style="background:${primaryColor};color:#fff;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;">${esc(ctaText)}</a>
     </div>
   </nav>`;
 
   return `
-  <nav style="background:${primaryColor};position:sticky;top:0;z-index:999;">
-    <div style="max-width:1200px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;">
-      <ul style="display:flex;gap:20px;list-style:none;margin:0;padding:0;flex:1;">
+  <nav class="site-nav" style="position:sticky;top:0;z-index:999;background:${primaryColor};width:100%;box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+    <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <ul class="nav-links-desktop" style="display:flex;gap:20px;list-style:none;margin:0;padding:0;flex:1;">
         <li><a href="#" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;">Home</a></li>
         <li><a href="#content" style="color:#fff;text-decoration:none;font-size:13px;font-weight:900;text-decoration:underline;text-underline-offset:3px;">Menu</a></li>
       </ul>
-      <a href="#" style="font-family:var(--font-display);font-size:18px;font-weight:900;color:#fff;text-decoration:none;flex:1;text-align:center;">${esc(businessName)}</a>
+      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:18px;font-weight:900;color:#fff;text-decoration:none;flex:1;text-align:center;">${esc(businessName)}</a>
       <div style="display:flex;gap:20px;align-items:center;flex:1;justify-content:flex-end;">
-        <a href="#gallery" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;">Gallery</a>
-        <a href="${waUrl}" target="_blank" style="background:#fff;color:${primaryColor};padding:8px 18px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;">${esc(ctaText)}</a>
+        <a href="#gallery" class="nav-links-desktop" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;">Gallery</a>
+        <a href="${waUrl}" target="_blank" class="nav-cta" style="background:#fff;color:${primaryColor};padding:8px 18px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;">${esc(ctaText)}</a>
       </div>
     </div>
   </nav>`;
@@ -144,9 +144,16 @@ function getPageShell(title: string, spec: any, content: string, waUrl: string, 
     }
     *, *::before, *::after { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { margin: 0; padding: 0; font-family: var(--font-body); background: ${tokens.canvasColor}; color: ${tokens.darkColor}; }
+    body { margin: 0; padding: 0; font-family: var(--font-body); background: ${tokens.canvasColor}; color: ${tokens.darkColor}; overflow-x: hidden; }
     img { max-width: 100%; display: block; }
     a { color: inherit; }
+
+    @media (max-width: 768px) {
+      .site-nav-inner { padding: 12px 16px !important; }
+      .nav-links-desktop { display: none !important; }
+      .brand-name { font-size: 18px !important; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .nav-cta { padding: 8px 14px !important; font-size: 12px !important; }
+    }
   </style>
 </head>
 <body>

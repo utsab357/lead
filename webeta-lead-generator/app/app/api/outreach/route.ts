@@ -85,8 +85,11 @@ FIRST MESSAGE STRUCTURE:
    "🔗 Test your interactive mobile preview here:
    ${previewUrl} (Active for 48 hours)"
 6. Visuals Note: "We have also attached the high-resolution design preview photos below."
-7. Low-friction Ask: "No obligation or cost at all — take a quick look, and if you'd like to activate it on your official domain, feel free to reply right here!"
-8. Professional Sign-off:
+7. Prototype Note (MANDATORY IN BOLD):
+   Always include this reassuring note in WhatsApp bold syntax:
+   "*(Note: This is an initial sample concept — your final official website will be fully customized with your exact menu/pricing, custom photos, official domain & an even more elegant design!)*"
+8. Low-friction Ask: "No obligation or cost at all — take a quick look, and if you'd like to activate it on your official domain, feel free to reply right here!"
+9. Professional Sign-off:
    "Best regards,
    Team Webeta
    Building Websites. Growing Businesses. | webeta.site"
