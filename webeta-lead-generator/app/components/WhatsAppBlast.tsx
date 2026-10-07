@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import type { RankedLead, OutreachResult } from "@/lib/types";
+import { toWhatsAppNumber, normalizePhone10 } from "@/lib/phoneUtils";
 
 interface WaConfig {
   evolutionApiUrl: string;
@@ -103,16 +104,17 @@ function formatEstimatedFinish(remainingCount: number, avgDelayMs: number): stri
 }
 
 function cleanPhone(raw: string): string {
-  const digits = raw.replace(/\D/g, "");
-  if (digits.startsWith("91") && digits.length === 12) return digits;
-  if (digits.length === 10) return `91${digits}`;
-  return digits;
+  return toWhatsAppNumber(raw);
 }
 
 function prepareText(raw: string): string {
   if (!raw) return "";
   let clean = raw;
-  clean = clean.replace(/https?:\/\/[^\s)]+/gi, "");
+  // Clean corrupt unicode replacement character
+  clean = clean.replace(/\uFFFD/g, "");
+  clean = clean.replace(/👇|👉/g, ":");
+  // Only strip agency website links so client's interactive preview URL is preserved!
+  clean = clean.replace(/\(?\s*https?:\/\/(?:www\.)?webeta\.site[^\s)]*\s*\)?/gi, "");
   clean = clean.replace(/or explore our work at\s*/gi, "");
   clean = clean.replace(/visit us at\s*/gi, "");
   clean = clean.replace(/\(\s*\)/g, "").replace(/\s{2,}/g, " ").trim();
@@ -267,11 +269,12 @@ export function WhatsAppBlast({
     };
   }, [blastState.status, blastState.nextSendAt]);
 
-  // All leads with valid WhatsApp numbers and drafts
+  // All leads with valid WhatsApp numbers/phone and drafts
   const eligibleLeads = useMemo(() => {
-    return ranked.filter(
-      (l) => outreachResults[l.id] && l.whatsapp && l.whatsapp.replace(/\D/g, "").length >= 10
-    );
+    return ranked.filter((l) => {
+      const p = l.whatsapp || l.phone;
+      return outreachResults[l.id] && Boolean(normalizePhone10(p));
+    });
   }, [ranked, outreachResults]);
 
   // Auto-select all eligible leads by default on first load
@@ -313,15 +316,16 @@ export function WhatsAppBlast({
   const displayedLeads = useMemo(() => {
     return eligibleLeads.filter((l) => {
       const q = searchQuery.toLowerCase();
+      const phoneStr = (l.whatsapp || l.phone || "").toLowerCase();
       const matchesSearch =
         !q ||
         l.name.toLowerCase().includes(q) ||
-        (l.whatsapp && l.whatsapp.includes(q)) ||
+        phoneStr.includes(q) ||
         l.category.toLowerCase().includes(q);
 
       if (!matchesSearch) return false;
 
-      const normPhone = cleanPhone(l.whatsapp || "").slice(-10);
+      const normPhone = cleanPhone(l.whatsapp || l.phone || "").slice(-10);
       const log = logMap.get(normPhone);
 
       if (statusFilter === "selected") return selectedLeadIds.has(l.id);
@@ -334,9 +338,9 @@ export function WhatsAppBlast({
 
   // Metrics
   const totalInQueue = blastState.total > 0 ? blastState.total : selectedLeadIds.size;
-  const sentCount = blastState.done;
+  const sentCount = Math.max(0, blastState.done - blastState.failed);
   const failedCount = blastState.failed;
-  const remainingCount = Math.max(0, totalInQueue - sentCount);
+  const remainingCount = Math.max(0, totalInQueue - blastState.done);
   const pct = totalInQueue > 0 ? Math.round((sentCount / totalInQueue) * 100) : 0;
   const avgDelayMs = (config.delayMinMs + config.delayMaxMs) / 2;
   const estimatedFinish = formatEstimatedFinish(remainingCount, avgDelayMs);
@@ -373,7 +377,7 @@ export function WhatsAppBlast({
       .map((l) => ({
         id: l.id,
         name: l.name,
-        phone: cleanPhone(l.whatsapp!),
+        phone: cleanPhone((l.whatsapp || l.phone)!),
         message: prepareText(outreachResults[l.id].first),
         imageUrl: previews[l.id]?.previewUrl ?? undefined,
         imageUrls: (previews[l.id]?.allUrls && previews[l.id]!.allUrls!.length > 0)
@@ -422,7 +426,8 @@ export function WhatsAppBlast({
 
   // Send single test message
   async function sendTestMessage(lead: RankedLead) {
-    if (!lead.whatsapp) return;
+    const targetPhone = lead.whatsapp || lead.phone;
+    if (!targetPhone) return;
     setTestingLeadId(lead.id);
     try {
       const res = await fetch("/api/whatsapp-blast/test-send", {
@@ -430,7 +435,7 @@ export function WhatsAppBlast({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: lead.name,
-          phone: cleanPhone(lead.whatsapp),
+          phone: cleanPhone(targetPhone),
           message: prepareText(outreachResults[lead.id]?.first || ""),
           imageUrl: previews[lead.id]?.previewUrl,
           imageUrls: (previews[lead.id]?.allUrls && previews[lead.id]!.allUrls!.length > 0)
@@ -944,7 +949,7 @@ export function WhatsAppBlast({
               ) : (
                 displayedLeads.map((lead) => {
                   const isSelected = selectedLeadIds.has(lead.id);
-                  const normPhone = cleanPhone(lead.whatsapp || "").slice(-10);
+                  const normPhone = cleanPhone(lead.whatsapp || lead.phone || "").slice(-10);
                   const log = logMap.get(normPhone);
                   const hasPreview = previews[lead.id]?.exists;
                   const draft = outreachResults[lead.id]?.first;
@@ -976,7 +981,7 @@ export function WhatsAppBlast({
                       </td>
 
                       <td className="px-3 py-3 font-mono text-foreground">
-                        {lead.whatsapp}
+                        {lead.whatsapp || lead.phone}
                       </td>
 
                       <td className="px-3 py-3">

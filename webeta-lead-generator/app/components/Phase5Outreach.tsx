@@ -36,6 +36,7 @@ import {
 import type { RankedLead, OutreachChannel, OutreachLanguage, OutreachResult } from "@/lib/types";
 import { toast } from "sonner";
 import { WhatsAppBlast } from "./WhatsAppBlast";
+import { toWhatsAppNumber, cleanPhone, normalizePhone10 } from "@/lib/phoneUtils";
 
 export function Phase5Outreach({
   ranked,
@@ -142,12 +143,16 @@ export function Phase5Outreach({
             const hash = l.id.slice(-8);
             const cleanName = l.name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 15);
             const matches = d.files.filter((f: string) =>
-              f.endsWith(".png") && (f.includes(hash) || f.includes(l.id) || (cleanName && f.toLowerCase().includes(cleanName)))
+              f.endsWith(".png") && (
+                f.includes(l.id) || 
+                (cleanName && cleanName.length >= 4 && f.toLowerCase().includes(cleanName) && f.includes(hash))
+              )
             );
             if (matches.length > 0) {
+              const isSub = (f: string) => /_(menu|gallery|services|rooms|programs|portfolio|products|dining|facilities|treatments|events)/i.test(f);
               matches.sort((a: string, b: string) => {
-                const isHomeA = !a.includes("_menu") && !a.includes("_gallery") && !a.includes("_services") && !a.includes("_rooms") && !a.includes("_programs");
-                const isHomeB = !b.includes("_menu") && !b.includes("_gallery") && !b.includes("_services") && !b.includes("_rooms") && !b.includes("_programs");
+                const isHomeA = !isSub(a);
+                const isHomeB = !isSub(b);
                 if (isHomeA && !isHomeB) return -1;
                 if (!isHomeA && isHomeB) return 1;
                 return a.localeCompare(b);
@@ -196,9 +201,9 @@ export function Phase5Outreach({
     clean = clean.replace(/👇|👉/g, ":");
 
     if (type === "first") {
-      // In first message, remove website links so WhatsApp does not show the agency logo card
-      // instead of the client's own website preview image!
-      clean = clean.replace(/\(?\s*https?:\/\/[^\s)]+\s*\)?/gi, "");
+      // In first message, only strip agency promotional site links (webeta.site) so WhatsApp does not show the agency logo card,
+      // while PRESERVING the customer's interactive website preview link (e.g. html-previews)!
+      clean = clean.replace(/\(?\s*https?:\/\/(?:www\.)?webeta\.site[^\s)]*\s*\)?/gi, "");
       clean = clean.replace(/or explore our work at\s*/gi, "");
       clean = clean.replace(/visit us at\s*/gi, "");
     } else {
@@ -232,11 +237,11 @@ export function Phase5Outreach({
   if (ranked.length === 0) {
     return (
       <PhaseShell
-        title="Phase 5 — Outreach"
+        title="Phase 6 — Outreach Studio"
         subtitle="AI writes personalized first message + day-3 follow-up for each lead."
         onPrev={onPrev}
         onNext={onNext}
-        nextLabel="Build site"
+        nextLabel="Pipeline CRM"
       >
         <IncompleteState
           title="No ranked leads yet"
@@ -358,8 +363,13 @@ export function Phase5Outreach({
     const rawText = type === "first" ? message : followUp;
     const textToSend = prepareOutreachText(rawText, type);
 
-    if (channel === "whatsapp" && activeLead.whatsapp) {
-      const num = activeLead.whatsapp.replace(/\D/g, "");
+    const targetPhone = activeLead.whatsapp || activeLead.phone;
+    if (channel === "whatsapp" && targetPhone) {
+      const num = toWhatsAppNumber(targetPhone);
+      if (!num) {
+        toast.error("Invalid phone number format for WhatsApp");
+        return;
+      }
 
       // For first message only: copy client mockup to clipboard AND auto-download
       if (type === "first" && previews[activeLead.id]?.exists && previews[activeLead.id]?.previewUrl) {
@@ -414,8 +424,8 @@ export function Phase5Outreach({
             id: "whatsapp",
             label: "WhatsApp",
             icon: MessageCircle,
-            enabled: !!activeLead.whatsapp,
-            note: activeLead.whatsapp ? "Available" : "No WhatsApp",
+            enabled: !!(activeLead.whatsapp || activeLead.phone),
+            note: (activeLead.whatsapp || activeLead.phone) ? "Available" : "No phone",
           },
           {
             id: "email",
@@ -445,16 +455,16 @@ export function Phase5Outreach({
   });
 
   const readyCount = ranked.filter(
-    (l) => outreachResults[l.id] && l.whatsapp && l.whatsapp.replace(/\D/g, "").length >= 10
+    (l) => outreachResults[l.id] && Boolean(normalizePhone10(l.whatsapp || l.phone))
   ).length;
 
   return (
     <PhaseShell
-      title="Phase 5 — Outreach"
+      title="Phase 6 — Outreach Studio"
       subtitle={`AI writes a personalized first touch + day-3 follow-up for each lead. ${doneCount}/${ranked.length} drafted.`}
       onPrev={onPrev}
       onNext={onNext}
-      nextLabel="Build site"
+      nextLabel="Pipeline CRM"
       nextDisabled={doneCount === 0}
     >
       {/* ── TOP MODE SWITCHER TABS ── */}
@@ -816,7 +826,7 @@ export function Phase5Outreach({
                     <div className="flex items-center gap-1.5 flex-wrap">
                       {activeLead.phone && (
                         <a
-                          href={`tel:${activeLead.phone}`}
+                          href={`tel:${cleanPhone(activeLead.phone)}`}
                           className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors"
                         >
                           <Phone className="h-3 w-3" />

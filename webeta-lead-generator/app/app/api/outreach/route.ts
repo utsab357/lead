@@ -83,7 +83,7 @@ FIRST MESSAGE STRUCTURE:
 4. The Solution: "To help you attract direct walk-ins and direct customer orders, Team Webeta put together a ${pageDesc}."
 5. Live Link with Expiry Note:
    "🔗 Test your interactive mobile preview here:
-   ${previewUrl} (Active for 48 hours)"
+   ${previewUrl} (Active for 72 hours)"
 6. Visuals Note: "We have also attached the high-resolution design preview photos below."
 7. Prototype Note (MANDATORY IN BOLD):
    Always include this reassuring note in WhatsApp bold syntax:
@@ -194,7 +194,7 @@ Many customers searching for ${lead.category || "great spots"} in ${lead.city ||
 To help you get direct customer inquiries and walk-ins, we designed a ${pageDesc}.
 
 🔗 Test your interactive mobile preview here:
-${previewUrl} (Active for 48 hours)
+${previewUrl} (Active for 72 hours)
 
 We've also attached your high-resolution design preview photos below.
 

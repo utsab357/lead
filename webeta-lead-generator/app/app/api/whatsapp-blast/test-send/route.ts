@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { readConfig } from "../settings/route";
+import fs from "node:fs";
+import path from "node:path";
 
 export const maxDuration = 30;
 
@@ -86,17 +88,36 @@ export async function POST(req: Request) {
         const imgUrl = imagesToSend[imgIdx];
         if (!imgUrl) continue;
 
-        // Resolve localhost to Render production domain
-        let base = appBaseUrl || "";
-        if (!base || base.includes("localhost") || base.includes("127.0.0.1")) {
-          base = "https://webeta-lead-generator.onrender.com";
-        }
-        let absoluteImageUrl = imgUrl.startsWith("http")
-          ? imgUrl
-          : `${base.replace(/\/$/, "")}/${imgUrl.replace(/^\//, "")}`;
+        // Resolve media payload: If local file exists, send Base64 directly so Evolution API
+        // doesn't fail with 404 trying to download from a Render server that hasn't received the file.
+        let mediaPayload = "";
+        const cleanRel = imgUrl.startsWith("/") ? imgUrl.slice(1) : imgUrl;
+        const isSafeImage = /\.(png|jpe?g|webp|svg)$/i.test(cleanRel) && !cleanRel.includes("..");
+        const publicDir = path.resolve(process.cwd(), "public");
+        const localFilePath = path.join(process.cwd(), "public", cleanRel);
+        const resolvedPath = path.resolve(localFilePath);
 
-        if (absoluteImageUrl.includes("localhost") || absoluteImageUrl.includes("127.0.0.1")) {
-          absoluteImageUrl = absoluteImageUrl.replace(/http:\/\/(localhost|127\.0\.0\.1):\d+/i, "https://webeta-lead-generator.onrender.com");
+        if (isSafeImage && resolvedPath.startsWith(publicDir) && fs.existsSync(localFilePath)) {
+          try {
+            const fileBuf = fs.readFileSync(localFilePath);
+            mediaPayload = `data:image/png;base64,${fileBuf.toString("base64")}`;
+          } catch (err) {
+            console.warn(`[WhatsApp Test] Could not read local file ${localFilePath} for Base64:`, err);
+          }
+        }
+
+        if (!mediaPayload) {
+          let base = appBaseUrl || "";
+          if (!base || base.includes("localhost") || base.includes("127.0.0.1")) {
+            base = "https://webeta-lead-generator.onrender.com";
+          }
+          mediaPayload = imgUrl.startsWith("http")
+            ? imgUrl
+            : `${base.replace(/\/$/, "")}/${imgUrl.replace(/^\//, "")}`;
+
+          if (mediaPayload.includes("localhost") || mediaPayload.includes("127.0.0.1")) {
+            mediaPayload = mediaPayload.replace(/http:\/\/(localhost|127\.0\.0\.1):\d+/i, "https://webeta-lead-generator.onrender.com");
+          }
         }
 
         try {
@@ -111,7 +132,7 @@ export async function POST(req: Request) {
               mediatype: "image",
               mimetype: "image/png",
               caption: "",
-              media: absoluteImageUrl,
+              media: mediaPayload,
               fileName: `website-preview-${imgIdx + 1}.png`,
             }),
           });

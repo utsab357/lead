@@ -17,6 +17,7 @@
 import type { RankedLead, BusinessStrategy } from "./types";
 import { buildWebsiteSpec, getCategoryGalleryPhotos } from "./websiteSpec";
 import { buildDeterministicBusinessStrategy } from "./businessStrategy";
+import { createWhatsAppUrl, cleanPhone } from "./phoneUtils";
 
 export interface TemplateResult {
   ok: boolean;
@@ -37,9 +38,7 @@ function esc(s: string | null | undefined): string {
 }
 
 function waLink(phone: string, name: string): string {
-  const digits = phone.replace(/\D/g, "");
-  const num = digits.startsWith("91") ? digits : "91" + digits.replace(/^0/, "");
-  return `https://wa.me/${num}?text=Hello%20${encodeURIComponent(name)}`;
+  return createWhatsAppUrl(phone, name);
 }
 
 function starRating(n: number): string {
@@ -242,6 +241,17 @@ function buildOfferings(spec: any, waUrl: string): string {
   const isFood = /cafe|coffee|restaurant|dining|food|pizza|burger|bistro|dhaba|eatery/i.test(category);
   const sectionTitle = isFood ? "Signature Dishes & Specialties" : "Our Services & Offerings";
   const sectionTag = isFood ? "OUR MENU" : "OUR SERVICES";
+  const offeringsCta = isFood
+    ? "Order on WhatsApp →"
+    : /clinic|doctor|dental|hospital|physio|eye/i.test(category)
+    ? "Book Appointment →"
+    : /gym|fitness|crossfit|yoga/i.test(category)
+    ? "Join on WhatsApp →"
+    : /hotel|resort|lodge|homestay/i.test(category)
+    ? "Book on WhatsApp →"
+    : /salon|spa|beauty|parlour|grooming/i.test(category)
+    ? "Book Service →"
+    : "Contact on WhatsApp →";
 
   const itemsHTML = offerings.length > 0
     ? offerings.map((o: any, i: number) => {
@@ -277,7 +287,7 @@ function buildOfferings(spec: any, waUrl: string): string {
           <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:10px;">${sectionTag}</span>
           <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:${tokens.darkColor};margin:0;line-height:1.1;">${sectionTitle}</h2>
         </div>
-        <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:12px 28px;border-radius:999px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;">Order on WhatsApp →</a>
+        <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:12px 28px;border-radius:999px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;">${offeringsCta}</a>
       </div>
       <div class="offerings-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;">
         ${itemsHTML}
@@ -660,7 +670,8 @@ export async function buildTemplateHTML(lead: RankedLead, strategy?: BusinessStr
 
     const { tokens, businessName, phone } = spec;
     const waUrl = spec.whatsapp || waLink(phone || "", businessName);
-    const telLink = phone ? `tel:${phone.replace(/\s/g, "")}` : "#";
+    const tel = cleanPhone(phone);
+    const telLink = tel ? `tel:${tel}` : "#";
     const googleFontsUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(tokens.displayFont)}:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=${encodeURIComponent(tokens.bodyFont)}:wght@400;500;600;700&display=swap`;
 
     // Layout variant from hash (A/B/C/D)
@@ -765,7 +776,7 @@ export async function buildTemplateHTML(lead: RankedLead, strategy?: BusinessStr
   </style>
 </head>
 <body>
-<div id="webeta-preview-banner" class="webeta-preview-banner" style="background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 11px 20px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.12); position: sticky; top: 0; z-index: 99999; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+<div id="webeta-preview-banner" class="webeta-preview-banner" style="background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 11px 20px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.12); position: relative; z-index: 99; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
   <div class="webeta-banner-left" style="display: flex; align-items: center; gap: 10px; min-width: 0;">
     <img src="/webeta-logo.jpg" alt="Webeta" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(255,255,255,0.25); flex-shrink: 0;" />
     <span class="webeta-banner-title" style="letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">⚡ Private Concept for <strong style="color: #fff; font-weight: 700;">${esc(businessName)}</strong> — Crafted by <strong style="color: #38bdf8;">Webeta</strong></span>

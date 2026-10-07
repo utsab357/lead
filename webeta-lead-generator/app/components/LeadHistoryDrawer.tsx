@@ -11,6 +11,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }>
   demo_sent:      { bg: "bg-purple-50",  text: "text-purple-600", label: "Demo Sent" },
   meeting_set:    { bg: "bg-indigo-50",  text: "text-indigo-600", label: "Meeting Set" },
   closed:         { bg: "bg-green-50",   text: "text-green-700",  label: "Closed ✓" },
+  completed:      { bg: "bg-green-50",   text: "text-green-700",  label: "Completed ✓" },
   not_interested: { bg: "bg-red-50",     text: "text-red-600",    label: "Not Interested" },
   no_response:    { bg: "bg-gray-50",    text: "text-gray-500",   label: "No Response" },
 };

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { ScrapeSession } from "@/lib/types";
+import { normalizePhone10 } from "@/lib/phoneUtils";
 
 const SESSIONS_DIR = path.join(process.cwd(), "data", "sessions");
 
@@ -45,14 +46,8 @@ export async function GET(req: Request) {
           const raw_phone = lead.phone ?? lead.whatsapp ?? "";
           if (!raw_phone) continue;
 
-          const digits = raw_phone.replace(/\D/g, "");
-          // Normalize: strip leading 91 + optional 0
-          let normalized = digits;
-          if (normalized.startsWith("910") && normalized.length === 12) normalized = normalized.slice(3);
-          else if (normalized.startsWith("91") && normalized.length === 12) normalized = normalized.slice(2);
-          else if (normalized.startsWith("0") && normalized.length === 11) normalized = normalized.slice(1);
-          // Keep only 10-digit numbers
-          if (normalized.length !== 10) continue;
+          const normalized = normalizePhone10(raw_phone);
+          if (!normalized) continue;
 
           index.push({
             phone: normalized,

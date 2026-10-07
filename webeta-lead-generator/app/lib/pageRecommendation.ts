@@ -52,7 +52,7 @@ export function getIntelligentPagesForLead(
     // If large facility with banquets / events / catering
     if (/banquet|catering|party|event|celebration|rooftop|private dining/i.test(combinedContext)) {
       pages.push({
-        id: "events",
+        id: "services",
         label: "🎉 Banquets & Events",
         reason: "Private dining, banquet hall bookings, and group party packages"
       });
@@ -92,7 +92,7 @@ export function getIntelligentPagesForLead(
     // Luxury Resort / Full Hotel -> Dining, Amenities, Gallery
     if (isLuxuryOrLarge || /pool|dining|restaurant|spa|conference|wedding/i.test(combinedContext)) {
       pages.push({
-        id: "dining",
+        id: "services",
         label: "🍽️ Dining & Amenities",
         reason: "In-house restaurant, swimming pool, and guest facilities"
       });
@@ -130,19 +130,12 @@ export function getIntelligentPagesForLead(
       reason: "Medical departments, specialist profiles, and OPD hours"
     });
 
-    if (/diagnostic|pathology|scan|x-ray|blood|lab|icu|emergency/i.test(combinedContext) || isBigHospital) {
-      pages.push({
-        id: "facilities",
-        label: "🔬 Diagnostic & ICU Facilities",
-        reason: "Advanced equipment, 24/7 emergency care, and diagnostic lab tests"
-      });
-    }
-
-    if (isHighVisual || isBigHospital) {
+    const hasPhotos = photosCount >= 3 || (lead.photoUrls && lead.photoUrls.length >= 3);
+    if (hasPhotos && (isHighVisual || isBigHospital || /diagnostic|pathology|scan|x-ray|blood|lab|icu|emergency/i.test(combinedContext))) {
       pages.push({
         id: "gallery",
         label: "📸 Facility Tour",
-        reason: "Clean patient rooms, operation theaters, and reception"
+        reason: "Patient rooms, diagnostic equipment, and reception"
       });
     }
 

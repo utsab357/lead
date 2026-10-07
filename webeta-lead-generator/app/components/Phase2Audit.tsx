@@ -97,6 +97,7 @@ export function Phase2Audit({
 
     setRunning(true);
     const errors: string[] = [];
+    const batchRetries: Record<number, number> = {};
     let localAudits = { ...audits };
 
     setProgress({ done: 0, total: targets.length, batchNum: 0, totalBatches: batches.length, status: "running", statusMsg: "Starting…", errors: [] });
@@ -129,9 +130,14 @@ export function Phase2Audit({
             errMsg.toLowerCase().includes("wait") ||
             errMsg.includes("⏳");
 
-          if (isRateMsg) {
-            errors.push(`Batch ${batchNum}: rate limited — auto-retrying in 65s…`);
-            setProgress(p => ({ ...p!, status: "waiting", statusMsg: "Rate limited — waiting 65s for reset…", errors: [...errors] }));
+          const retryCount = batchRetries[bi] || 0;
+          if (isRateMsg && retryCount < 2) {
+            batchRetries[bi] = retryCount + 1;
+            setProgress(p => ({
+              ...p!,
+              status: "waiting",
+              statusMsg: `Rate limited on batch ${batchNum} — waiting 65s for reset (attempt ${retryCount + 1}/2)…`,
+            }));
             await new Promise(r => setTimeout(r, 65000));
             bi--; // retry this batch
             continue;

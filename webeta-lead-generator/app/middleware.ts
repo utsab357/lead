@@ -29,7 +29,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 3. Unauthorized — redirect to login page
+  // 3. Unauthorized — return 401 JSON for API requests, redirect to login page for web pages
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+
   const loginUrl = new URL("/login", request.url);
   return NextResponse.redirect(loginUrl);
 }

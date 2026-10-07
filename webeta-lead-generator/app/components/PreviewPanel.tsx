@@ -198,7 +198,10 @@ export function PreviewPanel({
         const next: Record<string, PreviewStatus> = {};
         ranked.forEach(lead => {
           const hash = lead.id.slice(-8);
-          const match = d.files.find((f: string) => f.includes(hash));
+          const cleanName = lead.name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 15);
+          const isSubpageHtml = (f: string) => /[_-](menu|gallery|services|rooms|programs|portfolio|products|dining|facilities|treatments|events)\.html$/i.test(f);
+          const candidateFiles = d.files.filter((f: string) => f.includes(lead.id) || (f.includes(hash) && f.toLowerCase().includes(cleanName)));
+          const match = candidateFiles.find((f: string) => !isSubpageHtml(f)) || candidateFiles[0];
           if (match) {
             const status: PreviewStatus = { state: "done", htmlUrl: `/html-previews/${match}`, generationMethod: "html-screenshot", cached: true };
             next[lead.id] = status;
@@ -215,10 +218,15 @@ export function PreviewPanel({
       .then(d => {
         if (!d.files || !Array.isArray(d.files)) return;
         const next: Record<string, string> = {};
+        const nextMulti: Record<string, Record<string, string>> = {};
+        const isSubpage = (f: string) => /_(menu|gallery|services|rooms|programs|portfolio|products|dining|facilities|treatments|events)(_mobile)?\.png$/i.test(f);
+
         ranked.forEach(lead => {
           const hash = lead.id.slice(-8);
-          const mobileMatch = d.files.find((f: string) => f.endsWith(".png") && f.includes(hash) && f.includes("_mobile"));
-          const desktopMatch = d.files.find((f: string) => f.endsWith(".png") && f.includes(hash) && !f.includes("_mobile") && !f.includes("_menu") && !f.includes("_gallery"));
+          const cleanName = lead.name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 15);
+          const leadMatch = (f: string) => f.includes(lead.id) || (f.includes(hash) && f.toLowerCase().includes(cleanName));
+          const mobileMatch = d.files.find((f: string) => f.endsWith(".png") && leadMatch(f) && f.includes("_mobile") && !isSubpage(f));
+          const desktopMatch = d.files.find((f: string) => f.endsWith(".png") && leadMatch(f) && !f.includes("_mobile") && !isSubpage(f));
           if (mobileMatch) next[`${lead.id}_mobile`] = `/previews/${mobileMatch}`;
           if (desktopMatch) {
             next[`${lead.id}_desktop`] = `/previews/${desktopMatch}`;
@@ -226,8 +234,22 @@ export function PreviewPanel({
           } else if (mobileMatch && !next[lead.id]) {
             next[lead.id] = `/previews/${mobileMatch}`;
           }
+
+          // Restore multi-page screenshots from cache for this lead
+          d.files.forEach((f: string) => {
+            if (!f.endsWith(".png") || !leadMatch(f)) return;
+            const m = f.match(/_([a-z]+)(_mobile)?\.png$/i);
+            if (m && m[1] !== "mobile") {
+              const page = m[1].toLowerCase();
+              const isMob = !!m[2];
+              const key = `${page}_${isMob ? "mobile" : "desktop"}`;
+              if (!nextMulti[lead.id]) nextMulti[lead.id] = {};
+              nextMulti[lead.id][key] = `/previews/${f}`;
+            }
+          });
         });
         setScreenshots(prev => ({ ...prev, ...next }));
+        setMultiPageShots(prev => ({ ...prev, ...nextMulti }));
         // Load verifications for all found screenshots in parallel
         ranked.filter(l => next[l.id]).forEach(lead => {
           fetch(`/api/screenshot-preview?leadId=${lead.id}&name=${encodeURIComponent(lead.name)}`)
@@ -716,9 +738,9 @@ export function PreviewPanel({
                   {activeLead && (() => {
                     const isMobile = deviceFrame === "mobile";
                     const _tab = activePageTab[activeLead.id] || "home";
-                    const _mobileSuffix = isMobile ? "_mobile" : "";
-                    const _shotUrl = _tab !== "home" && multiPageShots[activeLead.id]?.[`${_tab}${_mobileSuffix}`]
-                      ? multiPageShots[activeLead.id][`${_tab}${_mobileSuffix}`]
+                    const _subKey = `${_tab.split("_")[0]}_${isMobile ? "mobile" : "desktop"}`;
+                    const _shotUrl = _tab !== "home" && multiPageShots[activeLead.id]?.[_subKey]
+                      ? multiPageShots[activeLead.id][_subKey]
                       : isMobile
                         ? screenshots[`${activeLead.id}_mobile`]
                         : (screenshots[`${activeLead.id}_desktop`] || screenshots[activeLead.id]);

@@ -15,6 +15,7 @@ import type { RankedLead, ConversionPoints, OutreachResult, BuildPromptResult, L
 import { toast } from "sonner";
 import { LeadHistoryDrawer } from "./LeadHistoryDrawer";
 import type { LeadHistoryEntry } from "./LeadHistoryDrawer";
+import { normalizePhone10, toWhatsAppNumber, cleanPhone } from "@/lib/phoneUtils";
 
 // ─── Status config ──────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<LeadStatus, { label: string; color: string; bg: string; icon: typeof Phone }> = {
@@ -118,12 +119,11 @@ export function Phase7Export({
   }, [sessionId]);
 
   function normPhone(raw: string): string {
-    const d = raw.replace(/\D/g, "");
-    let n = d;
-    if (n.startsWith("910") && n.length === 12) n = n.slice(3);
-    else if (n.startsWith("91") && n.length === 12) n = n.slice(2);
-    else if (n.startsWith("0") && n.length === 11) n = n.slice(1);
-    return n.length === 10 ? n : "";
+    return normalizePhone10(raw);
+  }
+
+  function toWaNumber(raw: string): string {
+    return toWhatsAppNumber(raw);
   }
 
   // ── helpers ────────────────────────────────────────────────────────────────
@@ -175,7 +175,9 @@ export function Phase7Export({
   const anyQualityFilter = fNoSite || fPhone || !!fRating || !!fReviews;
 
   function trigger(content: string, filename: string, mime: string) {
-    const blob = new Blob([content], { type: mime });
+    const hasBom = content.startsWith("\uFEFF");
+    const bom = (mime.includes("csv") && !hasBom) ? "\uFEFF" : "";
+    const blob = new Blob([bom + content], { type: mime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url; a.download = filename; a.click();
@@ -190,15 +192,28 @@ export function Phase7Export({
     if (!exportList.length) { toast.error("No leads to export"); return; }
     const headers = [
       "Rank","Name","Category","Address","City","Phone","WhatsApp","Website",
+      "Concept Preview Link",
       "Maps Link","Rating","Reviews","Score","Has Website","Status","Notes",
       "Biggest Gap","Est. Lost ₹/mo","Conv. Points","Outreach Drafted","Site Prompt Ready",
     ];
+    const asText = (v: string) => {
+      if (!v) return "";
+      const cleaned = String(v).replace(/["\r\n]/g, "").trim();
+      return cleaned ? `="${cleaned}"` : "";
+    };
     const rows = exportList.map((lead, i) => {
       const conv = conversions[lead.id];
       const status = leadStatuses[lead.id] ?? "new";
+      const namePart = (lead.name || "business").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 30);
+      const cityPart = (lead.city || "city").split(",")[0].toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 15);
+      const hash = (lead.id || "").slice(-8);
+      const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : "https://webeta-lead-generator.onrender.com";
+      const previewUrl = `${origin}/html-previews/${namePart}_${cityPart}_${hash}.html`;
+
       return [
         String(i + 1), lead.name, lead.category, lead.address, lead.city,
-        lead.phone || "", lead.whatsapp || lead.phone || "", lead.website || "",
+        asText(lead.phone || ""), asText(lead.whatsapp || lead.phone || ""), lead.website || "",
+        previewUrl,
         lead.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.name+" "+lead.city)}`,
         String(lead.rating || ""), String(lead.reviewsCount || ""), String(lead.score),
         lead.website ? "Yes" : "No",
@@ -211,7 +226,10 @@ export function Phase7Export({
       ];
     });
     const csv = [headers, ...rows]
-      .map(row => row.map(c => `"${String(c).replace(/"/g,'""')}"`).join(","))
+      .map(row => row.map((c, i) => {
+        if (i === 5 || i === 6) return c; // keep asText ="..." format
+        return `"${String(c).replace(/"/g,'""')}"`;
+      }).join(","))
       .join("\n");
     trigger(csv, `leads-${today()}.csv`, "text/csv;charset=utf-8;");
     toast.success(`Exported ${exportList.length} leads to CSV`);
@@ -233,7 +251,11 @@ export function Phase7Export({
       "Remarks",
     ];
     // Helper: force Excel to show phone as text (prevents 9.2E+11 scientific notation)
-    const asText = (v: string) => v ? `="${v}"` : "";
+    const asText = (v: string) => {
+      if (!v) return "";
+      const cleaned = String(v).replace(/["\r\n]/g, "").trim();
+      return cleaned ? `="${cleaned}"` : "";
+    };
     const rows = completed.map(lead => [
       lead.name,
       asText(lead.phone ?? ""),
@@ -276,7 +298,7 @@ export function Phase7Export({
 
     const cards = completed.map((lead, i) => {
       const note = leadNotes[lead.id] ?? "";
-      const waNum = (lead.whatsapp ?? lead.phone ?? "").replace(/\D/g, "");
+      const waNum = toWaNumber(lead.whatsapp ?? lead.phone ?? "");
       const d = clientDetails[lead.id] ?? {};
       const dealFields: { label: string; value: string }[] = [
         { label: "Client Name",           value: d.clientName       ?? "" },
@@ -306,7 +328,7 @@ export function Phase7Export({
   </div>
   <div class="card-body">
     <div class="info-grid">
-      <div class="info-row"><span class="label">\ud83d\udcde Phone</span><span class="val"><a href="tel:${esc(lead.phone ?? "")}">${esc(lead.phone ?? "\u2014")}</a></span></div>
+      <div class="info-row"><span class="label">📞 Phone</span><span class="val"><a href="tel:${cleanPhone(lead.phone)}">${esc(lead.phone ?? "—")}</a></span></div>
       <div class="info-row"><span class="label">\ud83d\udcac WhatsApp</span><span class="val">${waNum ? `<a href="https://wa.me/${waNum}" target="_blank">${esc(lead.whatsapp ?? lead.phone ?? "")}</a>` : "\u2014"}</span></div>
       <div class="info-row"><span class="label">\ud83d\udccd Maps</span><span class="val">${lead.mapUrl ? `<a href="${esc(lead.mapUrl)}" target="_blank">Open in Google Maps \u2197</a>` : "\u2014"}</span></div>
       <div class="info-row"><span class="label">\ud83c\udfd9\ufe0f City</span><span class="val">${esc(lead.city)}</span></div>
@@ -475,7 +497,7 @@ ${cards}
       const status  = leadStatuses[lead.id] ?? "new";
       const sc      = statusColors[status] ?? "#64748b";
       const sl      = statusLabel[status] ?? status;
-      const waNum   = (lead.whatsapp ?? lead.phone ?? "").replace(/\D/g, "");
+      const waNum   = toWaNumber(lead.whatsapp ?? lead.phone ?? "");
 
       return `
 <details id="l${i}" open>
@@ -934,19 +956,23 @@ ${sections}
                         {/* Contact quick-actions */}
                         <div className="flex flex-wrap gap-2">
                           {lead.phone && (
-                            <a href={`tel:${lead.phone}`} className="inline-flex items-center gap-1.5 text-xs border border-border rounded-full px-3 py-1.5 hover:bg-muted/50 transition-colors">
+                            <a href={`tel:${cleanPhone(lead.phone)}`} className="inline-flex items-center gap-1.5 text-xs border border-border rounded-full px-3 py-1.5 hover:bg-muted/50 transition-colors">
                               <Phone className="h-3 w-3" /> {lead.phone}
                             </a>
                           )}
-                          {(lead.whatsapp || lead.phone) && (
-                            <a
-                              href={`https://wa.me/${(lead.whatsapp ?? lead.phone ?? "").replace(/\D/g,"")}`}
-                              target="_blank" rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs bg-green-50 border border-green-200 text-green-700 rounded-full px-3 py-1.5 hover:bg-green-100 transition-colors"
-                            >
-                              💬 WhatsApp
-                            </a>
-                          )}
+                          {(() => {
+                            const wa = toWaNumber(lead.whatsapp ?? lead.phone ?? "");
+                            if (!wa) return null;
+                            return (
+                              <a
+                                href={`https://wa.me/${wa}`}
+                                target="_blank" rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs bg-green-50 border border-green-200 text-green-700 rounded-full px-3 py-1.5 hover:bg-green-100 transition-colors"
+                              >
+                                💬 WhatsApp
+                              </a>
+                            );
+                          })()}
                           {lead.mapUrl && (
                             <a href={lead.mapUrl} target="_blank" rel="noopener noreferrer"
                               className="inline-flex items-center gap-1.5 text-xs border border-border rounded-full px-3 py-1.5 hover:bg-muted/50 transition-colors">
@@ -985,41 +1011,41 @@ ${sections}
                           </div>
                         )}
 
-                        {/* Phase 5 — compact redirect */}
-                        {outreach ? (
-                          <div className="rounded-lg bg-blue-50/60 border border-blue-100 p-3 flex items-center justify-between gap-3">
-                            <div className="min-w-0">
-                              <div className="text-[10px] uppercase tracking-widest text-blue-600 font-semibold mb-1">Phase 5 — Outreach</div>
-                              <div className="text-xs text-gray-600 truncate">{outreach.bestSendTime}</div>
-                            </div>
-                            <Button size="sm" variant="outline" className="h-8 text-xs shrink-0 border-blue-200 text-blue-700 hover:bg-blue-50" onClick={() => onGoToPhase?.(5, lead.id)}>
-                              Open P5 →
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="rounded-lg border border-dashed border-blue-200 px-3 py-2 flex items-center justify-between gap-2">
-                            <span className="text-xs text-muted-foreground">No outreach draft yet.</span>
-                            <Button size="sm" variant="ghost" className="h-7 text-xs text-blue-600" onClick={() => onGoToPhase?.(5, lead.id)}>
-                              Generate in Phase 5 →
-                            </Button>
-                          </div>
-                        )}
-
-                        {/* Phase 6 — compact redirect */}
+                        {/* Phase 5 — Website Build redirect */}
                         {buildPrompt ? (
                           <div className="rounded-lg bg-purple-50/60 border border-purple-100 p-3 flex items-center justify-between gap-3">
                             <div className="min-w-0">
-                              <div className="text-[10px] uppercase tracking-widest text-purple-600 font-semibold mb-1">Phase 6 — Site Prompt</div>
+                              <div className="text-[10px] uppercase tracking-widest text-purple-600 font-semibold mb-1">Phase 5 — Website Build</div>
                               <div className="text-xs text-gray-600 truncate">{buildPrompt.prompt.slice(0, 60)}…</div>
                             </div>
-                            <Button size="sm" variant="outline" className="h-8 text-xs shrink-0 border-purple-200 text-purple-700 hover:bg-purple-50" onClick={() => onGoToPhase?.(6, lead.id)}>
-                              Open P6 →
+                            <Button size="sm" variant="outline" className="h-8 text-xs shrink-0 border-purple-200 text-purple-700 hover:bg-purple-50" onClick={() => onGoToPhase?.(5, lead.id)}>
+                              Open P5 →
                             </Button>
                           </div>
                         ) : (
                           <div className="rounded-lg border border-dashed border-purple-200 px-3 py-2 flex items-center justify-between gap-2">
                             <span className="text-xs text-muted-foreground">No site prompt yet.</span>
-                            <Button size="sm" variant="ghost" className="h-7 text-xs text-purple-600" onClick={() => onGoToPhase?.(6, lead.id)}>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs text-purple-600" onClick={() => onGoToPhase?.(5, lead.id)}>
+                              Generate in Phase 5 →
+                            </Button>
+                          </div>
+                        )}
+
+                        {/* Phase 6 — Outreach redirect */}
+                        {outreach ? (
+                          <div className="rounded-lg bg-blue-50/60 border border-blue-100 p-3 flex items-center justify-between gap-3">
+                            <div className="min-w-0">
+                              <div className="text-[10px] uppercase tracking-widest text-blue-600 font-semibold mb-1">Phase 6 — Outreach</div>
+                              <div className="text-xs text-gray-600 truncate">{outreach.bestSendTime}</div>
+                            </div>
+                            <Button size="sm" variant="outline" className="h-8 text-xs shrink-0 border-blue-200 text-blue-700 hover:bg-blue-50" onClick={() => onGoToPhase?.(6, lead.id)}>
+                              Open P6 →
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="rounded-lg border border-dashed border-blue-200 px-3 py-2 flex items-center justify-between gap-2">
+                            <span className="text-xs text-muted-foreground">No outreach draft yet.</span>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs text-blue-600" onClick={() => onGoToPhase?.(6, lead.id)}>
                               Generate in Phase 6 →
                             </Button>
                           </div>

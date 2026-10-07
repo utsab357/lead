@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { normalizePhone10 } from "@/lib/phoneUtils";
 
 export type DuplicateMatch = {
   sessionId: string;
@@ -56,11 +57,5 @@ export function useDuplicateIndex(currentSessionId: string | null | undefined): 
 
 /** Normalize a raw phone to 10 digits for lookup */
 export function normalizePhone(raw: string | null | undefined): string {
-  if (!raw) return "";
-  const digits = raw.replace(/\D/g, "");
-  if (digits.startsWith("910") && digits.length === 12) return digits.slice(3);
-  if (digits.startsWith("91") && digits.length === 12) return digits.slice(2);
-  if (digits.startsWith("0") && digits.length === 11) return digits.slice(1);
-  if (digits.length === 10) return digits;
-  return digits;
+  return normalizePhone10(raw);
 }

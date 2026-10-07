@@ -52,10 +52,11 @@ emit({ type: "status", message: `Detected input type: ${inputType}` });
 function normalizePhone(raw) {
   if (!raw) return null;
   let d = raw.replace(/\D/g, "");
-  if (d.startsWith("910") && d.length === 13) d = d.slice(3);
+  if (d.startsWith("0091") && d.length === 14) d = d.slice(4);
+  else if (d.startsWith("910") && d.length === 13) d = d.slice(3);
   else if (d.startsWith("91") && d.length === 12) d = d.slice(2);
   else if (d.startsWith("0") && d.length === 11) d = d.slice(1);
-  return d.length === 10 ? `+91${d}` : null;
+  return d.length === 10 && /^[6-9]\d{9}$/.test(d) ? `+91${d}` : null;
 }
 
 /** Extract all data from an already-open Google Maps detail panel */

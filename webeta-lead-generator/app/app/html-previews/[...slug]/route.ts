@@ -107,7 +107,7 @@ function injectTopBanner(html: string, businessName: string): string {
   }
 
   const banner = `
-<div id="webeta-preview-banner" class="webeta-preview-banner" style="background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 11px 20px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.12); position: sticky; top: 0; z-index: 99999; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+<div id="webeta-preview-banner" class="webeta-preview-banner" style="background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 11px 20px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.12); position: relative; width: 100%; box-sizing: border-box; z-index: 99999; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
   <div class="webeta-banner-left" style="display: flex; align-items: center; gap: 10px; min-width: 0;">
     <img src="/webeta-logo.jpg" alt="Webeta" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(255,255,255,0.25); flex-shrink: 0;" />
     <span class="webeta-banner-title" style="letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">⚡ Private Concept for <strong style="color: #fff; font-weight: 700;">${esc(businessName)}</strong> — Crafted by <strong style="color: #38bdf8;">Webeta</strong></span>
@@ -286,11 +286,19 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const filename = slug.join("/");
+    const rawFilename = slug.join("/");
+    if (slug.length !== 1 || /[\\/]|^\.\./.test(rawFilename)) {
+      return new Response("Invalid preview path", { status: 400 });
+    }
+    const filename = rawFilename.endsWith(".html") ? rawFilename : `${rawFilename}.html`;
     const dataFilePath = path.join(process.cwd(), "data", "html-previews", filename);
     const publicFilePath = path.join(process.cwd(), "public", "html-previews", filename);
     const filePath = fs.existsSync(dataFilePath) ? dataFilePath : publicFilePath;
     const cleanSlug = filename.replace(/\.html$/i, "").toLowerCase();
+    // Unified root slug (strips subpage suffix so all subpages share the same 72-hour trial window)
+    const rootSlug = cleanSlug.replace(/[_-](menu|gallery|services|rooms|programs|portfolio|products|dining|facilities|treatments|events)$/i, "");
+    const subpageMatch = cleanSlug.match(/[_-](menu|gallery|services|rooms|programs|portfolio|products|dining|facilities|treatments|events)$/i);
+    const subpageType = subpageMatch ? (subpageMatch[1].toLowerCase() as import("@/lib/multiPageTemplates").PageType) : null;
 
     const url = new URL(req.url);
     const isAdmin =
@@ -301,10 +309,10 @@ export async function GET(
     const ua = req.headers.get("user-agent") || "";
     const isBot = /bot|crawler|spider|facebookexternalhit|whatsapp|microlink|headlesschrome|puppeteer/i.test(ua);
 
-    // Track views for real human visitors with 72-hour window and session deduplication
+    // Track views for real human visitors with 72-hour window and session deduplication (keyed by rootSlug)
     let isExpired = false;
     if (!isAdmin && !isBot) {
-      const visit = recordPreviewVisit(cleanSlug);
+      const visit = recordPreviewVisit(rootSlug);
       isExpired = visit.isExpired;
     }
 
@@ -315,7 +323,7 @@ export async function GET(
 
       // If 72-hour preview window has expired, show locked activation screen
       if (!isAdmin && !isBot && isExpired) {
-        return new Response(renderLockedScreen(businessName, cleanSlug), {
+        return new Response(renderLockedScreen(businessName, rootSlug), {
           status: 200,
           headers: {
             "Content-Type": "text/html; charset=utf-8",
@@ -345,8 +353,13 @@ export async function GET(
         try {
           const sess = JSON.parse(fs.readFileSync(path.join(sessionsDir, file), "utf-8"));
           const found = sess.leads?.find((l: any) => {
-            const leadSlug = (l.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "_");
-            return l.id === cleanSlug || leadSlug.includes(cleanSlug) || cleanSlug.includes(leadSlug);
+            if (!l) return false;
+            const cleanLeadName = (l.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "_");
+            const hash = (l.id || "").slice(-8);
+            const matchesId = Boolean(l.id && l.id === rootSlug);
+            const matchesHash = Boolean(hash && hash.length >= 4 && rootSlug.includes(hash));
+            const matchesName = Boolean(cleanLeadName.length >= 4 && rootSlug.startsWith(cleanLeadName));
+            return matchesId || matchesHash || matchesName;
           });
           if (found) {
             targetLead = found;
@@ -359,7 +372,6 @@ export async function GET(
     }
 
     if (targetLead) {
-      const { buildTemplateHTML } = await import("@/lib/htmlTemplate");
       const rankedLead = {
         ...targetLead,
         score: targetLead.score || 95,
@@ -378,8 +390,16 @@ export async function GET(
         },
       } as unknown as RankedLead;
 
-      const result = await buildTemplateHTML(rankedLead);
-      const rawHtml = result.html || `<h1>${esc(targetLead.name)}</h1>`;
+      let rawHtml = "";
+      if (subpageType) {
+        const { buildMultiPageHTML } = await import("@/lib/multiPageTemplates");
+        const result = await buildMultiPageHTML(rankedLead, subpageType);
+        rawHtml = result.html || `<h1>${esc(targetLead.name)} - ${esc(subpageType)}</h1>`;
+      } else {
+        const { buildTemplateHTML } = await import("@/lib/htmlTemplate");
+        const result = await buildTemplateHTML(rankedLead);
+        rawHtml = result.html || `<h1>${esc(targetLead.name)}</h1>`;
+      }
 
       const previewsDir = path.join(process.cwd(), "data", "html-previews");
       if (!fs.existsSync(previewsDir)) fs.mkdirSync(previewsDir, { recursive: true });
@@ -387,7 +407,7 @@ export async function GET(
       const businessName = targetLead.name || extractBusinessName(rawHtml, cleanSlug);
 
       if (!isAdmin && !isBot && isExpired) {
-        return new Response(renderLockedScreen(businessName, cleanSlug), {
+        return new Response(renderLockedScreen(businessName, rootSlug), {
           status: 200,
           headers: {
             "Content-Type": "text/html; charset=utf-8",

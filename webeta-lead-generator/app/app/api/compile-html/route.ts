@@ -151,17 +151,38 @@ export async function GET(req: Request) {
 
   const dataDir = path.join(process.cwd(), "data", "html-previews");
   const publicDir = path.join(process.cwd(), "public", "html-previews");
-  const previewsDir = fs.existsSync(dataDir) ? dataDir : publicDir;
-  if (!fs.existsSync(previewsDir)) {
+  const dirs = [dataDir, publicDir].filter((d) => fs.existsSync(d));
+  if (dirs.length === 0) {
     return NextResponse.json(isList ? { exists: false, files: [] } : { exists: false });
   }
 
+  const findFilePath = (filename: string): string | null => {
+    for (const d of dirs) {
+      const p = path.join(d, filename);
+      if (fs.existsSync(p)) return p;
+    }
+    return null;
+  };
+
+  const getAllFiles = (): string[] => {
+    const fileSet = new Set<string>();
+    for (const d of dirs) {
+      try {
+        const files = fs.readdirSync(d);
+        for (const f of files) fileSet.add(f);
+      } catch {}
+    }
+    return Array.from(fileSet);
+  };
+
   if (isList || (!leadId && !name)) {
-    const allFiles = fs.readdirSync(previewsDir).filter((f) => f.endsWith(".html"));
+    const allFiles = getAllFiles().filter((f) => f.endsWith(".html"));
     // Filter out skeleton files (< 20KB)
     const goodFiles = allFiles.filter((f) => {
+      const p = findFilePath(f);
+      if (!p) return false;
       try {
-        const stat = fs.statSync(path.join(previewsDir, f));
+        const stat = fs.statSync(p);
         return stat.size >= 20000;
       } catch { return false; }
     });
@@ -170,18 +191,18 @@ export async function GET(req: Request) {
 
   if (leadId && name) {
     const { fileSlug, relativePath } = generateHtmlSlug({ id: leadId, name, city });
-    const targetPath = path.join(previewsDir, `${fileSlug}.html`);
-    if (fs.existsSync(targetPath) && fs.statSync(targetPath).size >= 20000) {
+    const targetPath = findFilePath(`${fileSlug}.html`);
+    if (targetPath && fs.statSync(targetPath).size >= 20000) {
       return NextResponse.json({ exists: true, htmlUrl: relativePath, fileSlug, leadId });
     }
   }
 
   if (leadId) {
-    const files = fs.readdirSync(previewsDir);
-    const match = files.find((f) => f.includes(leadId.slice(-8)));
+    const allFiles = getAllFiles();
+    const match = allFiles.find((f) => f.includes(leadId));
     if (match) {
-      const matchPath = path.join(previewsDir, match);
-      if (fs.statSync(matchPath).size >= 20000) {
+      const matchPath = findFilePath(match);
+      if (matchPath && fs.statSync(matchPath).size >= 20000) {
         return NextResponse.json({ exists: true, htmlUrl: `/html-previews/${match}`, fileSlug: match.replace(/\.html$/, ""), leadId });
       }
     }

@@ -16,6 +16,7 @@ import { NextResponse } from "next/server";
 import path from "node:path";
 import fs from "node:fs";
 import { readConfig } from "../settings/route";
+import { toWhatsAppNumber } from "@/lib/phoneUtils";
 
 export const maxDuration = 60; // 60s per HTTP req � blast runs as background async
 
@@ -230,6 +231,27 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
     if (currentState.status === "idle") return; // stopped
 
     const lead = leads[i];
+    const targetPhone = toWhatsAppNumber(lead.phone);
+    if (!targetPhone) {
+      const sFailed = readBlastState();
+      sFailed.failed++;
+      sFailed.done++;
+      sFailed.log.push({
+        name: lead.name,
+        phone: lead.phone || "empty",
+        result: "failed",
+        error: "Invalid phone number format",
+        ts: Date.now(),
+      });
+      if (i === leads.length - 1) {
+        sFailed.status = "done";
+        sFailed.nextSendAt = 0;
+        sFailed.currentName = "";
+      }
+      sFailed.updatedAt = Date.now();
+      writeBlastState(sFailed);
+      continue;
+    }
 
     // Update state: show who we are currently sending to
     const s = readBlastState();
@@ -242,7 +264,7 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
 
     try {
       // Step 1: Simulate human "typing..." presence for 1.5 seconds
-      await sendEvolutionPresence(evolutionApiUrl, evolutionApiKey, instanceName, lead.phone);
+      await sendEvolutionPresence(evolutionApiUrl, evolutionApiKey, instanceName, targetPhone);
       await sleep(1500);
 
       // Step 2: Send text pitch message FIRST (Option A)
@@ -250,7 +272,7 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
         evolutionApiUrl,
         evolutionApiKey,
         instanceName,
-        lead.phone,
+        targetPhone,
         lead.message
       );
 
@@ -272,25 +294,51 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
           const imgUrl = imagesToSend[imgIdx];
           if (!imgUrl) continue;
 
-          // Resolve localhost to Render production domain so cloud Evolution API can always download
-          let base = appBaseUrl || "";
-          if (!base || base.includes("localhost") || base.includes("127.0.0.1")) {
-            base = "https://webeta-lead-generator.onrender.com";
-          }
-          let absoluteImageUrl = imgUrl.startsWith("http")
-            ? imgUrl
-            : `${base.replace(/\/$/, "")}/${imgUrl.replace(/^\//, "")}`;
+          // Resolve media payload: If local file exists, send Base64 directly so Evolution API
+          // doesn't fail with 404 trying to download from a Render server that hasn't received the file.
+          let mediaPayload = "";
+          const cleanRel = imgUrl.startsWith("/") ? imgUrl.slice(1) : imgUrl;
+          const isSafeImage = /\.(png|jpe?g|webp|svg)$/i.test(cleanRel) && !cleanRel.includes("..");
+          const publicDir = path.resolve(process.cwd(), "public");
+          const dataDir = path.resolve(process.cwd(), "data");
+          const publicFilePath = path.join(process.cwd(), "public", cleanRel);
+          const dataFilePath = path.join(process.cwd(), "data", cleanRel);
+          const resolvedPublic = path.resolve(publicFilePath);
+          const resolvedData = path.resolve(dataFilePath);
 
-          if (absoluteImageUrl.includes("localhost") || absoluteImageUrl.includes("127.0.0.1")) {
-            absoluteImageUrl = absoluteImageUrl.replace(/http:\/\/(localhost|127\.0\.0\.1):\d+/i, "https://webeta-lead-generator.onrender.com");
+          const localFilePath = isSafeImage && resolvedPublic.startsWith(publicDir) && fs.existsSync(publicFilePath)
+            ? publicFilePath
+            : (isSafeImage && resolvedData.startsWith(dataDir) && fs.existsSync(dataFilePath) ? dataFilePath : null);
+
+          if (localFilePath) {
+            try {
+              const fileBuf = fs.readFileSync(localFilePath);
+              mediaPayload = `data:image/png;base64,${fileBuf.toString("base64")}`;
+            } catch (err) {
+              console.warn(`[WhatsApp Blast] Could not read local file ${localFilePath} for Base64:`, err);
+            }
+          }
+
+          if (!mediaPayload) {
+            let base = appBaseUrl || "";
+            if (!base || base.includes("localhost") || base.includes("127.0.0.1")) {
+              base = "https://webeta-lead-generator.onrender.com";
+            }
+            mediaPayload = imgUrl.startsWith("http")
+              ? imgUrl
+              : `${base.replace(/\/$/, "")}/${imgUrl.replace(/^\//, "")}`;
+
+            if (mediaPayload.includes("localhost") || mediaPayload.includes("127.0.0.1")) {
+              mediaPayload = mediaPayload.replace(/http:\/\/(localhost|127\.0\.0\.1):\d+/i, "https://webeta-lead-generator.onrender.com");
+            }
           }
 
           const imgResult = await sendEvolutionImage(
             evolutionApiUrl,
             evolutionApiKey,
             instanceName,
-            lead.phone,
-            absoluteImageUrl,
+            targetPhone,
+            mediaPayload,
             ""
           );
 
@@ -314,7 +362,7 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
     if (!success) updatedState.failed++;
     updatedState.log.push({
       name: lead.name,
-      phone: lead.phone,
+      phone: targetPhone,
       result: success ? "sent" : "failed",
       error: errorMsg,
       ts: Date.now(),

@@ -2,8 +2,8 @@ name: Render Services Keep-Alive
 
 on:
   schedule:
-    # Runs every 10 minutes (safely before Render's 15-minute inactivity limit)
-    - cron: '*/10 * * * *'
+    # Runs every 5 minutes (safely accounts for GitHub runner queue delays to beat Render's 15-minute inactivity limit)
+    - cron: '*/5 * * * *'
   push:
     branches: [main]
   workflow_dispatch: # Allows manual trigger from GitHub dashboard

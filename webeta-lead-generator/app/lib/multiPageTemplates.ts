@@ -15,6 +15,7 @@
 import type { RankedLead, BusinessStrategy } from "./types";
 import { buildWebsiteSpec, getCategoryGalleryPhotos } from "./websiteSpec";
 import { buildDeterministicBusinessStrategy } from "./businessStrategy";
+import { createWhatsAppUrl, cleanPhone } from "./phoneUtils";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -28,21 +29,22 @@ function esc(s: string | null | undefined): string {
 }
 
 function waLink(phone: string, name: string): string {
-  const digits = phone.replace(/\D/g, "");
-  const num = digits.startsWith("91") ? digits : "91" + digits.replace(/^0/, "");
-  return `https://wa.me/${num}?text=Hello%20${encodeURIComponent(name)}`;
+  return createWhatsAppUrl(phone, name);
 }
 
 function getNavHTML(businessName: string, waUrl: string, tokens: any, layoutVariant: string, ctaText: string): string {
   const { primaryColor, darkColor } = tokens;
+  const homeHref = "javascript:window.location.href=window.location.href.replace(/[_-](menu|gallery|services|rooms|programs|portfolio|products|dining|facilities|treatments|events)(\\.html)?(?=[?#]|$)/i,(m,p1,ext)=>ext||'');";
+  const galleryHref = "javascript:window.location.href=window.location.href.replace(/[_-](menu|gallery|services|rooms|programs|portfolio|products|dining|facilities|treatments|events)(\\.html)?(?=[?#]|$)/i,(m,p1,ext)=>ext||'').split('#')[0]+'#gallery';";
+
   if (layoutVariant === "A") return `
   <nav class="site-nav" style="position:sticky;top:0;z-index:999;width:100%;background:rgba(255,255,255,0.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,0,0,0.06);box-shadow:0 4px 20px rgba(0,0,0,0.04);">
     <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
-      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:20px;font-weight:800;color:${darkColor};text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
+      <a href="${homeHref}" class="brand-name" style="font-family:var(--font-display);font-size:20px;font-weight:800;color:${darkColor};text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
       <ul class="nav-links-desktop" style="display:flex;gap:26px;list-style:none;margin:0;padding:0;">
-        <li><a href="#" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:600;opacity:0.75;">Home</a></li>
+        <li><a href="${homeHref}" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:600;opacity:0.75;">Home</a></li>
         <li><a href="#content" style="color:${primaryColor};text-decoration:none;font-size:14px;font-weight:700;">Menu</a></li>
-        <li><a href="#gallery" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:600;opacity:0.75;">Gallery</a></li>
+        <li><a href="${galleryHref}" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:600;opacity:0.75;">Gallery</a></li>
       </ul>
       <a href="${waUrl}" target="_blank" class="nav-cta" style="background:${primaryColor};color:#fff;padding:9px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">${esc(ctaText)}</a>
     </div>
@@ -51,11 +53,11 @@ function getNavHTML(businessName: string, waUrl: string, tokens: any, layoutVari
   if (layoutVariant === "B") return `
   <nav class="site-nav" style="position:sticky;top:0;z-index:999;width:100%;background:${darkColor};border-bottom:3px solid ${primaryColor};box-shadow:0 4px 20px rgba(0,0,0,0.15);">
     <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
-      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:20px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.03em;">${esc(businessName)}</a>
+      <a href="${homeHref}" class="brand-name" style="font-family:var(--font-display);font-size:20px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.03em;">${esc(businessName)}</a>
       <ul class="nav-links-desktop" style="display:flex;gap:28px;list-style:none;margin:0;padding:0;">
-        <li><a href="#" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">HOME</a></li>
+        <li><a href="${homeHref}" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">HOME</a></li>
         <li><a href="#content" style="color:${primaryColor};text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">MENU</a></li>
-        <li><a href="#gallery" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">GALLERY</a></li>
+        <li><a href="${galleryHref}" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">GALLERY</a></li>
       </ul>
       <a href="${waUrl}" target="_blank" class="nav-cta" style="background:${primaryColor};color:#fff;padding:9px 22px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">${esc(ctaText)} →</a>
     </div>
@@ -64,11 +66,11 @@ function getNavHTML(businessName: string, waUrl: string, tokens: any, layoutVari
   if (layoutVariant === "C") return `
   <nav class="site-nav" style="position:sticky;top:0;z-index:999;width:100%;background:rgba(18,18,18,0.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.1);box-shadow:0 4px 20px rgba(0,0,0,0.25);">
     <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
-      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:22px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
+      <a href="${homeHref}" class="brand-name" style="font-family:var(--font-display);font-size:22px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
       <ul class="nav-links-desktop" style="display:flex;gap:28px;list-style:none;margin:0;padding:0;">
-        <li><a href="#" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;">Home</a></li>
+        <li><a href="${homeHref}" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;">Home</a></li>
         <li><a href="#content" style="color:#fff;text-decoration:none;font-size:14px;font-weight:700;border-bottom:2px solid ${primaryColor};padding-bottom:2px;">Menu</a></li>
-        <li><a href="#gallery" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;">Gallery</a></li>
+        <li><a href="${galleryHref}" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;">Gallery</a></li>
       </ul>
       <a href="${waUrl}" target="_blank" class="nav-cta" style="background:${primaryColor};color:#fff;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;">${esc(ctaText)}</a>
     </div>
@@ -78,12 +80,12 @@ function getNavHTML(businessName: string, waUrl: string, tokens: any, layoutVari
   <nav class="site-nav" style="position:sticky;top:0;z-index:999;background:${primaryColor};width:100%;box-shadow:0 4px 20px rgba(0,0,0,0.15);">
     <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
       <ul class="nav-links-desktop" style="display:flex;gap:20px;list-style:none;margin:0;padding:0;flex:1;">
-        <li><a href="#" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;">Home</a></li>
+        <li><a href="${homeHref}" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;">Home</a></li>
         <li><a href="#content" style="color:#fff;text-decoration:none;font-size:13px;font-weight:900;text-decoration:underline;text-underline-offset:3px;">Menu</a></li>
       </ul>
-      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:18px;font-weight:900;color:#fff;text-decoration:none;flex:1;text-align:center;">${esc(businessName)}</a>
+      <a href="${homeHref}" class="brand-name" style="font-family:var(--font-display);font-size:18px;font-weight:900;color:#fff;text-decoration:none;flex:1;text-align:center;">${esc(businessName)}</a>
       <div style="display:flex;gap:20px;align-items:center;flex:1;justify-content:flex-end;">
-        <a href="#gallery" class="nav-links-desktop" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;">Gallery</a>
+        <a href="${galleryHref}" class="nav-links-desktop" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;">Gallery</a>
         <a href="${waUrl}" target="_blank" class="nav-cta" style="background:#fff;color:${primaryColor};padding:8px 18px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;">${esc(ctaText)}</a>
       </div>
     </div>
@@ -293,13 +295,45 @@ function buildServicesContent(spec: any, waUrl: string): string {
   const { tokens, businessName, city, category } = spec;
   const subCat = spec.strategy?.subCategory?.value || "";
 
-  const isSalon   = /salon|spa|beauty|hair/i.test(category) || /salon|spa/.test(subCat);
-  const isGym     = /gym|fitness|yoga|crossfit/i.test(category) || /gym|yoga|crossfit/.test(subCat);
-  const isMed     = /clinic|doctor|dental|hospital|pharmacy|eye/i.test(category) || /clinic|dental|medical|ayurvedic/.test(subCat);
-  const isCoach   = /coaching|school|tutor/i.test(category) || /coaching/.test(subCat);
-  const isPro     = /lawyer|ca|accountant|photographer/i.test(category);
+  const isSalon    = /salon|spa|beauty|hair/i.test(category) || /salon|spa/.test(subCat);
+  const isGym      = /gym|fitness|yoga|crossfit/i.test(category) || /gym|yoga|crossfit/.test(subCat);
+  const isMed      = /clinic|doctor|dental|hospital|pharmacy|eye/i.test(category) || /clinic|dental|medical|ayurvedic/.test(subCat);
+  const isCoach    = /coaching|school|tutor/i.test(category) || /coaching/.test(subCat);
+  const isPro      = /lawyer|ca|accountant|photographer/i.test(category);
+  const isBanquets = /banquet|catering|party|event|celebration|rooftop|private dining/i.test(category) || /cafe|coffee|restaurant|dining|food|bistro/i.test(category);
+  const isHotel    = /hotel|resort|lodge|homestay|inn|guest house/i.test(category);
 
-  const serviceGroups = isSalon
+  const serviceGroups = isBanquets
+    ? [
+        { title: "Banquets & Celebrations", icon: "🎉", items: [
+          { name: "Private Dining Hall", price: "Custom Quote", desc: "Dedicated celebration space for birthdays, anniversaries, and family get-togethers." },
+          { name: "Corporate Gathering Package", price: "Custom Quote", desc: "AV-equipped event space with curated refreshments and high-speed Wi-Fi." },
+          { name: "Banquet Hall Rental", price: "Custom Quote", desc: "Spacious venue setup with custom decor, stage, and audio management." },
+          { name: "Cocktail & Mocktail Counter", price: "Custom Quote", desc: "Dedicated mixologist bar counter for your private party." },
+        ]},
+        { title: "Catering & Live Counters", icon: "🍽️", items: [
+          { name: "Full Buffet Catering", price: "₹450+/plate", desc: "Multi-course feast prepared fresh with full staff serving." },
+          { name: "Live Street Food Counters", price: "₹250+/plate", desc: "Interactive live cooking stations for chaat, pasta, or grills." },
+          { name: "High Tea & Hi-Snacks", price: "₹200+/person", desc: "Assorted savouries, signature bakery treats, tea, and artisanal coffee." },
+          { name: "Custom Chef's Tasting Menu", price: "Custom Quote", desc: "Personalized curated menu crafted specifically for your guest list." },
+        ]},
+      ]
+    : isHotel
+    ? [
+        { title: "Dining & Bar", icon: "🍽️", items: [
+          { name: "Multi-Cuisine Restaurant", price: "A La Carte", desc: "Fine dining featuring regional specialties, continental dishes, and fresh mocktails." },
+          { name: "Complimentary Breakfast Buffet", price: "Included / ₹350", desc: "Lavish spread of hot dishes, continental pastries, seasonal fruits, and fresh brews." },
+          { name: "24/7 In-Room Dining", price: "A La Carte", desc: "Fresh hot meals and beverages delivered directly to your room anytime." },
+          { name: "Rooftop Lounge & Bar", price: "A La Carte", desc: "Scenic city views paired with signature cocktails and evening grills." },
+        ]},
+        { title: "Guest Amenities & Wellness", icon: "✨", items: [
+          { name: "Swimming Pool & Deck", price: "Guest Access", desc: "Temperature-controlled pool with sun loungers and towel service." },
+          { name: "Spa & Ayurvedic Wellness", price: "₹1500+", desc: "Rejuvenating therapies, deep-tissue massages, and holistic wellness rituals." },
+          { name: "Fitness Center", price: "Guest Access", desc: "Modern cardio and strength equipment open early to late." },
+          { name: "Airport Transfer & Concierge", price: "On Request", desc: "Reliable chauffeur transfers and personalized local sightseeing assistance." },
+        ]},
+      ]
+    : isSalon
     ? [
         { title: "Hair Services", icon: "✂️", items: [
           { name: "Haircut & Styling", price: "₹300+", desc: "Expert cuts tailored to your face shape and style preference." },
@@ -377,7 +411,7 @@ function buildServicesContent(spec: any, waUrl: string): string {
         ]},
       ];
 
-  const bookText = isMed ? "Book Appointment" : isGym ? "Join Now" : "Book Now";
+  const bookText = isMed ? "Book Appointment" : isGym ? "Join Now" : isBanquets ? "Enquire Now" : isHotel ? "Reserve Now" : "Book Now";
 
   return `
   <!-- PAGE BANNER -->
@@ -536,7 +570,7 @@ function buildProductsContent(spec: any, waUrl: string): string {
 
 // ── Master Multi-Page Builder ─────────────────────────────────────────────────
 
-export type PageType = "home" | "menu" | "gallery" | "services" | "programs" | "rooms" | "portfolio" | "products";
+export type PageType = "home" | "menu" | "gallery" | "services" | "programs" | "rooms" | "portfolio" | "products" | "dining" | "facilities" | "treatments" | "events";
 
 export interface MultiPageResult {
   ok: boolean;
@@ -562,13 +596,15 @@ export async function buildMultiPageHTML(
 
     const { businessName, phone } = spec;
     const waUrl = spec.whatsapp || waLink(phone || "", businessName);
-    const telLink = phone ? `tel:${phone.replace(/\s/g, "")}` : "#";
+    const tel = cleanPhone(phone);
+    const telLink = tel ? `tel:${tel}` : "#";
 
     let content = "";
     let title = "";
 
     switch (pageType) {
       case "menu":
+      case "dining":
         content = buildMenuContent(spec, waUrl);
         title = "Our Menu";
         break;
@@ -577,6 +613,9 @@ export async function buildMultiPageHTML(
         title = "Gallery";
         break;
       case "services":
+      case "facilities":
+      case "treatments":
+      case "events":
         content = buildServicesContent(spec, waUrl);
         title = "Services & Pricing";
         break;

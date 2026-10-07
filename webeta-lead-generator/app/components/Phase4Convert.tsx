@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import type { RankedLead, ConversionPoints, AuditResult, LeadStatus, ClientDetail } from "@/lib/types";
 import { estimateBusinessAgeMonths, getAgeBadge } from "@/lib/businessAge";
+import { toWhatsAppNumber, cleanPhone, normalizePhone10 } from "@/lib/phoneUtils";
 import { toast } from "sonner";
 
 const BATCH_SIZE = 5;
@@ -174,7 +175,7 @@ export function Phase4Convert({
     if (isPhoneQuery) {
       const digits = q.replace(/\D/g, "");
       const rawPhone = (l.phone ?? l.whatsapp ?? "").replace(/\D/g, "");
-      const normPhone = rawPhone.startsWith("91") && rawPhone.length === 12 ? rawPhone.slice(2) : rawPhone;
+      const normPhone = normalizePhone10(l.phone ?? l.whatsapp) || (rawPhone.startsWith("91") && rawPhone.length === 12 ? rawPhone.slice(2) : rawPhone);
       return normPhone.includes(digits) || rawPhone.includes(digits);
     }
     return l.name.toLowerCase().includes(q.toLowerCase()) || l.city.toLowerCase().includes(q.toLowerCase());
@@ -301,7 +302,7 @@ export function Phase4Convert({
       onPrev={onPrev}
       onNext={onNext}
       nextDisabled={Object.keys(conversions).length === 0}
-      nextLabel="Write outreach"
+      nextLabel="Build website"
     >
       {/* ── TOP ACTION & STATS BANNER ── */}
       <div className="bg-card border border-border rounded-xl p-4 sm:p-5 mb-5 shadow-xs">
@@ -562,7 +563,7 @@ export function Phase4Convert({
                       {lead.phone && (
                         <div className="inline-flex items-center shrink-0">
                           <a
-                            href={`tel:${lead.phone}`}
+                            href={`tel:${cleanPhone(lead.phone)}`}
                             className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-l-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors"
                             title="Call business"
                           >
@@ -583,18 +584,24 @@ export function Phase4Convert({
                         </div>
                       )}
 
-                      {lead.whatsapp && (
-                        <a
-                          href={`https://wa.me/${lead.whatsapp.replace(/\D/g, "")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border border-green-500/30 bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors shrink-0"
-                          title="Chat on WhatsApp"
-                        >
-                          <MessageSquare className="h-3.5 w-3.5" />
-                          <span>WhatsApp</span>
-                        </a>
-                      )}
+                      {(() => {
+                        const targetPhone = lead.whatsapp || lead.phone;
+                        if (!targetPhone) return null;
+                        const waNum = toWhatsAppNumber(targetPhone);
+                        if (!waNum) return null;
+                        return (
+                          <a
+                            href={`https://wa.me/${waNum}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border border-green-500/30 bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors shrink-0"
+                            title="Chat on WhatsApp"
+                          >
+                            <MessageSquare className="h-3.5 w-3.5" />
+                            <span>WhatsApp</span>
+                          </a>
+                        );
+                      })()}
 
                       {lead.mapUrl && (
                         <a
@@ -630,11 +637,11 @@ export function Phase4Convert({
                               onSelectLead?.(lead.id);
                               onGoToPhase(5, lead.id);
                             }}
-                            className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors shrink-0"
-                            title="Open in Outreach Studio (Phase 5)"
+                            className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-violet-500/30 bg-violet-500/10 text-violet-600 dark:text-violet-400 hover:bg-violet-500/20 transition-colors shrink-0"
+                            title="Open in Website Architect (Phase 5)"
                           >
-                            <MessageSquare className="h-3.5 w-3.5" />
-                            <span>Outreach →</span>
+                            <Sparkles className="h-3.5 w-3.5" />
+                            <span>Website →</span>
                           </button>
 
                           <button
@@ -643,11 +650,11 @@ export function Phase4Convert({
                               onSelectLead?.(lead.id);
                               onGoToPhase(6, lead.id);
                             }}
-                            className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-violet-500/30 bg-violet-500/10 text-violet-600 dark:text-violet-400 hover:bg-violet-500/20 transition-colors shrink-0"
-                            title="Open in Website Architect (Phase 6)"
+                            className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors shrink-0"
+                            title="Open in Outreach Studio (Phase 6)"
                           >
-                            <Sparkles className="h-3.5 w-3.5" />
-                            <span>Website →</span>
+                            <MessageSquare className="h-3.5 w-3.5" />
+                            <span>Outreach →</span>
                           </button>
                         </>
                       )}

@@ -168,10 +168,11 @@ async function scrapeGoogleMaps() {
           }
           if (phone) {
             let digits = phone.replace(/\D/g, "");
-            if (digits.startsWith("910") && digits.length === 13) digits = digits.slice(3);
+            if (digits.startsWith("0091") && digits.length === 14) digits = digits.slice(4);
+            else if (digits.startsWith("910") && digits.length === 13) digits = digits.slice(3);
             else if (digits.startsWith("91") && digits.length === 12) digits = digits.slice(2);
             else if (digits.startsWith("0") && digits.length === 11) digits = digits.slice(1);
-            phone = digits.length === 10 ? `+91${digits}` : null;
+            phone = digits.length === 10 && /^[6-9]\d{9}$/.test(digits) ? `+91${digits}` : null;
           }
         } catch { /* no phone */ }
 
@@ -673,7 +674,7 @@ async function scrapeGoogleMaps() {
         }
 
         const lead = {
-          id:           `maps-${String(leads.length + 1).padStart(3, "0")}`,
+          id:           `${sessionId}_m${String(leads.length + 1).padStart(3, "0")}`,
           name:         name.trim(),
           category:     category.trim(),
           address,

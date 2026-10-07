@@ -66,6 +66,9 @@ export async function POST(req: Request) {
 
     // Also get the file path directly as fallback
     const rawRel = htmlUrl.replace(/^\//, "");
+    if (!/^html-previews\/[^/\\]+\.html$/.test(rawRel)) {
+      return NextResponse.json({ ok: false, error: "Invalid htmlUrl" }, { status: 400 });
+    }
     const publicPath = path.join(process.cwd(), "public", rawRel);
     const dataPath = path.join(process.cwd(), "data", rawRel);
     const htmlFilePath = fs.existsSync(dataPath) ? dataPath : publicPath;
@@ -95,6 +98,7 @@ export async function POST(req: Request) {
         deviceScaleFactor: 2,   // 2x retina
         isMobile: device === "mobile",
         hasTouch: device === "mobile",
+        baseURL: baseUrl,
       });
       const pwPage = await context.newPage();
 
@@ -104,7 +108,10 @@ export async function POST(req: Request) {
         loaded = true;
       } catch {
         if (fs.existsSync(htmlFilePath)) {
-          const htmlContent = fs.readFileSync(htmlFilePath, "utf-8");
+          let htmlContent = fs.readFileSync(htmlFilePath, "utf-8");
+          if (!htmlContent.includes("<base ") && !htmlContent.includes("<base>")) {
+            htmlContent = htmlContent.replace(/<head>/i, `<head><base href="${baseUrl}/">`);
+          }
           await pwPage.setContent(htmlContent, { waitUntil: "domcontentloaded", timeout: 15000 });
           loaded = true;
         }

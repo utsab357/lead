@@ -17,6 +17,7 @@ import type { Lead, ScrapeInput } from "@/lib/types";
 import { toast } from "sonner";
 import { LeadHistoryDrawer } from "./LeadHistoryDrawer";
 import type { LeadHistoryEntry } from "./LeadHistoryDrawer";
+import { normalizePhone10 } from "@/lib/phoneUtils";
 
 const LeadMap = dynamic(() => import("./LeadMap"), { ssr: false });
 
@@ -100,12 +101,7 @@ export function Phase1Scrape({
 
   /** Normalize phone to 10-digit string for cross-session lookup */
   function normPhone(raw: string): string {
-    const d = raw.replace(/\D/g, "");
-    let n = d;
-    if (n.startsWith("910") && n.length === 12) n = n.slice(3);
-    else if (n.startsWith("91") && n.length === 12) n = n.slice(2);
-    else if (n.startsWith("0") && n.length === 11) n = n.slice(1);
-    return n.length === 10 ? n : "";
+    return normalizePhone10(raw);
   }
 
   async function runScrape() {

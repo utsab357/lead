@@ -65,12 +65,19 @@ export function verifyHTML(html: string, lead: RankedLead): VerificationIssue[] 
     { text: ">undefined<", label: "undefined value rendered in HTML" },
     { text: ">null<", label: "null value rendered in HTML" },
     { text: "[object object]", label: "[object Object] rendered in HTML" },
-    { text: "nan", label: "NaN value rendered in HTML" },
+    { text: ">nan<", label: "NaN value rendered in HTML" },
   ];
 
   for (const { text, label } of BAD_STRINGS) {
     if (lower.includes(text)) {
       issues.push({ code: "PLACEHOLDER_TEXT", message: label, severity: "critical" });
+    }
+  }
+
+  // Check isolated NaN token (e.g. ₹NaN, : NaN;, > NaN <) without flagging words like banana or finance
+  if (/(?:[>:\s₹$]|^)nan(?=[;<,\s%"']|$)/i.test(html)) {
+    if (!issues.some(i => i.message.includes("NaN"))) {
+      issues.push({ code: "PLACEHOLDER_TEXT", message: "NaN value rendered in HTML", severity: "critical" });
     }
   }
 

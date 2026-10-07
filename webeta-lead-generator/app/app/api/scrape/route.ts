@@ -102,20 +102,22 @@ export async function POST(req: Request) {
                 }
 
                 if (msg.type === "lead") {
-                  const lead: Lead = {
-                    ...msg.lead,
-                    mapUrl: msg.lead.mapUrl || generateMapUrl(msg.lead.name, msg.lead.city),
-                  };
-
                   // Dedup check
-                  const normalized = normalizeName(lead.name);
+                  const normalized = normalizeName(msg.lead.name);
                   if (!seenNames.has(normalized)) {
-                    seenNames.add(normalized);
-                    allLeads.push(lead);
-
-                    // Apply no-website filter
-                    const passesFilter = input.noWebsiteOnly ? !lead.website : true;
+                    // Apply no-website filter before adding to session
+                    const passesFilter = input.noWebsiteOnly ? !msg.lead.website : true;
                     if (passesFilter) {
+                      seenNames.add(normalized);
+                      const leadIndex = allLeads.length + 1;
+                      const lead: Lead = {
+                        ...msg.lead,
+                        // Assign globally unique, session-scoped ID that never mutates
+                        id: `${sessionId}_${String(leadIndex).padStart(3, "0")}`,
+                        whatsapp: msg.lead.whatsapp || msg.lead.phone || undefined,
+                        mapUrl: msg.lead.mapUrl || generateMapUrl(msg.lead.name, msg.lead.city),
+                      };
+                      allLeads.push(lead);
                       enc({ type: "lead", lead, index: allLeads.length, total: msg.total, source: sourceLabel });
                     }
                   }
@@ -162,10 +164,7 @@ export async function POST(req: Request) {
           await fs.mkdir(SESSIONS_DIR, { recursive: true });
         } catch { /* ok */ }
 
-        // Re-number all leads
-        allLeads.forEach((l, i) => {
-          l.id = `lead-${String(i + 1).padStart(3, "0")}`;
-        });
+        // Leads already retain their unique session-scoped IDs from the stream
 
         const noSite    = allLeads.filter((l) => !l.website);
         const withPhone = allLeads.filter((l) => l.phone);

@@ -125,7 +125,9 @@ export function Phase4Build({
           const map: Record<string, { exists: boolean }> = {};
           ranked.forEach((l) => {
             const cleanName = l.name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 15);
-            const hasMatch = d.files.some((f: string) => f.includes(l.id) || (cleanName && f.toLowerCase().includes(cleanName)));
+            const hasMatch = d.files.some((f: string) =>
+              f.includes(l.id) || (cleanName && cleanName.length >= 4 && f.toLowerCase().includes(cleanName) && f.includes(l.id.slice(-6)))
+            );
             if (hasMatch) map[l.id] = { exists: true };
           });
           setImagePreviews(map);

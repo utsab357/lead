@@ -7,6 +7,7 @@ import type {
   BusinessStrategy,
 } from "./types";
 import { buildDeterministicBusinessStrategy } from "./businessStrategy";
+import { cleanPhone as centralCleanPhone, toWhatsAppNumber } from "./phoneUtils";
 
 /**
  * Curated stock photo mappings by business category for hero and showcase.
@@ -256,19 +257,10 @@ export function getCategoryGalleryPhotos(category: string): string[] {
   ];
 }
 
-export function cleanPhone(raw: string | null | undefined): string {
-  if (!raw) return "n/a";
-  const digits = raw.replace(/\D/g, "");
-  if (digits.startsWith("91") && digits.length === 12 && digits[2] === "0") return `+91 ${digits.slice(3)}`;
-  if (digits.length === 11 && digits[0] === "0") return `+91 ${digits.slice(1)}`;
-  if (digits.length === 10) return `+91 ${digits}`;
-  if (digits.startsWith("91") && digits.length === 12) return `+91 ${digits.slice(2)}`;
-  return `+91 ${digits}`;
-}
+export const cleanPhone = centralCleanPhone;
 
 export function cleanWaNumber(raw: string | null | undefined): string {
-  if (!raw) return "";
-  return cleanPhone(raw).replace(/[^\d]/g, "");
+  return toWhatsAppNumber(raw);
 }
 
 export function normalizeGooglePhotoUrl(url: string): string {
@@ -423,6 +415,23 @@ export function resolveVisualDesignTokens(
     hueRange = CATEGORY_HUE_RANGES.hardware; baseVibe = "bold_energy"; isDark = false;
   } else if (/retail|shop|store|supermarket|grocery|departmental|kirana|general store/.test(c)) {
     hueRange = CATEGORY_HUE_RANGES.retail; baseVibe = "professional_clean"; isDark = false;
+  }
+
+  // Apply explicit user-requested style preset overrides (from Phase 4 UI)
+  const req = (requestedStyle || "").toLowerCase();
+  if (req === "luxury" || req === "dark_luxury") {
+    isDark = true;
+    baseVibe = "dark_luxury";
+  } else if (req === "warm" || req === "warm_earthy") {
+    isDark = false;
+    baseVibe = "warm_earthy";
+  } else if (req === "bold" || req === "bold_energy") {
+    baseVibe = "bold_energy";
+  } else if (req === "modern" || req === "sleek_modern" || req === "animated") {
+    baseVibe = "sleek_modern";
+  } else if (req === "professional" || req === "professional_clean") {
+    isDark = false;
+    baseVibe = "professional_clean";
   }
 
   // 2. Generate unique primary hue within range
@@ -843,7 +852,8 @@ export function specToCompilerMarkdown(spec: WebsiteSpec): string {
   const ratingStr = spec.rating ? `${spec.rating.toFixed(1)} ★` : "4.8 ★";
   const reviewCountStr = spec.reviewsCount ? `${spec.reviewsCount}+` : "150+";
   const waLink = spec.whatsapp || "#";
-  const telLink = spec.phone ? `tel:${spec.phone.replace(/\s/g, "")}` : "#";
+  const tel = centralCleanPhone(spec.phone);
+  const telLink = tel ? `tel:${tel}` : "#";
 
   const heroBlock = spec.sections.find((s) => s.type === "hero") as any;
   const gridBlock = spec.sections.find((s) => s.type === "visual_grid") as any;

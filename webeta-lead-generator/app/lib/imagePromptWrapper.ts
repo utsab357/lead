@@ -225,7 +225,7 @@ export function getRecommendedPagesForLead(lead: RankedLead): {
     return {
       pages: [
         { id: "home", label: "Home Page", description: "Primary trust hero, doctor credentials, treatments preview & emergency contact" },
-        { id: "treatments", label: "Treatments & Doctors", description: "Full procedure breakdown, doctor profiles & consultation scheduler" },
+        { id: "services", label: "Treatments & Doctors", description: "Full procedure breakdown, doctor profiles & consultation scheduler" },
       ],
       reason: "Medical clinics require a treatment breakdown page to establish clinical authority.",
     };
