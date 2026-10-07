@@ -94,6 +94,7 @@ export function PreviewPanel({
   const [activeGenerating, setActiveGenerating] = useState(false);
   const [lightboxHtml, setLightboxHtml] = useState<string | null>(null);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
+  const [lightboxZoom, setLightboxZoom] = useState<"fit" | "mockup" | "full">("fit");
   const [expanded, setExpanded] = useState(true);
   // Which pages to generate (shown in page selector above Compile button)
   const [selectedPages, setSelectedPages] = useState<string[]>(["home"]);
@@ -135,7 +136,11 @@ export function PreviewPanel({
       const data = await res.json();
       if (data.ok && data.previewUrl) {
         if (page === "home") {
-          setScreenshots((prev) => ({ ...prev, [lead.id]: data.previewUrl }));
+          setScreenshots((prev) => ({
+            ...prev,
+            [lead.id]: data.previewUrl,
+            [`${lead.id}_${device}`]: data.previewUrl,
+          }));
         } else {
           setMultiPageShots((prev) => ({
             ...prev,
@@ -212,8 +217,15 @@ export function PreviewPanel({
         const next: Record<string, string> = {};
         ranked.forEach(lead => {
           const hash = lead.id.slice(-8);
-          const match = d.files.find((f: string) => f.endsWith(".png") && f.includes(hash));
-          if (match) next[lead.id] = `/previews/${match}`;
+          const mobileMatch = d.files.find((f: string) => f.endsWith(".png") && f.includes(hash) && f.includes("_mobile"));
+          const desktopMatch = d.files.find((f: string) => f.endsWith(".png") && f.includes(hash) && !f.includes("_mobile") && !f.includes("_menu") && !f.includes("_gallery"));
+          if (mobileMatch) next[`${lead.id}_mobile`] = `/previews/${mobileMatch}`;
+          if (desktopMatch) {
+            next[`${lead.id}_desktop`] = `/previews/${desktopMatch}`;
+            next[lead.id] = `/previews/${desktopMatch}`;
+          } else if (mobileMatch && !next[lead.id]) {
+            next[lead.id] = `/previews/${mobileMatch}`;
+          }
         });
         setScreenshots(prev => ({ ...prev, ...next }));
         // Load verifications for all found screenshots in parallel
@@ -429,15 +441,38 @@ export function PreviewPanel({
                 </div>
               </div>
 
-              {/* Device Frame (only for iframe mode) */}
-              {viewMode === "iframe" && (
-                <div className="space-y-1.5">
-                  <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                    <Monitor className="h-3.5 w-3.5 text-primary" />
-                    <span>Device</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    {([
+              {/* Device Frame / Screenshot Format */}
+              <div className="space-y-1.5">
+                <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                  <Monitor className="h-3.5 w-3.5 text-primary" />
+                  <span>{viewMode === "screenshot" ? "Image Format" : "Device"}</span>
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {viewMode === "screenshot" ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setDeviceFrame("mobile")}
+                        className={`h-8 px-3 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${deviceFrame === "mobile" ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+                        title="Mobile format (390px) — Best for sending to leads on WhatsApp!"
+                      >
+                        <Smartphone className="h-3.5 w-3.5" />
+                        <span>Mobile (WhatsApp)</span>
+                        <span className="text-[9px] opacity-70">390px</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDeviceFrame("desktop")}
+                        className={`h-8 px-3 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${deviceFrame === "desktop" ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+                        title="Desktop format (1280px)"
+                      >
+                        <Monitor className="h-3.5 w-3.5" />
+                        <span>Desktop</span>
+                        <span className="text-[9px] opacity-70">1280px</span>
+                      </button>
+                    </>
+                  ) : (
+                    ([
                       { key: "desktop", icon: Monitor, label: "Desktop", w: "1280px" },
                       { key: "tablet", icon: Tablet, label: "Tablet", w: "768px" },
                       { key: "mobile", icon: Smartphone, label: "Mobile", w: "375px" },
@@ -449,10 +484,10 @@ export function PreviewPanel({
                         <span className="hidden sm:inline">{label}</span>
                         <span className="text-[9px] opacity-70">{w}</span>
                       </button>
-                    ))}
-                  </div>
+                    ))
+                  )}
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Action Buttons */}
@@ -618,10 +653,10 @@ export function PreviewPanel({
                           href={currentHtmlUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium border border-border bg-card hover:bg-muted text-foreground transition-colors h-7"
+                          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
                         >
                           <ExternalLink className="h-3 w-3" />
-                          <span>Open Tab</span>
+                          <span>Open tab</span>
                         </a>
                       </>
                     )}
@@ -629,83 +664,134 @@ export function PreviewPanel({
                 </div>
               )}
 
-              {/* ── Viewport Box ─────────────────────────────────────────────────── */}
-              {activeStatus?.state === "generating" || activeGenerating ? (
-                <div className="p-12 sm:p-16 rounded-xl border border-primary/30 bg-primary/5 flex flex-col items-center justify-center gap-3 text-center">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center animate-pulse">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  </div>
-                  <div className="font-semibold text-sm text-foreground">
-                    Compiling live HTML website for {activeLead.name}…
-                  </div>
-                  <p className="text-xs text-muted-foreground max-w-md">
-                    AI is generating a complete HTML5 website. Trying Gemini → Groq → OpenRouter → Cloudflare. This may take 15–60 seconds.
-                  </p>
-                </div>
-              ) : currentHtmlUrl && viewMode === "screenshot" ? (
+              {currentHtmlUrl && viewMode === "screenshot" ? (
                 /* ── Screenshot / shareable image view ──────────────────────────── */
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {/* Screenshot status bar */}
                   <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       {activeLead && screenshotting[activeLead.id] ? (
                         <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[10px] gap-1 animate-pulse">
-                          <Camera className="h-3 w-3" /> Capturing screenshot…
+                          <Camera className="h-3 w-3" /> Capturing {deviceFrame === "mobile" ? "Mobile (WhatsApp)" : "Desktop"} screenshot…
                         </Badge>
-                      ) : activeLead && screenshots[activeLead.id] ? (
+                      ) : activeLead && (deviceFrame === "mobile" ? screenshots[`${activeLead.id}_mobile`] : (screenshots[`${activeLead.id}_desktop`] || screenshots[activeLead.id])) ? (
                         <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] gap-1">
-                          <CheckCircle2 className="h-3 w-3" /> Screenshot ready — share this image!
+                          <CheckCircle2 className="h-3 w-3" /> {deviceFrame === "mobile" ? "📱 Mobile Screenshot (WhatsApp Ready)" : "🖥️ Desktop Screenshot"} ready!
                         </Badge>
                       ) : (
                         <Badge variant="outline" className="text-[10px] gap-1 text-muted-foreground">
-                          <Camera className="h-3 w-3" /> Screenshot pending…
+                          <Camera className="h-3 w-3" /> {deviceFrame === "mobile" ? "Mobile screenshot not taken yet" : "Desktop screenshot not taken yet"}
                         </Badge>
                       )}
                     </div>
-                    {activeLead && screenshots[activeLead.id] && (
-                      <a
-                        href={screenshots[activeLead.id]}
-                        download={`${activeLead.name.replace(/[^a-z0-9]/gi, "_")}_website_preview.png`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                        Download PNG to Share
-                      </a>
-                    )}
+                    {activeLead && (() => {
+                      const currentShot = deviceFrame === "mobile" ? screenshots[`${activeLead.id}_mobile`] : (screenshots[`${activeLead.id}_desktop`] || screenshots[activeLead.id]);
+                      return (
+                        <div className="flex items-center gap-2">
+                          {currentShot && (
+                            <a
+                              href={currentShot}
+                              download={`${activeLead.name.replace(/[^a-z0-9]/gi, "_")}_${deviceFrame}_preview.png`}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+                            >
+                              <Download className="h-3.5 w-3.5" />
+                              Download {deviceFrame === "mobile" ? "WhatsApp PNG" : "PNG"}
+                            </a>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => takeScreenshot(activeLead, currentHtmlUrl, true, "home", deviceFrame === "mobile" ? "mobile" : "desktop")}
+                            className="h-7 text-xs gap-1.5"
+                          >
+                            <Camera className="h-3 w-3" />
+                            {currentShot ? "Recapture" : `Capture ${deviceFrame === "mobile" ? "Mobile" : "Desktop"}`}
+                          </Button>
+                        </div>
+                      );
+                    })()}
                   </div>
 
-                  {/* Screenshot image or loading state */}
+                  {/* Screenshot display */}
                   {activeLead && (() => {
+                    const isMobile = deviceFrame === "mobile";
                     const _tab = activePageTab[activeLead.id] || "home";
-                    const _shotUrl = _tab !== "home" && multiPageShots[activeLead.id]?.[_tab]
-                      ? multiPageShots[activeLead.id][_tab]
-                      : screenshots[activeLead.id];
+                    const _mobileSuffix = isMobile ? "_mobile" : "";
+                    const _shotUrl = _tab !== "home" && multiPageShots[activeLead.id]?.[`${_tab}${_mobileSuffix}`]
+                      ? multiPageShots[activeLead.id][`${_tab}${_mobileSuffix}`]
+                      : isMobile
+                        ? screenshots[`${activeLead.id}_mobile`]
+                        : (screenshots[`${activeLead.id}_desktop`] || screenshots[activeLead.id]);
                     const _pg = _tab.split("_")[0];
-                    const _lbl = _pg === "menu" ? "Menu" : _pg === "gallery" ? "Gallery" : _pg === "services" ? "Services" : _pg === "rooms" ? "Rooms" : _pg === "programs" ? "Programs" : "Home";
-                    if (_shotUrl) return (
-                      <div className="group relative rounded-xl overflow-hidden border border-border bg-neutral-950 cursor-zoom-in shadow-lg" onClick={() => setLightboxImg(_shotUrl)}>
-                        {_tab !== "home" && <div className="absolute top-3 left-3 z-10 bg-primary/90 text-white text-xs font-bold px-2.5 py-1 rounded-full">{_lbl} Page</div>}
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={`${_shotUrl}?t=${Date.now()}`} alt={`${activeLead.name} ${_lbl}`} className="w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.01]" style={{ maxHeight: "700px" }} />
-                        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-white text-xs flex items-center gap-1.5"><Maximize2 className="h-3.5 w-3.5" /><span>Click to view full size</span></div>
-                      </div>
-                    );
+                    const _lbl = _pg === "menu" ? "Menu" : _pg === "gallery" ? "Gallery" : _pg === "services" ? "Services" : "Home";
+
+                    if (_shotUrl) {
+                      return isMobile ? (
+                        /* Mobile iPhone mockup */
+                        <div className="flex flex-col items-center justify-center p-4 sm:p-6 bg-neutral-900/60 rounded-2xl border border-border/80">
+                          <div className="text-center mb-3">
+                            <span className="text-xs font-medium text-emerald-400">📱 Mobile WhatsApp View (390px)</span>
+                            <p className="text-[11px] text-muted-foreground">Click image to inspect in full HD or download for WhatsApp</p>
+                          </div>
+                          <div
+                            className="group relative max-w-[380px] w-full rounded-[36px] p-2 bg-neutral-800 border-4 border-neutral-700 shadow-2xl overflow-hidden cursor-zoom-in"
+                            onClick={() => setLightboxImg(_shotUrl)}
+                          >
+                            <div className="w-24 h-4 bg-neutral-800 rounded-full mx-auto mb-2 flex items-center justify-center">
+                              <div className="w-3 h-3 rounded-full bg-neutral-900 border border-neutral-700 mr-2" />
+                              <div className="w-2 h-2 rounded-full bg-neutral-900" />
+                            </div>
+                            <div className="rounded-[24px] overflow-hidden bg-neutral-950 max-h-[640px] overflow-y-auto">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={`${_shotUrl}?t=${Date.now()}`} alt={`${activeLead.name} mobile screenshot`} className="w-full h-auto object-top block" />
+                            </div>
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                              <span className="bg-black/80 backdrop-blur-md px-3.5 py-1.5 rounded-lg text-white text-xs font-medium flex items-center gap-1.5 shadow-lg">
+                                <Maximize2 className="h-3.5 w-3.5" /> Click to view full size
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        /* Desktop full-width container */
+                        <div className="group relative rounded-xl overflow-hidden border border-border bg-neutral-950 cursor-zoom-in shadow-lg" onClick={() => setLightboxImg(_shotUrl)}>
+                          <div className="px-4 py-2 bg-neutral-900 border-b border-neutral-800 flex items-center justify-between text-xs text-muted-foreground">
+                            <span>🖥️ Desktop Preview (1280px)</span>
+                            <span>Click to expand full height</span>
+                          </div>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={`${_shotUrl}?t=${Date.now()}`} alt={`${activeLead.name} ${_lbl}`} className="w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.005]" style={{ maxHeight: "650px" }} />
+                          <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-white text-xs flex items-center gap-1.5">
+                            <Maximize2 className="h-3.5 w-3.5" /><span>Click to view full size</span>
+                          </div>
+                        </div>
+                      );
+                    }
+
                     if (screenshotting[activeLead.id]) return (
                       <div className="p-16 rounded-xl border border-amber-500/30 bg-amber-500/5 flex flex-col items-center justify-center gap-3 text-center">
                         <div className="h-12 w-12 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center animate-pulse"><Camera className="h-6 w-6" /></div>
-                        <div className="font-semibold text-sm text-foreground">Taking full-page screenshot...</div>
-                        <p className="text-xs text-muted-foreground">Rendering {activeLead.name}&apos;s website. This takes ~5-10 seconds.</p>
+                        <div className="font-semibold text-sm text-foreground">Taking {isMobile ? "mobile" : "desktop"} screenshot...</div>
+                        <p className="text-xs text-muted-foreground">Rendering {activeLead.name}&apos;s website in {isMobile ? "390px mobile" : "1280px desktop"} viewport.</p>
                       </div>
                     );
+
                     return (
-                      <div className="p-10 rounded-xl border border-dashed border-border bg-muted/10 flex flex-col items-center gap-2 text-center">
-                        <Camera className="h-8 w-8 text-muted-foreground/40" />
-                        <p className="text-xs text-muted-foreground">Screenshot will appear here after compilation.</p>
-                        {currentHtmlUrl && <Button size="sm" variant="outline" onClick={() => takeScreenshot(activeLead!, currentHtmlUrl)} className="mt-1 text-xs gap-1.5"><Camera className="h-3.5 w-3.5" /> Capture Now</Button>}
+                      <div className="p-12 rounded-xl border border-dashed border-border bg-muted/10 flex flex-col items-center gap-3 text-center">
+                        <Smartphone className="h-10 w-10 text-muted-foreground/40" />
+                        <div>
+                          <div className="text-sm font-semibold">{isMobile ? "Mobile Screenshot (WhatsApp Ready)" : "Desktop Screenshot"}</div>
+                          <p className="text-xs text-muted-foreground mt-0.5">{isMobile ? "Capture a 390px phone-optimized screenshot perfect for sending over WhatsApp." : "Capture full 1280px desktop resolution."}</p>
+                        </div>
+                        {currentHtmlUrl && (
+                          <Button size="sm" onClick={() => takeScreenshot(activeLead!, currentHtmlUrl, true, "home", isMobile ? "mobile" : "desktop")} className="text-xs gap-1.5">
+                            <Camera className="h-3.5 w-3.5" /> Capture {isMobile ? "Mobile" : "Desktop"} Screenshot Now
+                          </Button>
+                        )}
                       </div>
                     );
                   })()}
-                 </div>
+                </div>
               ) : currentHtmlUrl && viewMode === "iframe" ? (
                 /* Live HTML iframe */
                 <div className="rounded-xl border border-border bg-neutral-100 dark:bg-neutral-900 overflow-hidden shadow-md">
@@ -783,28 +869,107 @@ export function PreviewPanel({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-3 sm:p-6 backdrop-blur-md"
             onClick={() => setLightboxImg(null)}
           >
-            <div className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-white font-semibold text-sm">{activeLead.name} — Full Page Website Preview</span>
+            <div
+              className="relative max-w-5xl w-full h-[92vh] flex flex-col bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-neutral-950 border-b border-neutral-800 shrink-0 gap-3 flex-wrap">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                  <span className="text-white font-semibold text-sm truncate">
+                    {activeLead.name}
+                  </span>
+                  <Badge variant="outline" className="text-[10px] text-emerald-400 border-emerald-500/30 shrink-0">
+                    {lightboxImg.includes("_mobile") ? "📱 WhatsApp Mobile (390px)" : "🖥️ Desktop Full (1280px)"}
+                  </Badge>
+                </div>
+
+                {/* Zoom / View controls */}
+                <div className="flex items-center gap-1.5 bg-neutral-900 p-1 rounded-xl border border-neutral-800">
+                  <button
+                    onClick={() => setLightboxZoom("mockup")}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                      lightboxZoom === "mockup" ? "bg-primary text-white shadow-sm" : "text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    📱 Phone (390px)
+                  </button>
+                  <button
+                    onClick={() => setLightboxZoom("fit")}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                      lightboxZoom === "fit" ? "bg-primary text-white shadow-sm" : "text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    ↔️ Fit Screen
+                  </button>
+                  <button
+                    onClick={() => setLightboxZoom("full")}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                      lightboxZoom === "full" ? "bg-primary text-white shadow-sm" : "text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    🔍 100% Full HD
+                  </button>
+                </div>
+
+                {/* Actions */}
                 <div className="flex items-center gap-2">
-                  <a href={lightboxImg}
-                    download={`${activeLead.name.replace(/[^a-z0-9]/gi, "_")}_website_preview.png`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-white hover:opacity-90 transition-opacity"
-                    onClick={(e) => e.stopPropagation()}>
+                  <a
+                    href={lightboxImg}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-neutral-800 hover:bg-neutral-700 text-white transition-colors border border-neutral-700"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" /> Open Tab
+                  </a>
+                  <a
+                    href={lightboxImg}
+                    download={`${activeLead.name.replace(/[^a-z0-9]/gi, "_")}_${lightboxImg.includes("_mobile") ? "mobile" : "desktop"}_preview.png`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+                  >
                     <Download className="h-3.5 w-3.5" /> Download PNG
                   </a>
-                  <button onClick={() => setLightboxImg(null)}
-                    className="h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+                  <button
+                    onClick={() => setLightboxImg(null)}
+                    className="h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                  >
                     <X className="h-4 w-4" />
                   </button>
                 </div>
               </div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={lightboxImg} alt={`${activeLead.name} full-page website screenshot`}
-                className="w-full rounded-xl shadow-2xl max-h-[85vh] object-contain" />
+
+              <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-neutral-950/90 flex justify-center items-start">
+                {lightboxZoom === "mockup" ? (
+                  /* Phone frame */
+                  <div className="max-w-[400px] w-full rounded-[40px] p-2.5 bg-neutral-900 border-4 border-neutral-700 shadow-2xl overflow-hidden my-auto">
+                    <div className="w-24 h-4 bg-neutral-800 rounded-full mx-auto mb-2 flex items-center justify-center">
+                      <div className="w-3 h-3 rounded-full bg-neutral-950 border border-neutral-700 mr-2" />
+                      <div className="w-2 h-2 rounded-full bg-neutral-950" />
+                    </div>
+                    <div className="rounded-[28px] overflow-hidden bg-neutral-950">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={lightboxImg}
+                        alt={`${activeLead.name} mobile phone preview`}
+                        className="w-full h-auto object-top block"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  /* Standard / Full image */
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={lightboxImg}
+                    alt={`${activeLead.name} full-page website screenshot`}
+                    className={`h-auto rounded-lg shadow-2xl object-top block transition-all ${
+                      lightboxZoom === "fit" ? "max-w-3xl w-full" : "w-full max-w-5xl"
+                    }`}
+                  />
+                )}
+              </div>
             </div>
           </motion.div>
         )}

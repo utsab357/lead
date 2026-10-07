@@ -59,14 +59,14 @@ function injectTopBanner(html: string, businessName: string, viewsCount: number)
   }
 
   const banner = `
-<div id="webeta-preview-banner" style="background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.12); position: sticky; top: 0; z-index: 99999; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
-  <div style="display: flex; align-items: center; gap: 10px;">
-    <img src="/webeta-logo.jpg" alt="Webeta" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(255,255,255,0.2);" />
-    <span style="letter-spacing: -0.01em;">⚡ Private Concept for <strong style="color: #fff;">${esc(businessName)}</strong> — Crafted by <strong style="color: #38bdf8;">Webeta</strong></span>
+<div id="webeta-preview-banner" class="webeta-preview-banner" style="background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 11px 20px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.12); position: sticky; top: 0; z-index: 99999; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+  <div class="webeta-banner-left" style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+    <img src="/webeta-logo.jpg" alt="Webeta" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(255,255,255,0.25); flex-shrink: 0;" />
+    <span class="webeta-banner-title" style="letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">⚡ Private Concept for <strong style="color: #fff; font-weight: 700;">${esc(businessName)}</strong> — Crafted by <strong style="color: #38bdf8;">Webeta</strong></span>
   </div>
-  <div style="display: flex; align-items: center; gap: 12px;">
-    <span style="font-size: 11px; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 999px;">Preview Active (${viewsCount}/7)</span>
-    <a href="https://webeta.site" target="_blank" rel="noopener noreferrer" style="color: #4ade80; text-decoration: none; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(74, 222, 128, 0.1); border-radius: 6px; border: 1px solid rgba(74, 222, 128, 0.25);">webeta.site ↗</a>
+  <div class="webeta-banner-right" style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+    <span class="webeta-banner-badge" style="font-size: 11px; color: #94a3b8; background: rgba(255,255,255,0.08); padding: 3px 9px; border-radius: 999px; white-space: nowrap;">Preview Active (${viewsCount}/7)</span>
+    <a href="https://webeta.site" target="_blank" rel="noopener noreferrer" class="webeta-banner-link" style="color: #4ade80; text-decoration: none; font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 4px; padding: 4px 11px; background: rgba(74, 222, 128, 0.12); border-radius: 6px; border: 1px solid rgba(74, 222, 128, 0.3); white-space: nowrap;">webeta.site ↗</a>
   </div>
 </div>`;
 
@@ -242,7 +242,11 @@ export async function GET(
     const cleanSlug = filename.replace(/\.html$/i, "").toLowerCase();
 
     const url = new URL(req.url);
-    const isAdmin = url.searchParams.get("admin") === "true" || url.searchParams.get("unlock") === "true";
+    const isAdmin =
+      url.searchParams.get("admin") === "true" ||
+      url.searchParams.get("unlock") === "true" ||
+      url.hostname === "localhost" ||
+      url.hostname === "127.0.0.1";
     const ua = req.headers.get("user-agent") || "";
     const isBot = /bot|crawler|spider|facebookexternalhit|whatsapp|microlink|headlesschrome|puppeteer/i.test(ua);
 

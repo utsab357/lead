@@ -52,67 +52,67 @@ function starRating(n: number): string {
 function buildNav(businessName: string, waUrl: string, tokens: any, ctaText: string = "Reserve a Table", layoutVariant: string = "A"): string {
   const { primaryColor, darkColor, canvasColor, surfaceColor } = tokens;
 
-  // Variant A — white floating pill (clean/minimal)
+  // Variant A — sleek floating pill (clean/minimal)
   if (layoutVariant === "A") return `
-  <!-- NAV -->
-  <nav style="position:sticky;top:16px;z-index:999;max-width:1200px;margin:0 auto;padding:0 24px;">
-    <div style="background:rgba(255,255,255,0.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(0,0,0,0.07);border-radius:999px;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-      <a href="#" style="font-family:var(--font-display);font-size:18px;font-weight:800;color:${darkColor};text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
-      <ul style="display:flex;gap:24px;list-style:none;margin:0;padding:0;">
-        <li><a href="#menu" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.65;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.65">Menu</a></li>
-        <li><a href="#about" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.65;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.65">About</a></li>
-        <li><a href="#gallery" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:500;opacity:0.65;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.65">Gallery</a></li>
+  <!-- NAV A -->
+  <nav class="site-nav" style="position:sticky;top:0;z-index:999;width:100%;background:rgba(255,255,255,0.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,0,0,0.06);box-shadow:0 4px 20px rgba(0,0,0,0.04);">
+    <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:20px;font-weight:800;color:${darkColor};text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
+      <ul class="nav-links-desktop" style="display:flex;gap:26px;list-style:none;margin:0;padding:0;">
+        <li><a href="#menu" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:600;opacity:0.75;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.75">Menu</a></li>
+        <li><a href="#about" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:600;opacity:0.75;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.75">About</a></li>
+        <li><a href="#gallery" style="color:${darkColor};text-decoration:none;font-size:14px;font-weight:600;opacity:0.75;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.75">Gallery</a></li>
       </ul>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:12px;font-weight:600;color:#16a34a;">● Open</span>
-        <a href="${waUrl}" target="_blank" style="background:${primaryColor};color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;">${esc(ctaText)}</a>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="nav-status-badge" style="font-size:12px;font-weight:700;color:#16a34a;">● Open</span>
+        <a href="${waUrl}" target="_blank" class="nav-cta" style="background:${primaryColor};color:#fff;padding:9px 20px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">${esc(ctaText)}</a>
       </div>
     </div>
   </nav>`;
 
   // Variant B — dark full-width bar with accent underline
   if (layoutVariant === "B") return `
-  <!-- NAV -->
-  <nav style="position:sticky;top:0;z-index:999;width:100%;background:${darkColor};border-bottom:3px solid ${primaryColor};">
-    <div style="max-width:1200px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px;">
-      <a href="#" style="font-family:var(--font-display);font-size:20px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.03em;">${esc(businessName)}</a>
-      <ul style="display:flex;gap:28px;list-style:none;margin:0;padding:0;">
-        <li><a href="#menu" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;" onmouseover="this.style.color='${primaryColor}'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">Menu</a></li>
-        <li><a href="#about" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;" onmouseover="this.style.color='${primaryColor}'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">About</a></li>
-        <li><a href="#gallery" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;" onmouseover="this.style.color='${primaryColor}'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">Gallery</a></li>
+  <!-- NAV B -->
+  <nav class="site-nav" style="position:sticky;top:0;z-index:999;width:100%;background:${darkColor};border-bottom:3px solid ${primaryColor};box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+    <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:20px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.03em;">${esc(businessName)}</a>
+      <ul class="nav-links-desktop" style="display:flex;gap:28px;list-style:none;margin:0;padding:0;">
+        <li><a href="#menu" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;" onmouseover="this.style.color='${primaryColor}'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Menu</a></li>
+        <li><a href="#about" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;" onmouseover="this.style.color='${primaryColor}'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">About</a></li>
+        <li><a href="#gallery" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;" onmouseover="this.style.color='${primaryColor}'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Gallery</a></li>
       </ul>
-      <a href="${waUrl}" target="_blank" style="background:${primaryColor};color:#fff;padding:9px 22px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;letter-spacing:0.02em;">${esc(ctaText)} →</a>
+      <a href="${waUrl}" target="_blank" class="nav-cta" style="background:${primaryColor};color:#fff;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;letter-spacing:0.02em;white-space:nowrap;">${esc(ctaText)} →</a>
     </div>
   </nav>`;
 
-  // Variant C — transparent overlay (sits on top of hero image)
+  // Variant C — sleek dark glassmorphism navbar (sits cleanly beneath banner)
   if (layoutVariant === "C") return `
-  <!-- NAV -->
-  <nav style="position:absolute;top:0;left:0;right:0;z-index:999;padding:24px 40px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;">
-      <a href="#" style="font-family:var(--font-display);font-size:20px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.01em;text-shadow:0 2px 8px rgba(0,0,0,0.4);">${esc(businessName)}</a>
-      <div style="display:flex;align-items:center;gap:28px;">
-        <a href="#menu" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">Menu</a>
-        <a href="#about" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">About</a>
-        <a href="#gallery" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">Gallery</a>
-        <a href="${waUrl}" target="_blank" style="background:#fff;color:${darkColor};padding:10px 22px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;">${esc(ctaText)}</a>
-      </div>
+  <!-- NAV C -->
+  <nav class="site-nav" style="position:sticky;top:0;z-index:999;width:100%;background:rgba(18,18,18,0.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.1);box-shadow:0 4px 20px rgba(0,0,0,0.25);">
+    <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:22px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.02em;">${esc(businessName)}</a>
+      <ul class="nav-links-desktop" style="display:flex;gap:28px;list-style:none;margin:0;padding:0;">
+        <li><a href="#menu" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">Menu</a></li>
+        <li><a href="#about" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">About</a></li>
+        <li><a href="#gallery" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">Gallery</a></li>
+      </ul>
+      <a href="${waUrl}" target="_blank" class="nav-cta" style="background:#fff;color:${darkColor};padding:10px 22px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;">${esc(ctaText)}</a>
     </div>
   </nav>`;
 
   // Variant D — bold colored bar, business name centered
   return `
-  <!-- NAV -->
-  <nav style="position:sticky;top:0;z-index:999;background:${primaryColor};width:100%;">
-    <div style="max-width:1200px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;">
-      <ul style="display:flex;gap:20px;list-style:none;margin:0;padding:0;flex:1;">
-        <li><a href="#menu" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">Menu</a></li>
-        <li><a href="#about" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">About</a></li>
+  <!-- NAV D -->
+  <nav class="site-nav" style="position:sticky;top:0;z-index:999;background:${primaryColor};width:100%;box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+    <div class="site-nav-inner" style="max-width:1200px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <ul class="nav-links-desktop" style="display:flex;gap:20px;list-style:none;margin:0;padding:0;flex:1;">
+        <li><a href="#menu" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">Menu</a></li>
+        <li><a href="#about" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">About</a></li>
       </ul>
-      <a href="#" style="font-family:var(--font-display);font-size:18px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.02em;text-align:center;flex:1;">${esc(businessName)}</a>
-      <div style="display:flex;gap:20px;align-items:center;flex:1;justify-content:flex-end;">
-        <a href="#gallery" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">Gallery</a>
-        <a href="${waUrl}" target="_blank" style="background:#fff;color:${primaryColor};padding:8px 18px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;">${esc(ctaText)}</a>
+      <a href="#" class="brand-name" style="font-family:var(--font-display);font-size:20px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.02em;text-align:center;flex:1;">${esc(businessName)}</a>
+      <div style="display:flex;gap:16px;align-items:center;flex:1;justify-content:flex-end;">
+        <a href="#gallery" class="nav-links-desktop" style="color:rgba(255,255,255,0.85);text-decoration:none;font-size:13px;font-weight:700;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.85)'">Gallery</a>
+        <a href="${waUrl}" target="_blank" class="nav-cta" style="background:#fff;color:${primaryColor};padding:8px 18px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;">${esc(ctaText)}</a>
       </div>
     </div>
   </nav>`;
@@ -135,59 +135,55 @@ function buildHero(spec: any, waUrl: string, telLink: string, variant: string): 
 
   // Layout A — Classic centered fullscreen hero
   if (variant === "A") return `
-  <!-- HERO A: Centered Fullscreen -->
-  <section style="height:100dvh;min-height:620px;background-image:linear-gradient(160deg,rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.25) 55%,rgba(0,0,0,0.65) 100%),url('${img}');background-size:cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;position:relative;margin-top:-72px;padding-top:112px;">
-    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:8px 20px;margin-bottom:24px;">
+  <!-- HERO A: Centered Hero -->
+  <section class="hero-section" style="min-height:580px;background-image:linear-gradient(160deg,rgba(0,0,0,0.68) 0%,rgba(0,0,0,0.35) 55%,rgba(0,0,0,0.72) 100%),url('${img}');background-size:cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 24px;position:relative;">
+    <div class="hero-badge" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:8px 20px;margin-bottom:22px;">
       <span style="color:#fbbf24;">★</span>
       <span style="color:#fff;font-size:13px;font-weight:600;">${ratingVal} · ${reviewVal} Google Reviews</span>
     </div>
-    <h1 style="font-family:var(--font-display);font-size:clamp(30px,4.5vw,54px);font-weight:800;color:#fff;line-height:1.15;letter-spacing:-0.02em;max-width:820px;margin:0 0 18px;">${esc(headline)}</h1>
-    <p style="font-size:clamp(14px,1.6vw,17px);color:rgba(255,255,255,0.85);max-width:560px;margin:0 0 32px;line-height:1.6;">${esc(subtitle)}</p>
-    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+    <h1 class="hero-title" style="font-family:var(--font-display);font-size:clamp(30px,4.5vw,54px);font-weight:800;color:#fff;line-height:1.16;letter-spacing:-0.02em;max-width:840px;margin:0 0 18px;">${esc(headline)}</h1>
+    <p class="hero-subtitle" style="font-size:clamp(14px,1.6vw,17px);color:rgba(255,255,255,0.88);max-width:580px;margin:0 0 32px;line-height:1.6;">${esc(subtitle)}</p>
+    <div class="hero-actions" style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
       <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:15px 36px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 8px 32px rgba(0,0,0,0.35);letter-spacing:0.01em;">${esc(primaryCtaText)}</a>
-      <a href="${telLink}" style="background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);color:#fff;border:2px solid rgba(255,255,255,0.35);padding:15px 30px;border-radius:999px;font-size:15px;font-weight:600;text-decoration:none;">Call Now</a>
-    </div>
-    <div style="position:absolute;bottom:28px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.5);font-size:11px;letter-spacing:.12em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:6px;">
-      <span>Scroll to Explore</span>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:bounce 2s infinite"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      <a href="${telLink}" style="background:rgba(255,255,255,0.14);backdrop-filter:blur(8px);color:#fff;border:2px solid rgba(255,255,255,0.35);padding:15px 30px;border-radius:999px;font-size:15px;font-weight:600;text-decoration:none;">Call Now</a>
     </div>
   </section>`;
 
   // Layout B — Split: left text panel + right full-bleed image
   if (variant === "B") return `
   <!-- HERO B: Split Layout -->
-  <section style="min-height:100dvh;display:grid;grid-template-columns:1fr 1fr;margin-top:-72px;">
-    <div style="background:${tokens.canvasColor};display:flex;flex-direction:column;justify-content:center;padding:120px 60px 60px;">
-      <div style="display:inline-flex;align-items:center;gap:8px;background:${tokens.primaryColor}18;border-radius:999px;padding:7px 16px;margin-bottom:24px;width:fit-content;">
+  <section class="hero-section hero-split-container" style="min-height:560px;display:grid;grid-template-columns:1fr 1fr;padding:0;">
+    <div style="background:${tokens.canvasColor};display:flex;flex-direction:column;justify-content:center;padding:80px 48px;">
+      <div class="hero-badge" style="display:inline-flex;align-items:center;gap:8px;background:${tokens.primaryColor}18;border-radius:999px;padding:7px 16px;margin-bottom:22px;width:fit-content;">
         <span style="color:#fbbf24;">★</span>
         <span style="color:${tokens.primaryColor};font-size:12px;font-weight:700;">${ratingVal} · ${reviewVal} Reviews</span>
       </div>
-      <h1 style="font-family:var(--font-display);font-size:clamp(28px,3.8vw,48px);font-weight:800;color:${tokens.darkColor};line-height:1.2;letter-spacing:-0.02em;margin:0 0 16px;">${esc(headline)}</h1>
-      <p style="font-size:15px;color:${tokens.darkColor};opacity:0.75;line-height:1.65;margin:0 0 32px;max-width:440px;">${esc(subtitle)}</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <h1 class="hero-title" style="font-family:var(--font-display);font-size:clamp(28px,3.8vw,48px);font-weight:800;color:${tokens.darkColor};line-height:1.2;letter-spacing:-0.02em;margin:0 0 16px;">${esc(headline)}</h1>
+      <p class="hero-subtitle" style="font-size:15px;color:${tokens.darkColor};opacity:0.8;line-height:1.65;margin:0 0 32px;max-width:460px;">${esc(subtitle)}</p>
+      <div class="hero-actions" style="display:flex;gap:12px;flex-wrap:wrap;">
         <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:15px 32px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;">${esc(primaryCtaText)}</a>
         <a href="${telLink}" style="background:transparent;color:${tokens.darkColor};border:2px solid ${tokens.primaryColor}40;padding:15px 28px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">Call Direct</a>
       </div>
     </div>
-    <div style="background-image:url('${img}');background-size:cover;background-position:center;min-height:560px;"></div>
+    <div style="background-image:url('${img}');background-size:cover;background-position:center;min-height:420px;"></div>
   </section>`;
 
   // Layout C — Dark editorial: balanced, elegant type on dark overlay
   if (variant === "C") return `
   <!-- HERO C: Dark Editorial -->
-  <section style="height:100dvh;min-height:640px;position:relative;overflow:hidden;margin-top:-72px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 60px 80px;">
+  <section class="hero-section" style="min-height:580px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:64px 48px 80px;">
     <div style="position:absolute;inset:0;background-image:url('${img}');background-size:cover;background-position:center;"></div>
-    <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.2) 100%);"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.3) 100%);"></div>
     <div style="position:relative;z-index:1;max-width:1100px;">
-      <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:6px 16px;margin-bottom:18px;background:rgba(0,0,0,0.3);backdrop-filter:blur(8px);">
+      <div class="hero-badge" style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:6px 16px;margin-bottom:18px;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);">
         <span style="color:#fbbf24;">★</span>
-        <span style="color:rgba(255,255,255,0.9);font-size:12px;font-weight:600;">${ratingVal} · ${reviewVal} Google Reviews</span>
+        <span style="color:rgba(255,255,255,0.92);font-size:12px;font-weight:600;">${ratingVal} · ${reviewVal} Google Reviews</span>
       </div>
-      <h1 style="font-family:var(--font-display);font-size:clamp(30px,4.5vw,54px);font-weight:800;color:#fff;line-height:1.15;letter-spacing:-0.02em;margin:0 0 16px;max-width:820px;">${esc(headline)}</h1>
-      <p style="font-size:clamp(14px,1.6vw,17px);color:rgba(255,255,255,0.85);max-width:580px;line-height:1.6;margin:0 0 24px;">${esc(subtitle)}</p>
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <h1 class="hero-title" style="font-family:var(--font-display);font-size:clamp(30px,4.5vw,54px);font-weight:800;color:#fff;line-height:1.16;letter-spacing:-0.02em;margin:0 0 16px;max-width:840px;">${esc(headline)}</h1>
+      <p class="hero-subtitle" style="font-size:clamp(14px,1.6vw,17px);color:rgba(255,255,255,0.88);max-width:580px;line-height:1.6;margin:0 0 26px;">${esc(subtitle)}</p>
+      <div class="hero-actions" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
         <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:14px 34px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,0.3);">${esc(primaryCtaText)}</a>
-        <a href="${telLink}" style="background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:14px 28px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">Call Directly</a>
+        <a href="${telLink}" style="background:rgba(255,255,255,0.14);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:14px 28px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">Call Directly</a>
       </div>
     </div>
   </section>`;
@@ -195,16 +191,16 @@ function buildHero(spec: any, waUrl: string, telLink: string, variant: string): 
   // Layout D — Bold with accent stripe + stacked text
   return `
   <!-- HERO D: Bold Accent -->
-  <section style="min-height:100dvh;background-image:url('${img}');background-size:cover;background-position:center;position:relative;display:flex;align-items:center;margin-top:-72px;">
-    <div style="position:absolute;inset:0;background:linear-gradient(135deg,${tokens.primaryColor}EE 0%,${tokens.darkColor}CC 100%);"></div>
-    <div style="position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:120px 60px 80px;">
-      <div style="font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-bottom:16px;">${esc(category)} · ${esc(city)}</div>
-      <h1 style="font-family:var(--font-display);font-size:clamp(30px,4.5vw,52px);font-weight:800;color:#fff;line-height:1.15;letter-spacing:-0.02em;margin:0 0 16px;max-width:760px;">${esc(headline)}</h1>
+  <section class="hero-section" style="min-height:560px;background-image:url('${img}');background-size:cover;background-position:center;position:relative;display:flex;align-items:center;padding:80px 48px;">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,${tokens.primaryColor}EE 0%,${tokens.darkColor}DD 100%);"></div>
+    <div style="position:relative;z-index:1;max-width:1200px;margin:0 auto;width:100%;">
+      <div style="font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:16px;">${esc(category)} · ${esc(city)}</div>
+      <h1 class="hero-title" style="font-family:var(--font-display);font-size:clamp(30px,4.5vw,52px);font-weight:800;color:#fff;line-height:1.16;letter-spacing:-0.02em;margin:0 0 16px;max-width:760px;">${esc(headline)}</h1>
       <div style="width:60px;height:4px;background:#fff;border-radius:2px;margin:0 0 20px;"></div>
-      <p style="font-size:16px;color:rgba(255,255,255,0.85);max-width:520px;line-height:1.6;margin:0 0 32px;">${esc(subtitle)}</p>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+      <p class="hero-subtitle" style="font-size:16px;color:rgba(255,255,255,0.88);max-width:520px;line-height:1.6;margin:0 0 32px;">${esc(subtitle)}</p>
+      <div class="hero-actions" style="display:flex;gap:14px;flex-wrap:wrap;">
         <a href="${waUrl}" target="_blank" style="background:#fff;color:${tokens.primaryColor};padding:15px 34px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;">${esc(primaryCtaText)}</a>
-        <a href="${telLink}" style="background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.4);color:#fff;padding:15px 28px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">★ ${ratingVal} · ${reviewVal} reviews</a>
+        <a href="${telLink}" style="background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.4);color:#fff;padding:15px 28px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">★ ${ratingVal} · ${reviewVal} reviews</a>
       </div>
     </div>
   </section>`;
@@ -217,19 +213,19 @@ function buildTrustBar(spec: any): string {
 
   return `
   <!-- TRUST BAR -->
-  <div style="background:${tokens.canvasColor};padding:0 24px;">
-    <div style="max-width:960px;margin:0 auto;background:${tokens.darkColor};border-radius:999px;padding:18px 40px;display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;box-shadow:0 12px 48px rgba(0,0,0,0.2);transform:translateY(-28px);">
-      <div style="display:flex;align-items:center;gap:10px;color:#fff;">
+  <div class="trust-bar-wrapper" style="background:${tokens.canvasColor};padding:0 24px;">
+    <div class="trust-bar-card" style="max-width:960px;margin:0 auto;background:${tokens.darkColor};border-radius:999px;padding:18px 40px;display:flex;align-items:center;justify-content:center;gap:36px;flex-wrap:wrap;box-shadow:0 12px 48px rgba(0,0,0,0.2);transform:translateY(-24px);">
+      <div class="trust-bar-item" style="display:flex;align-items:center;gap:10px;color:#fff;">
         <span style="font-size:22px;color:#fbbf24;">★</span>
         <span style="font-size:15px;font-weight:700;">${ratingVal} Google Rating</span>
       </div>
-      <div style="width:1px;height:24px;background:rgba(255,255,255,0.2);"></div>
-      <div style="display:flex;align-items:center;gap:10px;color:#fff;">
+      <div class="trust-bar-divider" style="width:1px;height:24px;background:rgba(255,255,255,0.2);"></div>
+      <div class="trust-bar-item" style="display:flex;align-items:center;gap:10px;color:#fff;">
         <span style="font-size:20px;">💬</span>
         <span style="font-size:15px;font-weight:700;">${reviewVal} Real Customer Reviews</span>
       </div>
-      <div style="width:1px;height:24px;background:rgba(255,255,255,0.2);"></div>
-      <div style="display:flex;align-items:center;gap:10px;color:#fff;">
+      <div class="trust-bar-divider" style="width:1px;height:24px;background:rgba(255,255,255,0.2);"></div>
+      <div class="trust-bar-item" style="display:flex;align-items:center;gap:10px;color:#fff;">
         <span style="font-size:20px;">🌿</span>
         <span style="font-size:15px;font-weight:700;">Loved in ${esc(city)}</span>
       </div>
@@ -274,16 +270,16 @@ function buildOfferings(spec: any, waUrl: string): string {
 
   return `
   <!-- OFFERINGS / MENU -->
-  <section id="menu" style="padding:80px 24px;background:${tokens.canvasColor};">
+  <section id="menu" class="section-pad offerings-section" style="padding:80px 24px;background:${tokens.canvasColor};">
     <div style="max-width:1200px;margin:0 auto;">
-      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:48px;">
+      <div class="offerings-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:48px;">
         <div>
           <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:10px;">${sectionTag}</span>
           <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:${tokens.darkColor};margin:0;line-height:1.1;">${sectionTitle}</h2>
         </div>
         <a href="${waUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:12px 28px;border-radius:999px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;">Order on WhatsApp →</a>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;">
+      <div class="offerings-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;">
         ${itemsHTML}
       </div>
     </div>
@@ -299,13 +295,13 @@ function buildAbout(spec: any, waUrl: string): string {
 
   return `
   <!-- ABOUT -->
-  <section id="about" style="padding:80px 24px;background:${tokens.surfaceColor};">
-    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
-      <div style="order:1;">
+  <section id="about" class="section-pad about-section" style="padding:80px 24px;background:${tokens.surfaceColor};">
+    <div class="about-grid" style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+      <div class="about-text-col" style="order:1;">
         <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">ABOUT US</span>
         <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,44px);font-weight:800;color:${tokens.darkColor};margin:0 0 20px;line-height:1.15;">Experience ${esc(businessName)}</h2>
         <p style="font-size:16px;color:${tokens.darkColor};opacity:0.75;line-height:1.8;margin:0 0 28px;">${esc(narrative)}</p>
-        <div style="display:flex;gap:32px;margin-bottom:32px;flex-wrap:wrap;">
+        <div class="about-stats-row" style="display:flex;gap:32px;margin-bottom:32px;flex-wrap:wrap;">
           <div>
             <div style="font-family:var(--font-display);font-size:36px;font-weight:900;color:${tokens.primaryColor};">${spec.rating?.toFixed(1) || "4.8"}★</div>
             <div style="font-size:13px;color:${tokens.darkColor};opacity:0.6;font-weight:600;">Google Rating</div>
@@ -324,11 +320,11 @@ function buildAbout(spec: any, waUrl: string): string {
           <span style="font-size:13px;font-weight:700;color:${tokens.primaryColor};">Trusted in ${esc(city)}</span>
         </div>
       </div>
-      <div style="order:2;position:relative;">
+      <div class="about-img-col" style="order:2;position:relative;">
         <div style="border-radius:24px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.15);aspect-ratio:4/3;">
           <img src="${photo}" alt="${esc(businessName)}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='${curatedStockPhotos.hero}'">
         </div>
-        <div style="position:absolute;bottom:-20px;left:-20px;background:${tokens.primaryColor};color:#fff;border-radius:20px;padding:16px 24px;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+        <div class="about-badge-since" style="position:absolute;bottom:-20px;left:-20px;background:${tokens.primaryColor};color:#fff;border-radius:20px;padding:16px 24px;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
           <div style="font-family:var(--font-display);font-size:20px;font-weight:900;">Since 2010</div>
           <div style="font-size:12px;opacity:0.85;">Serving with pride</div>
         </div>
@@ -355,7 +351,7 @@ function buildHighlights(spec: any): string {
 
   return `
   <!-- HIGHLIGHTS -->
-  <section style="padding:80px 24px;background:${tokens.canvasColor};">
+  <section class="section-pad highlights-section" style="padding:80px 24px;background:${tokens.canvasColor};">
     <div style="max-width:1200px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:56px;">
         <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">WHY CHOOSE US</span>
@@ -373,7 +369,7 @@ function buildHighlights(spec: any): string {
           return opts[h%opts.length];
         })()}</h2>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;">
+      <div class="highlights-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:24px;">
         ${cards.map(c => `
         <div style="background:${c.highlight ? tokens.primaryColor : tokens.surfaceColor};border-radius:20px;padding:32px;transition:transform .25s,box-shadow .25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 20px 48px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
           <div style="font-size:32px;margin-bottom:16px;">${c.icon}</div>
@@ -393,13 +389,13 @@ function buildGallery(spec: any): string {
   while (photos.length < 4) photos.push(curatedStockPhotos.hero);
 
   const photoHTML = photos.map((p: string, i: number) => `
-    <div style="border-radius:16px;overflow:hidden;aspect-ratio:${i === 0 || i === 3 ? "16/10" : "4/3"};${i === 0 ? "grid-column:span 2;" : ""}box-shadow:0 4px 20px rgba(0,0,0,0.08);transition:transform .3s,box-shadow .3s;" onmouseover="this.style.transform='scale(1.02)';this.style.boxShadow='0 16px 48px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'">
+    <div class="${i === 0 ? "gallery-item-span2" : ""}" style="border-radius:16px;overflow:hidden;aspect-ratio:${i === 0 || i === 3 ? "16/10" : "4/3"};${i === 0 ? "grid-column:span 2;" : ""}box-shadow:0 4px 20px rgba(0,0,0,0.08);transition:transform .3s,box-shadow .3s;" onmouseover="this.style.transform='scale(1.02)';this.style.boxShadow='0 16px 48px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'">
       <img src="${p}" alt="${esc(businessName)} photo ${i + 1}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='${curatedStockPhotos.hero}'">
     </div>`).join("");
 
   return `
   <!-- GALLERY -->
-  <section id="gallery" style="padding:80px 24px;background:${tokens.surfaceColor};">
+  <section id="gallery" class="section-pad gallery-section" style="padding:80px 24px;background:${tokens.surfaceColor};">
     <div style="max-width:1200px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:48px;">
         <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">GALLERY</span>
@@ -413,7 +409,7 @@ function buildGallery(spec: any): string {
           return opts[h%opts.length];
         })()}</h2>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      <div class="gallery-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
         ${photoHTML}
       </div>
     </div>
@@ -435,7 +431,7 @@ function buildReviews(spec: any): string {
 
   return `
   <!-- REVIEWS -->
-  <section style="padding:80px 24px;background:${tokens.darkColor};">
+  <section class="section-pad reviews-section" style="padding:80px 24px;background:${tokens.darkColor};">
     <div style="max-width:1200px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:56px;">
         <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">CUSTOMER REVIEWS</span>
@@ -447,7 +443,7 @@ function buildReviews(spec: any): string {
         })()}</h2>
         <p style="color:rgba(255,255,255,0.6);font-size:16px;margin:0;">${ratingVal} ★ average across ${spec.reviewsCount || 150}+ real Google reviews</p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;">
+      <div class="reviews-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;">
         ${displayReviews.map((r: any) => `
         <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px;backdrop-filter:blur(8px);">
           <div style="color:#fbbf24;font-size:18px;margin-bottom:14px;">${"★".repeat(r.rating || 5)}</div>
@@ -472,13 +468,13 @@ function buildLocation(spec: any, waUrl: string, telLink: string): string {
 
   return `
   <!-- LOCATION & CONTACT -->
-  <section id="contact" style="padding:80px 24px;background:${tokens.canvasColor};">
+  <section id="contact" class="section-pad location-section" style="padding:80px 24px;background:${tokens.canvasColor};">
     <div style="max-width:1200px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:56px;">
         <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${tokens.primaryColor};display:block;margin-bottom:12px;">VISIT US</span>
         <h2 style="font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:800;color:${tokens.darkColor};margin:0;">Find Us in ${esc(city)}</h2>
       </div>
-      <div style="background:${tokens.darkColor};border-radius:28px;padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;box-shadow:0 24px 80px rgba(0,0,0,0.15);">
+      <div class="location-grid" style="background:${tokens.darkColor};border-radius:28px;padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;box-shadow:0 24px 80px rgba(0,0,0,0.15);">
         <div>
           <div style="margin-bottom:28px;">
             <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${tokens.primaryColor};margin-bottom:8px;">📍 ADDRESS</div>
@@ -492,7 +488,7 @@ function buildLocation(spec: any, waUrl: string, telLink: string): string {
             <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${tokens.primaryColor};margin-bottom:8px;">📞 PHONE</div>
             <a href="${telLink}" style="color:#fff;font-size:16px;text-decoration:none;">${esc(phone)}</a>
           </div>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <div class="loc-actions" style="display:flex;gap:12px;flex-wrap:wrap;">
             <a href="${mapsUrl}" target="_blank" style="background:${tokens.primaryColor};color:#fff;padding:14px 24px;border-radius:999px;font-size:14px;font-weight:700;text-decoration:none;">Get Directions →</a>
             <a href="${waUrl}" target="_blank" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:14px 24px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;">WhatsApp Us</a>
           </div>
@@ -557,8 +553,8 @@ function buildCTABanner(spec: any, waUrl: string): string {
 
   return `
   <!-- CTA BANNER -->
-  <section style="padding:80px 24px;background:${tokens.surfaceColor};">
-    <div style="max-width:900px;margin:0 auto;background:linear-gradient(135deg,${tokens.primaryColor} 0%,${tokens.secondaryColor} 100%);border-radius:28px;padding:60px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.15);">
+  <section class="section-pad cta-banner-section" style="padding:80px 24px;background:${tokens.surfaceColor};">
+    <div class="cta-banner-box" style="max-width:900px;margin:0 auto;background:linear-gradient(135deg,${tokens.primaryColor} 0%,${tokens.secondaryColor} 100%);border-radius:28px;padding:60px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.15);">
       <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:16px;">${isFood ? "ORDER NOW" : "BOOK NOW"}</div>
       <h2 style="font-family:var(--font-display);font-size:clamp(24px,4vw,42px);font-weight:800;color:#fff;margin:0 0 16px;line-height:1.15;">${esc(title)}</h2>
       <p style="color:rgba(255,255,255,0.8);font-size:16px;margin:0 0 36px;line-height:1.6;max-width:560px;margin-left:auto;margin-right:auto;">${esc(sub)}</p>
@@ -575,11 +571,11 @@ function buildFooter(spec: any, waUrl: string, telLink: string): string {
 
   return `
   <!-- FOOTER -->
-  <footer style="background:${tokens.darkColor};padding:60px 24px 32px;">
+  <footer class="footer-section" style="background:${tokens.darkColor};padding:60px 24px 32px;">
     <div style="max-width:1200px;margin:0 auto;">
-      <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:48px;flex-wrap:wrap;">
+      <div class="footer-grid" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:48px;flex-wrap:wrap;">
         <div>
-          <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:#fff;margin-bottom:12px;">${esc(businessName)}</div>
+          <div class="footer-brand" style="font-family:var(--font-display);font-size:22px;font-weight:800;color:#fff;margin-bottom:12px;">${esc(businessName)}</div>
           <p style="color:rgba(255,255,255,0.5);font-size:14px;line-height:1.7;margin:0 0 20px;max-width:300px;">Proudly serving ${esc(city)} with quality, passion, and an unforgettable experience.</p>
           <div style="display:flex;gap:12px;">
             <a href="${waUrl}" target="_blank" style="width:40px;height:40px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:18px;">💬</a>
@@ -712,28 +708,71 @@ export async function buildTemplateHTML(lead: RankedLead, strategy?: BusinessStr
     @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)} }
     @keyframes waPulse { 0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)} 50%{box-shadow:0 4px 40px rgba(37,211,102,.95)} }
     @media (max-width: 768px) {
-      .nav-links { display: none !important; }
-      section > div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
-      [style*="grid-template-columns:2fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
-      [style*="grid-template-columns:repeat(3,1fr)"] { grid-template-columns: repeat(2,1fr) !important; }
-      [style*="grid-column:span 2"] { grid-column: span 1 !important; }
-      [style*="min-height:100dvh"][style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+      .site-nav-inner { padding: 12px 16px !important; }
+      .nav-links-desktop { display: none !important; }
+      .nav-status-badge { display: none !important; }
+      .brand-name { font-size: 18px !important; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .nav-cta { padding: 8px 14px !important; font-size: 12px !important; }
+
+      .hero-section { padding: 36px 16px 44px !important; min-height: auto !important; }
+      .hero-title { font-size: 26px !important; line-height: 1.22 !important; margin-bottom: 12px !important; }
+      .hero-subtitle { font-size: 14px !important; line-height: 1.5 !important; margin-bottom: 22px !important; }
+      .hero-actions { flex-direction: column !important; width: 100% !important; gap: 10px !important; }
+      .hero-actions a { width: 100% !important; text-align: center !important; justify-content: center !important; padding: 13px 20px !important; box-sizing: border-box !important; }
+      .hero-split-container { grid-template-columns: 1fr !important; }
+      .hero-split-container > div:first-child { padding: 40px 18px !important; }
+
+      .trust-bar-wrapper { padding: 0 16px !important; margin-top: 10px !important; }
+      .trust-bar-card { border-radius: 16px !important; padding: 14px 16px !important; flex-direction: column !important; gap: 10px !important; transform: none !important; }
+      .trust-bar-divider { display: none !important; }
+      .trust-bar-item { width: 100% !important; justify-content: center !important; }
+
+      .section-pad { padding: 44px 16px !important; }
+      .offerings-header { flex-direction: column !important; align-items: flex-start !important; gap: 14px !important; }
+      .offerings-header a { width: 100% !important; text-align: center !important; }
+      .offerings-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+
+      .about-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+      .about-text-col { order: 2 !important; }
+      .about-img-col { order: 1 !important; }
+      .about-stats-row { gap: 16px !important; justify-content: space-between !important; }
+      .about-badge-since { bottom: -10px !important; left: 10px !important; padding: 10px 16px !important; }
+
+      .highlights-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+      .gallery-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+      .gallery-item-span2 { grid-column: span 1 !important; }
+      .reviews-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+
+      .cta-banner-box { padding: 32px 18px !important; border-radius: 20px !important; }
+      .cta-banner-box a { width: 100% !important; display: block !important; padding: 14px 20px !important; box-sizing: border-box !important; }
+
+      .location-grid { grid-template-columns: 1fr !important; gap: 28px !important; padding: 24px 16px !important; border-radius: 20px !important; }
+      .loc-actions { flex-direction: column !important; width: 100% !important; }
+      .loc-actions a { width: 100% !important; text-align: center !important; }
+
+      .footer-grid { grid-template-columns: 1fr !important; gap: 28px !important; margin-bottom: 28px !important; }
+      #wa-fab { width: 52px !important; height: 52px !important; bottom: 16px !important; right: 16px !important; }
+      #wa-fab svg { width: 24px !important; height: 24px !important; }
     }
-    @media (max-width: 480px) {
-      [style*="grid-template-columns:repeat(2,1fr)"] { grid-template-columns: 1fr !important; }
-      [style*="padding:120px 60px"] { padding: 80px 24px 60px !important; }
+
+    @media (max-width: 640px) {
+      .webeta-preview-banner { padding: 8px 12px !important; font-size: 11px !important; }
+      .webeta-banner-left img { width: 22px !important; height: 22px !important; }
+      .webeta-banner-title { font-size: 11px !important; max-width: 190px !important; }
+      .webeta-banner-badge { display: none !important; }
+      .webeta-banner-link { font-size: 11px !important; padding: 3px 8px !important; }
     }
   </style>
 </head>
 <body>
-<div id="webeta-preview-banner" style="background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.12); position: sticky; top: 0; z-index: 99999; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
-  <div style="display: flex; align-items: center; gap: 10px;">
-    <img src="/webeta-logo.jpg" alt="Webeta" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(255,255,255,0.2);" />
-    <span style="letter-spacing: -0.01em;">⚡ Private Concept for <strong style="color: #fff;">${esc(businessName)}</strong> — Crafted by <strong style="color: #38bdf8;">Webeta</strong></span>
+<div id="webeta-preview-banner" class="webeta-preview-banner" style="background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 11px 20px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.12); position: sticky; top: 0; z-index: 99999; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+  <div class="webeta-banner-left" style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+    <img src="/webeta-logo.jpg" alt="Webeta" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(255,255,255,0.25); flex-shrink: 0;" />
+    <span class="webeta-banner-title" style="letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">⚡ Private Concept for <strong style="color: #fff; font-weight: 700;">${esc(businessName)}</strong> — Crafted by <strong style="color: #38bdf8;">Webeta</strong></span>
   </div>
-  <div style="display: flex; align-items: center; gap: 12px;">
-    <span style="font-size: 11px; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 999px;">Private Preview Active</span>
-    <a href="https://webeta.site" target="_blank" rel="noopener noreferrer" style="color: #4ade80; text-decoration: none; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(74, 222, 128, 0.1); border-radius: 6px; border: 1px solid rgba(74, 222, 128, 0.25);">webeta.site ↗</a>
+  <div class="webeta-banner-right" style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+    <span class="webeta-banner-badge" style="font-size: 11px; color: #94a3b8; background: rgba(255,255,255,0.08); padding: 3px 9px; border-radius: 999px; white-space: nowrap;">Private Preview Active</span>
+    <a href="https://webeta.site" target="_blank" rel="noopener noreferrer" class="webeta-banner-link" style="color: #4ade80; text-decoration: none; font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 4px; padding: 4px 11px; background: rgba(74, 222, 128, 0.12); border-radius: 6px; border: 1px solid rgba(74, 222, 128, 0.3); white-space: nowrap;">webeta.site ↗</a>
   </div>
 </div>
 ${buildNav(businessName, waUrl, tokens, primaryCtaText, layoutVariant)}
