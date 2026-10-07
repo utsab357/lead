@@ -6,7 +6,12 @@
   "leadsCount": 1,
   "noWebsiteCount": 1,
   "withPhoneCount": 1,
-  "expandedTerms": ["cafe", "coffee shop", "bistro", "bakery"],
+  "expandedTerms": [
+    "cafe",
+    "coffee shop",
+    "bistro",
+    "bakery"
+  ],
   "leads": [
     {
       "id": "lead-cafe-utsab",
@@ -70,9 +75,138 @@
       "source": "Google Maps"
     }
   ],
-  "audits": {},
-  "ranked": [],
-  "conversions": {},
+  "audits": {
+    "lead-cafe-utsab": {
+      "leadId": "lead-cafe-utsab",
+      "pageSpeedScore": 0,
+      "hasWebsite": false,
+      "mobileFriendly": false,
+      "https": false,
+      "hasSchema": false,
+      "loadTimeMs": 0,
+      "gaps": [
+        "Zero online photos — customers can't see the business",
+        "No website or online menu to view offerings",
+        "6 services offered but not listed anywhere online",
+        "No Instagram presence to drive social traffic",
+        "Owner not engaging with customers online (no replies to reviews)"
+      ],
+      "biggestGap": "The biggest opportunity is creating a website with an online menu, as multiple reviewers complain that the lack of a site prevents them from checking the menu or ordering online.",
+      "estLostRevenuePerMonth": 60000
+    }
+  },
+  "ranked": [
+    {
+      "id": "lead-cafe-utsab",
+      "name": "Cafe Utsab",
+      "category": "Cafe & Restaurant",
+      "address": "Station Road, Champadali More, Barasat, Kolkata, West Bengal 700124",
+      "city": "Barasat",
+      "phone": "9064970761",
+      "whatsapp": "9064970761",
+      "email": "cafeutsab@gmail.com",
+      "website": "",
+      "mapUrl": "https://maps.google.com/?q=Cafe+Utsab+Barasat",
+      "rating": 4.7,
+      "reviewsCount": 182,
+      "lat": 22.723,
+      "lng": 88.481,
+      "priceLevel": "₹₹",
+      "about": "Barasat's favorite spot for artisanal coffee, handcrafted burgers, woodfired pizzas, and gourmet bakery items. Cozy ambiance with free Wi-Fi.",
+      "hours": [
+        "Monday: 10:00 AM – 10:30 PM",
+        "Tuesday: 10:00 AM – 10:30 PM",
+        "Wednesday: 10:00 AM – 10:30 PM",
+        "Thursday: 10:00 AM – 10:30 PM",
+        "Friday: 10:00 AM – 11:00 PM",
+        "Saturday: 10:00 AM – 11:00 PM",
+        "Sunday: 10:00 AM – 11:00 PM"
+      ],
+      "services": [
+        "Artisanal Espresso & Cold Brew",
+        "Gourmet Burgers & Sandwiches",
+        "Thin Crust Woodfired Pizza",
+        "Fresh Pastries & Desserts",
+        "Dine-in & Takeaway",
+        "Private Birthday Parties"
+      ],
+      "photoUrls": [
+        "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80",
+        "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80",
+        "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&q=80"
+      ],
+      "reviews": [
+        {
+          "author": "Anirban Mukherjee",
+          "rating": 5,
+          "timeAgo": "2 weeks ago",
+          "text": "The hazelnut cappuccino and peri-peri burger are top notch! Cozy ambiance, great music. Only complaint is they don't have an online menu or website to reserve tables."
+        },
+        {
+          "author": "Priyanka Roy",
+          "rating": 4,
+          "timeAgo": "1 month ago",
+          "text": "Best cafe in Barasat for evening hangouts with friends. Would love if they had an online website so we could check their weekly dessert specials and order directly."
+        },
+        {
+          "author": "Subhajit Das",
+          "rating": 5,
+          "timeAgo": "3 weeks ago",
+          "text": "Superb coffee taste. Staff is very polite. If you are near Station road or Champadali, definitely visit!"
+        }
+      ],
+      "source": "Google Maps",
+      "audit": {
+        "leadId": "lead-cafe-utsab",
+        "pageSpeedScore": 0,
+        "hasWebsite": false,
+        "mobileFriendly": false,
+        "https": false,
+        "hasSchema": false,
+        "loadTimeMs": 0,
+        "gaps": [
+          "Zero online photos — customers can't see the business",
+          "No website or online menu to view offerings",
+          "6 services offered but not listed anywhere online",
+          "No Instagram presence to drive social traffic",
+          "Owner not engaging with customers online (no replies to reviews)"
+        ],
+        "biggestGap": "The biggest opportunity is creating a website with an online menu, as multiple reviewers complain that the lack of a site prevents them from checking the menu or ordering online.",
+        "estLostRevenuePerMonth": 60000
+      },
+      "score": 100,
+      "scoreReasoning": "No website, 182 reviews, 4.7 rating, cafe tier, 3 contact channels, 1-month age, $60k lost revenue."
+    }
+  ],
+  "conversions": {
+    "lead-cafe-utsab": {
+      "leadId": "lead-cafe-utsab",
+      "points": [
+        "Your hazelnut cappuccino and peri‑peri burger get rave reviews, and a simple website could showcase them to more locals.",
+        "Customers love the cozy vibe, but they can’t see your menu online, which likely costs you about ₹2,000 each day.",
+        "A quick online menu lets people plan visits and even order ahead, turning browsers into diners.",
+        "Adding a few photos of your pastries will attract the evening crowd that already praises your ambiance.",
+        "A free demo site can be ready in a day, letting you test how many extra orders you get."
+      ],
+      "competitorInsight": "Other top‑rated cafes in Barasat already have simple sites with menus and photo galleries.",
+      "revenueArgument": "Based on our analysis, you could be missing roughly ₹60,000 each month from customers who can’t find your menu online.",
+      "urgencyHook": "Every day you’re potentially losing about ₹2,000 by not having an online menu.",
+      "postCallWhatsApp": "Hi, I enjoyed hearing about Cafe Utsab’s hazelnut cappuccino. Here’s a free preview of a website with your menu and photos—would you like to give it a look?",
+      "bestTimeToCall": "Try calling on a weekday around 2 PM when the lunch rush is winding down.",
+      "callScript": {
+        "opener": "I was looking at cafes in Barasat and saw your 4.7 rating plus the rave reviews about your hazelnut cappuccino.",
+        "iceBreaker": "Do most of your new guests discover you through word of mouth, or are they searching for cafés on Google?",
+        "keyPoints": [
+          "Your customers love the coffee and burger, but they can’t view the menu or photos online.",
+          "A simple website with an online menu could capture the ₹2,000 daily revenue you’re missing.",
+          "We can set up a free demo in a day, showing how online ordering could boost evening traffic."
+        ],
+        "objectionHandler": "I understand you’re busy, but even a few extra orders could recover the ₹2,000 you lose each day.",
+        "closer": "I’ll send you a quick WhatsApp mock‑up of a menu site so you can see it for yourself, no cost.",
+        "doNotSay": "Don’t say 'I want to build you a website' right away."
+      }
+    }
+  },
   "outreachResults": {},
   "buildPrompts": {},
   "visualPreviews": {},

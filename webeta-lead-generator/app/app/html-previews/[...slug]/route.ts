@@ -236,7 +236,9 @@ export async function GET(
   try {
     const { slug } = await params;
     const filename = slug.join("/");
-    const filePath = path.join(process.cwd(), "public", "html-previews", filename);
+    const dataFilePath = path.join(process.cwd(), "data", "html-previews", filename);
+    const publicFilePath = path.join(process.cwd(), "public", "html-previews", filename);
+    const filePath = fs.existsSync(dataFilePath) ? dataFilePath : publicFilePath;
     const cleanSlug = filename.replace(/\.html$/i, "").toLowerCase();
 
     const url = new URL(req.url);
@@ -250,7 +252,7 @@ export async function GET(
       currentViews = incrementPreviewViews(cleanSlug);
     }
 
-    // Check existing compiled file
+    // Check existing compiled file (in data/html-previews or public/html-previews)
     if (fs.existsSync(filePath)) {
       const rawContent = fs.readFileSync(filePath, "utf-8");
       const businessName = extractBusinessName(rawContent, cleanSlug);
@@ -266,7 +268,7 @@ export async function GET(
         });
       }
 
-      // Views 1 to 7: Inject top branding badge
+      // Views 1 to 7: Inject top branding badge with current view count
       const content = injectTopBanner(rawContent, businessName, currentViews || 1);
       return new Response(content, {
         status: 200,
@@ -323,9 +325,9 @@ export async function GET(
       const result = await buildTemplateHTML(rankedLead);
       const rawHtml = result.html || `<h1>${esc(targetLead.name)}</h1>`;
 
-      const previewsDir = path.join(process.cwd(), "public", "html-previews");
+      const previewsDir = path.join(process.cwd(), "data", "html-previews");
       if (!fs.existsSync(previewsDir)) fs.mkdirSync(previewsDir, { recursive: true });
-      fs.writeFileSync(filePath, rawHtml, "utf-8");
+      fs.writeFileSync(dataFilePath, rawHtml, "utf-8");
 
       const businessName = targetLead.name || extractBusinessName(rawHtml, cleanSlug);
 

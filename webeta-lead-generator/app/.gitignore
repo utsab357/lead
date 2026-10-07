@@ -51,6 +51,7 @@ whatsapp_passwords.md
 
 # Generated Previews & Security Counters (runtime assets)
 /public/html-previews/*.html
+/data/html-previews/
 /public/previews/*
 !/public/previews/.gitkeep
 /data/preview-views.json

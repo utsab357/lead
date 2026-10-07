@@ -726,6 +726,16 @@ export async function buildTemplateHTML(lead: RankedLead, strategy?: BusinessStr
   </style>
 </head>
 <body>
+<div id="webeta-preview-banner" style="background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.12); position: sticky; top: 0; z-index: 99999; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <img src="/webeta-logo.jpg" alt="Webeta" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(255,255,255,0.2);" />
+    <span style="letter-spacing: -0.01em;">⚡ Private Concept for <strong style="color: #fff;">${esc(businessName)}</strong> — Crafted by <strong style="color: #38bdf8;">Webeta</strong></span>
+  </div>
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <span style="font-size: 11px; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 999px;">Private Preview Active</span>
+    <a href="https://webeta.site" target="_blank" rel="noopener noreferrer" style="color: #4ade80; text-decoration: none; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(74, 222, 128, 0.1); border-radius: 6px; border: 1px solid rgba(74, 222, 128, 0.25);">webeta.site ↗</a>
+  </div>
+</div>
 ${buildNav(businessName, waUrl, tokens, primaryCtaText, layoutVariant)}
 ${buildHero(spec, waUrl, telLink, layoutVariant)}
 ${buildTrustBar(spec)}

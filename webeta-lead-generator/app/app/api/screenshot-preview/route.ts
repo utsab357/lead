@@ -65,7 +65,10 @@ export async function POST(req: Request) {
     const fullUrl = `${baseUrl}${htmlUrl}`;
 
     // Also get the file path directly as fallback
-    const htmlFilePath = path.join(process.cwd(), "public", htmlUrl.replace(/^\//, ""));
+    const rawRel = htmlUrl.replace(/^\//, "");
+    const publicPath = path.join(process.cwd(), "public", rawRel);
+    const dataPath = path.join(process.cwd(), "data", rawRel);
+    const htmlFilePath = fs.existsSync(dataPath) ? dataPath : publicPath;
 
     let buffer: Buffer | null = null;
     let tookScreenshot = false;

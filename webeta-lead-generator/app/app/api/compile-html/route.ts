@@ -60,7 +60,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "No valid lead provided" }, { status: 400 });
     }
 
-    const previewsDir = path.join(process.cwd(), "public", "html-previews");
+    const previewsDir = path.join(process.cwd(), "data", "html-previews");
     if (!fs.existsSync(previewsDir)) {
       fs.mkdirSync(previewsDir, { recursive: true });
     }
@@ -149,7 +149,9 @@ export async function GET(req: Request) {
   const name = searchParams.get("name");
   const city = searchParams.get("city") || "";
 
-  const previewsDir = path.join(process.cwd(), "public", "html-previews");
+  const dataDir = path.join(process.cwd(), "data", "html-previews");
+  const publicDir = path.join(process.cwd(), "public", "html-previews");
+  const previewsDir = fs.existsSync(dataDir) ? dataDir : publicDir;
   if (!fs.existsSync(previewsDir)) {
     return NextResponse.json(isList ? { exists: false, files: [] } : { exists: false });
   }
