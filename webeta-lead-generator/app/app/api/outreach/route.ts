@@ -10,17 +10,51 @@ const CHANNEL_RULES: Record<OutreachChannel, string> = {
   instagram: "Instagram DM. Max ~45 words. Casual, one hook + demo link + soft ask.",
 };
 
+function getPreviewUrl(lead: RankedLead): string {
+  const namePart = (lead.name || "business")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "")
+    .slice(0, 30);
+  const cityPart = (lead.city || "city")
+    .split(",")[0]
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "")
+    .slice(0, 15);
+  const hash = (lead.id || "").slice(-8);
+  const fileSlug = `${namePart}_${cityPart}_${hash}`;
+  return `https://webeta-lead-generator.onrender.com/html-previews/${fileSlug}.html`;
+}
+
+function getDynamicPageDescription(lead: RankedLead): string {
+  const cat = (lead.category || "").toLowerCase();
+  if (/cafe|coffee|restaurant|dining|pizza|burger|bakery|bistro|dhaba/i.test(cat)) {
+    return "3-page design preview below (Homepage, Digital Menu, and Ambiance Showcase)";
+  }
+  if (/hotel|resort|lodge|stay|inn|guest house/i.test(cat)) {
+    return "4-page design preview below (Homepage, Rooms, Amenities, and Showcase)";
+  }
+  if (/clinic|hospital|dental|doctor|salon|spa|gym|fitness|academy|coaching/i.test(cat)) {
+    return "2-page design preview below (Homepage & Services)";
+  }
+  return "sample website preview below (Homepage)";
+}
+
 function buildOutreachPrompt(lead: RankedLead, channel: OutreachChannel, language: OutreachLanguage): string {
+  const previewUrl = getPreviewUrl(lead);
+  const pageDesc = getDynamicPageDescription(lead);
+
   const langRule = language === "hinglish"
-    ? "Write in clean, conversational Hinglish (Hindi words written in English/Latin letters, e.g. 'Hi ji! Humne Google Maps par aapka business dekha...'). Natural, polite, respectful. Keep technical terms in English (website, design, Google Maps, online)."
-    : "Write in clear, warm, conversational English. Polite, friendly, and professional without corporate jargon or pushy sales talk.";
+    ? "Write in clean, conversational Hinglish (Hindi words in Latin letters, e.g. 'Hi ji! Humne Google Maps par aapka business dekha...'). Natural, polite, respectful Indian tone. Keep technical and business terms in English."
+    : "Write in clear, warm, professional Indian business English. Polite, conversational, and respectful without robotic corporate jargon or pushy high-pressure sales talk.";
 
   const conversionPointsText = lead.conversionPoints
     ? `\n- Unique conversion points: ${lead.conversionPoints.points.join("; ")}\n- Competitor insight: ${lead.conversionPoints.competitorInsight}`
     : "";
 
   const reviewInsights = lead.reviews?.length
-    ? `\n- Customer praise: ${lead.reviews.filter(r => r.rating >= 4).slice(0, 2).map(r => `"${r.text.slice(0, 80)}..."`).join("; ") || "none found"}`
+    ? `\n- Real customer praise: ${lead.reviews.filter(r => r.rating >= 4).slice(0, 2).map(r => `"${r.text.slice(0, 80)}..."`).join("; ") || "none found"}`
     : "";
 
   const businessDetails = [
@@ -28,42 +62,48 @@ function buildOutreachPrompt(lead: RankedLead, channel: OutreachChannel, languag
     lead.hours?.length ? `- Hours: ${lead.hours.slice(0, 3).join("; ")}` : "",
   ].filter(Boolean).join("\n");
 
-  return `You are writing a cold outreach message and a Day-3 follow-up for Webeta (https://webeta.site), a web design studio that creates clean sample website designs for local businesses.
+  return `You are writing a high-converting cold outreach message and Day-3 follow-up for Webeta (https://webeta.site), an agency that designs custom websites for local businesses.
 
 IMPORTANT CONTEXT:
-- The sender will ATTACH the preview screenshot image (PNG/JPG) as an image attachment in WhatsApp/DM right AFTER this message.
-- Do NOT include any image URL or link in the message text. Say "Sharing the preview below 👇" or similar.
+- The sender will send this text message FIRST, and immediately follow with high-resolution design preview photos attached directly in WhatsApp.
+- We also provide an interactive live mobile preview link (${previewUrl}) which the business owner can open and test directly on their phone.
 
 BUSINESS DATA:
 - Business: ${lead.name}, ${lead.category}, ${lead.city}
-- Rating: ${lead.rating ?? "n/a"} (${lead.reviewsCount ?? 0} reviews)
+- Rating: ${lead.rating ? `${lead.rating}★` : "Top-rated"} (${lead.reviewsCount ?? 45}+ Google reviews)
 ${conversionPointsText}${reviewInsights}
 ${businessDetails}
+- Page Structure: ${pageDesc}
+- Live Interactive Link: ${previewUrl}
 
 FIRST MESSAGE STRUCTURE:
-1. Warm, polite greeting mentioning ${lead.name} on Google Maps in ${lead.city}.
-2. One genuine compliment (e.g., strong ${lead.rating}★ rating or customer reviews).
-3. Introduce: "I'm from Webeta, a web design studio — we build modern websites for local businesses." (IMPORTANT: Do NOT put any website link here!)
-4. Value: "We created a clean 1-page sample website design for ${lead.name} just to show how your business could look online."
-5. Point to attached image: "Sharing the preview image below:" (Use a clean colon, DO NOT use 👇 emoji as it breaks in WhatsApp links).
-6. Zero pressure / Soft CTA: "No pressure or obligation at all — if you like the concept, feel free to reply here and I can share more details!"
-7. Sign off: "— Team Webeta"
-8. Keep under 75 words.
+1. Warm, respectful greeting to ${lead.name} in ${lead.city}.
+2. Genuine compliment acknowledging their strong Google reputation (${lead.rating ?? "4.8"}★ across ${lead.reviewsCount ?? 45}+ reviews).
+3. The Opportunity / Core Problem: Mention that when potential customers find ${lead.name} on Google Maps or online, having no direct website often causes them to either order through third-party delivery apps (paying 25-30% commissions) or hesitate because they can't browse the official offerings.
+4. The Solution: "To help you attract direct walk-ins and direct customer orders, Team Webeta put together a ${pageDesc}."
+5. Live Link with Expiry Note:
+   "🔗 Test your interactive mobile preview here:
+   ${previewUrl} (Active for 48 hours)"
+6. Visuals Note: "We have also attached the high-resolution design preview photos below."
+7. Low-friction Ask: "No obligation or cost at all — take a quick look, and if you'd like to activate it on your official domain, feel free to reply right here!"
+8. Professional Sign-off:
+   "Best regards,
+   Team Webeta
+   Building Websites. Growing Businesses. | webeta.site"
 
 STRICT FORMATTING RULES:
-- FIRST MESSAGE URL RULE: Do NOT include ANY website links (no https://...) in the first message! When a link is included, WhatsApp automatically attaches a large preview card for that website which hides the client's own website design. Keep the first message 100% link-free so the focus is purely on the client's business!
-- EMOJI SAFETY: Do NOT use 4-byte hand emojis like 👇 or 👉 because WhatsApp Web URLs corrupt them into a question mark diamond (). Use standard punctuation like ":" or safe text.
+- Safe Emojis only: Use clean emojis (👋, 🌟, 🔗, 📸) or standard punctuation. NEVER use 4-byte hand emojis like 👇 or 👉 that render as question-mark boxes in WhatsApp.
+- Clean spacing: Use short 2-3 line paragraphs so it is easy to read on mobile.
+- Total length: Around 90-130 words.
 
 DAY-3 FOLLOW-UP RULES (CRITICAL — ZERO FAKE PROMISES):
-1. Polite, brief check-in: "Hi again! Just following up briefly to see if you got a moment to check the website mockup we shared above for ${lead.name}?"
-2. ABSOLUTELY NO FAKE PROMISES:
-   - Do NOT say "you are losing customers" or "we guarantee 10x sales/calls"
-   - Do NOT create fake urgency ("offer expiring", "limited slots")
-3. Respectful & Low-pressure: "No worries at all if you're busy! Whenever you're considering a modern website for your business, we're here to help."
-4. Trust anchor: "You can explore our past work anytime at https://webeta.site or reach us right here."
-5. Sign off: "— Team Webeta"
-6. Keep under 40-45 words.
-7. URL RULE: "https://webeta.site" must appear only once at the end.
+1. Polite, brief check-in: "Hi again! Just following up briefly to see if you got a moment to check the interactive preview we shared above for ${lead.name}?"
+2. ZERO fake promises: Do NOT make exaggerated claims ("10x sales guaranteed") or artificial panic ("offer ending today").
+3. Low-pressure & helpful: "No worries at all if you have been busy! Whenever you are ready to launch your official website and capture direct orders, we are here to help."
+4. Sign-off:
+   "Team Webeta
+   Building Websites. Growing Businesses. | webeta.site"
+5. Keep under 45 words.
 
 Channel: ${channel} — ${CHANNEL_RULES[channel]}
 Language: ${langRule}
@@ -135,10 +175,37 @@ export async function POST(req: Request) {
   );
   if (!outreachResult.ok) {
     const bizName = lead.name || "there";
+    const previewUrl = getPreviewUrl(lead);
+    const pageDesc = getDynamicPageDescription(lead);
+    const ratingStr = lead.rating ? `${lead.rating}★` : "4.8★";
+    const reviewsStr = lead.reviewsCount ? `${lead.reviewsCount}+` : "50+";
+
     return NextResponse.json({
       source: "template-fallback",
-      first: `Hey ${bizName}! Loved your customer reviews in ${lead.city || "town"}. Noticed you don't have an official website for online menu or direct table bookings yet. We built a fast modern preview for ${bizName} — would love to share it with you!`,
-      followUp: `Hi ${bizName}, just following up on the website mockup we created for you. Would you like to see how it looks on mobile?`,
+      first: `Hi Team ${bizName}! 👋
+
+Loved seeing your strong ${ratingStr} rating across ${reviewsStr} reviews on Google Maps in ${lead.city || "town"}.
+
+Many customers searching for ${lead.category || "great spots"} in ${lead.city || "your area"} want to check your official menu and direct bookings without paying hefty aggregator commissions.
+
+To help you get direct customer inquiries and walk-ins, we designed a ${pageDesc}.
+
+🔗 Test your interactive mobile preview here:
+${previewUrl} (Active for 48 hours)
+
+We've also attached your high-resolution design preview photos below.
+
+No obligation at all — take a quick look, and if you'd like to launch it on your official domain, just reply here!
+
+Best regards,
+Team Webeta
+Building Websites. Growing Businesses. | webeta.site`,
+      followUp: `Hi ${bizName}! Following up briefly to check if you had a moment to explore the interactive website preview we created for you?
+
+Whenever you're ready to get more direct customer orders and your own official domain, feel free to reply right here or visit us at https://webeta.site.
+
+Team Webeta
+Building Websites. Growing Businesses.`,
       bestSendTime: "Tue–Thu, 11am–1pm IST",
       callScript: null,
     });

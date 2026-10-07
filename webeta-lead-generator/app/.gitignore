@@ -48,3 +48,9 @@ next-env.d.ts
 whatsapp_passwords.md
 *password*.md
 *CREDENTIALS*.md
+
+# Generated Previews & Security Counters (runtime assets)
+/public/html-previews/*.html
+/public/previews/*
+!/public/previews/.gitkeep
+/data/preview-views.json

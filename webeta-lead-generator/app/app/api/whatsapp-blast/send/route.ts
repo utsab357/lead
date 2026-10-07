@@ -241,39 +241,11 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
     let errorMsg: string | undefined;
 
     try {
-      // Step 1: Send preview images (supports multiple pages: Home, Menu, Gallery)
-      const imagesToSend = (lead.imageUrls && lead.imageUrls.length > 0)
-        ? lead.imageUrls
-        : (lead.imageUrl ? [lead.imageUrl] : []);
-
-      for (let imgIdx = 0; imgIdx < imagesToSend.length; imgIdx++) {
-        const imgUrl = imagesToSend[imgIdx];
-        if (!imgUrl) continue;
-        const absoluteImageUrl = imgUrl.startsWith("http")
-          ? imgUrl
-          : `${appBaseUrl}${imgUrl.startsWith("/") ? "" : "/"}${imgUrl}`;
-
-        const imgResult = await sendEvolutionImage(
-          evolutionApiUrl,
-          evolutionApiKey,
-          instanceName,
-          lead.phone,
-          absoluteImageUrl,
-          ""
-        );
-
-        if (!imgResult.ok) {
-          console.warn(`[WhatsApp Blast] Image ${imgIdx + 1}/${imagesToSend.length} failed for ${lead.name}: ${imgResult.error}`);
-        }
-        // Wait 2.5 seconds between multiple images
-        await sleep(2500);
-      }
-
-      // Step 2: Simulate human "typing..." presence for 2.5 seconds
+      // Step 1: Simulate human "typing..." presence for 1.5 seconds
       await sendEvolutionPresence(evolutionApiUrl, evolutionApiKey, instanceName, lead.phone);
-      await sleep(2500);
+      await sleep(1500);
 
-      // Step 3: Send text message
+      // Step 2: Send text pitch message FIRST (Option A)
       const textResult = await sendEvolutionText(
         evolutionApiUrl,
         evolutionApiKey,
@@ -286,6 +258,51 @@ async function runBlast(leads: BlastLead[], appBaseUrl: string) {
         success = true;
       } else {
         errorMsg = textResult.error;
+      }
+
+      // Step 3: Send preview images immediately after in rapid burst (~400ms)
+      // WhatsApp mobile client automatically groups rapid multi-image messages into a neat 2x2 photo collage album!
+      const imagesToSend = (lead.imageUrls && lead.imageUrls.length > 0)
+        ? lead.imageUrls
+        : (lead.imageUrl ? [lead.imageUrl] : []);
+
+      if (imagesToSend.length > 0) {
+        await sleep(1200); // short breath after text message
+        for (let imgIdx = 0; imgIdx < imagesToSend.length; imgIdx++) {
+          const imgUrl = imagesToSend[imgIdx];
+          if (!imgUrl) continue;
+
+          // Resolve localhost to Render production domain so cloud Evolution API can always download
+          let base = appBaseUrl || "";
+          if (!base || base.includes("localhost") || base.includes("127.0.0.1")) {
+            base = "https://webeta-lead-generator.onrender.com";
+          }
+          let absoluteImageUrl = imgUrl.startsWith("http")
+            ? imgUrl
+            : `${base.replace(/\/$/, "")}/${imgUrl.replace(/^\//, "")}`;
+
+          if (absoluteImageUrl.includes("localhost") || absoluteImageUrl.includes("127.0.0.1")) {
+            absoluteImageUrl = absoluteImageUrl.replace(/http:\/\/(localhost|127\.0\.0\.1):\d+/i, "https://webeta-lead-generator.onrender.com");
+          }
+
+          const imgResult = await sendEvolutionImage(
+            evolutionApiUrl,
+            evolutionApiKey,
+            instanceName,
+            lead.phone,
+            absoluteImageUrl,
+            ""
+          );
+
+          if (!imgResult.ok) {
+            console.warn(`[WhatsApp Blast] Image ${imgIdx + 1}/${imagesToSend.length} failed for ${lead.name}: ${imgResult.error}`);
+          }
+
+          // 400ms delay triggers WhatsApp native Album grouping without flooding
+          if (imgIdx < imagesToSend.length - 1) {
+            await sleep(400);
+          }
+        }
       }
     } catch (e) {
       errorMsg = (e as Error).message;

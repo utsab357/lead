@@ -604,6 +604,7 @@ function buildFooter(spec: any, waUrl: string, telLink: string): string {
         <div style="color:rgba(255,255,255,0.4);font-size:13px;">© ${year} ${esc(businessName)}. All Rights Reserved.</div>
         <div style="color:rgba(255,255,255,0.3);font-size:12px;">Powered by Webeta</div>
       </div>
+      <div style="height:48px;width:100%;" aria-hidden="true"></div>
     </div>
   </footer>
 

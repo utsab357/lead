@@ -31,11 +31,6 @@ export async function POST(req: Request) {
 
     const { evolutionApiUrl, evolutionApiKey, instanceName } = config;
 
-    // 1. Send Preview Images (supports multiple pages: Home, Menu, Gallery)
-    const imagesToSend = (imageUrls && imageUrls.length > 0)
-      ? imageUrls
-      : (imageUrl ? [imageUrl] : []);
-
     // Helper with warmup retry for Render cold starts
     async function fetchWithWarmup(url: string, opts: RequestInit, retries = 4): Promise<Response> {
       for (let attempt = 1; attempt <= retries; attempt++) {
@@ -58,42 +53,7 @@ export async function POST(req: Request) {
       return new Response("Render server is warming up. Please retry in 15 seconds.", { status: 502 });
     }
 
-    for (let imgIdx = 0; imgIdx < imagesToSend.length; imgIdx++) {
-      const imgUrl = imagesToSend[imgIdx];
-      if (!imgUrl) continue;
-      const absoluteImageUrl = imgUrl.startsWith("http")
-        ? imgUrl
-        : `${appBaseUrl || ""}${imgUrl.startsWith("/") ? "" : "/"}${imgUrl}`;
-
-      try {
-        const imgRes = await fetchWithWarmup(`${evolutionApiUrl}/message/sendMedia/${instanceName}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: evolutionApiKey,
-          },
-          body: JSON.stringify({
-            number: phone,
-            mediatype: "image",
-            mimetype: "image/png",
-            caption: "",
-            media: absoluteImageUrl,
-            fileName: `website-preview-${imgIdx + 1}.png`,
-          }),
-        });
-
-        if (!imgRes.ok) {
-          const body = await imgRes.text();
-          console.warn(`[WhatsApp Test] Image failed: HTTP ${imgRes.status}: ${body}`);
-        }
-      } catch (err) {
-        console.warn(`[WhatsApp Test] Image network error:`, err);
-      }
-
-      await new Promise((r) => setTimeout(r, 2000));
-    }
-
-    // 2. Send Text
+    // 1. Send Text Pitch First (Option A)
     const textRes = await fetchWithWarmup(`${evolutionApiUrl}/message/sendText/${instanceName}`, {
       method: "POST",
       headers: {
@@ -112,6 +72,63 @@ export async function POST(req: Request) {
         { ok: false, error: `WhatsApp API (${textRes.status}): ${body.slice(0, 250)}` },
         { status: 400 }
       );
+    }
+
+    // 2. Send Preview Images in rapid succession (~400ms) for native WhatsApp Album collage
+    const imagesToSend = (imageUrls && imageUrls.length > 0)
+      ? imageUrls
+      : (imageUrl ? [imageUrl] : []);
+
+    if (imagesToSend.length > 0) {
+      await new Promise((r) => setTimeout(r, 1200)); // short pause after text
+
+      for (let imgIdx = 0; imgIdx < imagesToSend.length; imgIdx++) {
+        const imgUrl = imagesToSend[imgIdx];
+        if (!imgUrl) continue;
+
+        // Resolve localhost to Render production domain
+        let base = appBaseUrl || "";
+        if (!base || base.includes("localhost") || base.includes("127.0.0.1")) {
+          base = "https://webeta-lead-generator.onrender.com";
+        }
+        let absoluteImageUrl = imgUrl.startsWith("http")
+          ? imgUrl
+          : `${base.replace(/\/$/, "")}/${imgUrl.replace(/^\//, "")}`;
+
+        if (absoluteImageUrl.includes("localhost") || absoluteImageUrl.includes("127.0.0.1")) {
+          absoluteImageUrl = absoluteImageUrl.replace(/http:\/\/(localhost|127\.0\.0\.1):\d+/i, "https://webeta-lead-generator.onrender.com");
+        }
+
+        try {
+          const imgRes = await fetchWithWarmup(`${evolutionApiUrl}/message/sendMedia/${instanceName}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              apikey: evolutionApiKey,
+            },
+            body: JSON.stringify({
+              number: phone,
+              mediatype: "image",
+              mimetype: "image/png",
+              caption: "",
+              media: absoluteImageUrl,
+              fileName: `website-preview-${imgIdx + 1}.png`,
+            }),
+          });
+
+          if (!imgRes.ok) {
+            const body = await imgRes.text();
+            console.warn(`[WhatsApp Test] Image failed: HTTP ${imgRes.status}: ${body}`);
+          }
+        } catch (err) {
+          console.warn(`[WhatsApp Test] Image network error:`, err);
+        }
+
+        // 400ms delay triggers native WhatsApp Album collapse
+        if (imgIdx < imagesToSend.length - 1) {
+          await new Promise((r) => setTimeout(r, 400));
+        }
+      }
     }
 
     return NextResponse.json({ ok: true, message: `Test message sent to ${name} (${phone})` });
