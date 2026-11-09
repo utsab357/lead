@@ -42,7 +42,14 @@ async function scrapeZomato() {
   const isHeadless = !!process.env.RENDER || process.env.NODE_ENV === "production" || process.env.HEADLESS === "true";
   const browser = await chromium.launch({
     headless: isHeadless,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--no-first-run",
+      "--no-zygote",
+    ],
   });
 
   const context = await browser.newContext({

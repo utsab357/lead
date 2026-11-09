@@ -79,6 +79,10 @@ export async function POST(req: Request) {
           const child = spawn("node", [scriptPath, ...args], {
             cwd: process.cwd(),
             stdio: ["ignore", "pipe", "pipe"],
+            env: {
+              ...process.env,
+              PLAYWRIGHT_BROWSERS_PATH: process.env.PLAYWRIGHT_BROWSERS_PATH || "0",
+            },
           });
           childProcesses.push(child);
 

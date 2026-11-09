@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 import { spawn } from 'child_process';
 import { createInterface } from 'readline';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 
-const CLOUDFLARED = 'D:\\projects\\webeta-lead-generator\\webeta-lead-generator\\cloudflared.exe';
+const __dir = dirname(fileURLToPath(import.meta.url));
+const CLOUDFLARED = resolve(__dir, '..', '..', 'cloudflared.exe');
 const ARGS = ['tunnel', '--protocol', 'http2', '--url', 'http://localhost:3000'];
 
 // ANSI color codes
