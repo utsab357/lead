@@ -15,6 +15,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { readFileSync } from "fs";
 import { join } from "path";
+import { enrichLeadContacts } from "./contact-extractor.mjs";
 
 const rawInput  = process.argv[2] || "";
 const sessionId = process.argv[3] || `manual-${Date.now()}`;
@@ -563,6 +564,13 @@ async function main() {
         source: "manual",
       };
     } // end else (generic URL)
+
+    emit({ type: "status", message: `Checking emails & social links for ${lead.name}...` });
+    try {
+      lead = await enrichLeadContacts(lead);
+    } catch {
+      /* fail-safe */
+    }
 
     emit({ type: "status", message: `Found: ${lead.name}` });
     emit({ type: "lead", lead, index: 1, total: 1 });

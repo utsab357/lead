@@ -410,7 +410,8 @@ export function Phase5Outreach({
         "_blank"
       );
     } else if (channel === "instagram") {
-      window.open(`https://instagram.com/`, "_blank");
+      const instaLink = activeLead.socialLinks?.find((s) => s.platform === "instagram")?.url;
+      window.open(instaLink || `https://instagram.com/`, "_blank");
     } else {
       toast.error("No direct contact for this channel. Copied message instead!");
       navigator.clipboard.writeText(textToSend);
@@ -439,7 +440,9 @@ export function Phase5Outreach({
             label: "Instagram",
             icon: Camera,
             enabled: true,
-            note: "Direct DM",
+            note: activeLead.socialLinks?.some((s) => s.platform === "instagram")
+              ? "Profile found ✓"
+              : "Direct DM",
           },
         ]
       : [];

@@ -17,6 +17,7 @@ function buildPrompt(leads: Lead[], audits: Record<string, AuditResult>): string
         l.phone    && "phone",
         l.whatsapp && "whatsapp",
         l.email    && "email",
+        (l.socialLinks && l.socialLinks.length > 0) && "social_media",
       ].filter(Boolean);
 
       // Website quality: 0=none, 1=poor, 2=mediocre, 3=decent, 4=good

@@ -13,6 +13,7 @@ import { chromium } from "playwright";
 import { writeFileSync, mkdirSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { enrichLeadContacts } from "./contact-extractor.mjs";
 
 const niche     = process.argv[2] || "gym";
 const city      = process.argv[3] || "Barasat, West Bengal";
@@ -618,8 +619,10 @@ async function scrapeGoogleMaps() {
         // Social media links
         let socialLinks = [];
         try {
-          const smLinks = page.locator('[role="main"] a[href*="facebook.com"], [role="main"] a[href*="instagram.com"], [role="main"] a[href*="youtube.com"]');
-          const linkCount = Math.min(await smLinks.count(), 5);
+          const smLinks = page.locator(
+            '[role="main"] a[href*="facebook.com"], [role="main"] a[href*="instagram.com"], [role="main"] a[href*="youtube.com"], [role="main"] a[href*="linkedin.com"], [role="main"] a[href*="twitter.com"], [role="main"] a[href*="x.com"]'
+          );
+          const linkCount = Math.min(await smLinks.count(), 8);
           const seenPlatforms = new Set();
           for (let sl = 0; sl < linkCount; sl++) {
             const href2 = await smLinks.nth(sl).getAttribute("href");
@@ -628,6 +631,8 @@ async function scrapeGoogleMaps() {
             if (href2.includes("facebook")) platform = "facebook";
             else if (href2.includes("instagram")) platform = "instagram";
             else if (href2.includes("youtube")) platform = "youtube";
+            else if (href2.includes("linkedin")) platform = "linkedin";
+            else if (href2.includes("twitter") || href2.includes("x.com")) platform = "x";
             if (!seenPlatforms.has(platform)) {
               seenPlatforms.add(platform);
               socialLinks.push({ platform, url: href2 });
@@ -701,10 +706,18 @@ async function scrapeGoogleMaps() {
           source:         "maps",
         };
 
-        leads.push(lead);
+        // Free email & social media enrichment (100% Free: website crawl, bio links, free search fallback)
+        let finalLead = lead;
+        try {
+          finalLead = await enrichLeadContacts(lead);
+        } catch {
+          /* fail-safe: keep base lead on error */
+        }
+
+        leads.push(finalLead);
 
         // Emit each lead live
-        emit({ type: "lead", lead, index: idx + 1, total: totalLinks });
+        emit({ type: "lead", lead: finalLead, index: idx + 1, total: totalLinks });
 
         // Close detail panel
         await page.keyboard.press("Escape");

@@ -623,10 +623,36 @@ export function Phase1Scrape({
                       </TableCell>
                       <TableCell className="text-xs">
                         <div className="flex flex-col gap-0.5">
-                          {l.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" /> {l.phone}</span>}
-                          {l.whatsapp && <span className="flex items-center gap-1 text-green-600"><MessageCircle className="h-3 w-3" /> WhatsApp</span>}
-                          {l.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3" /> {l.email}</span>}
-                          {!l.phone && !l.email && <span className="text-muted-foreground/50">—</span>}
+                          {l.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3 shrink-0" /> {l.phone}</span>}
+                          {l.whatsapp && <span className="flex items-center gap-1 text-green-600"><MessageCircle className="h-3 w-3 shrink-0" /> WhatsApp</span>}
+                          {l.email && (
+                            <a
+                              href={`mailto:${l.email}`}
+                              className="flex items-center gap-1 text-primary truncate max-w-[170px] hover:underline"
+                              title={l.email}
+                            >
+                              <Mail className="h-3 w-3 shrink-0" /> {l.email}
+                            </a>
+                          )}
+                          {l.socialLinks && l.socialLinks.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-1 mt-0.5">
+                              {l.socialLinks.map((s, sIdx) => (
+                                <a
+                                  key={sIdx}
+                                  href={s.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[10px] px-1 py-0.5 rounded bg-muted hover:bg-primary/10 hover:text-primary transition-colors capitalize font-medium"
+                                  title={s.url}
+                                >
+                                  {s.platform}
+                                </a>
+                              ))}
+                            </div>
+                          )}
+                          {!l.phone && !l.email && (!l.socialLinks || l.socialLinks.length === 0) && (
+                            <span className="text-muted-foreground/50">—</span>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
