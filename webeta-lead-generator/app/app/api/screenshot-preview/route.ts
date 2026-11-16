@@ -71,7 +71,36 @@ export async function POST(req: Request) {
     }
     const publicPath = path.join(process.cwd(), "public", rawRel);
     const dataPath = path.join(process.cwd(), "data", rawRel);
-    const htmlFilePath = fs.existsSync(dataPath) ? dataPath : publicPath;
+    let htmlFilePath = fs.existsSync(dataPath) ? dataPath : publicPath;
+
+    // Auto-compile fallback: If the HTML file is missing on disk (e.g. after container restart),
+    // compile it immediately on demand from the lead data!
+    let htmlContent: string | null = null;
+    if (fs.existsSync(htmlFilePath)) {
+      try {
+        htmlContent = fs.readFileSync(htmlFilePath, "utf-8");
+      } catch { /* ignore read error */ }
+    }
+
+    if ((!htmlContent || htmlContent.length < 500) && body.lead) {
+      try {
+        const { buildTemplateHTML } = await import("@/lib/htmlTemplate");
+        const { buildMultiPageHTML } = await import("@/lib/multiPageTemplates");
+        const compRes = page === "home"
+          ? await buildTemplateHTML(body.lead as any)
+          : await buildMultiPageHTML(body.lead as any, page as any);
+
+        if (compRes.ok && compRes.html) {
+          htmlContent = compRes.html;
+          const dir = path.dirname(dataPath);
+          if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+          fs.writeFileSync(dataPath, htmlContent, "utf-8");
+          htmlFilePath = dataPath;
+        }
+      } catch (compileErr) {
+        console.warn("[screenshot-preview] Auto-compile on missing file failed:", compileErr);
+      }
+    }
 
     let buffer: Buffer | null = null;
     let tookScreenshot = false;
@@ -103,18 +132,25 @@ export async function POST(req: Request) {
       const pwPage = await context.newPage();
 
       let loaded = false;
-      try {
-        await pwPage.goto(fullUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
-        loaded = true;
-      } catch {
-        if (fs.existsSync(htmlFilePath)) {
-          let htmlContent = fs.readFileSync(htmlFilePath, "utf-8");
-          if (!htmlContent.includes("<base ") && !htmlContent.includes("<base>")) {
-            htmlContent = htmlContent.replace(/<head>/i, `<head><base href="${baseUrl}/">`);
-          }
-          await pwPage.setContent(htmlContent, { waitUntil: "domcontentloaded", timeout: 15000 });
-          loaded = true;
+
+      // 1. Preferred method: Load verified HTML content directly into Playwright
+      // Fast (<10ms), zero network hops, immune to localhost/port/reverse-proxy issues or 404s!
+      if (htmlContent && !htmlContent.includes("Preview not found")) {
+        let contentToLoad = htmlContent;
+        if (!contentToLoad.includes("<base ") && !contentToLoad.includes("<base>")) {
+          contentToLoad = contentToLoad.replace(/<head>/i, `<head><base href="${baseUrl}/">`);
         }
+        await pwPage.setContent(contentToLoad, { waitUntil: "domcontentloaded", timeout: 15000 });
+        loaded = true;
+      } else {
+        // 2. Fallback method: navigate via fullUrl
+        try {
+          const resp = await pwPage.goto(fullUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
+          // Reject 404 error pages — NEVER screenshot an error!
+          if (resp && resp.status() < 400) {
+            loaded = true;
+          }
+        } catch { /* network error */ }
       }
 
       if (loaded) {

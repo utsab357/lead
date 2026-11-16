@@ -22,7 +22,7 @@ export function getIntelligentPagesForLead(
 
   const cat = `${lead.category || ""} ${lead.name || ""}`.toLowerCase();
   const about = `${lead.about || ""} ${lead.services?.join(" ") || ""}`.toLowerCase();
-  const allReviewsText = lead.reviews?.map(r => r.text).join(" ").toLowerCase() || "";
+  const allReviewsText = (lead.reviews || []).map((r) => r?.text || "").join(" ").toLowerCase();
   const combinedContext = `${cat} ${about} ${allReviewsText}`;
 
   const reviewsCount = lead.reviewsCount || 0;

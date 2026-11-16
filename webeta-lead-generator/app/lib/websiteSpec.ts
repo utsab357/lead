@@ -524,12 +524,12 @@ export function buildWebsiteSpec(
   const primaryScrapedPhoto = photoUrls[0] || heroPhoto;
 
   const realReviews = (lead.reviews ?? [])
-    .filter((r) => r.rating >= 4)
+    .filter((r) => r && typeof r.rating === "number" && r.rating >= 4)
     .slice(0, 3)
     .map((r) => ({
-      author: r.author.split(/\d/)[0].trim(),
-      text: r.text.slice(0, 150),
-      rating: r.rating,
+      author: (r.author || "Customer").split(/\d/)[0].trim() || "Customer",
+      text: (r.text || "").slice(0, 150),
+      rating: r.rating || 5,
       avatarUrl: undefined,
     }));
 

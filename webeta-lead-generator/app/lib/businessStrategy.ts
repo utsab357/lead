@@ -180,7 +180,7 @@ export function validateBusinessStrategy(
   const quoteExistsInReviews = (quote?: string): boolean => {
     if (!quote || quote.trim().length < 4) return false;
     const cleanQuote = quote.toLowerCase().replace(/["']/g, "").trim();
-    return leadReviews.some((r) => r.text.toLowerCase().includes(cleanQuote));
+    return leadReviews.some((r) => (r?.text || "").toLowerCase().includes(cleanQuote));
   };
 
   const GENERIC_CATEGORY_WORDS = new Set([
@@ -230,11 +230,11 @@ export function validateBusinessStrategy(
           verifiedSource = "review_text";
         } else {
           // Check if any review simply mentions the offering name directly
-          const reviewWithMention = leadReviews.find((r) => r.text.toLowerCase().includes(offNameLower));
+          const reviewWithMention = leadReviews.find((r) => (r?.text || "").toLowerCase().includes(offNameLower));
           if (reviewWithMention) {
             isValid = true;
             verifiedSource = "review_text";
-            off.evidenceQuote = reviewWithMention.text.slice(0, 100);
+            off.evidenceQuote = (reviewWithMention.text || "").slice(0, 100);
           }
         }
       }
@@ -422,7 +422,7 @@ export function validateBusinessStrategy(
 export function buildDeterministicBusinessStrategy(lead: RankedLead): BusinessStrategy {
   const name = (lead.name || "").toLowerCase();
   const cat = (lead.category || "").toLowerCase();
-  const allReviews = (lead.reviews || []).map((r) => r.text.toLowerCase()).join(" ");
+  const allReviews = (lead.reviews || []).map((r) => (r?.text || "").toLowerCase()).join(" ");
   const city = lead.city?.split(",")[0] || "Your City";
 
   // 1. Classify Sub-category
@@ -481,7 +481,7 @@ export function buildDeterministicBusinessStrategy(lead: RankedLead): BusinessSt
   for (const kw of candidateLists) {
     if (offerings.length >= 6) break;
     const nameMatch = name.includes(kw);
-    const matchedReview = (lead.reviews || []).find((r) => r.text.toLowerCase().includes(kw));
+    const matchedReview = (lead.reviews || []).find((r) => (r?.text || "").toLowerCase().includes(kw));
 
     if (nameMatch || matchedReview) {
       // Avoid generic category words from matching business name without review evidence
@@ -629,14 +629,24 @@ export function buildDeterministicBusinessStrategy(lead: RankedLead): BusinessSt
 export async function extractBusinessStrategyWithGroq(lead: RankedLead): Promise<BusinessStrategy> {
   const photoMeta = resolvePhotoMetadata(lead.photoUrls || []);
   const praiseReviews = (lead.reviews || [])
-    .filter((r) => r.rating >= 4)
+    .filter((r) => r && typeof r.rating === "number" && r.rating >= 4)
     .slice(0, 5)
-    .map((r, i) => ({ id: `p${i + 1}`, author: r.author, rating: r.rating, text: r.text.slice(0, 200) }));
+    .map((r, i) => ({
+      id: `p${i + 1}`,
+      author: r.author || "Customer",
+      rating: r.rating,
+      text: (r.text || "").slice(0, 200),
+    }));
 
   const criticalReviews = (lead.reviews || [])
-    .filter((r) => r.rating <= 3)
+    .filter((r) => r && typeof r.rating === "number" && r.rating <= 3)
     .slice(0, 3)
-    .map((r, i) => ({ id: `c${i + 1}`, author: r.author, rating: r.rating, text: r.text.slice(0, 200) }));
+    .map((r, i) => ({
+      id: `c${i + 1}`,
+      author: r.author || "Customer",
+      rating: r.rating,
+      text: (r.text || "").slice(0, 200),
+    }));
 
   const payload = {
     business: {

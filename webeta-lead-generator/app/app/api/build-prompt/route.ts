@@ -526,37 +526,69 @@ ${COMPILER_OUTPUT_SPEC}`;
 
 
 export async function POST(req: Request) {
-  const { lead, style, pageType, pageLabel } = (await req.json()) as {
-    lead: RankedLead;
-    platform?: string;
-    style?: string;
-    pageType?: string;   // provided when generating an extra page prompt
-    pageLabel?: string;
-  };
-  if (!lead) return NextResponse.json({ error: "No lead provided." }, { status: 400 });
+  try {
+    const { lead, style, pageType, pageLabel } = (await req.json()) as {
+      lead: RankedLead;
+      platform?: string;
+      style?: string;
+      pageType?: string;   // provided when generating an extra page prompt
+      pageLabel?: string;
+    };
+    if (!lead) return NextResponse.json({ error: "No lead provided." }, { status: 400 });
 
-  // ── Extra page: on-demand, per-click, instant ─────────────────────────────
-  if (pageType && pageLabel) {
-    const prompt = buildExtraPagePrompt(lead, style || "professional", pageType, pageLabel);
-    return NextResponse.json({ source: "code", prompt });
+    // ── Extra page: on-demand, per-click, instant ─────────────────────────────
+    if (pageType && pageLabel) {
+      const prompt = buildExtraPagePrompt(lead, style || "professional", pageType, pageLabel);
+      return NextResponse.json({ source: "code", prompt });
+    }
+
+    // ── Main landing page (Option A) ──────────────────────────────────────────
+    // 1. Extract business strategy with Groq (or deterministic fallback)
+    let businessStrategy;
+    try {
+      businessStrategy = await extractBusinessStrategyWithGroq(lead);
+    } catch {
+      const { buildDeterministicBusinessStrategy } = await import("@/lib/businessStrategy");
+      businessStrategy = buildDeterministicBusinessStrategy(lead);
+    }
+
+    // 2. Build the website prompt instantly in JavaScript using the validated strategy
+    let websitePrompt = "";
+    try {
+      websitePrompt = buildPrompt(lead, style || "ai-decides", businessStrategy);
+    } catch (specErr) {
+      console.warn("Failed to build full spec prompt, using base prompt:", specErr);
+      websitePrompt = `Build a high-converting modern 2026 website for ${lead.name} (${lead.category || "Local Business"} in ${lead.city?.split(",")[0] || "India"}). Focus on WhatsApp conversions and trust.`;
+    }
+
+    // 3. Ask AI ONLY for the small creative parts (~500 tokens total)
+    let pitchPoints: string[] = [];
+    let extraPages: ExtraPage[] = [];
+    try {
+      const insights = await getCreativeInsights(lead);
+      pitchPoints = insights.pitchPoints;
+      extraPages = insights.extraPages;
+    } catch {
+      pitchPoints = [
+        `${lead.name} has strong local demand but no modern website — competitors are capturing their search traffic.`,
+        `A dedicated high-speed mobile website converts online visitors into direct paying customers on WhatsApp.`,
+        `A custom digital presence builds instant credibility and captures 24/7 enquiries in ${lead.city?.split(",")[0] || "their local area"}.`,
+      ];
+    }
+
+    return NextResponse.json({
+      source: "code",
+      style: style || "professional",
+      prompt: websitePrompt,
+      pitchPoints,
+      extraPages,
+      strategy: businessStrategy,
+    });
+  } catch (e) {
+    console.error("Critical error in /api/build-prompt:", e);
+    return NextResponse.json(
+      { error: (e as Error).message || "Generation error" },
+      { status: 500 }
+    );
   }
-
-  // ── Main landing page (Option A) ──────────────────────────────────────────
-  // 1. Extract business strategy with Groq (or deterministic fallback)
-  const businessStrategy = await extractBusinessStrategyWithGroq(lead);
-
-  // 2. Build the website prompt instantly in JavaScript using the validated strategy
-  const websitePrompt = buildPrompt(lead, style || "ai-decides", businessStrategy);
-
-  // 3. Ask AI ONLY for the small creative parts (~500 tokens total)
-  const { pitchPoints, extraPages } = await getCreativeInsights(lead);
-
-  return NextResponse.json({
-    source: "code",
-    style: style || "professional",
-    prompt: websitePrompt,
-    pitchPoints,
-    extraPages,
-    strategy: businessStrategy,
-  });
 }
