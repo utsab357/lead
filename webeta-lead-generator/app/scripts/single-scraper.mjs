@@ -39,9 +39,21 @@ const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function detectType(s) {
   if (!s) return "unknown";
-  if (s.includes("maps.google.com") || s.includes("google.com/maps")) return "maps-url";
-  if (s.includes("zomato.com")) return "zomato-url";
-  if (s.startsWith("http://") || s.startsWith("https://")) return "generic-url";
+  const lower = s.trim().toLowerCase();
+  if (
+    lower.includes("maps.google.") ||
+    lower.includes("google.com/maps") ||
+    lower.includes("google.co.in/maps") ||
+    lower.includes("maps.app.goo.gl") ||
+    lower.includes("goo.gl/maps") ||
+    lower.includes("g.page") ||
+    lower.includes("g.co/kgs") ||
+    (lower.includes("goo.gl/") && !lower.includes("drive.google"))
+  ) {
+    return "maps-url";
+  }
+  if (lower.includes("zomato.com")) return "zomato-url";
+  if (lower.startsWith("http://") || lower.startsWith("https://")) return "generic-url";
   return "search-name";
 }
 
@@ -123,7 +135,24 @@ async function extractFromMapsPanel(page, fallbackCity = "") {
         if (m) website = m[0];
       }
     }
-    if (website && (website.includes("facebook.com") || website.includes("instagram.com"))) website = null;
+    if (website) {
+      const lower = website.toLowerCase();
+      if (lower.includes("facebook.com") || lower.includes("instagram.com")) {
+        const plat = lower.includes("facebook") ? "facebook" : "instagram";
+        if (!socialLinks.some((s) => s.platform === plat)) {
+          socialLinks.push({ platform: plat, url: website });
+        }
+        website = null;
+      } else if (
+        lower.includes("google.com") ||
+        lower.includes("maps.google.") ||
+        lower.includes("goo.gl") ||
+        lower.includes("business.site") ||
+        lower.includes("g.page")
+      ) {
+        website = null;
+      }
+    }
   } catch { /* no website */ }
 
   // Address
@@ -364,6 +393,16 @@ async function main() {
         if (await btn.isVisible({ timeout: 2000 })) await btn.click();
       } catch { /* ok */ }
       await delay(2000);
+      // If landed on a search list rather than a place detail, click the first place
+      try {
+        if (page.url().includes("/search/")) {
+          const firstLink = page.locator('[role="feed"] a[href*="/maps/place/"]').first();
+          if (await firstLink.count() > 0) {
+            await firstLink.click();
+            await delay(3000);
+          }
+        }
+      } catch { /* ok */ }
       emit({ type: "status", message: "Extracting business data..." });
       lead = await extractFromMapsPanel(page);
 
@@ -562,7 +601,7 @@ async function main() {
         city: extracted.city || "",
         phone: extracted.phone || undefined,
         whatsapp: extracted.phone || undefined,
-        website: rawInput,
+        website: (/google\.[a-z.]+|goo\.gl|business\.site|g\.page/i.test(rawInput)) ? undefined : rawInput,
         mapUrl: rawInput,
         rating: extracted.rating,
         lat: 22.72, lng: 88.48,

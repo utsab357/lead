@@ -4,6 +4,22 @@ import type { Lead, AuditResult } from "@/lib/types";
 
 export const maxDuration = 300;
 
+function isRealWebsite(url?: string | null): boolean {
+  if (!url || typeof url !== "string") return false;
+  const lower = url.toLowerCase().trim();
+  if (
+    lower.includes("google.com") ||
+    lower.includes("maps.google.") ||
+    lower.includes("maps.app.goo.gl") ||
+    lower.includes("goo.gl") ||
+    lower.includes("business.site") ||
+    lower.includes("g.page")
+  ) {
+    return false;
+  }
+  return true;
+}
+
 function buildPrompt(leads: Lead[]): string {
   const rich = leads.map((l) => ({
     id: l.id,
@@ -13,7 +29,7 @@ function buildPrompt(leads: Lead[]): string {
     address: l.address,
     rating: l.rating,
     reviewsCount: l.reviewsCount,
-    website: l.website || null,
+    website: isRealWebsite(l.website) ? l.website : null,
     hasPhone: !!l.phone,
     hasWhatsapp: !!l.whatsapp,
     yearsInBusiness: l.yearsInBusiness ?? null,
@@ -83,13 +99,13 @@ export async function POST(req: Request) {
       // Fallback gracefully with realistic heuristics if AI providers are down/exhausted
       const fallbackAudits: Record<string, AuditResult> = {};
       for (const lead of leads) {
-        const hasWebsite = !!lead.website;
+        const hasWebsite = isRealWebsite(lead.website);
         fallbackAudits[lead.id] = {
           leadId: lead.id,
           pageSpeedScore: hasWebsite ? 52 : 0,
           hasWebsite,
           mobileFriendly: hasWebsite,
-          https: hasWebsite && lead.website!.startsWith("https"),
+          https: hasWebsite && (lead.website || "").startsWith("https"),
           hasSchema: false,
           loadTimeMs: hasWebsite ? 3800 : 0,
           gaps: hasWebsite
@@ -115,7 +131,7 @@ export async function POST(req: Request) {
     for (let idx = 0; idx < leads.length; idx++) {
       const lead = leads[idx];
       const a = byId.get(lead.id) ?? (leads.length === 1 && list[0] ? list[0] : (list[idx] ?? {}));
-      const hasWebsite = a.hasWebsite ?? !!lead.website;
+      const hasWebsite = isRealWebsite(lead.website) && (a.hasWebsite ?? true);
       audits[lead.id] = {
         leadId:                 lead.id,
         pageSpeedScore:         Number(a.pageSpeedScore ?? (hasWebsite ? 55 : 0)),

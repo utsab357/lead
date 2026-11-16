@@ -286,6 +286,18 @@ export async function crawlWebsiteForContacts(rawUrl) {
     url = `https://${url}`;
   }
 
+  // Discard Google / Maps links from website crawl
+  const lowerUrl = url.toLowerCase();
+  if (
+    lowerUrl.includes("google.com") ||
+    lowerUrl.includes("maps.google.") ||
+    lowerUrl.includes("goo.gl") ||
+    lowerUrl.includes("business.site") ||
+    lowerUrl.includes("g.page")
+  ) {
+    return { email: null, socialLinks: [] };
+  }
+
   // Direct check: is the website itself a social profile?
   const selfSocial = categorizeSocialUrl(url);
   if (selfSocial) {

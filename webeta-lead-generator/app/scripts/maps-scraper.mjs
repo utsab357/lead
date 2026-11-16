@@ -648,12 +648,24 @@ async function scrapeGoogleMaps() {
         } catch { /* no social */ }
 
         // Move Facebook/Instagram URLs from website to socialLinks
-        if (website && (website.includes('facebook.com') || website.includes('instagram.com'))) {
-          const fbPlatform = website.includes('facebook') ? 'facebook' : 'instagram';
-          if (!socialLinks.some(s => s.platform === fbPlatform)) {
-            socialLinks.push({ platform: fbPlatform, url: website });
+        // And discard Google / business.site links from being counted as a website
+        if (website) {
+          const lowerW = website.toLowerCase();
+          if (lowerW.includes("facebook.com") || lowerW.includes("instagram.com")) {
+            const fbPlatform = lowerW.includes("facebook") ? "facebook" : "instagram";
+            if (!socialLinks.some((s) => s.platform === fbPlatform)) {
+              socialLinks.push({ platform: fbPlatform, url: website });
+            }
+            website = null;
+          } else if (
+            lowerW.includes("google.com") ||
+            lowerW.includes("maps.google.") ||
+            lowerW.includes("goo.gl") ||
+            lowerW.includes("business.site") ||
+            lowerW.includes("g.page")
+          ) {
+            website = null;
           }
-          website = null;
         }
 
         // ──────────────────────────────────────────────────────────────
