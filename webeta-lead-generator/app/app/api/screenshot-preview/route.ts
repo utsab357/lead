@@ -207,9 +207,8 @@ export async function POST(req: Request) {
     // ── Run 3-layer safety verification ────────────────────────────────────
     const { runFullVerification } = await import("../../../lib/verifyGenerated");
 
-    // Read the HTML for code checks
-    let htmlContent = "";
-    if (fs.existsSync(htmlFilePath)) {
+    // Read the HTML for code checks (if not already loaded in memory)
+    if (!htmlContent && fs.existsSync(htmlFilePath)) {
       htmlContent = fs.readFileSync(htmlFilePath, "utf-8");
     }
 
@@ -227,7 +226,8 @@ export async function POST(req: Request) {
     const useAI = !!process.env.GEMINI_API_KEY && buffer.length < 10 * 1024 * 1024; // skip AI if PNG > 10MB
     const pngBase64 = useAI ? buffer.toString("base64") : undefined;
 
-    const verification = await runFullVerification(htmlContent, buffer.length, leadForVerify, {
+    const safeHtml = htmlContent || "";
+    const verification = await runFullVerification(safeHtml, buffer.length, leadForVerify, {
       pngBase64,
       geminiApiKey: process.env.GEMINI_API_KEY,
       skipAI: !useAI,
@@ -239,7 +239,7 @@ export async function POST(req: Request) {
       ...verification,
       generatedAt: new Date().toISOString(),
       pngSize: buffer.length,
-      htmlSize: htmlContent.length,
+      htmlSize: safeHtml.length,
       businessName,
       leadId,
     }, null, 2));
