@@ -151,6 +151,31 @@ async function extractFromMapsPanel(page, fallbackCity = "") {
         lower.includes("g.page")
       ) {
         website = null;
+      } else if (
+        lower.includes("zomato.com") ||
+        lower.includes("swiggy.com") ||
+        lower.includes("practo.com") ||
+        lower.includes("justdial.com") ||
+        lower.includes("indiamart.com") ||
+        lower.includes("magicpin.in") ||
+        lower.includes("dineout.co.in") ||
+        lower.includes("urbancompany.com") ||
+        lower.includes("sulekha.com") ||
+        lower.includes("lybrate.com") ||
+        lower.includes("1mg.com") ||
+        lower.includes("pharmeasy.in") ||
+        lower.includes("nearbuy.com")
+      ) {
+        let plat = "other";
+        if (lower.includes("zomato")) plat = "zomato";
+        else if (lower.includes("swiggy")) plat = "swiggy";
+        else if (lower.includes("practo")) plat = "practo";
+        else if (lower.includes("justdial")) plat = "justdial";
+        else if (lower.includes("indiamart")) plat = "indiamart";
+        if (!socialLinks.some((s) => s.url === website)) {
+          socialLinks.push({ platform: plat, url: website });
+        }
+        website = null;
       }
     }
   } catch { /* no website */ }
@@ -374,6 +399,9 @@ async function main() {
 
   const context = await browser.newContext({
     locale: "en-IN",
+    timezoneId: "Asia/Kolkata",
+    geolocation: { latitude: 20.5937, longitude: 78.9629 }, // Center of India
+    permissions: ["geolocation"],
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
   });
 
@@ -408,7 +436,7 @@ async function main() {
 
     } else if (inputType === "search-name") {
       emit({ type: "status", message: `Searching Google Maps for "${rawInput}"...` });
-      const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(rawInput)}`;
+      const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(rawInput)}?hl=en&gl=in`;
       await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
       await delay(2500);
       try {

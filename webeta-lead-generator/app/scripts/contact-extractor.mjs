@@ -286,14 +286,27 @@ export async function crawlWebsiteForContacts(rawUrl) {
     url = `https://${url}`;
   }
 
-  // Discard Google / Maps links from website crawl
+  // Discard Google / Maps / Aggregator links from website crawl
   const lowerUrl = url.toLowerCase();
   if (
     lowerUrl.includes("google.com") ||
     lowerUrl.includes("maps.google.") ||
     lowerUrl.includes("goo.gl") ||
     lowerUrl.includes("business.site") ||
-    lowerUrl.includes("g.page")
+    lowerUrl.includes("g.page") ||
+    lowerUrl.includes("zomato.com") ||
+    lowerUrl.includes("swiggy.com") ||
+    lowerUrl.includes("practo.com") ||
+    lowerUrl.includes("justdial.com") ||
+    lowerUrl.includes("indiamart.com") ||
+    lowerUrl.includes("magicpin.in") ||
+    lowerUrl.includes("dineout.co.in") ||
+    lowerUrl.includes("urbancompany.com") ||
+    lowerUrl.includes("sulekha.com") ||
+    lowerUrl.includes("lybrate.com") ||
+    lowerUrl.includes("1mg.com") ||
+    lowerUrl.includes("pharmeasy.in") ||
+    lowerUrl.includes("nearbuy.com")
   ) {
     return { email: null, socialLinks: [] };
   }

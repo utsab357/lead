@@ -13,7 +13,20 @@ function isRealWebsite(url?: string | null): boolean {
     lower.includes("maps.app.goo.gl") ||
     lower.includes("goo.gl") ||
     lower.includes("business.site") ||
-    lower.includes("g.page")
+    lower.includes("g.page") ||
+    lower.includes("zomato.com") ||
+    lower.includes("swiggy.com") ||
+    lower.includes("practo.com") ||
+    lower.includes("justdial.com") ||
+    lower.includes("indiamart.com") ||
+    lower.includes("magicpin.in") ||
+    lower.includes("dineout.co.in") ||
+    lower.includes("urbancompany.com") ||
+    lower.includes("sulekha.com") ||
+    lower.includes("lybrate.com") ||
+    lower.includes("1mg.com") ||
+    lower.includes("pharmeasy.in") ||
+    lower.includes("nearbuy.com")
   ) {
     return false;
   }

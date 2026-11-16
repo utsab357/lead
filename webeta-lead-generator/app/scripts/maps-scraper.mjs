@@ -47,6 +47,9 @@ async function scrapeGoogleMaps() {
 
   const context = await browser.newContext({
     locale: "en-IN",
+    timezoneId: "Asia/Kolkata",
+    geolocation: { latitude: 20.5937, longitude: 78.9629 }, // Center of India
+    permissions: ["geolocation"],
     userAgent:
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
   });
@@ -54,7 +57,7 @@ async function scrapeGoogleMaps() {
   const page = await context.newPage();
   page.setDefaultTimeout(12000);
 
-  const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(niche + " in " + city)}`;
+  const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(niche + " in " + city)}?hl=en&gl=in`;
   const leads = [];
 
   try {
@@ -664,6 +667,31 @@ async function scrapeGoogleMaps() {
             lowerW.includes("business.site") ||
             lowerW.includes("g.page")
           ) {
+            website = null;
+          } else if (
+            lowerW.includes("zomato.com") ||
+            lowerW.includes("swiggy.com") ||
+            lowerW.includes("practo.com") ||
+            lowerW.includes("justdial.com") ||
+            lowerW.includes("indiamart.com") ||
+            lowerW.includes("magicpin.in") ||
+            lowerW.includes("dineout.co.in") ||
+            lowerW.includes("urbancompany.com") ||
+            lowerW.includes("sulekha.com") ||
+            lowerW.includes("lybrate.com") ||
+            lowerW.includes("1mg.com") ||
+            lowerW.includes("pharmeasy.in") ||
+            lowerW.includes("nearbuy.com")
+          ) {
+            let plat = "other";
+            if (lowerW.includes("zomato")) plat = "zomato";
+            else if (lowerW.includes("swiggy")) plat = "swiggy";
+            else if (lowerW.includes("practo")) plat = "practo";
+            else if (lowerW.includes("justdial")) plat = "justdial";
+            else if (lowerW.includes("indiamart")) plat = "indiamart";
+            if (!socialLinks.some((s) => s.url === website)) {
+              socialLinks.push({ platform: plat, url: website });
+            }
             website = null;
           }
         }
