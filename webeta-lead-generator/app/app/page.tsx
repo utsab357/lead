@@ -255,6 +255,7 @@ export default function Page() {
     setClientDetails({});
     setActiveSessionId(null);
     setPhase(1);
+    fetch("/api/scrape?cancel=true", { method: "POST" }).catch(() => {});
     if (typeof window !== "undefined") {
       try {
         localStorage.removeItem("webeta_active_session_id");

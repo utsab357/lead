@@ -99,35 +99,47 @@ export function Phase1Scrape({
       .catch(() => {});
   }, [sessionId]);
 
+  // Check on mount if a detached background scrape is already running
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/scrape?status=true")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!isMounted || !d.ok || !d.job) return;
+        const job = d.job;
+
+        if (d.running) {
+          setLoading(true);
+          setStatusMsg(job.statusMsg || "Scraper running in background...");
+          if (Array.isArray(job.leads) && job.leads.length > 0) {
+            setLeads(job.leads);
+          }
+          if (job.progress) {
+            setProgress(job.progress);
+          }
+          if (job.sessionId && onSessionCreated) {
+            onSessionCreated(job.sessionId);
+          }
+          toast.info(`Resumed background scrape for "${job.niche}" in ${job.city}`);
+          connectToStream();
+        }
+      })
+      .catch(() => {});
+
+    return () => { isMounted = false; };
+  }, []);
+
   /** Normalize phone to 10-digit string for cross-session lookup */
   function normPhone(raw: string): string {
     return normalizePhone10(raw);
   }
 
-  async function runScrape() {
-    setLoading(true);
-    setLeads([]);
-    setStatusMsg("Connecting...");
-    setProgress(null);
-    onScrapeStart?.(); // notify parent to clear audit/rank/selectedId
+  async function readSSEStream(reader: ReadableStreamDefaultReader) {
+    readerRef.current = reader;
+    const decoder = new TextDecoder();
+    let buf = "";
 
     try {
-      const res = await fetch("/api/scrape", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(input),
-      });
-
-      if (!res.ok || !res.body) {
-        const err = await res.json().catch(() => ({ error: "Scrape failed" }));
-        throw new Error(err.error ?? "Scrape failed");
-      }
-
-      const reader = res.body.getReader();
-      readerRef.current = reader;
-      const decoder = new TextDecoder();
-      let buf = "";
-
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -162,9 +174,10 @@ export function Phase1Scrape({
             if (msg.type === "done" || msg.type === "stats") {
               setStatusMsg("");
               setProgress(null);
-              const sources = msg.sources ? ` (Maps: ${msg.sources.maps}, JustDial: ${msg.sources.justdial})` : "";
+              const sources = msg.sources
+                ? ` (Maps: ${msg.sources.maps || 0}${msg.sources.zomato ? `, Zomato: ${msg.sources.zomato}` : ""})`
+                : "";
               toast.success(`Scrape complete! ${msg.total} businesses found${sources}`);
-              // Track the session ID so Phase 2 & 3 can auto-save back to it
               if (msg.sessionId && onSessionCreated) onSessionCreated(msg.sessionId);
             }
 
@@ -187,12 +200,53 @@ export function Phase1Scrape({
     }
   }
 
-  function cancelScrape() {
+  async function connectToStream() {
+    try {
+      const res = await fetch("/api/scrape", { headers: { Accept: "text/event-stream" } });
+      if (res.ok && res.body) {
+        setLoading(true);
+        await readSSEStream(res.body.getReader());
+      }
+    } catch { /* stream closed */ }
+  }
+
+  async function runScrape() {
+    setLoading(true);
+    setLeads([]);
+    setStatusMsg("Connecting...");
+    setProgress(null);
+    onScrapeStart?.(); // notify parent to clear audit/rank/selectedId
+
+    try {
+      const res = await fetch("/api/scrape", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      if (!res.ok || !res.body) {
+        const err = await res.json().catch(() => ({ error: "Scrape failed" }));
+        throw new Error(err.error ?? "Scrape failed");
+      }
+
+      await readSSEStream(res.body.getReader());
+    } catch (e) {
+      toast.error((e as Error).message);
+      setLoading(false);
+      setStatusMsg("");
+      setProgress(null);
+    }
+  }
+
+  async function cancelScrape() {
     try { readerRef.current?.cancel(); } catch { /* ok */ }
     setLoading(false);
     setStatusMsg("");
     setProgress(null);
-    toast.info("Scrape cancelled — leads found so far are kept.");
+    try {
+      await fetch("/api/scrape?cancel=true", { method: "POST" });
+    } catch { /* ignore */ }
+    toast.info("Scrape stopped — leads found so far are kept.");
   }
 
   async function addManually() {
