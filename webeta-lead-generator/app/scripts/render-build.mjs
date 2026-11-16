@@ -21,7 +21,7 @@ try {
 }
 
 console.log("\n🏗️ [2/2] Running Next.js build...");
-execSync("next build", {
+execSync("npx next build", {
   stdio: "inherit",
   env: { ...process.env, PLAYWRIGHT_BROWSERS_PATH: "0" },
 });

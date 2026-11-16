@@ -18,7 +18,18 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export default function Page() {
-  const [phase, setPhase] = useState(1);
+  const [phase, setPhase] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = sessionStorage.getItem("webeta_active_phase") || localStorage.getItem("webeta_active_phase");
+        if (saved) {
+          const p = parseInt(saved, 10);
+          if (p >= 1 && p <= 7) return p;
+        }
+      } catch { /* ignore */ }
+    }
+    return 1;
+  });
   const [leads, setLeads] = useState<Lead[]>([]);
   const [audits, setAudits] = useState<Record<string, AuditResult>>({});
   const [ranked, setRanked] = useState<RankedLead[]>([]);
@@ -35,10 +46,13 @@ export default function Page() {
   const [showSessions, setShowSessions] = useState(false);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
-  // Persist current phase in sessionStorage for refresh restore
+  // Persist current phase in sessionStorage & localStorage for refresh / tab restore
   useEffect(() => {
     if (typeof window !== "undefined" && phase >= 1 && phase <= 7) {
-      sessionStorage.setItem("webeta_active_phase", String(phase));
+      try {
+        sessionStorage.setItem("webeta_active_phase", String(phase));
+        localStorage.setItem("webeta_active_phase", String(phase));
+      } catch { /* ignore */ }
     }
   }, [phase]);
 
@@ -50,20 +64,33 @@ export default function Page() {
       .catch(() => setGeminiOk(false));
 
     try {
-      const savedId = localStorage.getItem("webeta_active_session_id");
+      const localData = localStorage.getItem("webeta_active_session_data");
       const cached = sessionStorage.getItem("webeta_cached_session");
+      const savedId = localStorage.getItem("webeta_active_session_id");
 
-      // Fast initial hydration from tab cache if available
-      if (cached) {
+      // 1. High priority: Fast rehydration from full localStorage snapshot
+      if (localData) {
         try {
-          const parsed = JSON.parse(cached) as ScrapeSession;
-          if (parsed && parsed.leads && parsed.leads.length > 0 && (!savedId || parsed.id === savedId)) {
+          const parsed = JSON.parse(localData) as ScrapeSession;
+          if (parsed && Array.isArray(parsed.leads) && parsed.leads.length > 0) {
             handleLoadSession(parsed);
+            return;
           }
         } catch { /* parse error, ignore */ }
       }
 
-      // Rehydrate freshest state from disk session
+      // 2. Tab cache fallback
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached) as ScrapeSession;
+          if (parsed && Array.isArray(parsed.leads) && parsed.leads.length > 0) {
+            handleLoadSession(parsed);
+            return;
+          }
+        } catch { /* parse error, ignore */ }
+      }
+
+      // 3. Rehydrate from server disk session if savedId exists
       if (savedId) {
         fetch(`/api/sessions/${savedId}`)
           .then((r) => {
@@ -71,25 +98,15 @@ export default function Page() {
             return r.json();
           })
           .then((d) => {
-            if (d?.session && d.session.leads && d.session.leads.length > 0) {
+            if (d?.session && Array.isArray(d.session.leads) && d.session.leads.length > 0) {
               handleLoadSession(d.session);
-            } else {
-              throw new Error("Empty session");
             }
           })
           .catch(() => {
-            // Clean up stale pointer if file was removed or empty
-            localStorage.removeItem("webeta_active_session_id");
-            sessionStorage.removeItem("webeta_cached_session");
-            fetch("/api/sessions/session-cafe-utsab-test")
-              .then((r) => r.json())
-              .then((d) => {
-                if (d?.session) handleLoadSession(d.session);
-              })
-              .catch(() => {});
+            // Server file not found on disk — do NOT wipe user storage!
           });
-      } else if (!cached) {
-        // Auto-load Cafe Utsab test session if no session is active
+      } else {
+        // Only load demo Cafe Utsab if there is absolutely no saved user session
         fetch("/api/sessions/session-cafe-utsab-test")
           .then((r) => r.json())
           .then((d) => {
@@ -101,6 +118,58 @@ export default function Page() {
       // storage disabled / private browsing
     }
   }, []);
+
+  // Real-time auto-save effect across ALL phases (1 to 7)
+  // Whenever leads, audits, rankings, hooks, prompts, or notes change, immediately persist to localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (leads.length === 0 && !activeSessionId) return;
+
+    const sessionSnapshot: ScrapeSession = {
+      id: activeSessionId || `session-local-${Date.now()}`,
+      niche: leads[0]?.category || "Local Business",
+      city: leads[0]?.city || "",
+      timestamp: new Date().toISOString(),
+      leadsCount: leads.length,
+      noWebsiteCount: leads.filter((l) => !l.website).length,
+      withPhoneCount: leads.filter((l) => l.phone).length,
+      expandedTerms: [],
+      leads,
+      audits,
+      ranked,
+      selectedId,
+      conversions,
+      outreachResults,
+      buildPrompts,
+      visualPreviews,
+      leadStatuses,
+      leadNotes,
+      clientDetails,
+    };
+
+    try {
+      localStorage.setItem("webeta_active_session_data", JSON.stringify(sessionSnapshot));
+      if (sessionSnapshot.id) {
+        localStorage.setItem("webeta_active_session_id", sessionSnapshot.id);
+      }
+      sessionStorage.setItem("webeta_cached_session", JSON.stringify(sessionSnapshot));
+    } catch {
+      // storage quota protection
+    }
+  }, [
+    leads,
+    audits,
+    ranked,
+    selectedId,
+    conversions,
+    outreachResults,
+    buildPrompts,
+    visualPreviews,
+    leadStatuses,
+    leadNotes,
+    clientDetails,
+    activeSessionId,
+  ]);
 
   const completed = useMemo(() => {
     const s = new Set<number>();
@@ -155,7 +224,9 @@ export default function Page() {
     const savedConversions = session.conversions ?? {};
 
     // Restore last active phase if available, otherwise jump to furthest progress
-    const cachedPhase = typeof window !== "undefined" ? sessionStorage.getItem("webeta_active_phase") : null;
+    const cachedPhase = typeof window !== "undefined"
+      ? (sessionStorage.getItem("webeta_active_phase") || localStorage.getItem("webeta_active_phase"))
+      : null;
     if (cachedPhase && !isNaN(Number(cachedPhase)) && Number(cachedPhase) >= 1 && Number(cachedPhase) <= 7) {
       setPhase(Number(cachedPhase));
     } else {
@@ -187,6 +258,8 @@ export default function Page() {
     if (typeof window !== "undefined") {
       try {
         localStorage.removeItem("webeta_active_session_id");
+        localStorage.removeItem("webeta_active_session_data");
+        localStorage.removeItem("webeta_active_phase");
         sessionStorage.removeItem("webeta_cached_session");
         sessionStorage.removeItem("webeta_active_phase");
       } catch { /* ignore */ }
@@ -405,6 +478,8 @@ export default function Page() {
                 if (typeof window !== "undefined") {
                   try {
                     localStorage.removeItem("webeta_active_session_id");
+                    localStorage.removeItem("webeta_active_session_data");
+                    localStorage.removeItem("webeta_active_phase");
                     sessionStorage.removeItem("webeta_cached_session");
                     sessionStorage.removeItem("webeta_active_phase");
                   } catch { /* ignore */ }
