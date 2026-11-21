@@ -2,8 +2,7 @@
  * Hermes v3 — High-Performance Google Maps Scraper
  * Extracts all businesses directly from Google Maps feed:
  *   - Basic: name, phone, address, website, rating, reviews count, coordinates
- *   - Memory-safe (<80MB RAM) for 512MB hosted containers
- *   - Anti-bot detection bypass (disable webdriver flag)
+ *   - Memory-safe for 512MB hosted containers
  *   - Fast execution (under 60s total)
  *
  * Usage: node scripts/maps-scraper.mjs "cafe" "Barasat, West Bengal" [sessionId]
@@ -84,33 +83,20 @@ async function scrapeGoogleMaps() {
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
   });
 
-  // Mask automated browser signature so Google does not block search requests
   await context.addInitScript(() => {
     Object.defineProperty(navigator, "webdriver", { get: () => undefined });
   });
 
   const page = await context.newPage();
-  page.setDefaultTimeout(12000);
+  page.setDefaultTimeout(15000);
 
-  // Block heavy assets (images, fonts, vector tiles) to keep memory usage under 80MB on Render
+  // Safely abort media (audio/video) to conserve bandwidth without breaking map fonts, icons, or vector tiles
   await page.route("**/*", async (route) => {
     try {
       const type = route.request().resourceType();
-      if (type === "media" || type === "font") {
+      if (type === "media") {
         await route.abort().catch(() => {});
         return;
-      }
-      if (type === "image") {
-        const url = route.request().url();
-        if (
-          url.includes("googleusercontent.com") ||
-          url.includes("/maps/vt") ||
-          url.includes("/maps/photometa") ||
-          url.includes("streetviewpixels")
-        ) {
-          await route.abort().catch(() => {});
-          return;
-        }
       }
       await route.continue().catch(() => {});
     } catch {}
@@ -122,8 +108,8 @@ async function scrapeGoogleMaps() {
 
   try {
     emit({ type: "status", message: "Opening Google Maps..." });
-    await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
-    await delay(2500);
+    await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 35000 });
+    await delay(3000);
 
     // Accept cookies/consent dialog if shown
     try {
@@ -134,9 +120,9 @@ async function scrapeGoogleMaps() {
         'button[aria-label*="Accept all" i], ' +
         'form[action*="consent"] button'
       ).first();
-      if (await consentBtn.isVisible({ timeout: 2000 })) {
+      if (await consentBtn.isVisible({ timeout: 2500 })) {
         await consentBtn.click();
-        await delay(2000);
+        await delay(3000);
       }
     } catch {}
 
@@ -161,7 +147,13 @@ async function scrapeGoogleMaps() {
       return all;
     }
 
-    // Wait for search results container to appear
+    // Diagnostic logging
+    try {
+      const pTitle = await page.title();
+      emit({ type: "status", message: `Connected to Google Maps ("${pTitle}")` });
+    } catch {}
+
+    // Wait for search results container or links to appear
     emit({ type: "status", message: "Loading search results..." });
     try {
       await page.waitForSelector('[role="feed"], a[href*="/maps/place/"]', { timeout: 15000 });
@@ -313,7 +305,9 @@ async function scrapeGoogleMaps() {
         if (newCount > 0) {
           saveSession(Array.from(leadsMap.values()));
         }
-      } catch {}
+      } catch (err) {
+        emit({ type: "status", message: `Notice: ${err.message?.slice(0, 60)}` });
+      }
     }
 
     // ── Infinite Scroll Loop ───────────────────────────────────────────
@@ -355,13 +349,13 @@ async function scrapeGoogleMaps() {
         await page.evaluate(() => {
           const feed = document.querySelector('[role="feed"]');
           if (feed) {
-            feed.scrollBy(0, 3000);
+            feed.scrollTop = feed.scrollHeight;
           } else {
             window.scrollBy(0, 2000);
           }
         }).catch(() => {});
 
-        await delay(1500);
+        await delay(1800);
       } catch {
         break;
       }
@@ -371,52 +365,8 @@ async function scrapeGoogleMaps() {
     await harvestVisibleListings();
 
     const allLeads = Array.from(leadsMap.values());
-    emit({ type: "status", message: `Discovered ${allLeads.length} businesses. Enriching contact info...` });
+    emit({ type: "status", message: `Discovered ${allLeads.length} businesses on Google Maps.` });
     saveSession(allLeads);
-
-    // ── Quick Phone Enrichment for Leads Missing Phone Numbers ─────────
-    // Fast (<3s each) isolated tab checks for up to 10 high-priority leads
-    const leadsMissingPhone = allLeads.filter((l) => !l.phone).slice(0, 10);
-    for (let i = 0; i < leadsMissingPhone.length; i++) {
-      const target = leadsMissingPhone[i];
-      if (!target.mapUrl) continue;
-
-      let detailPage = null;
-      try {
-        detailPage = await context.newPage();
-        detailPage.setDefaultTimeout(8000);
-
-        await detailPage.route("**/*", (r) => {
-          const rt = r.request().resourceType();
-          if (rt === "image" || rt === "media" || rt === "font") return r.abort().catch(() => {});
-          return r.continue().catch(() => {});
-        });
-
-        await detailPage.goto(target.mapUrl, { waitUntil: "domcontentloaded", timeout: 10000 });
-        await delay(800);
-
-        let phoneFound = null;
-        const phoneBtn = detailPage.locator('button[data-item-id^="phone:"]');
-        if (await phoneBtn.count() > 0) {
-          const id = await phoneBtn.first().getAttribute("data-item-id");
-          if (id) {
-            const raw = id.replace("phone:tel:", "").replace("phone:", "").trim();
-            const digits = raw.replace(/\D/g, "");
-            if (digits.length === 10 && /^[6-9]\d{9}$/.test(digits)) phoneFound = `+91${digits}`;
-          }
-        }
-
-        if (phoneFound) {
-          target.phone = phoneFound;
-          target.whatsapp = phoneFound;
-          const key = target.name.toLowerCase().replace(/[^a-z0-9]/g, "");
-          leadsMap.set(key, target);
-          emit({ type: "lead", lead: target, index: i + 1, total: allLeads.length });
-        }
-      } catch {} finally {
-        if (detailPage) await detailPage.close().catch(() => {});
-      }
-    }
 
   } catch (e) {
     emit({ type: "error", message: e.message });
