@@ -1,12 +1,10 @@
 /**
- * Hermes v7 — Complete Production Google Maps Engine
+ * Hermes v8 — Live Continuous Stream + Progressive Phone Enrichment
  *
- * Full extraction restored:
- *   - Basic: Name, Verified Phone (+91/local), Address, Website, Rating, Review Count, Coords
- *   - Extended: Business Hours, Services/Amenities, Photos Count, Photo URLs, About summary
- *   - Contact Enrichment: Free website/bio crawler for Email & Social Links
- *   - 4-Layer Phone Detection: data-item-id, aria-label, pane text RegEx, button contents
- *   - 512MB RAM Safe: Sequential clean place navigation, progressive SSE emission, disk persistence
+ * 1. Fast Feed Scroll: Collects 30-50 businesses and streams them to the UI IMMEDIATELY.
+ * 2. Real-Time Enrichment: Visits each business and extracts verified phone (4-layer detection),
+ *    website, opening hours, services, and photos. Updates the table in real-time.
+ * 3. Never blank: Within 5 seconds, businesses appear in the UI.
  *
  * Usage: node scripts/maps-scraper.mjs "cafe" "Barasat, West Bengal" [sessionId]
  */
@@ -21,9 +19,10 @@ const rawCity    = process.argv[3] || "Barasat, West Bengal";
 const sessionId  = process.argv[4] || `session-${Date.now()}`;
 const city       = rawCity.includes(",") ? rawCity : `${rawCity}, India`;
 
-const MAX_SCROLL      = 40;   // scroll passes to harvest search feed
-const SCROLL_DELAY    = 1500; // ms between feed scrolls
-const HYDRATION_DELAY = 2500; // ms to let Google Maps hydrate place dynamic DOM
+const MAX_SCROLL      = 20;   // 20 scroll passes max (~30s total feed harvest)
+const SCROLL_DELAY    = 1200; // ms between feed scrolls
+const TARGET_CAP      = 40;   // stop feed scroll once 40 solid businesses are found
+const HYDRATION_DELAY = 2200; // ms to let Google Maps place dynamic DOM hydrate
 
 const __dir        = dirname(fileURLToPath(import.meta.url));
 const SESSIONS_DIR = join(__dir, "..", "data", "sessions");
@@ -98,9 +97,9 @@ async function scrapeGoogleMaps() {
   });
 
   const page = await context.newPage();
-  page.setDefaultTimeout(25000);
+  page.setDefaultTimeout(20000);
 
-  // Abort only heavy video/audio streaming, allow images, fonts, styles, and vector tiles
+  // Abort only heavy video/audio
   await page.route("**/*", async (route) => {
     try {
       if (route.request().resourceType() === "media") {
@@ -117,14 +116,14 @@ async function scrapeGoogleMaps() {
   emit({ type: "status", message: "Opening Google Maps..." });
 
   try {
-    await page.goto(targetUrl, { waitUntil: "domcontentloaded", timeout: 40000 });
+    await page.goto(targetUrl, { waitUntil: "domcontentloaded", timeout: 35000 });
   } catch (e) {
     emit({ type: "error", message: `Navigation error: ${String(e.message || e).slice(0, 120)}` });
     await browser.close().catch(() => {});
     return [];
   }
 
-  await delay(2500);
+  await delay(2000);
 
   // Dismiss consent if present
   for (const sel of [
@@ -137,13 +136,13 @@ async function scrapeGoogleMaps() {
       const btn = page.locator(sel).first();
       if (await btn.isVisible({ timeout: 1500 }).catch(() => false)) {
         await btn.click().catch(() => {});
-        await delay(2000);
+        await delay(1500);
         break;
       }
     } catch {}
   }
 
-  // Check if search directly opened a single place page
+  // Single place direct redirect?
   if (page.url().includes("/maps/place/")) {
     emit({ type: "status", message: "Direct place match detected — extracting full profile..." });
     const singleLead = await extractSinglePlaceDetails(page, page.url(), 1);
@@ -159,25 +158,26 @@ async function scrapeGoogleMaps() {
   emit({ type: "status", message: "Loading search results..." });
 
   try {
-    await page.waitForSelector('[role="feed"], a[href*="/maps/place/"]', { timeout: 18000 });
+    await page.waitForSelector('[role="feed"], a[href*="/maps/place/"]', { timeout: 15000 });
   } catch {
     emit({ type: "error", message: "Google Maps feed did not appear. Please check search parameters." });
     await browser.close().catch(() => {});
     return [];
   }
 
-  await delay(1000);
+  await delay(800);
 
   // ════════════════════════════════════════════════════════════════════════════
-  // STEP 1: Scroll feed and harvest targets
+  // STEP 1: Stream basic leads live AS they appear during scroll
   // ════════════════════════════════════════════════════════════════════════════
-  emit({ type: "status", message: "Harvesting businesses from Google Maps feed..." });
+  emit({ type: "status", message: "Discovering businesses..." });
 
-  const targetsMap = new Map(); // href -> { href, name, cardRating, cardReviews, cardAddress, lat, lng }
+  const targetsMap = new Map(); // href -> lead object
+  const allLeads = [];
   let stallCount = 0;
   let lastCount = 0;
 
-  async function harvestVisibleListings() {
+  async function harvestAndStreamVisibleListings() {
     try {
       const items = await page.evaluate(({ cityArg }) => {
         const feed = document.querySelector('[role="feed"]') || document;
@@ -188,7 +188,6 @@ async function scrapeGoogleMaps() {
             const href = a.href || "";
             if (!href || !href.includes("/maps/place/")) return null;
 
-            // Name
             let name =
               a.getAttribute("aria-label") ||
               a.querySelector('[class*="fontHeadlineSmall"]')?.textContent?.trim() ||
@@ -197,7 +196,6 @@ async function scrapeGoogleMaps() {
             name = name.replace(/^[·•\s]+/, "").trim();
             if (!name || name.length < 2) return null;
 
-            // Walk up to card
             let card = a.parentElement;
             for (let i = 0; i < 5; i++) {
               if (card && (card.getAttribute("role") === "article" || card.children.length > 2)) break;
@@ -206,17 +204,14 @@ async function scrapeGoogleMaps() {
 
             const text = card ? card.textContent || "" : "";
 
-            // Rating
             let cardRating = null;
             const rm = text.match(/\b([1-5]\.\d)\b/);
             if (rm) cardRating = parseFloat(rm[1]);
 
-            // Review count
             let cardReviews = null;
             const rvm = text.match(/\(([\d,]+)\)/);
             if (rvm) cardReviews = parseInt(rvm[1].replace(/,/g, ""), 10);
 
-            // Card address snippet
             let cardAddress = cityArg;
             const parts = text.split(/[·•]/).map((s) => s.trim()).filter(Boolean);
             for (const p of parts) {
@@ -229,7 +224,6 @@ async function scrapeGoogleMaps() {
               }
             }
 
-            // Coordinates from URL
             let lat = 22.72, lng = 88.48;
             const c1 = href.match(/@(-?[\d.]+),(-?[\d.]+)/);
             if (c1) {
@@ -251,7 +245,30 @@ async function scrapeGoogleMaps() {
 
       for (const item of items) {
         if (!targetsMap.has(item.href)) {
-          targetsMap.set(item.href, item);
+          const lead = {
+            id: `${sessionId}_m${String(allLeads.length + 1).padStart(3, "0")}`,
+            name: item.name,
+            category: niche,
+            address: item.cardAddress || city,
+            city,
+            mapUrl: item.href,
+            rating: item.cardRating || null,
+            reviewsCount: item.cardReviews || null,
+            lat: item.lat,
+            lng: item.lng,
+            source: "maps",
+          };
+
+          targetsMap.set(item.href, lead);
+          allLeads.push(lead);
+
+          // Stream immediately to UI so the user sees results instantly
+          emit({
+            type: "lead",
+            lead,
+            index: allLeads.length,
+            total: allLeads.length,
+          });
         }
       }
     } catch {}
@@ -260,29 +277,30 @@ async function scrapeGoogleMaps() {
   for (let pass = 0; pass < MAX_SCROLL; pass++) {
     if (page.isClosed()) break;
 
-    await harvestVisibleListings();
+    await harvestAndStreamVisibleListings();
     const curCount = targetsMap.size;
 
-    // Check if end of list reached
+    // Stop early if reached end of list
     const endCount = await page.locator('text="You\'ve reached the end of the list"').count().catch(() => 0);
     if (endCount > 0) {
-      emit({ type: "status", message: `All results loaded (${curCount} businesses) ✓` });
+      emit({ type: "status", message: `Search feed fully loaded (${curCount} businesses) ✓` });
       break;
     }
 
-    if (curCount >= 100) {
-      emit({ type: "status", message: `Loaded ${curCount} businesses from feed ✓` });
+    // Stop feed scroll once TARGET_CAP is reached
+    if (curCount >= TARGET_CAP) {
+      emit({ type: "status", message: `Collected ${curCount} businesses — proceeding to detail extraction ✓` });
       break;
     }
 
     if (curCount > lastCount) {
       stallCount = 0;
       lastCount = curCount;
-      emit({ type: "status", message: `Found ${curCount} businesses so far... scrolling for more...` });
+      emit({ type: "status", message: `Discovered ${curCount} businesses... scrolling for more...` });
     } else {
       stallCount++;
-      if (stallCount >= 5 && curCount > 0) {
-        emit({ type: "status", message: `Search feed fully captured (${curCount} businesses) ✓` });
+      if (stallCount >= 4 && curCount >= 15) {
+        emit({ type: "status", message: `Feed finished (${curCount} businesses) ✓` });
         break;
       }
     }
@@ -300,106 +318,83 @@ async function scrapeGoogleMaps() {
     await delay(SCROLL_DELAY);
   }
 
-  // Final harvest
-  await harvestVisibleListings();
+  // Final quick harvest
+  await harvestAndStreamVisibleListings();
+  saveSession(allLeads);
 
-  const targets = Array.from(targetsMap.values());
-  const total = targets.length;
-
+  const total = allLeads.length;
   if (total === 0) {
-    emit({ type: "error", message: "No businesses found in the selected city. Please try another niche or location." });
+    emit({ type: "error", message: "No businesses found. Try a different city or niche." });
     await browser.close().catch(() => {});
     return [];
   }
 
-  emit({ type: "status", message: `Discovered ${total} businesses — extracting verified phone numbers & details...` });
+  emit({ type: "status", message: `Discovered ${total} businesses — now verifying phone numbers & contact info...` });
 
   // ════════════════════════════════════════════════════════════════════════════
-  // STEP 2: Extract verified details with 4-Layer Phone Detection
+  // STEP 2: Extract verified phone & details (updates the existing rows live)
   // ════════════════════════════════════════════════════════════════════════════
-  const leads = [];
-
   for (let idx = 0; idx < total; idx++) {
     if (page.isClosed()) break;
-    const target = targets[idx];
+    const currentLead = allLeads[idx];
 
-    emit({ type: "status", message: `[${idx + 1}/${total}] Extracting: ${target.name}...` });
+    emit({ type: "status", message: `[${idx + 1}/${total}] Getting phone & details: ${currentLead.name}...` });
 
     try {
-      // Direct navigation to place URL: 100% reliable, zero click overlays, zero timeouts
-      await page.goto(target.href, { waitUntil: "domcontentloaded", timeout: 20000 });
-
-      // Crucial: wait for Google Maps dynamic JS hydration to mount buttons and data-item-id
+      await page.goto(currentLead.mapUrl, { waitUntil: "domcontentloaded", timeout: 18000 });
       await delay(HYDRATION_DELAY);
 
-      const details = await extractDetailsFromLoadedPage(page, target);
+      const details = await extractDetailsFromLoadedPage(page, currentLead);
 
-      let lead = {
-        id: `${sessionId}_m${String(leads.length + 1).padStart(3, "0")}`,
-        name: details.name || target.name,
-        category: details.category || niche,
-        address: details.address || target.cardAddress || city,
-        city,
-        phone: details.phone || undefined,
-        whatsapp: details.phone || undefined,
-        website: details.website || undefined,
-        mapUrl: target.href,
-        rating: details.rating ?? target.cardRating ?? null,
-        reviewsCount: details.reviewsCount ?? target.cardReviews ?? null,
-        lat: target.lat,
-        lng: target.lng,
-        hours: details.hours.length > 0 ? details.hours : undefined,
-        services: details.services.length > 0 ? details.services : undefined,
-        photoUrls: details.photoUrls.length > 0 ? details.photoUrls : undefined,
-        photosCount: details.photosCount || undefined,
-        about: details.about || undefined,
-        socialLinks: details.socialLinks.length > 0 ? details.socialLinks : undefined,
-        priceLevel: details.priceLevel || undefined,
-        source: "maps",
-      };
+      // Merge verified contact details into the lead
+      if (details.name) currentLead.name = details.name;
+      if (details.phone) {
+        currentLead.phone = details.phone;
+        currentLead.whatsapp = details.phone;
+      }
+      if (details.website) currentLead.website = details.website;
+      if (details.address) currentLead.address = details.address;
+      if (details.rating) currentLead.rating = details.rating;
+      if (details.reviewsCount) currentLead.reviewsCount = details.reviewsCount;
+      if (details.hours?.length > 0) currentLead.hours = details.hours;
+      if (details.services?.length > 0) currentLead.services = details.services;
+      if (details.photoUrls?.length > 0) currentLead.photoUrls = details.photoUrls;
+      if (details.photosCount) currentLead.photosCount = details.photosCount;
+      if (details.socialLinks?.length > 0) currentLead.socialLinks = details.socialLinks;
+      if (details.priceLevel) currentLead.priceLevel = details.priceLevel;
+      if (details.about) currentLead.about = details.about;
 
-      // Free Contact & Social Enrichment (website deep crawler, bio links)
+      // Free Contact & Social Enrichment
       try {
-        lead = await enrichLeadContacts(lead);
+        const enriched = await enrichLeadContacts(currentLead);
+        Object.assign(currentLead, enriched);
       } catch {}
 
-      leads.push(lead);
+      // Re-emit updated lead so UI shows phone badge and WhatsApp link immediately
+      emit({
+        type: "lead",
+        lead: currentLead,
+        index: idx + 1,
+        total,
+      });
 
-      // Stream to frontend live immediately
-      emit({ type: "lead", lead, index: leads.length, total });
-
-      // Progressive backup to disk
-      if (leads.length % 3 === 0 || idx === total - 1) {
-        saveSession(leads);
+      // Save progressive backup to disk
+      if ((idx + 1) % 3 === 0 || idx === total - 1) {
+        saveSession(allLeads);
       }
     } catch (err) {
-      // Fallback lead on error so no business is dropped
-      const fallbackLead = {
-        id: `${sessionId}_m${String(leads.length + 1).padStart(3, "0")}`,
-        name: target.name,
-        category: niche,
-        address: target.cardAddress || city,
-        city,
-        mapUrl: target.href,
-        rating: target.cardRating || null,
-        reviewsCount: target.cardReviews || null,
-        lat: target.lat,
-        lng: target.lng,
-        source: "maps",
-      };
-      leads.push(fallbackLead);
-      emit({ type: "lead", lead: fallbackLead, index: leads.length, total });
+      // Keep going to next business even if one page has timeout
     }
   }
 
-  saveSession(leads);
+  saveSession(allLeads);
   await browser.close().catch(() => {});
-  emitDone(leads);
-  return leads;
+  emitDone(allLeads);
+  return allLeads;
 }
 
 /**
- * 4-Layer Phone Extractor & Complete Detail Scanner from loaded Google Maps page
+ * 4-Layer Phone Extractor & Complete Detail Scanner
  */
 async function extractDetailsFromLoadedPage(page, target) {
   return await page.evaluate((fallbackTarget) => {
@@ -475,7 +470,6 @@ async function extractDetailsFromLoadedPage(page, target) {
       website = siteAnchor.href;
     }
 
-    // Move social links / aggregators from website
     if (website) {
       const low = website.toLowerCase();
       if (low.includes("facebook.com")) {
@@ -487,11 +481,10 @@ async function extractDetailsFromLoadedPage(page, target) {
       } else if (low.includes("google.com") || low.includes("business.site") || low.includes("goo.gl") || low.includes("g.page")) {
         website = null;
       } else if (low.includes("zomato.com") || low.includes("swiggy.com") || low.includes("justdial.com") || low.includes("indiamart.com")) {
-        website = null; // Aggregator, not their own website
+        website = null;
       }
     }
 
-    // Scan for social profile buttons
     const socialAnchors = Array.from(
       document.querySelectorAll('a[href*="facebook.com"], a[href*="instagram.com"], a[href*="youtube.com"], a[href*="linkedin.com"]')
     );
@@ -510,7 +503,7 @@ async function extractDetailsFromLoadedPage(page, target) {
     }
 
     // ─────────────────────────────────────────────────────────
-    // ADDRESS, RATING, REVIEWS COUNT & CATEGORY
+    // ADDRESS, RATING, REVIEWS COUNT
     // ─────────────────────────────────────────────────────────
     let address = "";
     const addrBtn = document.querySelector('button[data-item-id="address"]');
@@ -531,10 +524,6 @@ async function extractDetailsFromLoadedPage(page, target) {
       const m = (revSpan.getAttribute("aria-label") || revSpan.textContent || "").match(/([\d,]+)/);
       if (m) reviewsCount = parseInt(m[1].replace(/,/g, ""), 10);
     }
-
-    let category = "";
-    const catBtn = document.querySelector('button[jsaction*="category"]');
-    if (catBtn) category = catBtn.textContent?.trim() || "";
 
     // ─────────────────────────────────────────────────────────
     // EXTENDED: HOURS, PHOTOS, SERVICES, ABOUT
@@ -592,7 +581,6 @@ async function extractDetailsFromLoadedPage(page, target) {
       address,
       rating,
       reviewsCount,
-      category,
       hours,
       socialLinks,
       photosCount,
@@ -604,14 +592,14 @@ async function extractDetailsFromLoadedPage(page, target) {
   }, target);
 }
 
-/** Fallback extractor for when Google Maps navigates directly to a single business page */
+/** Fallback extractor for direct single place match */
 async function extractSinglePlaceDetails(page, href, idx) {
   try {
     const details = await extractDetailsFromLoadedPage(page, { name: "Business", cardAddress: city });
     let lead = {
       id: `${sessionId}_m${String(idx).padStart(3, "0")}`,
       name: details.name,
-      category: details.category || niche,
+      category: niche,
       address: details.address || city,
       city,
       phone: details.phone || undefined,
