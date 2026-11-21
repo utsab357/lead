@@ -394,10 +394,12 @@ async function main() {
       "--disable-gpu",
       "--no-first-run",
       "--no-zygote",
+      "--window-size=1920,1080",
     ],
   });
 
   const context = await browser.newContext({
+    viewport: { width: 1920, height: 1080 },
     locale: "en-IN",
     timezoneId: "Asia/Kolkata",
     geolocation: { latitude: 20.5937, longitude: 78.9629 }, // Center of India

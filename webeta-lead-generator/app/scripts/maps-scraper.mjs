@@ -29,6 +29,42 @@ function emit(obj) {
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
+async function closeDetailPanel(page) {
+  // 1. Click explicit Back / Close button in Google Maps place panel
+  try {
+    const backBtn = page.locator(
+      'button[aria-label*="Back to results" i], ' +
+      'button[aria-label*="Back to search" i], ' +
+      'button[aria-label="Back" i], ' +
+      'button[aria-label*="Back" i], ' +
+      'button[jsaction*="pane.back" i], ' +
+      'button[jsaction*="navigation.back" i], ' +
+      'button[aria-label*="Close" i], ' +
+      'button[jsaction*="close" i]'
+    ).first();
+    if (await backBtn.isVisible({ timeout: 1200 })) {
+      await backBtn.click({ timeout: 2000 });
+      await delay(800);
+      return;
+    }
+  } catch { /* proceed */ }
+
+  // 2. Try browser back navigation if current URL is a place URL
+  try {
+    if (page.url().includes("/maps/place/")) {
+      await page.goBack({ timeout: 4000, waitUntil: "domcontentloaded" });
+      await delay(800);
+      return;
+    }
+  } catch { /* proceed */ }
+
+  // 3. Fallback: Escape key
+  try {
+    await page.keyboard.press("Escape");
+    await delay(400);
+  } catch { /* proceed */ }
+}
+
 emit({ type: "status", message: `Searching "${niche}" in "${city}"...` });
 
 async function scrapeGoogleMaps() {
@@ -42,10 +78,12 @@ async function scrapeGoogleMaps() {
       "--disable-gpu",
       "--no-first-run",
       "--no-zygote",
+      "--window-size=1920,1080",
     ],
   });
 
   const context = await browser.newContext({
+    viewport: { width: 1920, height: 1080 },
     locale: "en-IN",
     timezoneId: "Asia/Kolkata",
     geolocation: { latitude: 20.5937, longitude: 78.9629 }, // Center of India
@@ -71,17 +109,40 @@ async function scrapeGoogleMaps() {
       if (await btn.isVisible({ timeout: 2000 })) await btn.click();
     } catch { /* no banner */ }
 
-    // ── Scroll to load ALL results ─────────────────────────────────────
+    // ── Scroll to load ALL results & harvest listing targets ───────────
     emit({ type: "status", message: "Loading all results..." });
     let lastCount = 0;
     let sameCountTimes = 0;
+    const targetsMap = new Map(); // href -> name
+
+    async function harvestVisibleListings() {
+      try {
+        const items = await page.evaluate(() => {
+          const feed = document.querySelector('[role="feed"]');
+          if (!feed) return [];
+          const links = Array.from(feed.querySelectorAll('a[href*="/maps/place/"]'));
+          return links.map((a) => ({
+            href: a.href,
+            name: a.getAttribute("aria-label") || a.textContent?.trim() || "",
+          })).filter((x) => x.href && x.name);
+        });
+        for (const item of items) {
+          if (!targetsMap.has(item.href)) {
+            targetsMap.set(item.href, item.name);
+          }
+        }
+      } catch { /* ok */ }
+    }
+
     for (let i = 0; i < MAX_SCROLL; i++) {
       try {
         await page.evaluate(() => {
           const feed = document.querySelector('[role="feed"]');
           if (feed) feed.scrollBy(0, 2000);
         });
-        await delay(1500);
+        await delay(1200);
+
+        await harvestVisibleListings();
 
         // Check for end-of-list message
         const endText = await page.locator('text="You\'ve reached the end of the list"').count();
@@ -90,7 +151,7 @@ async function scrapeGoogleMaps() {
           break;
         }
         // Also stop if result count stops growing (3 times in a row)
-        const curCount = await page.locator('[role="feed"] a[href*="/maps/place/"]').count();
+        const curCount = targetsMap.size;
         if (curCount === lastCount) {
           sameCountTimes++;
           if (sameCountTimes >= 3) break;
@@ -101,25 +162,66 @@ async function scrapeGoogleMaps() {
       } catch { break; }
     }
 
-    // ── Count total listings ───────────────────────────────────────────
-    const totalLinks = await page.locator('[role="feed"] a[href*="/maps/place/"]').count();
+    // Scroll feed back to top so earlier listings are reachable and rendered
+    await page.evaluate(() => {
+      const feed = document.querySelector('[role="feed"]');
+      if (feed) feed.scrollTop = 0;
+    }).catch(() => {});
+    await delay(1000);
+
+    // Final harvest to ensure all listings are captured
+    await harvestVisibleListings();
+
+    const targetListings = Array.from(targetsMap.entries()).map(([href, name]) => ({ href, name }));
+    const totalLinks = targetListings.length;
     emit({ type: "status", message: `Found ${totalLinks} businesses — extracting full details...` });
 
     // ── Click each listing and extract EVERYTHING ──────────────────────
     for (let idx = 0; idx < totalLinks; idx++) {
+      const target = targetListings[idx];
       try {
-        const links = page.locator('[role="feed"] a[href*="/maps/place/"]');
-        const count = await links.count();
-        if (idx >= count) break;
-
-        const link = links.nth(idx);
-        const name = (await link.getAttribute("aria-label")) || "";
-        const href = (await link.getAttribute("href")) || "";
+        const name = target.name;
+        const href = target.href;
         if (!name || !href) continue;
 
-        // Click to open business detail panel
-        await link.click();
-        await delay(3000);
+        let opened = false;
+
+        // Try locating link in feed by href or by index
+        try {
+          const linkByHref = page.locator(`[role="feed"] a[href="${href}"]`).first();
+          if (await linkByHref.count() > 0) {
+            await linkByHref.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
+            try {
+              await linkByHref.click({ timeout: 4000 });
+              opened = true;
+            } catch {
+              // DOM evaluate click bypasses overlay & actionability checks
+              await linkByHref.evaluate((el) => el.click()).catch(() => {});
+              opened = true;
+            }
+          } else {
+            const allFeedLinks = page.locator('[role="feed"] a[href*="/maps/place/"]');
+            if (idx < await allFeedLinks.count()) {
+              const link = allFeedLinks.nth(idx);
+              await link.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
+              try {
+                await link.click({ timeout: 4000 });
+                opened = true;
+              } catch {
+                await link.evaluate((el) => el.click()).catch(() => {});
+                opened = true;
+              }
+            }
+          }
+        } catch { /* fallback to goto */ }
+
+        // Fallback: If click did not open or element was not found in feed, navigate directly to href
+        if (!opened) {
+          await page.goto(href, { waitUntil: "domcontentloaded", timeout: 15000 });
+          opened = true;
+        }
+
+        await delay(2500);
 
         // Verify the detail panel updated to this business
         // (prevents data contamination — reading previous listing's phone/address)
@@ -262,7 +364,7 @@ async function scrapeGoogleMaps() {
         try {
           const hoursBtn = page.locator('button[data-item-id="oh"]');
           if (await hoursBtn.count() > 0) {
-            await hoursBtn.first().click();
+            await hoursBtn.first().click({ timeout: 3000 });
             await delay(1000);
             // Read all "Copy open hours" buttons — each one contains a day + time in aria-label
             const copyBtns = page.locator('[role="main"] button[aria-label*="Copy open hours"]');
@@ -443,7 +545,7 @@ async function scrapeGoogleMaps() {
         try {
           const aboutTab = page.locator('[role="main"] button[aria-label*="About"], [role="main"] [role="tab"]:has-text("About")');
           if (await aboutTab.count() > 0) {
-            await aboutTab.first().click();
+            await aboutTab.first().click({ timeout: 3000 });
             await delay(1500);
 
             // Extract structured attributes: { "Amenities": ["Restroom"], "Planning": ["Membership required"], ... }
@@ -514,7 +616,7 @@ async function scrapeGoogleMaps() {
             // Navigate back to Overview tab
             const overviewTab = page.locator('[role="main"] button[aria-label*="Overview"], [role="main"] [role="tab"]:has-text("Overview")');
             if (await overviewTab.count() > 0) {
-              await overviewTab.first().click();
+              await overviewTab.first().click({ timeout: 3000 });
               await delay(800);
             }
           }
@@ -766,21 +868,17 @@ async function scrapeGoogleMaps() {
         // Emit each lead live
         emit({ type: "lead", lead: finalLead, index: idx + 1, total: totalLinks });
 
-        // Close detail panel
-        await page.keyboard.press("Escape");
-        await delay(1200);
+        // Close detail panel to return to search results feed
+        await closeDetailPanel(page);
 
       } catch (e) {
         emit({ type: "status", message: `Skipped #${idx + 1}: ${e.message?.slice(0, 50)}` });
         try {
-          await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
-          await delay(2500);
-          for (let s = 0; s < 5; s++) {
-            await page.evaluate(() => {
-              const feed = document.querySelector('[role="feed"]');
-              if (feed) feed.scrollBy(0, 2000);
-            });
-            await delay(700);
+          await closeDetailPanel(page);
+          const feedCount = await page.locator('[role="feed"]').count().catch(() => 0);
+          if (feedCount === 0) {
+            await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
+            await delay(2000);
           }
         } catch { /* continue */ }
       }
@@ -841,7 +939,7 @@ async function extractVisibleReviews(page, maxCount) {
         // Expand "More" to get full review text
         try {
           const moreBtn = el.locator('button:has-text("More"), button[aria-label*="more"]');
-          if (await moreBtn.count() > 0) { await moreBtn.first().click(); await delay(80); }
+          if (await moreBtn.count() > 0) { await moreBtn.first().click({ timeout: 1500 }); await delay(80); }
         } catch { /* no expand */ }
 
         // Review text
