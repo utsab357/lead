@@ -183,6 +183,7 @@ export function Phase1Scrape({
     setLeads([]);
     setStatusMsg("Connecting...");
     setProgress(null);
+    if (input.noWebsiteOnly) setFNoSite(true);
     onScrapeStart?.(); // notify parent to clear audit/rank/selectedId
 
     try {

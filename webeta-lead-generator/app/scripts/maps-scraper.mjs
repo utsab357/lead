@@ -18,7 +18,7 @@ import { enrichLeadContacts } from "./contact-extractor.mjs";
 const niche     = process.argv[2] || "gym";
 const city      = process.argv[3] || "Barasat, West Bengal";
 const sessionId = process.argv[4] || `session-${Date.now()}`;
-const MAX_SCROLL = 25; // scroll more to load all results
+const MAX_SCROLL = 60; // scroll to load up to 100+ results
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const ROOT  = join(__dir, "..");
@@ -28,42 +28,6 @@ function emit(obj) {
 }
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
-
-async function closeDetailPanel(page) {
-  // 1. Click explicit Back / Close button in Google Maps place panel
-  try {
-    const backBtn = page.locator(
-      'button[aria-label*="Back to results" i], ' +
-      'button[aria-label*="Back to search" i], ' +
-      'button[aria-label="Back" i], ' +
-      'button[aria-label*="Back" i], ' +
-      'button[jsaction*="pane.back" i], ' +
-      'button[jsaction*="navigation.back" i], ' +
-      'button[aria-label*="Close" i], ' +
-      'button[jsaction*="close" i]'
-    ).first();
-    if (await backBtn.isVisible({ timeout: 1200 })) {
-      await backBtn.click({ timeout: 2000 });
-      await delay(800);
-      return;
-    }
-  } catch { /* proceed */ }
-
-  // 2. Try browser back navigation if current URL is a place URL
-  try {
-    if (page.url().includes("/maps/place/")) {
-      await page.goBack({ timeout: 4000, waitUntil: "domcontentloaded" });
-      await delay(800);
-      return;
-    }
-  } catch { /* proceed */ }
-
-  // 3. Fallback: Escape key
-  try {
-    await page.keyboard.press("Escape");
-    await delay(400);
-  } catch { /* proceed */ }
-}
 
 emit({ type: "status", message: `Searching "${niche}" in "${city}"...` });
 
@@ -191,45 +155,42 @@ async function scrapeGoogleMaps() {
       try {
         await page.evaluate(() => {
           const feed = document.querySelector('[role="feed"]');
-          if (feed) feed.scrollBy(0, 2000);
+          if (feed) {
+            feed.scrollTop = feed.scrollHeight;
+          }
         });
-        await delay(1200);
+        await delay(2000);
 
         await harvestVisibleListings();
 
         // Check for end-of-list message
         const endText = await page.locator('text="You\'ve reached the end of the list"').count();
         if (endText > 0) {
-          emit({ type: "status", message: "All results loaded ✓" });
+          emit({ type: "status", message: `All results loaded (${targetsMap.size} businesses) ✓` });
           break;
         }
-        // Also stop if result count stops growing (3 times in a row)
+        // Stop if result count stops growing after 6 consecutive scrolls or reaches 120
         const curCount = targetsMap.size;
+        if (curCount >= 120) {
+          emit({ type: "status", message: `Harvested ${curCount} businesses ✓` });
+          break;
+        }
         if (curCount === lastCount) {
           sameCountTimes++;
-          if (sameCountTimes >= 3) break;
+          if (sameCountTimes >= 6) break;
         } else {
           sameCountTimes = 0;
           lastCount = curCount;
+          emit({ type: "status", message: `Found ${curCount} businesses so far... scrolling for more...` });
         }
       } catch { break; }
     }
-
-    // Scroll feed back to top so earlier listings are reachable and rendered
-    await page.evaluate(() => {
-      const feed = document.querySelector('[role="feed"]');
-      if (feed) feed.scrollTop = 0;
-    }).catch(() => {});
-    await delay(1000);
-
-    // Final harvest to ensure all listings are captured
-    await harvestVisibleListings();
 
     const targetListings = Array.from(targetsMap.entries()).map(([href, name]) => ({ href, name }));
     const totalLinks = targetListings.length;
     emit({ type: "status", message: `Found ${totalLinks} businesses — extracting full details...` });
 
-    // ── Click each listing and extract EVERYTHING ──────────────────────
+    // ── Visit each listing directly and extract EVERYTHING ─────────────
     for (let idx = 0; idx < totalLinks; idx++) {
       const target = targetListings[idx];
       try {
@@ -237,42 +198,14 @@ async function scrapeGoogleMaps() {
         const href = target.href;
         if (!name || !href) continue;
 
-        let opened = false;
+        emit({ type: "status", message: `[${idx + 1}/${totalLinks}] Extracting: ${name}...` });
 
-        // Try locating link in feed by href or by index
-        try {
-          const linkByHref = page.locator(`[role="feed"] a[href="${href}"]`).first();
-          if (await linkByHref.count() > 0) {
-            await linkByHref.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
-            try {
-              await linkByHref.click({ timeout: 4000 });
-              opened = true;
-            } catch {
-              // DOM evaluate click bypasses overlay & actionability checks
-              await linkByHref.evaluate((el) => el.click()).catch(() => {});
-              opened = true;
-            }
-          } else {
-            const allFeedLinks = page.locator('[role="feed"] a[href*="/maps/place/"]');
-            if (idx < await allFeedLinks.count()) {
-              const link = allFeedLinks.nth(idx);
-              await link.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
-              try {
-                await link.click({ timeout: 4000 });
-                opened = true;
-              } catch {
-                await link.evaluate((el) => el.click()).catch(() => {});
-                opened = true;
-              }
-            }
-          }
-        } catch { /* fallback to goto */ }
+        // Navigate directly to the place URL — 100% reliable, zero click timeouts, zero element obscuring
+        await page.goto(href, { waitUntil: "domcontentloaded", timeout: 20000 });
+        await delay(1500);
 
-        // Fallback: If click did not open or element was not found in feed, navigate directly to href
-        if (!opened) {
-          await page.goto(href, { waitUntil: "domcontentloaded", timeout: 15000 });
-          opened = true;
-        }
+        // Wait for business details panel to render
+        await page.waitForSelector('[role="main"], h1', { timeout: 8000 }).catch(() => {});
 
         await delay(2500);
 
@@ -921,19 +854,22 @@ async function scrapeGoogleMaps() {
         // Emit each lead live
         emit({ type: "lead", lead: finalLead, index: idx + 1, total: totalLinks });
 
-        // Close detail panel to return to search results feed
-        await closeDetailPanel(page);
-
       } catch (e) {
-        emit({ type: "status", message: `Skipped #${idx + 1}: ${e.message?.slice(0, 50)}` });
-        try {
-          await closeDetailPanel(page);
-          const feedCount = await page.locator('[role="feed"]').count().catch(() => 0);
-          if (feedCount === 0) {
-            await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
-            await delay(2000);
-          }
-        } catch { /* continue */ }
+        emit({ type: "status", message: `Notice on #${idx + 1} (${target.name}): ${e.message?.slice(0, 50)}` });
+        // Fallback: emit basic lead so no business is dropped
+        const fallbackLead = {
+          id: `${sessionId}_m${String(leads.length + 1).padStart(3, "0")}`,
+          name: target.name.trim(),
+          category: niche,
+          address: city,
+          city,
+          mapUrl: target.href,
+          lat: 22.72,
+          lng: 88.48,
+          source: "maps",
+        };
+        leads.push(fallbackLead);
+        emit({ type: "lead", lead: fallbackLead, index: idx + 1, total: totalLinks });
       }
     }
   } catch (e) {

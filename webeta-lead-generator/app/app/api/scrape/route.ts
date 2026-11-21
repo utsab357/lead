@@ -130,25 +130,22 @@ export async function POST(req: Request) {
                 if (msg.type === "lead") {
                   const normalized = normalizeName(msg.lead.name);
                   if (!seenNames.has(normalized)) {
-                    const passesFilter = input.noWebsiteOnly ? !msg.lead.website : true;
-                    if (passesFilter) {
-                      seenNames.add(normalized);
-                      const leadIndex = allLeads.length + 1;
-                      const lead: Lead = {
-                        ...msg.lead,
-                        id: `${sessionId}_${String(leadIndex).padStart(3, "0")}`,
-                        whatsapp: msg.lead.whatsapp || msg.lead.phone || undefined,
-                        mapUrl: msg.lead.mapUrl || generateMapUrl(msg.lead.name, msg.lead.city),
-                      };
-                      allLeads.push(lead);
-                      enc({
-                        type: "lead",
-                        lead,
-                        index: allLeads.length,
-                        total: msg.total,
-                        source: sourceLabel,
-                      });
-                    }
+                    seenNames.add(normalized);
+                    const leadIndex = allLeads.length + 1;
+                    const lead: Lead = {
+                      ...msg.lead,
+                      id: `${sessionId}_${String(leadIndex).padStart(3, "0")}`,
+                      whatsapp: msg.lead.whatsapp || msg.lead.phone || undefined,
+                      mapUrl: msg.lead.mapUrl || generateMapUrl(msg.lead.name, msg.lead.city),
+                    };
+                    allLeads.push(lead);
+                    enc({
+                      type: "lead",
+                      lead,
+                      index: allLeads.length,
+                      total: msg.total,
+                      source: sourceLabel,
+                    });
                   }
                 }
 
