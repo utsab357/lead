@@ -79,7 +79,21 @@ export default function Page() {
         } catch { /* parse error, ignore */ }
       }
 
-      // 2. Tab cache fallback
+      // 2. Saved session by ID from localStorage
+      if (savedId) {
+        try {
+          const savedRaw = localStorage.getItem(`webeta_session_${savedId}`);
+          if (savedRaw) {
+            const parsed = JSON.parse(savedRaw) as ScrapeSession;
+            if (parsed && Array.isArray(parsed.leads) && parsed.leads.length > 0) {
+              handleLoadSession(parsed);
+              return;
+            }
+          }
+        } catch {}
+      }
+
+      // 3. Tab cache fallback
       if (cached) {
         try {
           const parsed = JSON.parse(cached) as ScrapeSession;
@@ -90,7 +104,7 @@ export default function Page() {
         } catch { /* parse error, ignore */ }
       }
 
-      // 3. Rehydrate from server disk session if savedId exists
+      // 4. Rehydrate from server disk session if savedId exists
       if (savedId) {
         fetch(`/api/sessions/${savedId}`)
           .then((r) => {
@@ -143,6 +157,25 @@ export default function Page() {
       localStorage.setItem("webeta_active_session_data", JSON.stringify(sessionSnapshot));
       if (sessionSnapshot.id) {
         localStorage.setItem("webeta_active_session_id", sessionSnapshot.id);
+        localStorage.setItem(`webeta_session_${sessionSnapshot.id}`, JSON.stringify(sessionSnapshot));
+
+        // Keep persistent client-side session index (immune to Render ephemeral disk restarts)
+        const metaItem = {
+          id: sessionSnapshot.id,
+          niche: sessionSnapshot.niche,
+          city: sessionSnapshot.city,
+          timestamp: sessionSnapshot.timestamp,
+          leadsCount: sessionSnapshot.leadsCount,
+          noWebsiteCount: sessionSnapshot.noWebsiteCount,
+          withPhoneCount: sessionSnapshot.withPhoneCount,
+        };
+        try {
+          const listRaw = localStorage.getItem("webeta_saved_sessions_meta");
+          let list: any[] = listRaw ? JSON.parse(listRaw) : [];
+          list = list.filter((x: any) => x && x.id !== sessionSnapshot.id);
+          list.unshift(metaItem);
+          localStorage.setItem("webeta_saved_sessions_meta", JSON.stringify(list.slice(0, 30)));
+        } catch { /* storage limit */ }
       }
       sessionStorage.setItem("webeta_cached_session", JSON.stringify(sessionSnapshot));
     } catch {

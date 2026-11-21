@@ -79,6 +79,11 @@ async function scrapeGoogleMaps() {
       "--no-first-run",
       "--no-zygote",
       "--window-size=1920,1080",
+      "--disable-extensions",
+      "--disable-background-networking",
+      "--disable-default-apps",
+      "--mute-audio",
+      "--js-flags=--max-old-space-size=256",
     ],
   });
 
@@ -94,6 +99,21 @@ async function scrapeGoogleMaps() {
 
   const page = await context.newPage();
   page.setDefaultTimeout(12000);
+
+  // Block heavy binary asset downloads to prevent Out-Of-Memory (OOM) on 512MB RAM hosted containers
+  await page.route("**/*", (route) => {
+    const type = route.request().resourceType();
+    if (type === "media" || type === "font") {
+      return route.abort();
+    }
+    if (type === "image") {
+      const url = route.request().url();
+      if (url.includes("googleusercontent.com") || url.includes("/maps/vt") || url.includes("/maps/photometa")) {
+        return route.abort();
+      }
+    }
+    return route.continue();
+  });
 
   const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(niche + " in " + city)}?hl=en&gl=in`;
   const leads = [];

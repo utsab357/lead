@@ -37,9 +37,33 @@ export function SessionsPage({
   const fetchSessions = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/sessions");
-      const data = await res.json();
-      setSessions(data.sessions ?? []);
+      let serverSessions: SessionMeta[] = [];
+      try {
+        const res = await fetch("/api/sessions");
+        const data = await res.json();
+        serverSessions = data.sessions ?? [];
+      } catch { /* server offline or restarting */ }
+
+      // Read client-side persistent session index (survives Render container restarts)
+      let localSessions: SessionMeta[] = [];
+      try {
+        const raw = localStorage.getItem("webeta_saved_sessions_meta");
+        if (raw) localSessions = JSON.parse(raw);
+      } catch { /* parse error */ }
+
+      const seen = new Set<string>();
+      const combined: SessionMeta[] = [];
+      for (const s of [...serverSessions, ...localSessions]) {
+        if (s && s.id && !seen.has(s.id)) {
+          seen.add(s.id);
+          combined.push(s);
+        }
+      }
+
+      setSessions(combined);
+      try {
+        localStorage.setItem("webeta_saved_sessions_meta", JSON.stringify(combined.slice(0, 30)));
+      } catch { /* storage limit */ }
     } catch {
       toast.error("Failed to load sessions");
     } finally {
@@ -52,11 +76,26 @@ export function SessionsPage({
   async function loadSession(id: string) {
     setLoadingId(id);
     try {
-      const res = await fetch(`/api/sessions/${id}`);
-      if (!res.ok) throw new Error("Session not found");
-      const data = await res.json();
-      onLoadSession(data.session as ScrapeSession);
-      toast.success(`Loaded ${data.session.leadsCount} leads from session`);
+      let session: ScrapeSession | null = null;
+      try {
+        const res = await fetch(`/api/sessions/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          session = data.session as ScrapeSession;
+        }
+      } catch { /* fallback to localStorage */ }
+
+      // Fallback: load from client-side persistent storage if server container restarted
+      if (!session) {
+        try {
+          const raw = localStorage.getItem(`webeta_session_${id}`);
+          if (raw) session = JSON.parse(raw);
+        } catch { /* ignore */ }
+      }
+
+      if (!session) throw new Error("Session not found");
+      onLoadSession(session);
+      toast.success(`Loaded ${session.leadsCount} leads from session`);
       onClose();
     } catch (e) {
       toast.error((e as Error).message);
@@ -76,12 +115,26 @@ export function SessionsPage({
     setConfirmDeleteId(null);
     setDeletingId(id);
     try {
-      const res = await fetch("/api/sessions", {
+      fetch("/api/sessions", {
         method: "DELETE",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ id }),
-      });
-      if (!res.ok) throw new Error("Failed to delete");
+      }).catch(() => {});
+
+      // Remove from client localStorage
+      try {
+        localStorage.removeItem(`webeta_session_${id}`);
+        const raw = localStorage.getItem("webeta_saved_sessions_meta");
+        if (raw) {
+          const list = (JSON.parse(raw) as SessionMeta[]).filter((s) => s.id !== id);
+          localStorage.setItem("webeta_saved_sessions_meta", JSON.stringify(list));
+        }
+        if (localStorage.getItem("webeta_active_session_id") === id) {
+          localStorage.removeItem("webeta_active_session_id");
+          localStorage.removeItem("webeta_active_session_data");
+        }
+      } catch { /* ignore */ }
+
       setSessions((prev) => prev.filter((s) => s.id !== id));
       if (id === activeSessionId) {
         onDeleteActiveSession?.();
@@ -144,15 +197,28 @@ export function SessionsPage({
     if (!confirm("Are you sure you want to delete all scrape history? This will permanently wipe all sessions.")) return;
     setLoading(true);
     try {
-      await fetch("/api/sessions", {
+      fetch("/api/sessions", {
         method: "DELETE",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ id: "all" }),
-      });
-      localStorage.removeItem("webeta_active_session_id");
-      sessionStorage.removeItem("webeta_cached_session");
+      }).catch(() => {});
+
+      try {
+        const raw = localStorage.getItem("webeta_saved_sessions_meta");
+        if (raw) {
+          const list = JSON.parse(raw) as SessionMeta[];
+          for (const s of list) {
+            localStorage.removeItem(`webeta_session_${s.id}`);
+          }
+        }
+        localStorage.removeItem("webeta_saved_sessions_meta");
+        localStorage.removeItem("webeta_active_session_id");
+        localStorage.removeItem("webeta_active_session_data");
+        sessionStorage.removeItem("webeta_cached_session");
+      } catch { /* ignore */ }
+
+      setSessions([]);
       toast.success("All scrape history wiped clean.");
-      await fetchSessions();
     } catch {
       toast.error("Failed to wipe old sessions");
     } finally {
