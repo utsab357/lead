@@ -86,7 +86,7 @@ async function scrapeGoogleMaps() {
   });
 
   const page = await context.newPage();
-  page.setDefaultTimeout(20000);
+  page.setDefaultTimeout(25000);
 
   // Safely abort heavy audio/video media
   await page.route("**/*", async (route) => {
@@ -101,7 +101,8 @@ async function scrapeGoogleMaps() {
   });
 
   const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(niche + " in " + city)}?hl=en&gl=in`;
-  const leadsMap = new Map(); // normalizedName -> lead
+  const targetsMap = new Map(); // href -> item data
+  const leadsMap   = new Map(); // key -> lead
 
   try {
     emit({ type: "status", message: "Opening Google Maps..." });
@@ -119,7 +120,7 @@ async function scrapeGoogleMaps() {
       ).first();
       if (await consentBtn.isVisible({ timeout: 2500 })) {
         await consentBtn.click();
-        await delay(2000);
+        await delay(3000);
       }
     } catch {}
 
@@ -144,277 +145,226 @@ async function scrapeGoogleMaps() {
       return all;
     }
 
-    // ── Phase A: Infinite Scroll & Zero-Navigation Card Harvesting ────────
-    emit({ type: "status", message: "Discovering businesses on Google Maps..." });
+    // Wait for search results container or place links to appear
+    emit({ type: "status", message: "Loading results feed..." });
+    try {
+      await page.waitForSelector('[role="feed"], a[href*="/maps/place/"]', { timeout: 20000 });
+      await delay(2000);
+    } catch {
+      // feed might be delayed, proceed to scroll attempts
+    }
 
-    let lastCount = 0;
-    let sameCountTimes = 0;
+    // ── Phase A: Infinite Scroll & Card Harvesting ──────────────────────
+    emit({ type: "status", message: "Harvesting businesses from Google Maps..." });
 
-    async function harvestVisibleCards() {
+    async function harvestVisibleListings() {
       try {
-        const rawCards = await page.evaluate((nicheParam, cityParam) => {
-          const feed = document.querySelector('[role="feed"]');
-          const anchors = feed
-            ? Array.from(feed.querySelectorAll('a[href*="/maps/place/"]'))
-            : Array.from(document.querySelectorAll('a[href*="/maps/place/"]'));
+        const items = await page.evaluate((nicheStr, cityStr) => {
+          const feed = document.querySelector('[role="feed"]') || document;
+          const links = Array.from(feed.querySelectorAll('a[href*="/maps/place/"]'));
 
-          const results = [];
-          const seenHrefs = new Set();
+          return links.map((a) => {
+            const href = a.href || '';
+            const rawName = a.getAttribute('aria-label') || a.textContent?.trim() || '';
+            const name = rawName.replace(/^·\s*/, '').trim();
+            if (!href || !name || name.length < 2) return null;
 
-          for (const a of anchors) {
-            const href = a.href;
-            if (!href || seenHrefs.has(href)) continue;
-            seenHrefs.add(href);
-
-            // Find enclosing card
-            let card = a.closest('div.Nv2PK') || a.closest('div[jsaction*="mouseover"]');
-            if (!card) {
-              let p = a.parentElement;
-              for (let d = 0; d < 4 && p; d++) {
-                if (p.children.length > 2) { card = p; break; }
-                p = p.parentElement;
+            // Enclosing card element
+            let card = a.parentElement;
+            for (let i = 0; i < 4; i++) {
+              if (card && card.parentElement && card.parentElement.children.length > 2) {
+                card = card.parentElement;
+                break;
               }
+              if (card && card.parentElement) card = card.parentElement;
             }
-            if (!card) card = a;
 
-            // 1. Business Name
-            let name = a.getAttribute('aria-label') || '';
-            if (!name) {
-              const h = card.querySelector('.qBF1Pd, h3, div[role="heading"]');
-              if (h) name = h.textContent?.trim() || '';
-            }
-            if (!name) name = a.textContent?.trim() || '';
-            name = name.replace(/^·\s*/, '').trim();
-            if (!name || name.length < 2) continue;
+            const text = card ? (card.textContent || '') : '';
 
-            // 2. Rating & Reviews
+            // Rating
             let rating = null;
-            let reviewsCount = null;
-            const rEl = card.querySelector('.MW4etd, [aria-label*="star" i]');
-            if (rEl) {
-              const rt = rEl.getAttribute('aria-label') || rEl.textContent || '';
-              const rm = rt.match(/\b([1-5]\.\d)\b/);
-              if (rm) rating = parseFloat(rm[1]);
-            }
-            const revEl = card.querySelector('.UY7F9, [aria-label*="reviews" i]');
-            if (revEl) {
-              const rvt = revEl.getAttribute('aria-label') || revEl.textContent || '';
-              const rvm = rvt.match(/([\d,]+)/);
-              if (rvm) reviewsCount = parseInt(rvm[1].replace(/,/g, ''), 10);
-            }
-            const cardText = card.textContent || '';
-            if (!rating) {
-              const rm = cardText.match(/\b([1-5]\.\d)\b/);
-              if (rm) rating = parseFloat(rm[1]);
-            }
-            if (!reviewsCount) {
-              const rvm = cardText.match(/\(([\d,]+)\)/);
-              if (rvm) reviewsCount = parseInt(rvm[1].replace(/,/g, ''), 10);
-            }
+            const rm = text.match(/\b([1-5]\.\d)\b/);
+            if (rm) rating = parseFloat(rm[1]);
 
-            // 3. Category & Address snippet
-            let category = nicheParam;
-            let address = cityParam;
-            const textContainers = Array.from(card.querySelectorAll('.W4Efsd, div[class*="fontBodyMedium"]'));
-            for (const tc of textContainers) {
-              const txt = tc.textContent?.trim() || '';
-              if (!txt) continue;
-              const parts = txt.split('·').map(p => p.trim()).filter(Boolean);
-              for (const part of parts) {
-                if (part.match(/^[1-5]\.\d/) || part.match(/^\([\d,]+\)$/)) continue;
-                if (part.match(/open|closed|closes|opens|24 hours/i)) continue;
-                if (part.match(/[\d+][\d\s\-().]{7,}/)) continue;
-                if (category === nicheParam && part.length < 35 && !part.match(/\d/)) {
-                  category = part;
-                } else if (part.length > 4 && !part.match(/\b\d{1,2}\s*(am|pm)\b/i)) {
-                  address = part;
+            // Review count
+            let reviewsCount = null;
+            const rvm = text.match(/\(([\d,]+)\)/);
+            if (rvm) reviewsCount = parseInt(rvm[1].replace(/,/g, ''), 10);
+
+            // Phone number
+            let phone = null;
+            const pm = text.match(/(\+91[\s\-]?\d{5}[\s\-]?\d{5}|\b[6-9]\d{9}\b|\b0\d{2,4}[\s\-]?\d{6,8}\b)/);
+            if (pm) phone = pm[0].replace(/[\s\-]/g, '');
+
+            // Website (external link on the card)
+            let website = null;
+            if (card) {
+              const allA = card.getElementsByTagName('a');
+              for (let j = 0; j < allA.length; j++) {
+                const h = allA[j].href || '';
+                if (h.startsWith('http') &&
+                    !h.includes('google.') &&
+                    !h.includes('goo.gl') &&
+                    !h.includes('googleusercontent.')) {
+                  website = h;
+                  break;
                 }
               }
             }
 
-            // 4. Website link on card (if card has Website action button)
-            let website = null;
-            const siteEl = card.querySelector('a[data-value="Website"], a[aria-label*="website" i], a[href^="http"]:not([href*="google."]):not([href*="goo.gl"]):not([href*="googleusercontent."])');
-            if (siteEl && siteEl.href) {
-              website = siteEl.href;
+            // Address snippet
+            let address = cityStr;
+            const parts = text.split('·').map(s => s.trim()).filter(Boolean);
+            for (const p of parts) {
+              if (p.length > 5 && p.match(/road|rd|street|lane|nagar|colony|bazaar|market|station|more|highway|cross|chowk/i)) {
+                address = p;
+                break;
+              }
             }
 
-            // 5. Phone number on card (if visible in text or call button)
-            let phone = null;
-            const telEl = card.querySelector('a[href^="tel:"], button[data-tooltip*="Call"], a[data-value="Call"]');
-            if (telEl) {
-              const th = telEl.getAttribute('href') || telEl.getAttribute('data-item-id') || '';
-              const tm = th.match(/tel:([+\d\s\-().]+)/);
-              if (tm) phone = tm[1];
-            }
-            if (!phone) {
-              const pm = cardText.match(/(\+91[\s\-]?\d{5}[\s\-]?\d{5}|\b[6-9]\d{9}\b|\b0\d{2,4}[\s\-]?\d{6,8}\b)/);
-              if (pm) phone = pm[0].replace(/[\s\-]/g, '');
-            }
-
-            results.push({
-              href,
-              name,
-              rating,
-              reviewsCount,
-              category,
-              address,
-              website,
-              phone,
-            });
-          }
-
-          return results;
+            return { href, name, rating, reviewsCount, phone, website, category: nicheStr, address };
+          }).filter(Boolean);
         }, niche, city);
 
-        let newLeadsFound = 0;
-        for (const item of rawCards) {
-          const key = item.name.toLowerCase().replace(/[^a-z0-9]/g, "");
-          if (!key || leadsMap.has(key)) continue;
+        let newCount = 0;
+        for (const item of items) {
+          if (!targetsMap.has(item.href)) {
+            targetsMap.set(item.href, item);
 
-          // Parse coordinates from map URL
-          let lat = 22.72, lng = 88.48;
-          const coordMatch = item.href.match(/@(-?[\d.]+),(-?[\d.]+)/);
-          if (coordMatch) {
-            lat = parseFloat(coordMatch[1]);
-            lng = parseFloat(coordMatch[2]);
-          } else {
-            const lat3d = item.href.match(/!3d(-?[\d.]+)/);
-            const lng4d = item.href.match(/!4d(-?[\d.]+)/);
-            if (lat3d && lng4d) {
-              lat = parseFloat(lat3d[1]);
-              lng = parseFloat(lng4d[1]);
+            const key = item.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+            if (!leadsMap.has(key)) {
+              // Parse coordinates from URL
+              let lat = 22.72, lng = 88.48;
+              const coordMatch = item.href.match(/@(-?[\d.]+),(-?[\d.]+)/);
+              if (coordMatch) {
+                lat = parseFloat(coordMatch[1]);
+                lng = parseFloat(coordMatch[2]);
+              } else {
+                const lat3d = item.href.match(/!3d(-?[\d.]+)/);
+                const lng4d = item.href.match(/!4d(-?[\d.]+)/);
+                if (lat3d && lng4d) {
+                  lat = parseFloat(lat3d[1]);
+                  lng = parseFloat(lng4d[1]);
+                }
+              }
+
+              // Standardize phone
+              let phone = item.phone;
+              if (phone) {
+                let digits = phone.replace(/\D/g, "");
+                if (digits.startsWith("0091") && digits.length === 14) digits = digits.slice(4);
+                else if (digits.startsWith("910") && digits.length === 13) digits = digits.slice(3);
+                else if (digits.startsWith("91") && digits.length === 12) digits = digits.slice(2);
+                else if (digits.startsWith("0") && digits.length === 11) digits = digits.slice(1);
+                phone = digits.length === 10 && /^[6-9]\d{9}$/.test(digits) ? `+91${digits}` : null;
+              }
+
+              const lead = {
+                id:           `${sessionId}_m${String(leadsMap.size + 1).padStart(3, "0")}`,
+                name:         item.name,
+                category:     item.category || niche,
+                address:      item.address || city,
+                city,
+                phone:        phone || undefined,
+                whatsapp:     phone || undefined,
+                website:      item.website || undefined,
+                mapUrl:       item.href,
+                rating:       item.rating || null,
+                reviewsCount: item.reviewsCount || null,
+                lat,
+                lng,
+                source:       "maps",
+              };
+
+              leadsMap.set(key, lead);
+              newCount++;
+
+              // Emit lead live immediately to UI
+              emit({
+                type: "lead",
+                lead,
+                index: leadsMap.size,
+                total: leadsMap.size,
+              });
             }
           }
-
-          // Clean phone to standard format
-          let phone = item.phone;
-          if (phone) {
-            let digits = phone.replace(/\D/g, "");
-            if (digits.startsWith("0091") && digits.length === 14) digits = digits.slice(4);
-            else if (digits.startsWith("910") && digits.length === 13) digits = digits.slice(3);
-            else if (digits.startsWith("91") && digits.length === 12) digits = digits.slice(2);
-            else if (digits.startsWith("0") && digits.length === 11) digits = digits.slice(1);
-            phone = digits.length === 10 && /^[6-9]\d{9}$/.test(digits) ? `+91${digits}` : null;
-          }
-
-          // Clean website
-          let website = item.website;
-          if (website) {
-            const low = website.toLowerCase();
-            if (low.includes("google.com") || low.includes("business.site") || low.includes("goo.gl")) {
-              website = undefined;
-            }
-          }
-
-          const lead = {
-            id:           `${sessionId}_m${String(leadsMap.size + 1).padStart(3, "0")}`,
-            name:         item.name.trim(),
-            category:     item.category.trim() || niche,
-            address:      item.address.trim() || city,
-            city,
-            phone:        phone || undefined,
-            whatsapp:     phone || undefined,
-            website:      website || undefined,
-            mapUrl:       item.href,
-            rating:       item.rating || null,
-            reviewsCount: item.reviewsCount || null,
-            lat,
-            lng,
-            source:       "maps",
-          };
-
-          leadsMap.set(key, lead);
-          newLeadsFound++;
-
-          // Emit lead live immediately to the UI
-          emit({
-            type: "lead",
-            lead,
-            index: leadsMap.size,
-            total: leadsMap.size,
-          });
         }
 
-        if (newLeadsFound > 0) {
+        if (newCount > 0) {
           saveSession(Array.from(leadsMap.values()));
         }
       } catch (err) {
-        // non-fatal card parsing error
+        // non-fatal harvest error
       }
     }
 
-    // Scroll Google Maps feed to load 60 to 100+ businesses
+    // Scroll Google Maps feed to load up to 100+ businesses
+    let lastCount = 0;
+    let sameCountTimes = 0;
+
     for (let scrollPass = 0; scrollPass < MAX_SCROLL; scrollPass++) {
       try {
-        await harvestVisibleCards();
+        await harvestVisibleListings();
 
-        const curCount = leadsMap.size;
+        const curCount = targetsMap.size;
         if (curCount >= 100) {
           emit({ type: "status", message: `Discovered ${curCount} businesses on Google Maps ✓` });
           break;
         }
 
-        // Check if reached end of list
+        // Check for end-of-list indicator
         const endReached = await page.locator('text="You\'ve reached the end of the list"').count();
         if (endReached > 0) {
-          emit({ type: "status", message: `End of results list reached (${curCount} businesses) ✓` });
+          emit({ type: "status", message: `All results loaded (${curCount} businesses) ✓` });
           break;
         }
 
-        if (curCount === lastCount) {
+        // Only count stagnancy if we have already found at least 1 lead
+        if (curCount > 0 && curCount === lastCount) {
           sameCountTimes++;
-          if (sameCountTimes >= 6) {
-            emit({ type: "status", message: `All available businesses loaded (${curCount} found) ✓` });
+          if (sameCountTimes >= 5) {
+            emit({ type: "status", message: `Finished scrolling (${curCount} businesses found) ✓` });
             break;
           }
-        } else {
+        } else if (curCount > lastCount) {
           sameCountTimes = 0;
           lastCount = curCount;
           emit({ type: "status", message: `Found ${curCount} businesses so far... scrolling for more...` });
         }
 
-        // Scroll the feed using DOM scrolling + keyboard PageDown
+        // Scroll the feed container
         await page.evaluate(() => {
           const feed = document.querySelector('[role="feed"]');
           if (feed) {
-            feed.scrollBy({ top: 3500, behavior: "smooth" });
             feed.scrollTop = feed.scrollHeight;
-            feed.dispatchEvent(new Event("scroll", { bubbles: true }));
           } else {
-            window.scrollBy({ top: 2000, behavior: "smooth" });
+            window.scrollBy(0, 2500);
           }
         });
 
-        // Trigger keyboard scroll on feed
-        try {
-          await page.keyboard.press("PageDown");
-        } catch {}
-
-        await delay(1400);
+        await delay(1800);
       } catch {
         break;
       }
     }
 
-    // Final harvest pass to catch any remaining cards
-    await harvestVisibleCards();
+    // Final harvest pass
+    await harvestVisibleListings();
 
     const allLeads = Array.from(leadsMap.values());
-    emit({ type: "status", message: `Harvested ${allLeads.length} businesses. Starting deep enrichment...` });
+    emit({ type: "status", message: `Found ${allLeads.length} businesses. Enriching details...` });
     saveSession(allLeads);
 
     // ── Phase B: Safe, Memory-Capped Deep Enrichment ──────────────────────
-    // Enrich businesses that are prime prospects (e.g. no website or missing phone/hours)
-    // Runs in isolated lightweight tabs with images/fonts blocked to consume <20MB RAM
-    const leadsToEnrich = allLeads.slice(0, 30); // Enrich top 30 prospects for high speed & zero OOM risk
+    // Enrich businesses (hours, photos, reviews) in isolated tabs
+    const leadsToEnrich = allLeads.slice(0, 25); // Enrich top 25 prospects
     for (let i = 0; i < leadsToEnrich.length; i++) {
       const targetLead = leadsToEnrich[i];
       if (!targetLead.mapUrl) continue;
 
       emit({
         type: "status",
-        message: `[${i + 1}/${leadsToEnrich.length}] Enriching details: ${targetLead.name}...`,
+        message: `[${i + 1}/${leadsToEnrich.length}] Enriching: ${targetLead.name}...`,
       });
 
       let enrichedLead = { ...targetLead };
@@ -424,7 +374,7 @@ async function scrapeGoogleMaps() {
         detailPage = await context.newPage();
         detailPage.setDefaultTimeout(12000);
 
-        // Block heavy media on detail page for speed & low memory
+        // Block media and fonts to conserve memory (<15MB RAM per tab)
         await detailPage.route("**/*", (route) => {
           const type = route.request().resourceType();
           if (type === "media" || type === "font") {
@@ -436,7 +386,7 @@ async function scrapeGoogleMaps() {
         await detailPage.goto(targetLead.mapUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
         await delay(1200);
 
-        // 1. Phone number (if missing from card)
+        // Phone number (if missing from card)
         if (!enrichedLead.phone) {
           try {
             const phoneBtn = detailPage.locator('button[data-item-id^="phone:"]');
@@ -451,16 +401,7 @@ async function scrapeGoogleMaps() {
           } catch {}
         }
 
-        // 2. Full Address
-        try {
-          const addrBtn = detailPage.locator('button[data-item-id="address"]');
-          if (await addrBtn.count() > 0) {
-            const fullAddr = (await addrBtn.first().textContent())?.trim();
-            if (fullAddr && fullAddr.length > 5) enrichedLead.address = fullAddr;
-          }
-        } catch {}
-
-        // 3. Website (if missing from card)
+        // Website (if missing from card)
         if (!enrichedLead.website) {
           try {
             const siteLink = detailPage.locator('a[data-item-id="authority"]');
@@ -473,7 +414,16 @@ async function scrapeGoogleMaps() {
           } catch {}
         }
 
-        // 4. Business Hours
+        // Full address
+        try {
+          const addrBtn = detailPage.locator('button[data-item-id="address"]');
+          if (await addrBtn.count() > 0) {
+            const fullAddr = (await addrBtn.first().textContent())?.trim();
+            if (fullAddr && fullAddr.length > 5) enrichedLead.address = fullAddr;
+          }
+        } catch {}
+
+        // Operating hours
         try {
           const hoursBtn = detailPage.locator('button[data-item-id="oh"]');
           if (await hoursBtn.count() > 0) {
@@ -492,7 +442,7 @@ async function scrapeGoogleMaps() {
           }
         } catch {}
 
-        // 5. Photos count and sample photo URLs
+        // Photos
         try {
           const photoData = await detailPage.evaluate(() => {
             const imgs = [];
@@ -512,7 +462,7 @@ async function scrapeGoogleMaps() {
           }
         } catch {}
 
-        // 6. Visible Reviews snippets
+        // Visible reviews
         try {
           const revs = await detailPage.evaluate(() => {
             const list = [];
@@ -531,7 +481,7 @@ async function scrapeGoogleMaps() {
         } catch {}
 
       } catch (err) {
-        // Individual detail enrichment error — safe to continue
+        // Safe to continue on individual enrichment error
       } finally {
         if (detailPage) {
           await detailPage.close().catch(() => {});
@@ -553,7 +503,6 @@ async function scrapeGoogleMaps() {
         total: allLeads.length,
       });
 
-      // Periodically update disk session
       if (i % 3 === 0 || i === leadsToEnrich.length - 1) {
         saveSession(Array.from(leadsMap.values()));
       }

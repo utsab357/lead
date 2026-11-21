@@ -133,7 +133,7 @@ export default function Page() {
   // Whenever leads, audits, rankings, hooks, prompts, or notes change, immediately persist to localStorage
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (leads.length === 0 && !activeSessionId) return;
+    if (leads.length === 0) return;
 
     const sessionSnapshot: ScrapeSession = {
       id: activeSessionId || `session-local-${Date.now()}`,
