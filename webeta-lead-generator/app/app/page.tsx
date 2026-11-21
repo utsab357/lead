@@ -18,18 +18,18 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export default function Page() {
-  const [phase, setPhase] = useState<number>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = sessionStorage.getItem("webeta_active_phase") || localStorage.getItem("webeta_active_phase");
-        if (saved) {
-          const p = parseInt(saved, 10);
-          if (p >= 1 && p <= 7) return p;
-        }
-      } catch { /* ignore */ }
-    }
-    return 1;
-  });
+  const [phase, setPhase] = useState<number>(1);
+
+  // Safe client-only rehydration on mount to prevent React hydration error #418
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem("webeta_active_phase") || localStorage.getItem("webeta_active_phase");
+      if (saved) {
+        const p = parseInt(saved, 10);
+        if (p >= 1 && p <= 7) setPhase(p);
+      }
+    } catch {}
+  }, []);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [audits, setAudits] = useState<Record<string, AuditResult>>({});
   const [ranked, setRanked] = useState<RankedLead[]>([]);

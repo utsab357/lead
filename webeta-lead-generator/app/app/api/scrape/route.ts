@@ -97,6 +97,29 @@ export async function POST(req: Request) {
       const allLeads: Lead[] = [];
       const seenNames = new Set<string>();
 
+      async function persistSessionIncremental() {
+        try {
+          await fs.mkdir(SESSIONS_DIR, { recursive: true });
+          const noSite = allLeads.filter((l) => !l.website);
+          const withPhone = allLeads.filter((l) => l.phone);
+
+          const session: ScrapeSession = {
+            id: sessionId,
+            niche,
+            city,
+            timestamp: new Date().toISOString(),
+            leadsCount: allLeads.length,
+            noWebsiteCount: noSite.length,
+            withPhoneCount: withPhone.length,
+            expandedTerms: [niche],
+            leads: allLeads,
+          };
+
+          const outPath = path.join(SESSIONS_DIR, `${sessionId}.json`);
+          await fs.writeFile(outPath, JSON.stringify(session, null, 2), "utf-8");
+        } catch {}
+      }
+
       function runScraper(scriptPath: string, args: string[], sourceLabel: string): Promise<void> {
         return new Promise((resolve) => {
           enc({ type: "status", message: `Starting ${sourceLabel} scrape...` });
@@ -129,7 +152,25 @@ export async function POST(req: Request) {
 
                 if (msg.type === "lead") {
                   const normalized = normalizeName(msg.lead.name);
-                  if (!seenNames.has(normalized)) {
+                  const existingIdx = allLeads.findIndex(
+                    (l) => normalizeName(l.name) === normalized || (l.mapUrl && l.mapUrl === msg.lead.mapUrl)
+                  );
+
+                  if (existingIdx >= 0) {
+                    // Update existing lead with enriched fields
+                    allLeads[existingIdx] = {
+                      ...allLeads[existingIdx],
+                      ...msg.lead,
+                      whatsapp: msg.lead.whatsapp || msg.lead.phone || allLeads[existingIdx].whatsapp,
+                    };
+                    enc({
+                      type: "lead",
+                      lead: allLeads[existingIdx],
+                      index: existingIdx + 1,
+                      total: msg.total || allLeads.length,
+                      source: sourceLabel,
+                    });
+                  } else {
                     seenNames.add(normalized);
                     const leadIndex = allLeads.length + 1;
                     const lead: Lead = {
@@ -143,9 +184,14 @@ export async function POST(req: Request) {
                       type: "lead",
                       lead,
                       index: allLeads.length,
-                      total: msg.total,
+                      total: msg.total || allLeads.length,
                       source: sourceLabel,
                     });
+                  }
+
+                  // Progressively save every 5 leads to protect data against any interruption
+                  if (allLeads.length % 5 === 0) {
+                    persistSessionIncremental().catch(() => {});
                   }
                 }
 

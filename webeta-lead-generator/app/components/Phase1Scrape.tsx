@@ -41,26 +41,29 @@ export function Phase1Scrape({
   /** Called just before a new scrape begins (use to clear downstream state) */
   onScrapeStart?: () => void;
 }) {
-  const [input, setInput] = useState<ScrapeInput>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("webeta_scrape_input");
-        if (saved) return JSON.parse(saved);
-      } catch { /* ignore parse error */ }
-    }
-    return {
-      niche: "gym",
-      city: "Barasat, West Bengal",
-      noWebsiteOnly: true,
-    };
+  const [input, setInput] = useState<ScrapeInput>({
+    niche: "gym",
+    city: "Barasat, West Bengal",
+    noWebsiteOnly: true,
   });
 
+  // Safe client-only rehydration on mount to prevent React hydration error #418
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        localStorage.setItem("webeta_scrape_input", JSON.stringify(input));
-      } catch { /* ignore */ }
-    }
+    try {
+      const saved = localStorage.getItem("webeta_scrape_input");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.niche && parsed.city) {
+          setInput(parsed);
+        }
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("webeta_scrape_input", JSON.stringify(input));
+    } catch {}
   }, [input]);
 
   const [loading, setLoading]       = useState(false);
@@ -139,8 +142,14 @@ export function Phase1Scrape({
               if (activeId && onSessionCreated) onSessionCreated(activeId);
               setProgress({ index: msg.index, total: msg.total });
               setLeads((prev: Lead[]) => {
-                // Avoid duplicate IDs
-                if (prev.some((l) => l.id === msg.lead.id)) return prev;
+                const idx = prev.findIndex(
+                  (l) => l.id === msg.lead.id || (l.mapUrl && l.mapUrl === msg.lead.mapUrl) || (l.name.toLowerCase() === msg.lead.name.toLowerCase())
+                );
+                if (idx >= 0) {
+                  const updated = [...prev];
+                  updated[idx] = { ...updated[idx], ...msg.lead };
+                  return updated;
+                }
                 return [...prev, msg.lead];
               });
             }
@@ -184,6 +193,7 @@ export function Phase1Scrape({
     setStatusMsg("Connecting...");
     setProgress(null);
     if (input.noWebsiteOnly) setFNoSite(true);
+    else setFNoSite(false);
     onScrapeStart?.(); // notify parent to clear audit/rank/selectedId
 
     try {

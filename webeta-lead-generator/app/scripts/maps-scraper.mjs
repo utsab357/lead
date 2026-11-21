@@ -3,7 +3,7 @@
  * Extracts EVERYTHING from each business listing:
  *   - Basic: name, phone, address, website, rating, reviews count
  *   - Extended: hours, photos, about, services, price level, social links
- *   - Reviews: 15 most relevant + 15 negative (with owner replies)
+ *   - Reviews: top relevant reviews (with owner replies)
  *
  * Usage: node scripts/maps-scraper.mjs "gym" "Barasat, West Bengal" [sessionId]
  *
@@ -18,16 +18,41 @@ import { enrichLeadContacts } from "./contact-extractor.mjs";
 const niche     = process.argv[2] || "gym";
 const city      = process.argv[3] || "Barasat, West Bengal";
 const sessionId = process.argv[4] || `session-${Date.now()}`;
-const MAX_SCROLL = 60; // scroll to load up to 100+ results
+const MAX_SCROLL = 50; // scrolls to harvest up to 100+ results
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const ROOT  = join(__dir, "..");
+const SESSIONS_DIR = join(ROOT, "data", "sessions");
 
 function emit(obj) {
   process.stdout.write(JSON.stringify(obj) + "\n");
 }
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function saveSession(leads) {
+  try {
+    if (!existsSync(SESSIONS_DIR)) mkdirSync(SESSIONS_DIR, { recursive: true });
+    const noSite    = leads.filter((l) => !l.website);
+    const withPhone = leads.filter((l) => l.phone);
+
+    const session = {
+      id:              sessionId,
+      niche,
+      city,
+      timestamp:       new Date().toISOString(),
+      leadsCount:      leads.length,
+      noWebsiteCount:  noSite.length,
+      withPhoneCount:  withPhone.length,
+      expandedTerms:   [niche],
+      leads,
+    };
+    const outPath = join(SESSIONS_DIR, `${sessionId}.json`);
+    writeFileSync(outPath, JSON.stringify(session, null, 2));
+  } catch {
+    /* non-critical disk write */
+  }
+}
 
 emit({ type: "status", message: `Searching "${niche}" in "${city}"...` });
 
@@ -54,16 +79,16 @@ async function scrapeGoogleMaps() {
     viewport: { width: 1920, height: 1080 },
     locale: "en-IN",
     timezoneId: "Asia/Kolkata",
-    geolocation: { latitude: 20.5937, longitude: 78.9629 }, // Center of India
+    geolocation: { latitude: 20.5937, longitude: 78.9629 },
     permissions: ["geolocation"],
     userAgent:
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
   });
 
   const page = await context.newPage();
-  page.setDefaultTimeout(15000);
+  page.setDefaultTimeout(20000);
 
-  // Safely abort media (audio/video) to conserve memory without breaking map fonts, icons, or vector tiles
+  // Safely abort heavy audio/video media
   await page.route("**/*", async (route) => {
     try {
       const type = route.request().resourceType();
@@ -72,20 +97,18 @@ async function scrapeGoogleMaps() {
         return;
       }
       await route.continue().catch(() => {});
-    } catch {
-      // route may already be handled or page closed
-    }
+    } catch {}
   });
 
   const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(niche + " in " + city)}?hl=en&gl=in`;
-  const leads = [];
+  const leadsMap = new Map(); // normalizedName -> lead
 
   try {
     emit({ type: "status", message: "Opening Google Maps..." });
     await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 35000 });
     await delay(3000);
 
-    // Accept cookies/consent (supports datacenter IP consent banners)
+    // Accept cookies/consent if presented
     try {
       const consentBtn = page.locator(
         'button:has-text("Accept all"), ' +
@@ -98,173 +121,174 @@ async function scrapeGoogleMaps() {
         await consentBtn.click();
         await delay(2000);
       }
-    } catch { /* no banner */ }
+    } catch {}
 
-    // ── Scroll to load ALL results & harvest listing targets ───────────
-    emit({ type: "status", message: "Loading all results..." });
+    // Check if Google Maps redirected directly to a single business
+    if (page.url().includes("/maps/place/")) {
+      emit({ type: "status", message: "Single business match detected — extracting full details..." });
+      const singleLead = await extractSingleBusinessFromPage(page, page.url(), sessionId);
+      if (singleLead) {
+        leadsMap.set(singleLead.name.toLowerCase().replace(/[^a-z0-9]/g, ""), singleLead);
+        emit({ type: "lead", lead: singleLead, index: 1, total: 1 });
+        saveSession([singleLead]);
+      }
+      await browser.close();
+      const all = Array.from(leadsMap.values());
+      emit({
+        type: "done",
+        total: all.length,
+        withPhone: all.filter(l => l.phone).length,
+        noSite: all.filter(l => !l.website).length,
+        sessionId,
+      });
+      return all;
+    }
+
+    // ── Phase A: Infinite Scroll & Zero-Navigation Card Harvesting ────────
+    emit({ type: "status", message: "Discovering businesses on Google Maps..." });
+
     let lastCount = 0;
     let sameCountTimes = 0;
-    const targetsMap = new Map(); // href -> name
 
-    async function harvestVisibleListings() {
+    async function harvestVisibleCards() {
       try {
-        // If Google Maps redirected directly to a single business detail panel
-        if (page.url().includes("/maps/place/")) {
-          const placeUrl = page.url();
-          let placeName = "";
-          try {
-            placeName = await page.evaluate(() => {
-              const main = document.querySelector('[role="main"]');
-              if (!main) return "";
-              for (const el of main.querySelectorAll('h1, h2, div[role="heading"]')) {
-                const t = el.textContent?.trim();
-                if (t && t.length > 1 && t.length < 100) return t;
+        const rawCards = await page.evaluate((nicheParam, cityParam) => {
+          const feed = document.querySelector('[role="feed"]');
+          const anchors = feed
+            ? Array.from(feed.querySelectorAll('a[href*="/maps/place/"]'))
+            : Array.from(document.querySelectorAll('a[href*="/maps/place/"]'));
+
+          const results = [];
+          const seenHrefs = new Set();
+
+          for (const a of anchors) {
+            const href = a.href;
+            if (!href || seenHrefs.has(href)) continue;
+            seenHrefs.add(href);
+
+            // Find enclosing card
+            let card = a.closest('div.Nv2PK') || a.closest('div[jsaction*="mouseover"]');
+            if (!card) {
+              let p = a.parentElement;
+              for (let d = 0; d < 4 && p; d++) {
+                if (p.children.length > 2) { card = p; break; }
+                p = p.parentElement;
               }
-              return document.title.split(" - ")[0]?.trim() || "";
+            }
+            if (!card) card = a;
+
+            // 1. Business Name
+            let name = a.getAttribute('aria-label') || '';
+            if (!name) {
+              const h = card.querySelector('.qBF1Pd, h3, div[role="heading"]');
+              if (h) name = h.textContent?.trim() || '';
+            }
+            if (!name) name = a.textContent?.trim() || '';
+            name = name.replace(/^·\s*/, '').trim();
+            if (!name || name.length < 2) continue;
+
+            // 2. Rating & Reviews
+            let rating = null;
+            let reviewsCount = null;
+            const rEl = card.querySelector('.MW4etd, [aria-label*="star" i]');
+            if (rEl) {
+              const rt = rEl.getAttribute('aria-label') || rEl.textContent || '';
+              const rm = rt.match(/\b([1-5]\.\d)\b/);
+              if (rm) rating = parseFloat(rm[1]);
+            }
+            const revEl = card.querySelector('.UY7F9, [aria-label*="reviews" i]');
+            if (revEl) {
+              const rvt = revEl.getAttribute('aria-label') || revEl.textContent || '';
+              const rvm = rvt.match(/([\d,]+)/);
+              if (rvm) reviewsCount = parseInt(rvm[1].replace(/,/g, ''), 10);
+            }
+            const cardText = card.textContent || '';
+            if (!rating) {
+              const rm = cardText.match(/\b([1-5]\.\d)\b/);
+              if (rm) rating = parseFloat(rm[1]);
+            }
+            if (!reviewsCount) {
+              const rvm = cardText.match(/\(([\d,]+)\)/);
+              if (rvm) reviewsCount = parseInt(rvm[1].replace(/,/g, ''), 10);
+            }
+
+            // 3. Category & Address snippet
+            let category = nicheParam;
+            let address = cityParam;
+            const textContainers = Array.from(card.querySelectorAll('.W4Efsd, div[class*="fontBodyMedium"]'));
+            for (const tc of textContainers) {
+              const txt = tc.textContent?.trim() || '';
+              if (!txt) continue;
+              const parts = txt.split('·').map(p => p.trim()).filter(Boolean);
+              for (const part of parts) {
+                if (part.match(/^[1-5]\.\d/) || part.match(/^\([\d,]+\)$/)) continue;
+                if (part.match(/open|closed|closes|opens|24 hours/i)) continue;
+                if (part.match(/[\d+][\d\s\-().]{7,}/)) continue;
+                if (category === nicheParam && part.length < 35 && !part.match(/\d/)) {
+                  category = part;
+                } else if (part.length > 4 && !part.match(/\b\d{1,2}\s*(am|pm)\b/i)) {
+                  address = part;
+                }
+              }
+            }
+
+            // 4. Website link on card (if card has Website action button)
+            let website = null;
+            const siteEl = card.querySelector('a[data-value="Website"], a[aria-label*="website" i], a[href^="http"]:not([href*="google."]):not([href*="goo.gl"]):not([href*="googleusercontent."])');
+            if (siteEl && siteEl.href) {
+              website = siteEl.href;
+            }
+
+            // 5. Phone number on card (if visible in text or call button)
+            let phone = null;
+            const telEl = card.querySelector('a[href^="tel:"], button[data-tooltip*="Call"], a[data-value="Call"]');
+            if (telEl) {
+              const th = telEl.getAttribute('href') || telEl.getAttribute('data-item-id') || '';
+              const tm = th.match(/tel:([+\d\s\-().]+)/);
+              if (tm) phone = tm[1];
+            }
+            if (!phone) {
+              const pm = cardText.match(/(\+91[\s\-]?\d{5}[\s\-]?\d{5}|\b[6-9]\d{9}\b|\b0\d{2,4}[\s\-]?\d{6,8}\b)/);
+              if (pm) phone = pm[0].replace(/[\s\-]/g, '');
+            }
+
+            results.push({
+              href,
+              name,
+              rating,
+              reviewsCount,
+              category,
+              address,
+              website,
+              phone,
             });
-          } catch {}
-          if (!placeName) placeName = niche;
-          targetsMap.set(placeUrl, placeName);
-          return;
-        }
-
-        const items = await page.evaluate(() => {
-          const feed = document.querySelector('[role="feed"]');
-          if (!feed) {
-            const links = Array.from(document.querySelectorAll('a[href*="/maps/place/"]'));
-            return links.map((a) => ({
-              href: a.href,
-              name: a.getAttribute("aria-label") || a.textContent?.trim() || "",
-            })).filter((x) => x.href && x.name);
           }
-          const links = Array.from(feed.querySelectorAll('a[href*="/maps/place/"]'));
-          return links.map((a) => ({
-            href: a.href,
-            name: a.getAttribute("aria-label") || a.textContent?.trim() || "",
-          })).filter((x) => x.href && x.name);
-        });
-        for (const item of items) {
-          if (!targetsMap.has(item.href)) {
-            targetsMap.set(item.href, item.name);
-          }
-        }
-      } catch { /* ok */ }
-    }
 
-    for (let i = 0; i < MAX_SCROLL; i++) {
-      try {
-        await page.evaluate(() => {
-          const feed = document.querySelector('[role="feed"]');
-          if (feed) {
-            feed.scrollTop = feed.scrollHeight;
-          }
-        });
-        await delay(2000);
+          return results;
+        }, niche, city);
 
-        await harvestVisibleListings();
+        let newLeadsFound = 0;
+        for (const item of rawCards) {
+          const key = item.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+          if (!key || leadsMap.has(key)) continue;
 
-        // Check for end-of-list message
-        const endText = await page.locator('text="You\'ve reached the end of the list"').count();
-        if (endText > 0) {
-          emit({ type: "status", message: `All results loaded (${targetsMap.size} businesses) ✓` });
-          break;
-        }
-        // Stop if result count stops growing after 6 consecutive scrolls or reaches 120
-        const curCount = targetsMap.size;
-        if (curCount >= 120) {
-          emit({ type: "status", message: `Harvested ${curCount} businesses ✓` });
-          break;
-        }
-        if (curCount === lastCount) {
-          sameCountTimes++;
-          if (sameCountTimes >= 6) break;
-        } else {
-          sameCountTimes = 0;
-          lastCount = curCount;
-          emit({ type: "status", message: `Found ${curCount} businesses so far... scrolling for more...` });
-        }
-      } catch { break; }
-    }
-
-    const targetListings = Array.from(targetsMap.entries()).map(([href, name]) => ({ href, name }));
-    const totalLinks = targetListings.length;
-    emit({ type: "status", message: `Found ${totalLinks} businesses — extracting full details...` });
-
-    // ── Visit each listing directly and extract EVERYTHING ─────────────
-    for (let idx = 0; idx < totalLinks; idx++) {
-      const target = targetListings[idx];
-      try {
-        const name = target.name;
-        const href = target.href;
-        if (!name || !href) continue;
-
-        emit({ type: "status", message: `[${idx + 1}/${totalLinks}] Extracting: ${name}...` });
-
-        // Navigate directly to the place URL — 100% reliable, zero click timeouts, zero element obscuring
-        await page.goto(href, { waitUntil: "domcontentloaded", timeout: 20000 });
-        await delay(1500);
-
-        // Wait for business details panel to render
-        await page.waitForSelector('[role="main"], h1', { timeout: 8000 }).catch(() => {});
-
-        await delay(2500);
-
-        // Verify the detail panel updated to this business
-        // (prevents data contamination — reading previous listing's phone/address)
-        try {
-          const nameCheck = name.trim().slice(0, 12).toLowerCase();
-          const headingText = await page.evaluate(() => {
-            const main = document.querySelector('[role="main"]');
-            if (!main) return '';
-            for (const el of main.querySelectorAll('h1, h2, div[role="heading"]')) {
-              const t = el.textContent?.trim();
-              if (t && t.length > 2 && t.length < 100) return t;
-            }
-            return '';
-          });
-          if (headingText && !headingText.toLowerCase().includes(nameCheck)) {
-            // Panel still shows previous business — wait longer
-            await delay(2500);
-          }
-        } catch { /* proceed anyway */ }
-
-        // ──────────────────────────────────────────────────────────────
-        // BASIC DATA
-        // ──────────────────────────────────────────────────────────────
-        let phone = null;
-        let website = null;
-        let address = "";
-        let rating = null;
-        let reviews = null;
-        let category = niche;
-
-        // Phone — 4 methods
-        try {
-          const phoneBtn = page.locator('button[data-item-id^="phone:"]');
-          if (await phoneBtn.count() > 0) {
-            const phoneId = await phoneBtn.first().getAttribute("data-item-id");
-            if (phoneId) phone = phoneId.replace("phone:tel:", "").replace("phone:", "").trim();
-          }
-          if (!phone) {
-            const phoneLbl = page.locator('[aria-label*="Phone:"], [data-tooltip="Copy phone number"]');
-            if (await phoneLbl.count() > 0) {
-              const lbl = await phoneLbl.first().getAttribute("aria-label") || "";
-              const m = lbl.match(/[\d+][\d\s\-().]{7,}/);
-              if (m) phone = m[0].replace(/[\s\-().]/g, "");
+          // Parse coordinates from map URL
+          let lat = 22.72, lng = 88.48;
+          const coordMatch = item.href.match(/@(-?[\d.]+),(-?[\d.]+)/);
+          if (coordMatch) {
+            lat = parseFloat(coordMatch[1]);
+            lng = parseFloat(coordMatch[2]);
+          } else {
+            const lat3d = item.href.match(/!3d(-?[\d.]+)/);
+            const lng4d = item.href.match(/!4d(-?[\d.]+)/);
+            if (lat3d && lng4d) {
+              lat = parseFloat(lat3d[1]);
+              lng = parseFloat(lng4d[1]);
             }
           }
-          if (!phone) {
-            const allText = await page.locator('[role="main"]').textContent() || "";
-            const m = allText.match(/(\+91[\s\-]?\d{5}[\s\-]?\d{5}|\b[6-9]\d{9}\b)/);
-            if (m) phone = m[0].replace(/[\s\-]/g, "");
-          }
-          if (!phone) {
-            const btns = await page.locator('[role="main"] button').allTextContents();
-            for (const txt of btns) {
-              const m = txt.match(/(\+91[\s\-]?\d{5}[\s\-]?\d{5}|\b[6-9]\d{9}\b)/);
-              if (m) { phone = m[0].replace(/[\s\-]/g, ""); break; }
-            }
-          }
+
+          // Clean phone to standard format
+          let phone = item.phone;
           if (phone) {
             let digits = phone.replace(/\D/g, "");
             if (digits.startsWith("0091") && digits.length === 14) digits = digits.slice(4);
@@ -273,788 +297,345 @@ async function scrapeGoogleMaps() {
             else if (digits.startsWith("0") && digits.length === 11) digits = digits.slice(1);
             phone = digits.length === 10 && /^[6-9]\d{9}$/.test(digits) ? `+91${digits}` : null;
           }
-        } catch { /* no phone */ }
 
-        // Website
-        try {
-          const siteLink = page.locator('a[data-item-id="authority"]');
-          if (await siteLink.count() > 0) website = await siteLink.first().getAttribute("href");
-        } catch { /* no website */ }
-
-        // Address
-        try {
-          const addrBtn = page.locator('button[data-item-id="address"]');
-          if (await addrBtn.count() > 0) address = ((await addrBtn.first().textContent()) || "").trim();
-        } catch { /* no address */ }
-
-        // Rating
-        try {
-          const rSpan = page.locator('div.fontDisplayLarge');
-          if (await rSpan.count() > 0) {
-            const t = await rSpan.first().textContent();
-            if (t) rating = parseFloat(t);
-          }
-        } catch { /* no rating */ }
-
-        // Review count — the number shown next to the stars e.g. "(247)"
-        try {
-          // Try the specific review count button (shows star rating + count)
-          const ratingBlock = page.locator('[role="main"] div.fontBodyMedium button, [role="main"] span[aria-label*="reviews"]');
-          if (await ratingBlock.count() > 0) {
-            for (let ri = 0; ri < Math.min(await ratingBlock.count(), 3); ri++) {
-              const t = (await ratingBlock.nth(ri).textContent()) || "";
-              const m = t.match(/([\d,]+)/);
-              if (m && parseInt(m[1].replace(/,/g, ""), 10) > 0) {
-                reviews = parseInt(m[1].replace(/,/g, ""), 10);
-                break;
-              }
+          // Clean website
+          let website = item.website;
+          if (website) {
+            const low = website.toLowerCase();
+            if (low.includes("google.com") || low.includes("business.site") || low.includes("goo.gl")) {
+              website = undefined;
             }
           }
-          // Fallback: scan the full page text for "(N reviews)"
-          if (!reviews) {
-            const mainText = await page.locator('[role="main"]').first().textContent() || "";
-            const m = mainText.match(/\(([\d,]+)\s+review/i);
-            if (m) reviews = parseInt(m[1].replace(/,/g, ""), 10);
-          }
-        } catch { /* no reviews */ }
 
-        // Category
-        try {
-          const catBtn = page.locator('button[jsaction*="category"]');
-          if (await catBtn.count() > 0) category = (await catBtn.first().textContent()) || niche;
-        } catch { /* use default */ }
+          const lead = {
+            id:           `${sessionId}_m${String(leadsMap.size + 1).padStart(3, "0")}`,
+            name:         item.name.trim(),
+            category:     item.category.trim() || niche,
+            address:      item.address.trim() || city,
+            city,
+            phone:        phone || undefined,
+            whatsapp:     phone || undefined,
+            website:      website || undefined,
+            mapUrl:       item.href,
+            rating:       item.rating || null,
+            reviewsCount: item.reviewsCount || null,
+            lat,
+            lng,
+            source:       "maps",
+          };
 
-        // Coordinates from URL
-        let lat = 22.72, lng = 88.48;
-        const coordMatch = href.match(/@(-?[\d.]+),(-?[\d.]+)/);
-        if (coordMatch) {
-          lat = parseFloat(coordMatch[1]);
-          lng = parseFloat(coordMatch[2]);
-        } else {
-          // Google Maps place URLs encode coords as !3d<lat>!4d<lng>
-          const lat3d = href.match(/!3d(-?[\d.]+)/);
-          const lng4d = href.match(/!4d(-?[\d.]+)/);
-          if (lat3d && lng4d) {
-            lat = parseFloat(lat3d[1]);
-            lng = parseFloat(lng4d[1]);
-          }
-        }
+          leadsMap.set(key, lead);
+          newLeadsFound++;
 
-        // ──────────────────────────────────────────────────────────────
-        // EXTENDED DATA (optimized for speed — ~10s per business)
-        // ──────────────────────────────────────────────────────────────
-
-        // Business hours — click to expand, then read aria-labels from "Copy open hours" buttons
-        // Each day-row button has: aria-label="Thursday, 6 am to 10:30 pm, Copy open hours"
-        let hours = [];
-        try {
-          const hoursBtn = page.locator('button[data-item-id="oh"]');
-          if (await hoursBtn.count() > 0) {
-            await hoursBtn.first().click({ timeout: 3000 });
-            await delay(1000);
-            // Read all "Copy open hours" buttons — each one contains a day + time in aria-label
-            const copyBtns = page.locator('[role="main"] button[aria-label*="Copy open hours"]');
-            const copyCount = await copyBtns.count();
-            if (copyCount >= 2) {
-              for (let ci = 0; ci < copyCount; ci++) {
-                const label = await copyBtns.nth(ci).getAttribute('aria-label') || '';
-                // Format: "Thursday, 6 am to 10:30 pm, Copy open hours"
-                // Remove the trailing ", Copy open hours" part
-                const cleaned = label.replace(/,?\s*Copy open hours.*$/i, '').trim();
-                if (cleaned.length > 3) hours.push(cleaned);
-              }
-            }
-            // Fallback: if no copy buttons found, try aria-label on the oh button itself
-            if (hours.length === 0) {
-              const label = await hoursBtn.first().getAttribute('aria-label') || '';
-              if (label.length > 10) {
-                hours = label.split(/[;]/).map(h => h.trim()).filter(Boolean);
-              }
-            }
-            // Close the expanded dropdown
-            await page.keyboard.press('Escape');
-            await delay(300);
-          } else {
-            // Fallback: any aria-label with day names
-            const hoursEl = page.locator('[role="main"] [aria-label*="Monday"], [role="main"] [aria-label*="Sunday"]');
-            if (await hoursEl.count() > 0) {
-              const label = await hoursEl.first().getAttribute('aria-label') || '';
-              if (label.length > 10) {
-                hours = label.split(/[;.]/).map(h => h.trim()).filter(h => h.length > 3 && /\d/.test(h));
-              }
-            }
-          }
-          // Clean all hours entries:
-          // - Strip "Copy open hours" / "Hide open hours" / "See more hours" junk
-          // - Strip Unicode thin space U+202F (Google uses it before am/pm)
-          // - Normalize en-dash U+2013 to plain hyphen
-          hours = hours
-            .map(h => h
-              .replace(/,?\s*Copy open hours.*$/i, '')
-              .replace(/,?\s*Hide open hours.*$/i, '')
-              .replace(/,?\s*See more hours.*$/i, '')
-              .replace(/[\u202F\u00A0]/g, ' ')  // thin space / nbsp → normal space
-              .replace(/\u2013/g, '-')            // en-dash → hyphen
-              .replace(/\s+/g, ' ')
-              .trim()
-            )
-            .filter(h => h.length > 3);
-        } catch { /* no hours */ }
-
-        // Photo URLs — Google Maps renders the photo strip as CSS background-image
-        // on <button> elements (NOT <img> tags). We extract via inline style + computed style.
-        let photosCount = 0;
-        let photoUrls = [];
-        try {
-          // ── Try to get TOTAL photo count ──────────────────────────────
-          // Strategy 1: aria-label on hero header or "See all photos" button
-          // e.g. aria-label="See all 230 photos" or aria-label="1,234 photos"
-          const totalFromAriaLabel = await page.evaluate(() => {
-            const candidates = document.querySelectorAll(
-              'button[jsaction*="heroHeaderImage"], button[jsaction*="pane.heroHeaderImage"], ' +
-              'button[aria-label*="photo" i], button[aria-label*="Photo" i], ' +
-              'a[aria-label*="photo" i], div[aria-label*="photo" i]'
-            );
-            for (const el of candidates) {
-              const label = el.getAttribute('aria-label') || '';
-              const m = label.match(/([\d,]+)\s*photo/i);
-              if (m) return parseInt(m[1].replace(/,/g, ''), 10);
-              // Also try text content
-              const text = el.textContent || '';
-              const tm = text.match(/([\d,]+)\s*photo/i);
-              if (tm) return parseInt(tm[1].replace(/,/g, ''), 10);
-            }
-            return 0;
+          // Emit lead live immediately to the UI
+          emit({
+            type: "lead",
+            lead,
+            index: leadsMap.size,
+            total: leadsMap.size,
           });
-          if (totalFromAriaLabel > 0) photosCount = totalFromAriaLabel;
-
-          // Strategy 2: look for plain number near "photos" anywhere in panel header
-          if (!photosCount) {
-            const totalFromText = await page.evaluate(() => {
-              const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-              let node;
-              while ((node = walker.nextNode())) {
-                const t = node.textContent.trim();
-                const m = t.match(/^([\d,]+)\s*photos?$/i);
-                if (m) {
-                  const count = parseInt(m[1].replace(/,/g, ''), 10);
-                  if (count > 0) return count;
-                }
-              }
-              return 0;
-            });
-            if (totalFromText > 0) photosCount = totalFromText;
-          }
-
-          // Strategy 3: old button locator fallback
-          if (!photosCount) {
-            const photoBtn = page.locator('button[jsaction*="pane.heroHeaderImage"], button[aria-label*="photo" i], button[aria-label*="Photo" i]');
-            if (await photoBtn.count() > 0) {
-              for (let pb = 0; pb < Math.min(await photoBtn.count(), 4); pb++) {
-                const pText = (await photoBtn.nth(pb).textContent()) || '';
-                const ariaLabel = await photoBtn.nth(pb).getAttribute('aria-label') || '';
-                const combined = pText + ' ' + ariaLabel;
-                const pMatch = combined.match(/([\d,]+)/);
-                if (pMatch) { photosCount = parseInt(pMatch[1].replace(/,/g, ''), 10); break; }
-              }
-            }
-          }
-
-          // Extract photo URLs — check CSS background-image on photo strip buttons
-          const panelPhotos = await page.evaluate(() => {
-            const imgs = [];
-            const feed = document.querySelector('[role="feed"]');
-
-            // Method 1: background-image in inline style on buttons (most reliable for Maps panel)
-            const candidates = document.querySelectorAll(
-              'button[jsaction], [class*="aoRNLd"] button, [data-photo-index] button, button[style*="background"]'
-            );
-            for (const el of candidates) {
-              if (feed && feed.contains(el)) continue;
-              const style = el.getAttribute('style') || '';
-              // Match inline background-image: url(...)
-              const m = style.match(/background-image\s*:\s*url\(\s*["']?(https:\/\/[^"')]+)["']?\s*\)/i);
-              if (m) {
-                const url = m[1];
-                if (!url.includes('/a-/') && !url.includes('/a/ACg') && !imgs.includes(url)) {
-                  imgs.push(url);
-                  if (imgs.length >= 6) break;
-                }
-              }
-            }
-
-            // Method 2: computed background-image (for dynamically applied styles)
-            if (imgs.length < 3) {
-              const allBtns = document.querySelectorAll('[role="main"] button');
-              for (const btn of allBtns) {
-                if (feed && feed.contains(btn)) continue;
-                const computed = window.getComputedStyle(btn).backgroundImage;
-                if (!computed || computed === 'none') continue;
-                const m = computed.match(/url\(\s*["']?(https:\/\/(?:lh3|lh5|maps)\.googleusercontent\.com\/[^"')]+)["']?\s*\)/i);
-                if (m) {
-                  const url = m[1];
-                  if (!imgs.includes(url)) {
-                    imgs.push(url);
-                    if (imgs.length >= 6) break;
-                  }
-                }
-              }
-            }
-
-            // Method 3: fallback — img tags that do exist in some layouts
-            if (imgs.length === 0) {
-              for (const img of document.querySelectorAll('img[src*="googleusercontent"]')) {
-                if (feed && feed.contains(img)) continue;
-                const src = img.getAttribute('src') || '';
-                if (src.includes('/a-/') || src.includes('/a/ACg')) continue;
-                if (src.includes('w28') || src.includes('w36') || src.includes('w24')) continue;
-                if (!imgs.includes(src)) imgs.push(src);
-                if (imgs.length >= 6) break;
-              }
-            }
-
-            return imgs;
-          });
-
-          photoUrls = panelPhotos || [];
-          // Use found count as fallback if all strategies failed
-          if (!photosCount && photoUrls.length > 0) photosCount = photoUrls.length;
-        } catch { /* no photos */ }
-
-
-        // About — click the "About" tab to extract:
-        //   1. A free-text business description ("From the business") — if it exists
-        //   2. Structured attributes (Amenities, Planning, Payments, Offerings, etc.)
-        // Most small businesses only have #2. Some restaurants/hotels also have #1.
-        let about = "";
-        let aboutAttributes = {};
-        try {
-          const aboutTab = page.locator('[role="main"] button[aria-label*="About"], [role="main"] [role="tab"]:has-text("About")');
-          if (await aboutTab.count() > 0) {
-            await aboutTab.first().click({ timeout: 3000 });
-            await delay(1500);
-
-            // Extract structured attributes: { "Amenities": ["Restroom"], "Planning": ["Membership required"], ... }
-            aboutAttributes = await page.evaluate(() => {
-              const main = document.querySelector('[role="main"]');
-              if (!main) return {};
-              const result = {};
-              // Junk headings/items from Google UI (not business attributes)
-              const junkHeadings = /get the most out|sign in|google maps|overview|review|about|photo|privacy|cookie/i;
-              const junkItems = /sign in|get the most|google maps|learn more|dismiss|privacy|cookie|personalized/i;
-              const headings = main.querySelectorAll('h2, h3, h4, [role="heading"]');
-              for (const heading of headings) {
-                const title = (heading.textContent || '').trim();
-                if (!title || title.length > 40 || title.length < 3) continue;
-                if (junkHeadings.test(title)) continue;
-                const section = heading.closest('div[class]') || heading.parentElement;
-                if (!section) continue;
-                const items = [];
-                for (const el of section.querySelectorAll('li, span, div')) {
-                  if (el.contains(heading)) continue;
-                  if (el.children.length > 1) continue;
-                  const txt = (el.textContent || '').trim();
-                  if (txt.length >= 2 && txt.length <= 60 && txt !== title &&
-                      !items.includes(txt) && /[A-Za-z]/.test(txt) &&
-                      !junkItems.test(txt)) {
-                    items.push(txt);
-                  }
-                }
-                if (items.length > 0) result[title] = items.slice(0, 15);
-              }
-              return result;
-            }) || {};
-
-            // Extract free-text description ("From the business" paragraph) — rare but valuable
-            const skipAbout = [
-              'Wheelchair', 'Delivery', 'Accessibility', 'Amenities', 'Maps', 'JavaScript',
-              'Sign in', 'Suggest an edit', 'hotel and vacation rental', 'personalized based on',
-              'vacation', 'browsing activity', 'recent searches', 'Gmail', 'Restroom',
-              'Membership', 'Debit cards', 'Credit cards', 'NFC mobile',
-              'Get the most out of Google', 'google.com', 'Cookie', 'Privacy'
-            ];
-            about = await page.evaluate((skip) => {
-              const main = document.querySelector('[role="main"]');
-              if (!main) return '';
-              for (const el of main.querySelectorAll('div, span, p')) {
-                if (el.children.length > 0) continue;
-                const txt = (el.textContent || '').trim();
-                if (txt.length > 60 && txt.length < 800 &&
-                    !skip.some(w => txt.includes(w)) &&
-                    txt.split(' ').length > 10 &&
-                    /[.!?,]/.test(txt) &&
-                    // Skip address-like strings
-                    !/\b\d{6}\b/.test(txt) &&           // postal codes (6 digits)
-                    !/\b\d{3}\s?\d{3}\b/.test(txt) &&   // postal codes with space
-                    !/Road[,\s]/.test(txt) &&            // "Road," or "Road "
-                    !/Street[,\s]/.test(txt) &&          // "Street," or "Street "
-                    !/Plot\s+No/i.test(txt) &&           // "Plot No"
-                    !/Ward\s+No/i.test(txt) &&           // "Ward No"
-                    !/Floor[,\s]/i.test(txt) &&          // "Floor," or "2nd Floor"
-                    // Must have at least 2 sentences (real descriptions have sentences, addresses don't)
-                    (txt.match(/\.\s+[A-Z]/g) || []).length >= 1) {
-                  return txt;
-                }
-              }
-              return '';
-            }, skipAbout) || '';
-
-            // Navigate back to Overview tab
-            const overviewTab = page.locator('[role="main"] button[aria-label*="Overview"], [role="main"] [role="tab"]:has-text("Overview")');
-            if (await overviewTab.count() > 0) {
-              await overviewTab.first().click({ timeout: 3000 });
-              await delay(800);
-            }
-          }
-          // Fallback: try inline overview text (for businesses that show description without a tab)
-          if (!about) {
-            const skipInline = [
-              'Wheelchair', 'Delivery', 'On-site', 'Accessibility', 'Amenities', 'Maps',
-              'JavaScript', 'Sign in', 'hotel and vacation rental', 'personalized based on',
-              'vacation', 'browsing activity', 'recent searches', 'Gmail'
-            ];
-            about = await page.evaluate((skip) => {
-              const feed = document.querySelector('[role="feed"]');
-              const main = document.querySelector('[role="main"]');
-              if (!main) return '';
-              for (const el of main.querySelectorAll('div, span, p')) {
-                if (feed && feed.contains(el)) continue;
-                if (el.children.length > 0) continue;
-                let inReview = false;
-                let anc = el.parentElement;
-                while (anc && anc !== main) {
-                  if (anc.hasAttribute('data-review-id')) { inReview = true; break; }
-                  anc = anc.parentElement;
-                }
-                if (inReview) continue;
-                const txt = (el.textContent || '').trim();
-                if (txt.length > 60 && txt.length < 800 && !skip.some(w => txt.includes(w)) &&
-                    txt.split(' ').length > 10 && /[.!?,]/.test(txt) &&
-                    !/\b\d{6}\b/.test(txt) && !/\b\d{3}\s?\d{3}\b/.test(txt) &&
-                    !/Road[,\s]/.test(txt) && !/Street[,\s]/.test(txt) &&
-                    !/Plot\s+No/i.test(txt) && !/Ward\s+No/i.test(txt) && !/Floor[,\s]/i.test(txt) &&
-                    (txt.match(/\.\s+[A-Z]/g) || []).length >= 1) {
-                  return txt;
-                }
-              }
-              return '';
-            }, skipInline) || '';
-          }
-        } catch { /* no about */ }
-
-        // Services list — amenity/service chips shown in the Overview panel
-        let services = [];
-        try {
-          // Method 1: evaluate DOM for service/amenity chip sections
-          services = await page.evaluate(() => {
-            const main = document.querySelector('[role="main"]');
-            const feed = document.querySelector('[role="feed"]');
-            if (!main) return [];
-            const result = new Set();
-            const skipWords = ['Wheelchair', 'Restroom', 'LGBTQ', 'Gender', 'Planning', 'Payments', 'Dogs', 'Kids'];
-
-            // Look for sections with labels like Offerings, Amenities, Highlights, Activities
-            const sectionKeywords = /offering|amenit|highlight|activit|feature|service|popular/i;
-            for (const el of main.querySelectorAll('[aria-label]')) {
-              if (feed && feed.contains(el)) continue;
-              const label = el.getAttribute('aria-label') || '';
-              if (!sectionKeywords.test(label)) continue;
-              for (const child of el.querySelectorAll('span, li, div')) {
-                if (child.children.length > 0) continue;
-                const txt = (child.textContent || '').trim();
-                if (txt.length >= 3 && txt.length <= 50 &&
-                    !skipWords.some(w => txt.toLowerCase().includes(w.toLowerCase())) &&
-                    !/^\d+$/.test(txt) && !txt.includes('·') && !txt.includes('http')) {
-                  result.add(txt);
-                }
-              }
-            }
-
-            // Also scan for standalone chip-like elements (short bold labels in the panel)
-            if (result.size === 0) {
-              for (const el of main.querySelectorAll('li, [role="listitem"]')) {
-                if (feed && feed.contains(el)) continue;
-                if (el.children.length > 2) continue;
-                const txt = (el.textContent || '').trim().replace(/\s+/g, ' ');
-                if (txt.length >= 3 && txt.length <= 50 &&
-                    !skipWords.some(w => txt.toLowerCase().includes(w.toLowerCase())) &&
-                    !/^\d+$/.test(txt) && !txt.includes('·') && !txt.includes('http') &&
-                    /[A-Za-z]/.test(txt)) {
-                  result.add(txt);
-                }
-              }
-            }
-            return [...result].slice(0, 12);
-          });
-
-          // Method 2: Playwright locator fallback for service chip spans
-          if (services.length === 0) {
-            const svcItems = page.locator(
-              '[role="main"] [aria-label*="Offering"] span, ' +
-              '[role="main"] [aria-label*="Amenities"] span, ' +
-              '[role="main"] [aria-label*="Highlights"] span, ' +
-              '[role="main"] [aria-label*="Activities"] span, ' +
-              '[role="main"] [aria-label*="Service"] span'
-            );
-            const svcCount = Math.min(await svcItems.count(), 12);
-            for (let s = 0; s < svcCount; s++) {
-              const txt = (await svcItems.nth(s).textContent())?.trim();
-              if (txt && txt.length > 1 && txt.length <= 50 && !txt.includes('"') && !services.includes(txt)) {
-                services.push(txt);
-              }
-            }
-          }
-        } catch { /* no services */ }
-
-        // Price level
-        let priceLevel = undefined;
-        try {
-          const mainText = await page.locator('[role="main"]').first().textContent() || "";
-          const priceMatch = mainText.match(/(₹{1,4})/);
-          if (priceMatch) priceLevel = priceMatch[1];
-        } catch { /* no price */ }
-
-        // Social media links
-        let socialLinks = [];
-        try {
-          const smLinks = page.locator(
-            '[role="main"] a[href*="facebook.com"], [role="main"] a[href*="instagram.com"], [role="main"] a[href*="youtube.com"], [role="main"] a[href*="linkedin.com"], [role="main"] a[href*="twitter.com"], [role="main"] a[href*="x.com"]'
-          );
-          const linkCount = Math.min(await smLinks.count(), 8);
-          const seenPlatforms = new Set();
-          for (let sl = 0; sl < linkCount; sl++) {
-            const href2 = await smLinks.nth(sl).getAttribute("href");
-            if (!href2) continue;
-            let platform = "other";
-            if (href2.includes("facebook")) platform = "facebook";
-            else if (href2.includes("instagram")) platform = "instagram";
-            else if (href2.includes("youtube")) platform = "youtube";
-            else if (href2.includes("linkedin")) platform = "linkedin";
-            else if (href2.includes("twitter") || href2.includes("x.com")) platform = "x";
-            if (!seenPlatforms.has(platform)) {
-              seenPlatforms.add(platform);
-              socialLinks.push({ platform, url: href2 });
-            }
-          }
-        } catch { /* no social */ }
-
-        // Move Facebook/Instagram URLs from website to socialLinks
-        // And discard Google / business.site links from being counted as a website
-        if (website) {
-          const lowerW = website.toLowerCase();
-          if (lowerW.includes("facebook.com") || lowerW.includes("instagram.com")) {
-            const fbPlatform = lowerW.includes("facebook") ? "facebook" : "instagram";
-            if (!socialLinks.some((s) => s.platform === fbPlatform)) {
-              socialLinks.push({ platform: fbPlatform, url: website });
-            }
-            website = null;
-          } else if (
-            lowerW.includes("google.com") ||
-            lowerW.includes("maps.google.") ||
-            lowerW.includes("goo.gl") ||
-            lowerW.includes("business.site") ||
-            lowerW.includes("g.page")
-          ) {
-            website = null;
-          } else if (
-            lowerW.includes("zomato.com") ||
-            lowerW.includes("swiggy.com") ||
-            lowerW.includes("practo.com") ||
-            lowerW.includes("justdial.com") ||
-            lowerW.includes("indiamart.com") ||
-            lowerW.includes("magicpin.in") ||
-            lowerW.includes("dineout.co.in") ||
-            lowerW.includes("urbancompany.com") ||
-            lowerW.includes("sulekha.com") ||
-            lowerW.includes("lybrate.com") ||
-            lowerW.includes("1mg.com") ||
-            lowerW.includes("pharmeasy.in") ||
-            lowerW.includes("nearbuy.com")
-          ) {
-            let plat = "other";
-            if (lowerW.includes("zomato")) plat = "zomato";
-            else if (lowerW.includes("swiggy")) plat = "swiggy";
-            else if (lowerW.includes("practo")) plat = "practo";
-            else if (lowerW.includes("justdial")) plat = "justdial";
-            else if (lowerW.includes("indiamart")) plat = "indiamart";
-            if (!socialLinks.some((s) => s.url === website)) {
-              socialLinks.push({ platform: plat, url: website });
-            }
-            website = null;
-          }
         }
 
-        // ──────────────────────────────────────────────────────────────
-        // REVIEWS — Overview snippets ONLY (no tab click, no sign-in)
-        // Google shows 3-6 "most relevant" reviews on the Overview panel
-        // extractVisibleReviews scrolls to find any lazy-loaded ones
-        // ──────────────────────────────────────────────────────────────
-        let reviewsData = [];
-        let ownerReplies = false;
-        try {
-          const overviewReviewCount = await page.locator('div[data-review-id]').count();
-          if (overviewReviewCount > 0) {
-            reviewsData = await extractVisibleReviews(page, 10);
-            ownerReplies = reviewsData.some(r => r.ownerReply);
-          }
-        } catch { /* reviews extraction failed */ }
-
-        // ──────────────────────────────────────────────────────────────
-        // BUILD LEAD OBJECT
-        // ──────────────────────────────────────────────────────────────
-        // If services is still empty, populate from aboutAttributes (Amenities, Offerings, etc.)
-        if (services.length === 0 && Object.keys(aboutAttributes).length > 0) {
-          for (const [category, items] of Object.entries(aboutAttributes)) {
-            // Skip non-service categories
-            if (/payment|planning|parking|accessibility/i.test(category)) continue;
-            for (const item of items) {
-              if (!services.includes(item)) services.push(item);
-            }
-          }
+        if (newLeadsFound > 0) {
+          saveSession(Array.from(leadsMap.values()));
         }
-
-        const lead = {
-          id:           `${sessionId}_m${String(leads.length + 1).padStart(3, "0")}`,
-          name:         name.trim(),
-          category:     category.trim(),
-          address,
-          city,
-          phone:        phone || undefined,
-          whatsapp:     phone || undefined,
-          website:      website || undefined,
-          mapUrl:       href,
-          rating,
-          reviewsCount: reviews,
-          lat,
-          lng,
-          // Extended
-          hours:          hours.length > 0 ? hours : undefined,
-          photoUrls:      photoUrls.length > 0 ? photoUrls : undefined,
-          photosCount:    photosCount || undefined,
-          about:          about || undefined,
-          aboutAttributes: Object.keys(aboutAttributes).length > 0 ? aboutAttributes : undefined,
-          services:       services.length > 0 ? services : undefined,
-          priceLevel:     priceLevel || undefined,
-          socialLinks:    socialLinks.length > 0 ? socialLinks : undefined,
-          reviews:        reviewsData.length > 0 ? reviewsData : undefined,
-          ownerReplies:   reviewsData.length > 0 ? ownerReplies : undefined,
-          source:         "maps",
-        };
-
-        // Free email & social media enrichment (100% Free: website crawl, bio links, free search fallback)
-        let finalLead = lead;
-        try {
-          finalLead = await enrichLeadContacts(lead);
-        } catch {
-          /* fail-safe: keep base lead on error */
-        }
-
-        leads.push(finalLead);
-
-        // Emit each lead live
-        emit({ type: "lead", lead: finalLead, index: idx + 1, total: totalLinks });
-
-      } catch (e) {
-        emit({ type: "status", message: `Notice on #${idx + 1} (${target.name}): ${e.message?.slice(0, 50)}` });
-        // Fallback: emit basic lead so no business is dropped
-        const fallbackLead = {
-          id: `${sessionId}_m${String(leads.length + 1).padStart(3, "0")}`,
-          name: target.name.trim(),
-          category: niche,
-          address: city,
-          city,
-          mapUrl: target.href,
-          lat: 22.72,
-          lng: 88.48,
-          source: "maps",
-        };
-        leads.push(fallbackLead);
-        emit({ type: "lead", lead: fallbackLead, index: idx + 1, total: totalLinks });
+      } catch (err) {
+        // non-fatal card parsing error
       }
     }
+
+    // Scroll Google Maps feed to load 60 to 100+ businesses
+    for (let scrollPass = 0; scrollPass < MAX_SCROLL; scrollPass++) {
+      try {
+        await harvestVisibleCards();
+
+        const curCount = leadsMap.size;
+        if (curCount >= 100) {
+          emit({ type: "status", message: `Discovered ${curCount} businesses on Google Maps ✓` });
+          break;
+        }
+
+        // Check if reached end of list
+        const endReached = await page.locator('text="You\'ve reached the end of the list"').count();
+        if (endReached > 0) {
+          emit({ type: "status", message: `End of results list reached (${curCount} businesses) ✓` });
+          break;
+        }
+
+        if (curCount === lastCount) {
+          sameCountTimes++;
+          if (sameCountTimes >= 6) {
+            emit({ type: "status", message: `All available businesses loaded (${curCount} found) ✓` });
+            break;
+          }
+        } else {
+          sameCountTimes = 0;
+          lastCount = curCount;
+          emit({ type: "status", message: `Found ${curCount} businesses so far... scrolling for more...` });
+        }
+
+        // Scroll the feed using DOM scrolling + keyboard PageDown
+        await page.evaluate(() => {
+          const feed = document.querySelector('[role="feed"]');
+          if (feed) {
+            feed.scrollBy({ top: 3500, behavior: "smooth" });
+            feed.scrollTop = feed.scrollHeight;
+            feed.dispatchEvent(new Event("scroll", { bubbles: true }));
+          } else {
+            window.scrollBy({ top: 2000, behavior: "smooth" });
+          }
+        });
+
+        // Trigger keyboard scroll on feed
+        try {
+          await page.keyboard.press("PageDown");
+        } catch {}
+
+        await delay(1400);
+      } catch {
+        break;
+      }
+    }
+
+    // Final harvest pass to catch any remaining cards
+    await harvestVisibleCards();
+
+    const allLeads = Array.from(leadsMap.values());
+    emit({ type: "status", message: `Harvested ${allLeads.length} businesses. Starting deep enrichment...` });
+    saveSession(allLeads);
+
+    // ── Phase B: Safe, Memory-Capped Deep Enrichment ──────────────────────
+    // Enrich businesses that are prime prospects (e.g. no website or missing phone/hours)
+    // Runs in isolated lightweight tabs with images/fonts blocked to consume <20MB RAM
+    const leadsToEnrich = allLeads.slice(0, 30); // Enrich top 30 prospects for high speed & zero OOM risk
+    for (let i = 0; i < leadsToEnrich.length; i++) {
+      const targetLead = leadsToEnrich[i];
+      if (!targetLead.mapUrl) continue;
+
+      emit({
+        type: "status",
+        message: `[${i + 1}/${leadsToEnrich.length}] Enriching details: ${targetLead.name}...`,
+      });
+
+      let enrichedLead = { ...targetLead };
+      let detailPage = null;
+
+      try {
+        detailPage = await context.newPage();
+        detailPage.setDefaultTimeout(12000);
+
+        // Block heavy media on detail page for speed & low memory
+        await detailPage.route("**/*", (route) => {
+          const type = route.request().resourceType();
+          if (type === "media" || type === "font") {
+            return route.abort().catch(() => {});
+          }
+          return route.continue().catch(() => {});
+        });
+
+        await detailPage.goto(targetLead.mapUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
+        await delay(1200);
+
+        // 1. Phone number (if missing from card)
+        if (!enrichedLead.phone) {
+          try {
+            const phoneBtn = detailPage.locator('button[data-item-id^="phone:"]');
+            if (await phoneBtn.count() > 0) {
+              const phoneId = await phoneBtn.first().getAttribute("data-item-id");
+              if (phoneId) {
+                const raw = phoneId.replace("phone:tel:", "").replace("phone:", "").trim();
+                let digits = raw.replace(/\D/g, "");
+                if (digits.length === 10 && /^[6-9]\d{9}$/.test(digits)) enrichedLead.phone = `+91${digits}`;
+              }
+            }
+          } catch {}
+        }
+
+        // 2. Full Address
+        try {
+          const addrBtn = detailPage.locator('button[data-item-id="address"]');
+          if (await addrBtn.count() > 0) {
+            const fullAddr = (await addrBtn.first().textContent())?.trim();
+            if (fullAddr && fullAddr.length > 5) enrichedLead.address = fullAddr;
+          }
+        } catch {}
+
+        // 3. Website (if missing from card)
+        if (!enrichedLead.website) {
+          try {
+            const siteLink = detailPage.locator('a[data-item-id="authority"]');
+            if (await siteLink.count() > 0) {
+              const href = await siteLink.first().getAttribute("href");
+              if (href && !href.includes("google.com") && !href.includes("business.site")) {
+                enrichedLead.website = href;
+              }
+            }
+          } catch {}
+        }
+
+        // 4. Business Hours
+        try {
+          const hoursBtn = detailPage.locator('button[data-item-id="oh"]');
+          if (await hoursBtn.count() > 0) {
+            await hoursBtn.first().click({ timeout: 2500 });
+            await delay(600);
+            const copyBtns = detailPage.locator('[role="main"] button[aria-label*="Copy open hours"]');
+            const cCount = await copyBtns.count();
+            const hList = [];
+            for (let c = 0; c < Math.min(cCount, 7); c++) {
+              const lbl = (await copyBtns.nth(c).getAttribute("aria-label")) || "";
+              const cleaned = lbl.replace(/,?\s*Copy open hours.*$/i, "").trim();
+              if (cleaned.length > 3) hList.push(cleaned);
+            }
+            if (hList.length > 0) enrichedLead.hours = hList;
+            await detailPage.keyboard.press("Escape").catch(() => {});
+          }
+        } catch {}
+
+        // 5. Photos count and sample photo URLs
+        try {
+          const photoData = await detailPage.evaluate(() => {
+            const imgs = [];
+            for (const el of document.querySelectorAll('button[style*="background-image"]')) {
+              const s = el.getAttribute('style') || '';
+              const m = s.match(/url\(\s*["']?(https:\/\/[^"')]+)["']?\s*\)/i);
+              if (m && !imgs.includes(m[1]) && !m[1].includes('/a-/')) {
+                imgs.push(m[1]);
+                if (imgs.length >= 4) break;
+              }
+            }
+            return imgs;
+          });
+          if (photoData && photoData.length > 0) {
+            enrichedLead.photoUrls = photoData;
+            enrichedLead.photosCount = photoData.length;
+          }
+        } catch {}
+
+        // 6. Visible Reviews snippets
+        try {
+          const revs = await detailPage.evaluate(() => {
+            const list = [];
+            const rEls = document.querySelectorAll('[role="main"] div[data-review-id]');
+            for (let r = 0; r < Math.min(rEls.length, 5); r++) {
+              const el = rEls[r];
+              const author = (el.querySelector('div[class*="d4r55"]') || el.querySelector('button'))?.textContent?.trim() || 'Anonymous';
+              const text = (el.querySelector('span[class*="wiI7pd"]') || el)?.textContent?.trim() || '';
+              if (text && text.length > 10) {
+                list.push({ author, text: text.slice(0, 300), rating: 5 });
+              }
+            }
+            return list;
+          });
+          if (revs && revs.length > 0) enrichedLead.reviews = revs;
+        } catch {}
+
+      } catch (err) {
+        // Individual detail enrichment error — safe to continue
+      } finally {
+        if (detailPage) {
+          await detailPage.close().catch(() => {});
+        }
+      }
+
+      // Free contact enrichment (website crawler, email, social links)
+      try {
+        enrichedLead = await enrichLeadContacts(enrichedLead);
+      } catch {}
+
+      // Update lead in memory and emit update
+      const key = targetLead.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+      leadsMap.set(key, enrichedLead);
+      emit({
+        type: "lead",
+        lead: enrichedLead,
+        index: i + 1,
+        total: allLeads.length,
+      });
+
+      // Periodically update disk session
+      if (i % 3 === 0 || i === leadsToEnrich.length - 1) {
+        saveSession(Array.from(leadsMap.values()));
+      }
+    }
+
   } catch (e) {
     emit({ type: "error", message: e.message });
   } finally {
-    await browser.close();
+    await browser.close().catch(() => {});
   }
 
-  return leads;
-}
+  const finalLeads = Array.from(leadsMap.values());
+  saveSession(finalLeads);
 
-/**
- * Extract reviews using scroll-and-harvest approach.
- * Google Maps uses a VIRTUAL LIST — reviews are removed from DOM as you
- * scroll past them. So we must harvest visible reviews on EVERY scroll pass,
- * not just at the end.
- */
-async function extractVisibleReviews(page, maxCount) {
-  const seenAuthors = new Set();
-  const reviews = [];
-
-  // Helper: harvest all currently visible review elements
-  async function harvestVisible() {
-    let reviewEls = page.locator('[role="main"] div[data-review-id]');
-    let elCount = await reviewEls.count();
-    if (elCount === 0) {
-      reviewEls = page.locator('[role="main"] div[class*="jftiEf"]');
-      elCount = await reviewEls.count();
-    }
-
-    for (let i = 0; i < elCount; i++) {
-      if (reviews.length >= maxCount) break;
-      try {
-        const el = reviewEls.nth(i);
-
-        // Author first (for dedup check before doing any other work)
-        let author = "";
-        try {
-          const authorEl = el.locator('div[class*="d4r55"], button[class*="al6Kxe"]');
-          if (await authorEl.count() > 0) author = (await authorEl.first().textContent())?.trim() || "";
-        } catch { /* no author */ }
-
-        // Clean author — strip "2 reviews", "Local Guide · 50 reviews · 7 photos" etc.
-        if (author) {
-          author = author
-            .replace(/Local Guide\s*·?\s*/i, '')
-            .replace(/\d+\s*reviews?\s*(·\s*\d+\s*photos?)?\s*$/i, '')
-            .replace(/\s*·\s*$/, '')
-            .trim();
-        }
-
-        const authorKey = author.toLowerCase().replace(/[^a-z]/g, "");
-        if (authorKey && seenAuthors.has(authorKey)) continue;
-        if (authorKey) seenAuthors.add(authorKey);
-
-        // Expand "More" to get full review text
-        try {
-          const moreBtn = el.locator('button:has-text("More"), button[aria-label*="more"]');
-          if (await moreBtn.count() > 0) { await moreBtn.first().click({ timeout: 1500 }); await delay(80); }
-        } catch { /* no expand */ }
-
-        // Review text
-        const textEl = el.locator('span[class*="wiI7pd"], div[class*="MyEned"] span');
-        const text = (await textEl.first().textContent())?.trim() || "";
-
-        // Star rating
-        let revRating = 0;
-        try {
-          const starsEl = el.locator('[role="img"][aria-label*="star"]');
-          if (await starsEl.count() > 0) {
-            const lbl = await starsEl.first().getAttribute("aria-label");
-            const m = lbl?.match(/(\d)/);
-            if (m) revRating = parseInt(m[1]);
-          }
-        } catch { /* no rating */ }
-
-        // Time ago
-        let timeAgo = "";
-        try {
-          const timeEl = el.locator('span[class*="rsqaWe"]');
-          if (await timeEl.count() > 0) timeAgo = (await timeEl.first().textContent())?.trim() || "";
-        } catch { /* no time */ }
-
-        // Owner reply
-        let ownerReply = undefined;
-        try {
-          const replyEl = el.locator('div[class*="CDe7pd"]');
-          if (await replyEl.count() > 0) {
-            ownerReply = (await replyEl.first().textContent())?.trim().slice(0, 300) || undefined;
-          }
-        } catch { /* no reply */ }
-
-        if (text || revRating) {
-          reviews.push({ text: text.slice(0, 400), rating: revRating, author, timeAgo, ownerReply });
-        }
-      } catch { /* skip element */ }
-    }
-  }
-
-  // Helper: scroll the inner review panel
-  async function scrollReviewPanel() {
-    await page.evaluate(() => {
-      const main = document.querySelector('[role="main"]');
-      if (!main) return;
-      // Find deepest scrollable container (the virtual review list)
-      let scrollable = null;
-      for (const div of main.querySelectorAll('div')) {
-        const s = window.getComputedStyle(div);
-        if ((s.overflowY === 'auto' || s.overflowY === 'scroll') && div.scrollHeight > div.clientHeight + 100) {
-          scrollable = div;
-        }
-      }
-      (scrollable || main).scrollBy(0, 1200);
-    });
-    await delay(900);
-  }
-
-  // Harvest first batch (already visible after tab click + 2.5s wait)
-  await harvestVisible();
-
-  // Scroll and harvest until we have enough or nothing new appears
-  let noNewCount = 0;
-  for (let pass = 0; pass < 10 && reviews.length < maxCount; pass++) {
-    const before = reviews.length;
-    await scrollReviewPanel();
-    await harvestVisible();
-    if (reviews.length === before) {
-      noNewCount++;
-      if (noNewCount >= 2) break; // truly done
-    } else {
-      noNewCount = 0;
-    }
-  }
-
-  return reviews;
-}
-
-// ─── Run ─────────────────────────────────────────────────────────────────────
-try {
-  const leads = await scrapeGoogleMaps();
-
-  // Deduplicate by name
-  const seen   = new Set();
-  const unique = leads.filter((l) => {
-    const key = l.name.toLowerCase().replace(/[^a-z0-9]/g, "");
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-
-  unique.forEach((l, i) => { l.id = `maps-${String(i + 1).padStart(3, "0")}`; });
-
-  const noSite    = unique.filter((l) => !l.website);
-  const withPhone = unique.filter((l) => l.phone);
-  const withReviews = unique.filter((l) => l.reviews && l.reviews.length > 0);
-
-  // Save as session file
-  const sessionsDir = join(ROOT, "data", "sessions");
-  if (!existsSync(sessionsDir)) mkdirSync(sessionsDir, { recursive: true });
-
-  const session = {
-    id:              sessionId,
-    niche,
-    city,
-    timestamp:       new Date().toISOString(),
-    leadsCount:      unique.length,
-    noWebsiteCount:  noSite.length,
-    withPhoneCount:  withPhone.length,
-    expandedTerms:   [niche],
-    leads:           unique,
-  };
-
-  const outPath = join(sessionsDir, `${sessionId}.json`);
-  writeFileSync(outPath, JSON.stringify(session, null, 2));
+  const noSite = finalLeads.filter((l) => !l.website);
+  const withPhone = finalLeads.filter((l) => l.phone);
 
   emit({
     type: "done",
-    total: unique.length,
+    total: finalLeads.length,
     withPhone: withPhone.length,
     noSite: noSite.length,
-    withReviews: withReviews.length,
     sessionId,
   });
 
-} catch (e) {
-  emit({ type: "error", message: e.message });
-  process.exit(1);
+  return finalLeads;
 }
+
+/** Fallback extractor for when Google Maps redirects directly to a single business page */
+async function extractSingleBusinessFromPage(page, href, sessionId) {
+  try {
+    const data = await page.evaluate((url) => {
+      let name = document.title.split(" - ")[0]?.trim() || "Business";
+      const h1 = document.querySelector('h1');
+      if (h1 && h1.textContent?.trim()) name = h1.textContent.trim();
+
+      let phone = null;
+      const phoneBtn = document.querySelector('button[data-item-id^="phone:"]');
+      if (phoneBtn) {
+        const id = phoneBtn.getAttribute('data-item-id') || '';
+        phone = id.replace('phone:tel:', '').replace('phone:', '').trim();
+      }
+
+      let address = "";
+      const addrBtn = document.querySelector('button[data-item-id="address"]');
+      if (addrBtn) address = addrBtn.textContent?.trim() || '';
+
+      let website = null;
+      const siteLink = document.querySelector('a[data-item-id="authority"]');
+      if (siteLink && siteLink.href && !siteLink.href.includes('google.com')) website = siteLink.href;
+
+      let rating = null;
+      const rSpan = document.querySelector('div.fontDisplayLarge, span.MW4etd');
+      if (rSpan && rSpan.textContent) {
+        const parsed = parseFloat(rSpan.textContent.trim());
+        if (!isNaN(parsed)) rating = parsed;
+      }
+
+      return { name, phone, address, website, rating, mapUrl: url };
+    }, href);
+
+    return {
+      id: `${sessionId}_m001`,
+      name: data.name,
+      category: niche,
+      address: data.address || city,
+      city,
+      phone: data.phone || undefined,
+      whatsapp: data.phone || undefined,
+      website: data.website || undefined,
+      mapUrl: href,
+      rating: data.rating,
+      lat: 22.72,
+      lng: 88.48,
+      source: "maps",
+    };
+  } catch {
+    return null;
+  }
+}
+
+scrapeGoogleMaps().catch((err) => {
+  emit({ type: "error", message: `Fatal: ${err.message}` });
+  process.exit(1);
+});

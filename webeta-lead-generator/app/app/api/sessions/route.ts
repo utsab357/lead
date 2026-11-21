@@ -196,23 +196,32 @@ export async function POST(req: Request) {
 
 /** DELETE — remove a session by ID or 'all' */
 export async function DELETE(req: Request) {
+  await ensureDir();
   try {
     const { id } = (await req.json()) as { id: string };
     if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
     if (id === "all") {
-      const files = (await fs.readdir(SESSIONS_DIR)).filter((f) => f.endsWith(".json"));
-      for (const f of files) {
-        try {
-          await fs.unlink(path.join(SESSIONS_DIR, f));
-        } catch {
-          /* ignore */
+      try {
+        const files = (await fs.readdir(SESSIONS_DIR)).filter((f) => f.endsWith(".json"));
+        for (const f of files) {
+          try {
+            await fs.unlink(path.join(SESSIONS_DIR, f));
+          } catch {
+            /* ignore */
+          }
         }
+        return NextResponse.json({ success: true, count: files.length });
+      } catch {
+        return NextResponse.json({ success: true, count: 0 });
       }
-      return NextResponse.json({ success: true, count: files.length });
     }
 
-    await fs.unlink(path.join(SESSIONS_DIR, `${id}.json`));
+    try {
+      await fs.unlink(path.join(SESSIONS_DIR, `${id}.json`));
+    } catch {
+      /* already unlinked or not found */
+    }
     return NextResponse.json({ success: true });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });
