@@ -128,7 +128,6 @@ export function Phase1Scrape({
             if (msg.type === "init") {
               if (msg.sessionId) {
                 activeId = msg.sessionId;
-                setSessionId(msg.sessionId);
               }
             }
 
