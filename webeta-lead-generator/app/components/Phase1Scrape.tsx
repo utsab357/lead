@@ -99,43 +99,7 @@ export function Phase1Scrape({
       .catch(() => {});
   }, [sessionId]);
 
-  // Check on mount if a detached background scrape is already running
-  useEffect(() => {
-    let isMounted = true;
-    fetch("/api/scrape?status=true")
-      .then((r) => r.json())
-      .then((d) => {
-        if (!isMounted || !d.ok || !d.job) return;
-        const job = d.job;
-
-        if (d.running) {
-          setLoading(true);
-          setStatusMsg(job.statusMsg || "Scraper running in background...");
-          if (Array.isArray(job.leads) && job.leads.length > 0) {
-            setLeads(job.leads);
-          }
-          if (job.progress) {
-            setProgress(job.progress);
-          }
-          if (job.sessionId && onSessionCreated) {
-            onSessionCreated(job.sessionId);
-          }
-          toast.info(`Resumed background scrape for "${job.niche}" in ${job.city}`);
-          connectToStream();
-        } else if (job.status === "completed" && Array.isArray(job.leads) && job.leads.length > 0 && leads.length === 0) {
-          setLeads(job.leads);
-          if (job.sessionId && onSessionCreated) {
-            onSessionCreated(job.sessionId);
-          }
-          toast.success(`Loaded completed background scrape for "${job.niche}" (${job.leads.length} leads)`);
-        }
-      })
-      .catch(() => {});
-
-    return () => { isMounted = false; };
-  }, []);
-
-  /** Normalize phone to 10-digit string for cross-session lookup */
+  // Normalize phone to 10-digit string for cross-session lookup
   function normPhone(raw: string): string {
     return normalizePhone10(raw);
   }
@@ -212,16 +176,6 @@ export function Phase1Scrape({
     }
   }
 
-  async function connectToStream() {
-    try {
-      const res = await fetch("/api/scrape", { headers: { Accept: "text/event-stream" } });
-      if (res.ok && res.body) {
-        setLoading(true);
-        await readSSEStream(res.body.getReader());
-      }
-    } catch { /* stream closed */ }
-  }
-
   async function runScrape() {
     setLoading(true);
     setLeads([]);
@@ -250,14 +204,11 @@ export function Phase1Scrape({
     }
   }
 
-  async function cancelScrape() {
+  function cancelScrape() {
     try { readerRef.current?.cancel(); } catch { /* ok */ }
     setLoading(false);
     setStatusMsg("");
     setProgress(null);
-    try {
-      await fetch("/api/scrape?cancel=true", { method: "POST" });
-    } catch { /* ignore */ }
     toast.info("Scrape stopped — leads found so far are kept.");
   }
 
