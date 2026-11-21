@@ -83,7 +83,6 @@ async function scrapeGoogleMaps() {
       "--disable-background-networking",
       "--disable-default-apps",
       "--mute-audio",
-      "--js-flags=--max-old-space-size=256",
     ],
   });
 
@@ -98,21 +97,20 @@ async function scrapeGoogleMaps() {
   });
 
   const page = await context.newPage();
-  page.setDefaultTimeout(12000);
+  page.setDefaultTimeout(15000);
 
-  // Block heavy binary asset downloads to prevent Out-Of-Memory (OOM) on 512MB RAM hosted containers
-  await page.route("**/*", (route) => {
-    const type = route.request().resourceType();
-    if (type === "media" || type === "font") {
-      return route.abort();
-    }
-    if (type === "image") {
-      const url = route.request().url();
-      if (url.includes("googleusercontent.com") || url.includes("/maps/vt") || url.includes("/maps/photometa")) {
-        return route.abort();
+  // Safely abort media (audio/video) to conserve memory without breaking map fonts, icons, or vector tiles
+  await page.route("**/*", async (route) => {
+    try {
+      const type = route.request().resourceType();
+      if (type === "media") {
+        await route.abort().catch(() => {});
+        return;
       }
+      await route.continue().catch(() => {});
+    } catch {
+      // route may already be handled or page closed
     }
-    return route.continue();
   });
 
   const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(niche + " in " + city)}?hl=en&gl=in`;
@@ -120,13 +118,22 @@ async function scrapeGoogleMaps() {
 
   try {
     emit({ type: "status", message: "Opening Google Maps..." });
-    await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
+    await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 35000 });
     await delay(3000);
 
-    // Accept cookies/consent
+    // Accept cookies/consent (supports datacenter IP consent banners)
     try {
-      const btn = page.locator('button:has-text("Accept all"), button:has-text("Reject all")').first();
-      if (await btn.isVisible({ timeout: 2000 })) await btn.click();
+      const consentBtn = page.locator(
+        'button:has-text("Accept all"), ' +
+        'button:has-text("Reject all"), ' +
+        'button:has-text("I agree"), ' +
+        'button[aria-label*="Accept all" i], ' +
+        'form[action*="consent"] button'
+      ).first();
+      if (await consentBtn.isVisible({ timeout: 2500 })) {
+        await consentBtn.click();
+        await delay(2000);
+      }
     } catch { /* no banner */ }
 
     // ── Scroll to load ALL results & harvest listing targets ───────────
@@ -137,9 +144,35 @@ async function scrapeGoogleMaps() {
 
     async function harvestVisibleListings() {
       try {
+        // If Google Maps redirected directly to a single business detail panel
+        if (page.url().includes("/maps/place/")) {
+          const placeUrl = page.url();
+          let placeName = "";
+          try {
+            placeName = await page.evaluate(() => {
+              const main = document.querySelector('[role="main"]');
+              if (!main) return "";
+              for (const el of main.querySelectorAll('h1, h2, div[role="heading"]')) {
+                const t = el.textContent?.trim();
+                if (t && t.length > 1 && t.length < 100) return t;
+              }
+              return document.title.split(" - ")[0]?.trim() || "";
+            });
+          } catch {}
+          if (!placeName) placeName = niche;
+          targetsMap.set(placeUrl, placeName);
+          return;
+        }
+
         const items = await page.evaluate(() => {
           const feed = document.querySelector('[role="feed"]');
-          if (!feed) return [];
+          if (!feed) {
+            const links = Array.from(document.querySelectorAll('a[href*="/maps/place/"]'));
+            return links.map((a) => ({
+              href: a.href,
+              name: a.getAttribute("aria-label") || a.textContent?.trim() || "",
+            })).filter((x) => x.href && x.name);
+          }
           const links = Array.from(feed.querySelectorAll('a[href*="/maps/place/"]'));
           return links.map((a) => ({
             href: a.href,

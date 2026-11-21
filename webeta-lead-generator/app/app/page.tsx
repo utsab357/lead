@@ -108,7 +108,11 @@ export default function Page() {
       if (savedId) {
         fetch(`/api/sessions/${savedId}`)
           .then((r) => {
-            if (!r.ok) throw new Error("Session not found");
+            if (!r.ok) {
+              // Not on server disk — clean up dangling ID reference
+              try { localStorage.removeItem("webeta_active_session_id"); } catch {}
+              return null;
+            }
             return r.json();
           })
           .then((d) => {

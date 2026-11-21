@@ -125,8 +125,8 @@ export function Phase1Scrape({
             const msg = JSON.parse(line);
 
             if (msg.type === "init") {
-              if (msg.sessionId && onSessionCreated) {
-                onSessionCreated(msg.sessionId);
+              if (msg.sessionId) {
+                setSessionId(msg.sessionId);
               }
             }
 
@@ -135,6 +135,7 @@ export function Phase1Scrape({
             }
 
             if (msg.type === "lead") {
+              if (sessionId && onSessionCreated) onSessionCreated(sessionId);
               setProgress({ index: msg.index, total: msg.total });
               setLeads((prev: Lead[]) => {
                 // Avoid duplicate IDs

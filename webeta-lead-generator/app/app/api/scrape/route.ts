@@ -81,6 +81,15 @@ export async function POST(req: Request) {
         }
       };
 
+      // Periodic heartbeat keeps SSE connection alive across Render proxy (100s idle timeout)
+      const pingTimer = setInterval(() => {
+        try {
+          controller.enqueue(new TextEncoder().encode(": ping\n\n"));
+        } catch {
+          clearInterval(pingTimer);
+        }
+      }, 15000);
+
       // Notify client of the active session ID immediately
       enc({ type: "init", sessionId, niche, city });
 
@@ -162,8 +171,29 @@ export async function POST(req: Request) {
             }
           });
 
-          child.on("close", () => resolve());
-          child.on("error", () => resolve());
+          child.stderr?.on("data", (d: Buffer) => {
+            const errText = d.toString().trim();
+            if (errText) {
+              console.error(`[${sourceLabel} stderr]:`, errText);
+              // Only report fatal messages or unhandled exceptions to UI
+              if (errText.includes("Error:") || errText.includes("Unhandled") || errText.includes("Cannot find")) {
+                enc({ type: "status", message: `⚠️ ${errText.slice(0, 100)}` });
+              }
+            }
+          });
+
+          child.on("close", (code) => {
+            if (code !== 0 && code !== null) {
+              console.warn(`[${sourceLabel}] process exited with code ${code}`);
+            }
+            resolve();
+          });
+
+          child.on("error", (err) => {
+            console.error(`[${sourceLabel}] spawn error:`, err);
+            enc({ type: "error", message: `Failed to spawn ${sourceLabel}: ${err.message}` });
+            resolve();
+          });
         });
       }
 
@@ -219,6 +249,7 @@ export async function POST(req: Request) {
         });
 
         try {
+          clearInterval(pingTimer);
           controller.close();
         } catch {
           // already closed
@@ -227,6 +258,7 @@ export async function POST(req: Request) {
     },
     cancel() {
       // User pressed Stop or closed the tab: immediately terminate running Chrome processes
+      clearInterval(pingTimer);
       for (const child of childProcesses) {
         try {
           child.kill("SIGTERM");
