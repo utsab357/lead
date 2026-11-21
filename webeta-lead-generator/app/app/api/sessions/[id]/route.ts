@@ -18,12 +18,6 @@ export async function GET(
       const session: ScrapeSession = JSON.parse(raw);
       return NextResponse.json({ session });
     } catch {
-      if (id === "session-cafe-utsab-test") {
-        const { DEFAULT_CAFE_UTSAB_SESSION } = await import("../route");
-        await fs.mkdir(SESSIONS_DIR, { recursive: true });
-        await fs.writeFile(filePath, JSON.stringify(DEFAULT_CAFE_UTSAB_SESSION, null, 2), "utf-8");
-        return NextResponse.json({ session: DEFAULT_CAFE_UTSAB_SESSION });
-      }
       return NextResponse.json({ error: "Session not found" }, { status: 404 });
     }
   } catch {
@@ -81,9 +75,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  if (id === "session-cafe-utsab-test") {
-    return NextResponse.json({ error: "Cannot delete reserved test session" }, { status: 400 });
-  }
   try {
     const filePath = path.join(SESSIONS_DIR, `${id}.json`);
     await fs.unlink(filePath);

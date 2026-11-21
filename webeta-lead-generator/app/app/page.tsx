@@ -105,14 +105,6 @@ export default function Page() {
           .catch(() => {
             // Server file not found on disk — do NOT wipe user storage!
           });
-      } else {
-        // Only load demo Cafe Utsab if there is absolutely no saved user session
-        fetch("/api/sessions/session-cafe-utsab-test")
-          .then((r) => r.json())
-          .then((d) => {
-            if (d?.session) handleLoadSession(d.session);
-          })
-          .catch(() => {});
       }
     } catch {
       // storage disabled / private browsing

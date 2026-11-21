@@ -122,6 +122,12 @@ export function Phase1Scrape({
           }
           toast.info(`Resumed background scrape for "${job.niche}" in ${job.city}`);
           connectToStream();
+        } else if (job.status === "completed" && Array.isArray(job.leads) && job.leads.length > 0 && leads.length === 0) {
+          setLeads(job.leads);
+          if (job.sessionId && onSessionCreated) {
+            onSessionCreated(job.sessionId);
+          }
+          toast.success(`Loaded completed background scrape for "${job.niche}" (${job.leads.length} leads)`);
         }
       })
       .catch(() => {});
@@ -153,6 +159,12 @@ export function Phase1Scrape({
           if (!line) continue;
           try {
             const msg = JSON.parse(line);
+
+            if (msg.type === "init") {
+              if (msg.sessionId && onSessionCreated) {
+                onSessionCreated(msg.sessionId);
+              }
+            }
 
             if (msg.type === "status") {
               setStatusMsg(msg.message);

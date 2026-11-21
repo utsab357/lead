@@ -121,14 +121,6 @@ export async function GET() {
       }
     }
 
-    // Ensure Cafe Utsab test session exists as seed if no sessions exist
-    const utsabPath = path.join(SESSIONS_DIR, "session-cafe-utsab-test.json");
-    try {
-      await fs.access(utsabPath);
-    } catch {
-      await fs.writeFile(utsabPath, JSON.stringify(DEFAULT_CAFE_UTSAB_SESSION, null, 2), "utf-8");
-    }
-
     const cleanFiles = (await fs.readdir(SESSIONS_DIR)).filter((f) => f.endsWith(".json"));
     const sessions: Omit<ScrapeSession, "leads">[] = [];
 
@@ -217,8 +209,6 @@ export async function DELETE(req: Request) {
           /* ignore */
         }
       }
-      const utsabPath = path.join(SESSIONS_DIR, "session-cafe-utsab-test.json");
-      await fs.writeFile(utsabPath, JSON.stringify(DEFAULT_CAFE_UTSAB_SESSION, null, 2), "utf-8");
       return NextResponse.json({ success: true, count: files.length });
     }
 

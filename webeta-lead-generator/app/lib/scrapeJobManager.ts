@@ -76,6 +76,13 @@ export function subscribeToJob(fn: JobSubscriber): () => void {
   // Send current state immediately upon subscribing so new tabs catch up instantly
   const state = globalThis.__webeta_scrape_state;
   if (state) {
+    fn({
+      type: "init",
+      sessionId: state.sessionId,
+      niche: state.niche,
+      city: state.city,
+      status: state.status,
+    });
     if (state.statusMsg) {
       fn({ type: "status", message: state.statusMsg });
     }

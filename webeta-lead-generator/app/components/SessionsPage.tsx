@@ -141,7 +141,7 @@ export function SessionsPage({
   const totalLeads = sessions.reduce((sum, s) => sum + (s.leadsCount ?? 0), 0);
 
   async function wipeAllOldSessions() {
-    if (!confirm("Are you sure you want to delete all old history? This will permanently wipe all old sessions and reset to the Cafe Utsab test session.")) return;
+    if (!confirm("Are you sure you want to delete all scrape history? This will permanently wipe all sessions.")) return;
     setLoading(true);
     try {
       await fetch("/api/sessions", {
@@ -151,7 +151,7 @@ export function SessionsPage({
       });
       localStorage.removeItem("webeta_active_session_id");
       sessionStorage.removeItem("webeta_cached_session");
-      toast.success("All old history wiped clean! Cafe Utsab test session is ready.");
+      toast.success("All scrape history wiped clean.");
       await fetchSessions();
     } catch {
       toast.error("Failed to wipe old sessions");
