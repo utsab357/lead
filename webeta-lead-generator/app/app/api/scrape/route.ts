@@ -245,15 +245,7 @@ export async function POST(req: Request) {
         // 1. Run Google Maps scraper
         await runScraper(getScraperPath("maps-scraper"), [niche, city, sessionId], "Google Maps");
 
-        // 2. Run Zomato scraper if restaurant/food niche and Maps yielded few results
-        if (isFoodNiche(niche) && allLeads.length < 5) {
-          try {
-            enc({ type: "status", message: "🍽️ Food niche detected — also searching Zomato for more restaurants..." });
-            await runScraper(getScraperPath("zomato-scraper"), [niche, city, sessionId + "-zomato"], "Zomato");
-          } catch {
-            enc({ type: "status", message: "Zomato scrape skipped (error). Maps data saved." });
-          }
-        }
+        // Zomato scraper removed — Google Maps only
 
         // 3. Save completed session to disk
         try {

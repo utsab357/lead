@@ -209,7 +209,7 @@ async function scrapeGoogleMaps() {
         if (page.isClosed()) return 0;
         let newCount = 0;
         try {
-          const items = await page.evaluate((nicheArg, cityArg) => {
+          const items = await page.evaluate(({ nicheArg, cityArg }) => {
             // Try feed-scoped query first, fall back to whole document
             const feed = document.querySelector('[role="feed"]') || document;
             const links = Array.from(feed.querySelectorAll('a[href*="/maps/place/"]'));
@@ -283,7 +283,7 @@ async function scrapeGoogleMaps() {
 
               return { href, name, rating, reviewsCount, phone, website, category: nicheArg, address };
             }).filter(Boolean);
-          }, niche, city);
+          }, { nicheArg: niche, cityArg: city });
 
           for (const item of items) {
             if (targetsMap.has(item.href)) continue;
