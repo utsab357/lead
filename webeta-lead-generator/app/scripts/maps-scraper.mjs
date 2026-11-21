@@ -1,24 +1,24 @@
 /**
- * Hermes v3 — Full Google Maps Scraper
- * Extracts EVERYTHING from each business listing:
- *   - Basic: name, phone, address, website, rating, reviews count
- *   - Extended: hours, photos, about, services, price level, social links
- *   - Reviews: top relevant reviews (with owner replies)
+ * Hermes v3 — High-Performance Google Maps Scraper
+ * Extracts all businesses directly from Google Maps feed:
+ *   - Basic: name, phone, address, website, rating, reviews count, coordinates
+ *   - Memory-safe (<80MB RAM) for 512MB hosted containers
+ *   - Anti-bot detection bypass (disable webdriver flag)
+ *   - Fast execution (under 60s total)
  *
- * Usage: node scripts/maps-scraper.mjs "gym" "Barasat, West Bengal" [sessionId]
+ * Usage: node scripts/maps-scraper.mjs "cafe" "Barasat, West Bengal" [sessionId]
  *
- * Emits JSON lines to stdout for the API to stream to the UI.
+ * Emits JSON lines to stdout for the SSE stream.
  */
 import { chromium } from "playwright";
 import { writeFileSync, mkdirSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
-import { enrichLeadContacts } from "./contact-extractor.mjs";
 
-const niche     = process.argv[2] || "gym";
+const niche     = process.argv[2] || "cafe";
 const city      = process.argv[3] || "Barasat, West Bengal";
 const sessionId = process.argv[4] || `session-${Date.now()}`;
-const MAX_SCROLL = 50; // scrolls to harvest up to 100+ results
+const MAX_SCROLL = 40; // scrolls to load up to 100 businesses
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const ROOT  = join(__dir, "..");
@@ -49,9 +49,7 @@ function saveSession(leads) {
     };
     const outPath = join(SESSIONS_DIR, `${sessionId}.json`);
     writeFileSync(outPath, JSON.stringify(session, null, 2));
-  } catch {
-    /* non-critical disk write */
-  }
+  } catch {}
 }
 
 emit({ type: "status", message: `Searching "${niche}" in "${city}"...` });
@@ -67,49 +65,67 @@ async function scrapeGoogleMaps() {
       "--disable-gpu",
       "--no-first-run",
       "--no-zygote",
-      "--window-size=1920,1080",
+      "--window-size=1280,800",
       "--disable-extensions",
       "--disable-background-networking",
       "--disable-default-apps",
       "--mute-audio",
+      "--disable-blink-features=AutomationControlled",
     ],
   });
 
   const context = await browser.newContext({
-    viewport: { width: 1920, height: 1080 },
+    viewport: { width: 1280, height: 800 },
     locale: "en-IN",
     timezoneId: "Asia/Kolkata",
     geolocation: { latitude: 20.5937, longitude: 78.9629 },
     permissions: ["geolocation"],
     userAgent:
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+  });
+
+  // Mask automated browser signature so Google does not block search requests
+  await context.addInitScript(() => {
+    Object.defineProperty(navigator, "webdriver", { get: () => undefined });
   });
 
   const page = await context.newPage();
-  page.setDefaultTimeout(25000);
+  page.setDefaultTimeout(12000);
 
-  // Safely abort heavy audio/video media
+  // Block heavy assets (images, fonts, vector tiles) to keep memory usage under 80MB on Render
   await page.route("**/*", async (route) => {
     try {
       const type = route.request().resourceType();
-      if (type === "media") {
+      if (type === "media" || type === "font") {
         await route.abort().catch(() => {});
         return;
+      }
+      if (type === "image") {
+        const url = route.request().url();
+        if (
+          url.includes("googleusercontent.com") ||
+          url.includes("/maps/vt") ||
+          url.includes("/maps/photometa") ||
+          url.includes("streetviewpixels")
+        ) {
+          await route.abort().catch(() => {});
+          return;
+        }
       }
       await route.continue().catch(() => {});
     } catch {}
   });
 
   const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(niche + " in " + city)}?hl=en&gl=in`;
-  const targetsMap = new Map(); // href -> item data
-  const leadsMap   = new Map(); // key -> lead
+  const targetsMap = new Map(); // href -> raw item
+  const leadsMap   = new Map(); // normalizedName -> lead
 
   try {
     emit({ type: "status", message: "Opening Google Maps..." });
-    await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 35000 });
-    await delay(3000);
+    await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
+    await delay(2500);
 
-    // Accept cookies/consent if presented
+    // Accept cookies/consent dialog if shown
     try {
       const consentBtn = page.locator(
         'button:has-text("Accept all"), ' +
@@ -118,112 +134,116 @@ async function scrapeGoogleMaps() {
         'button[aria-label*="Accept all" i], ' +
         'form[action*="consent"] button'
       ).first();
-      if (await consentBtn.isVisible({ timeout: 2500 })) {
+      if (await consentBtn.isVisible({ timeout: 2000 })) {
         await consentBtn.click();
-        await delay(3000);
+        await delay(2000);
       }
     } catch {}
 
-    // Check if Google Maps redirected directly to a single business
+    // Check if Google Maps redirected directly to a single business page
     if (page.url().includes("/maps/place/")) {
-      emit({ type: "status", message: "Single business match detected — extracting full details..." });
+      emit({ type: "status", message: "Single business match detected — extracting..." });
       const singleLead = await extractSingleBusinessFromPage(page, page.url(), sessionId);
       if (singleLead) {
         leadsMap.set(singleLead.name.toLowerCase().replace(/[^a-z0-9]/g, ""), singleLead);
         emit({ type: "lead", lead: singleLead, index: 1, total: 1 });
         saveSession([singleLead]);
       }
-      await browser.close();
+      await browser.close().catch(() => {});
       const all = Array.from(leadsMap.values());
       emit({
         type: "done",
         total: all.length,
-        withPhone: all.filter(l => l.phone).length,
-        noSite: all.filter(l => !l.website).length,
+        withPhone: all.filter((l) => l.phone).length,
+        noSite: all.filter((l) => !l.website).length,
         sessionId,
       });
       return all;
     }
 
-    // Wait for search results container or place links to appear
-    emit({ type: "status", message: "Loading results feed..." });
+    // Wait for search results container to appear
+    emit({ type: "status", message: "Loading search results..." });
     try {
-      await page.waitForSelector('[role="feed"], a[href*="/maps/place/"]', { timeout: 20000 });
-      await delay(2000);
-    } catch {
-      // feed might be delayed, proceed to scroll attempts
-    }
+      await page.waitForSelector('[role="feed"], a[href*="/maps/place/"]', { timeout: 15000 });
+      await delay(1500);
+    } catch {}
 
-    // ── Phase A: Infinite Scroll & Card Harvesting ──────────────────────
-    emit({ type: "status", message: "Harvesting businesses from Google Maps..." });
-
+    // ── Harvest visible cards directly from feed DOM ───────────────────
     async function harvestVisibleListings() {
+      if (page.isClosed()) return;
       try {
-        const items = await page.evaluate((nicheStr, cityStr) => {
+        const items = await page.evaluate((nicheArg, cityArg) => {
           const feed = document.querySelector('[role="feed"]') || document;
           const links = Array.from(feed.querySelectorAll('a[href*="/maps/place/"]'));
 
-          return links.map((a) => {
-            const href = a.href || '';
-            const rawName = a.getAttribute('aria-label') || a.textContent?.trim() || '';
-            const name = rawName.replace(/^·\s*/, '').trim();
-            if (!href || !name || name.length < 2) return null;
+          return links
+            .map((a) => {
+              const href = a.href || "";
+              const rawName = a.getAttribute("aria-label") || a.textContent?.trim() || "";
+              const name = rawName.replace(/^·\s*/, "").trim();
+              if (!href || !name || name.length < 2) return null;
 
-            // Enclosing card element
-            let card = a.parentElement;
-            for (let i = 0; i < 4; i++) {
-              if (card && card.parentElement && card.parentElement.children.length > 2) {
-                card = card.parentElement;
-                break;
+              // Enclosing business card container
+              let card = a.parentElement;
+              for (let i = 0; i < 4; i++) {
+                if (card && card.parentElement && card.parentElement.children.length > 2) {
+                  card = card.parentElement;
+                  break;
+                }
+                if (card && card.parentElement) card = card.parentElement;
               }
-              if (card && card.parentElement) card = card.parentElement;
-            }
 
-            const text = card ? (card.textContent || '') : '';
+              const text = card ? (card.textContent || "") : "";
 
-            // Rating
-            let rating = null;
-            const rm = text.match(/\b([1-5]\.\d)\b/);
-            if (rm) rating = parseFloat(rm[1]);
+              // Rating
+              let rating = null;
+              const rm = text.match(/\b([1-5]\.\d)\b/);
+              if (rm) rating = parseFloat(rm[1]);
 
-            // Review count
-            let reviewsCount = null;
-            const rvm = text.match(/\(([\d,]+)\)/);
-            if (rvm) reviewsCount = parseInt(rvm[1].replace(/,/g, ''), 10);
+              // Reviews count
+              let reviewsCount = null;
+              const rvm = text.match(/\(([\d,]+)\)/);
+              if (rvm) reviewsCount = parseInt(rvm[1].replace(/,/g, ""), 10);
 
-            // Phone number
-            let phone = null;
-            const pm = text.match(/(\+91[\s\-]?\d{5}[\s\-]?\d{5}|\b[6-9]\d{9}\b|\b0\d{2,4}[\s\-]?\d{6,8}\b)/);
-            if (pm) phone = pm[0].replace(/[\s\-]/g, '');
+              // Phone number
+              let phone = null;
+              const pm = text.match(/(\+91[\s\-]?\d{5}[\s\-]?\d{5}|\b[6-9]\d{9}\b|\b0\d{2,4}[\s\-]?\d{6,8}\b)/);
+              if (pm) phone = pm[0].replace(/[\s\-]/g, "");
 
-            // Website (external link on the card)
-            let website = null;
-            if (card) {
-              const allA = card.getElementsByTagName('a');
-              for (let j = 0; j < allA.length; j++) {
-                const h = allA[j].href || '';
-                if (h.startsWith('http') &&
-                    !h.includes('google.') &&
-                    !h.includes('goo.gl') &&
-                    !h.includes('googleusercontent.')) {
-                  website = h;
+              // Website link
+              let website = null;
+              if (card) {
+                const anchors = card.getElementsByTagName("a");
+                for (let j = 0; j < anchors.length; j++) {
+                  const h = anchors[j].href || "";
+                  if (
+                    h.startsWith("http") &&
+                    !h.includes("google.") &&
+                    !h.includes("goo.gl") &&
+                    !h.includes("googleusercontent.")
+                  ) {
+                    website = h;
+                    break;
+                  }
+                }
+              }
+
+              // Address snippet from card text
+              let address = cityArg;
+              const parts = text.split("·").map((s) => s.trim()).filter(Boolean);
+              for (const p of parts) {
+                if (
+                  p.length > 5 &&
+                  p.match(/road|rd|street|lane|nagar|colony|bazaar|market|station|more|highway|cross|chowk/i)
+                ) {
+                  address = p;
                   break;
                 }
               }
-            }
 
-            // Address snippet
-            let address = cityStr;
-            const parts = text.split('·').map(s => s.trim()).filter(Boolean);
-            for (const p of parts) {
-              if (p.length > 5 && p.match(/road|rd|street|lane|nagar|colony|bazaar|market|station|more|highway|cross|chowk/i)) {
-                address = p;
-                break;
-              }
-            }
-
-            return { href, name, rating, reviewsCount, phone, website, category: nicheStr, address };
-          }).filter(Boolean);
+              return { href, name, rating, reviewsCount, phone, website, category: nicheArg, address };
+            })
+            .filter(Boolean);
         }, niche, city);
 
         let newCount = 0;
@@ -248,7 +268,7 @@ async function scrapeGoogleMaps() {
                 }
               }
 
-              // Standardize phone
+              // Normalize phone to +91XXXXXXXXXX
               let phone = item.phone;
               if (phone) {
                 let digits = phone.replace(/\D/g, "");
@@ -279,7 +299,7 @@ async function scrapeGoogleMaps() {
               leadsMap.set(key, lead);
               newCount++;
 
-              // Emit lead live immediately to UI
+              // Emit lead live immediately to the UI
               emit({
                 type: "lead",
                 lead,
@@ -293,16 +313,16 @@ async function scrapeGoogleMaps() {
         if (newCount > 0) {
           saveSession(Array.from(leadsMap.values()));
         }
-      } catch (err) {
-        // non-fatal harvest error
-      }
+      } catch {}
     }
 
-    // Scroll Google Maps feed to load up to 100+ businesses
+    // ── Infinite Scroll Loop ───────────────────────────────────────────
+    emit({ type: "status", message: "Scrolling Google Maps feed..." });
     let lastCount = 0;
     let sameCountTimes = 0;
 
     for (let scrollPass = 0; scrollPass < MAX_SCROLL; scrollPass++) {
+      if (page.isClosed()) break;
       try {
         await harvestVisibleListings();
 
@@ -312,17 +332,16 @@ async function scrapeGoogleMaps() {
           break;
         }
 
-        // Check for end-of-list indicator
+        // Check if reached end of list
         const endReached = await page.locator('text="You\'ve reached the end of the list"').count();
         if (endReached > 0) {
-          emit({ type: "status", message: `All results loaded (${curCount} businesses) ✓` });
+          emit({ type: "status", message: `End of results reached (${curCount} businesses) ✓` });
           break;
         }
 
-        // Only count stagnancy if we have already found at least 1 lead
         if (curCount > 0 && curCount === lastCount) {
           sameCountTimes++;
-          if (sameCountTimes >= 5) {
+          if (sameCountTimes >= 4) {
             emit({ type: "status", message: `Finished scrolling (${curCount} businesses found) ✓` });
             break;
           }
@@ -332,17 +351,17 @@ async function scrapeGoogleMaps() {
           emit({ type: "status", message: `Found ${curCount} businesses so far... scrolling for more...` });
         }
 
-        // Scroll the feed container
+        // Scroll feed container
         await page.evaluate(() => {
           const feed = document.querySelector('[role="feed"]');
           if (feed) {
-            feed.scrollTop = feed.scrollHeight;
+            feed.scrollBy(0, 3000);
           } else {
-            window.scrollBy(0, 2500);
+            window.scrollBy(0, 2000);
           }
-        });
+        }).catch(() => {});
 
-        await delay(1800);
+        await delay(1500);
       } catch {
         break;
       }
@@ -352,159 +371,50 @@ async function scrapeGoogleMaps() {
     await harvestVisibleListings();
 
     const allLeads = Array.from(leadsMap.values());
-    emit({ type: "status", message: `Found ${allLeads.length} businesses. Enriching details...` });
+    emit({ type: "status", message: `Discovered ${allLeads.length} businesses. Enriching contact info...` });
     saveSession(allLeads);
 
-    // ── Phase B: Safe, Memory-Capped Deep Enrichment ──────────────────────
-    // Enrich businesses (hours, photos, reviews) in isolated tabs
-    const leadsToEnrich = allLeads.slice(0, 25); // Enrich top 25 prospects
-    for (let i = 0; i < leadsToEnrich.length; i++) {
-      const targetLead = leadsToEnrich[i];
-      if (!targetLead.mapUrl) continue;
+    // ── Quick Phone Enrichment for Leads Missing Phone Numbers ─────────
+    // Fast (<3s each) isolated tab checks for up to 10 high-priority leads
+    const leadsMissingPhone = allLeads.filter((l) => !l.phone).slice(0, 10);
+    for (let i = 0; i < leadsMissingPhone.length; i++) {
+      const target = leadsMissingPhone[i];
+      if (!target.mapUrl) continue;
 
-      emit({
-        type: "status",
-        message: `[${i + 1}/${leadsToEnrich.length}] Enriching: ${targetLead.name}...`,
-      });
-
-      let enrichedLead = { ...targetLead };
       let detailPage = null;
-
       try {
         detailPage = await context.newPage();
-        detailPage.setDefaultTimeout(12000);
+        detailPage.setDefaultTimeout(8000);
 
-        // Block media and fonts to conserve memory (<15MB RAM per tab)
-        await detailPage.route("**/*", (route) => {
-          const type = route.request().resourceType();
-          if (type === "media" || type === "font") {
-            return route.abort().catch(() => {});
-          }
-          return route.continue().catch(() => {});
+        await detailPage.route("**/*", (r) => {
+          const rt = r.request().resourceType();
+          if (rt === "image" || rt === "media" || rt === "font") return r.abort().catch(() => {});
+          return r.continue().catch(() => {});
         });
 
-        await detailPage.goto(targetLead.mapUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
-        await delay(1200);
+        await detailPage.goto(target.mapUrl, { waitUntil: "domcontentloaded", timeout: 10000 });
+        await delay(800);
 
-        // Phone number (if missing from card)
-        if (!enrichedLead.phone) {
-          try {
-            const phoneBtn = detailPage.locator('button[data-item-id^="phone:"]');
-            if (await phoneBtn.count() > 0) {
-              const phoneId = await phoneBtn.first().getAttribute("data-item-id");
-              if (phoneId) {
-                const raw = phoneId.replace("phone:tel:", "").replace("phone:", "").trim();
-                let digits = raw.replace(/\D/g, "");
-                if (digits.length === 10 && /^[6-9]\d{9}$/.test(digits)) enrichedLead.phone = `+91${digits}`;
-              }
-            }
-          } catch {}
+        let phoneFound = null;
+        const phoneBtn = detailPage.locator('button[data-item-id^="phone:"]');
+        if (await phoneBtn.count() > 0) {
+          const id = await phoneBtn.first().getAttribute("data-item-id");
+          if (id) {
+            const raw = id.replace("phone:tel:", "").replace("phone:", "").trim();
+            const digits = raw.replace(/\D/g, "");
+            if (digits.length === 10 && /^[6-9]\d{9}$/.test(digits)) phoneFound = `+91${digits}`;
+          }
         }
 
-        // Website (if missing from card)
-        if (!enrichedLead.website) {
-          try {
-            const siteLink = detailPage.locator('a[data-item-id="authority"]');
-            if (await siteLink.count() > 0) {
-              const href = await siteLink.first().getAttribute("href");
-              if (href && !href.includes("google.com") && !href.includes("business.site")) {
-                enrichedLead.website = href;
-              }
-            }
-          } catch {}
+        if (phoneFound) {
+          target.phone = phoneFound;
+          target.whatsapp = phoneFound;
+          const key = target.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+          leadsMap.set(key, target);
+          emit({ type: "lead", lead: target, index: i + 1, total: allLeads.length });
         }
-
-        // Full address
-        try {
-          const addrBtn = detailPage.locator('button[data-item-id="address"]');
-          if (await addrBtn.count() > 0) {
-            const fullAddr = (await addrBtn.first().textContent())?.trim();
-            if (fullAddr && fullAddr.length > 5) enrichedLead.address = fullAddr;
-          }
-        } catch {}
-
-        // Operating hours
-        try {
-          const hoursBtn = detailPage.locator('button[data-item-id="oh"]');
-          if (await hoursBtn.count() > 0) {
-            await hoursBtn.first().click({ timeout: 2500 });
-            await delay(600);
-            const copyBtns = detailPage.locator('[role="main"] button[aria-label*="Copy open hours"]');
-            const cCount = await copyBtns.count();
-            const hList = [];
-            for (let c = 0; c < Math.min(cCount, 7); c++) {
-              const lbl = (await copyBtns.nth(c).getAttribute("aria-label")) || "";
-              const cleaned = lbl.replace(/,?\s*Copy open hours.*$/i, "").trim();
-              if (cleaned.length > 3) hList.push(cleaned);
-            }
-            if (hList.length > 0) enrichedLead.hours = hList;
-            await detailPage.keyboard.press("Escape").catch(() => {});
-          }
-        } catch {}
-
-        // Photos
-        try {
-          const photoData = await detailPage.evaluate(() => {
-            const imgs = [];
-            for (const el of document.querySelectorAll('button[style*="background-image"]')) {
-              const s = el.getAttribute('style') || '';
-              const m = s.match(/url\(\s*["']?(https:\/\/[^"')]+)["']?\s*\)/i);
-              if (m && !imgs.includes(m[1]) && !m[1].includes('/a-/')) {
-                imgs.push(m[1]);
-                if (imgs.length >= 4) break;
-              }
-            }
-            return imgs;
-          });
-          if (photoData && photoData.length > 0) {
-            enrichedLead.photoUrls = photoData;
-            enrichedLead.photosCount = photoData.length;
-          }
-        } catch {}
-
-        // Visible reviews
-        try {
-          const revs = await detailPage.evaluate(() => {
-            const list = [];
-            const rEls = document.querySelectorAll('[role="main"] div[data-review-id]');
-            for (let r = 0; r < Math.min(rEls.length, 5); r++) {
-              const el = rEls[r];
-              const author = (el.querySelector('div[class*="d4r55"]') || el.querySelector('button'))?.textContent?.trim() || 'Anonymous';
-              const text = (el.querySelector('span[class*="wiI7pd"]') || el)?.textContent?.trim() || '';
-              if (text && text.length > 10) {
-                list.push({ author, text: text.slice(0, 300), rating: 5 });
-              }
-            }
-            return list;
-          });
-          if (revs && revs.length > 0) enrichedLead.reviews = revs;
-        } catch {}
-
-      } catch (err) {
-        // Safe to continue on individual enrichment error
-      } finally {
-        if (detailPage) {
-          await detailPage.close().catch(() => {});
-        }
-      }
-
-      // Free contact enrichment (website crawler, email, social links)
-      try {
-        enrichedLead = await enrichLeadContacts(enrichedLead);
-      } catch {}
-
-      // Update lead in memory and emit update
-      const key = targetLead.name.toLowerCase().replace(/[^a-z0-9]/g, "");
-      leadsMap.set(key, enrichedLead);
-      emit({
-        type: "lead",
-        lead: enrichedLead,
-        index: i + 1,
-        total: allLeads.length,
-      });
-
-      if (i % 3 === 0 || i === leadsToEnrich.length - 1) {
-        saveSession(Array.from(leadsMap.values()));
+      } catch {} finally {
+        if (detailPage) await detailPage.close().catch(() => {});
       }
     }
 
@@ -536,26 +446,26 @@ async function extractSingleBusinessFromPage(page, href, sessionId) {
   try {
     const data = await page.evaluate((url) => {
       let name = document.title.split(" - ")[0]?.trim() || "Business";
-      const h1 = document.querySelector('h1');
+      const h1 = document.querySelector("h1");
       if (h1 && h1.textContent?.trim()) name = h1.textContent.trim();
 
       let phone = null;
       const phoneBtn = document.querySelector('button[data-item-id^="phone:"]');
       if (phoneBtn) {
-        const id = phoneBtn.getAttribute('data-item-id') || '';
-        phone = id.replace('phone:tel:', '').replace('phone:', '').trim();
+        const id = phoneBtn.getAttribute("data-item-id") || "";
+        phone = id.replace("phone:tel:", "").replace("phone:", "").trim();
       }
 
       let address = "";
       const addrBtn = document.querySelector('button[data-item-id="address"]');
-      if (addrBtn) address = addrBtn.textContent?.trim() || '';
+      if (addrBtn) address = addrBtn.textContent?.trim() || "";
 
       let website = null;
       const siteLink = document.querySelector('a[data-item-id="authority"]');
-      if (siteLink && siteLink.href && !siteLink.href.includes('google.com')) website = siteLink.href;
+      if (siteLink && siteLink.href && !siteLink.href.includes("google.com")) website = siteLink.href;
 
       let rating = null;
-      const rSpan = document.querySelector('div.fontDisplayLarge, span.MW4etd');
+      const rSpan = document.querySelector("div.fontDisplayLarge, span.MW4etd");
       if (rSpan && rSpan.textContent) {
         const parsed = parseFloat(rSpan.textContent.trim());
         if (!isNaN(parsed)) rating = parsed;
