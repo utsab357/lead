@@ -108,6 +108,7 @@ export function Phase1Scrape({
     readerRef.current = reader;
     const decoder = new TextDecoder();
     let buf = "";
+    let activeId = "";
 
     try {
       while (true) {
@@ -126,6 +127,7 @@ export function Phase1Scrape({
 
             if (msg.type === "init") {
               if (msg.sessionId) {
+                activeId = msg.sessionId;
                 setSessionId(msg.sessionId);
               }
             }
@@ -135,7 +137,7 @@ export function Phase1Scrape({
             }
 
             if (msg.type === "lead") {
-              if (sessionId && onSessionCreated) onSessionCreated(sessionId);
+              if (activeId && onSessionCreated) onSessionCreated(activeId);
               setProgress({ index: msg.index, total: msg.total });
               setLeads((prev: Lead[]) => {
                 // Avoid duplicate IDs

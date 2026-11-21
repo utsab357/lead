@@ -70,6 +70,7 @@ export async function POST(req: Request) {
   const city = input.city.trim();
 
   const childProcesses: ReturnType<typeof spawn>[] = [];
+  let pingTimer: ReturnType<typeof setInterval> | null = null;
 
   const stream = new ReadableStream({
     start(controller) {
@@ -82,11 +83,11 @@ export async function POST(req: Request) {
       };
 
       // Periodic heartbeat keeps SSE connection alive across Render proxy (100s idle timeout)
-      const pingTimer = setInterval(() => {
+      pingTimer = setInterval(() => {
         try {
           controller.enqueue(new TextEncoder().encode(": ping\n\n"));
         } catch {
-          clearInterval(pingTimer);
+          if (pingTimer) clearInterval(pingTimer);
         }
       }, 15000);
 
@@ -249,7 +250,7 @@ export async function POST(req: Request) {
         });
 
         try {
-          clearInterval(pingTimer);
+          if (pingTimer) clearInterval(pingTimer);
           controller.close();
         } catch {
           // already closed
@@ -258,7 +259,7 @@ export async function POST(req: Request) {
     },
     cancel() {
       // User pressed Stop or closed the tab: immediately terminate running Chrome processes
-      clearInterval(pingTimer);
+      if (pingTimer) clearInterval(pingTimer);
       for (const child of childProcesses) {
         try {
           child.kill("SIGTERM");
